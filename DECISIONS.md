@@ -116,6 +116,17 @@
 
 ---
 
+## D013 — Vercel para Deploy
+
+**Data:** 2026-05-22  
+**Contexto:** App React/Vite precisa de hosting estático com suporte a env vars e CI/CD  
+**Decisão:** Vercel via CLI (`vercel --prod`)  
+**Motivo:** Zero config para Vite, env vars por interface, HTTPS automático, CDN global, free tier generoso  
+**Variáveis configuradas:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`  
+**URL produção:** https://tabuada-rush-rho.vercel.app
+
+---
+
 ## D007 — Dados da Batalha 2P não persistidos
 
 **Data:** 2026-05-22  

@@ -6,9 +6,9 @@
 
 ## 🔄 ONDE PARAMOS
 
-**Sessão:** 002  
+**Sessão:** 003  
 **Data:** 2026-05-22  
-**Resultado:** Implementação da Fase 2 — Auth + Audio + Cloud Sync + Export
+**Resultado:** Deploy no Vercel concluído — app em produção com Supabase configurado
 
 ---
 
@@ -24,19 +24,19 @@ npm run dev
 
 ## 📋 PRÓXIMO PASSO IMEDIATO
 
-1. Configurar Supabase seguindo `SUPABASE_SETUP.md`
-2. Criar `.env` com as credenciais
-3. Testar login/cadastro em browser real
-4. Deploy no Vercel
+1. Testar login/logout em produção (https://tabuada-rush-rho.vercel.app)
+2. Testar cloud sync entre dois dispositivos
+3. Melhorias visuais: ResultsPage, partículas, RecordsPage
+4. Domínio customizado (opcional)
 
 ---
 
 ## 🔗 LINKS IMPORTANTES
 
 - **Dev local:** `http://localhost:3000`
-- **GitHub:** (configurar remote)
-- **Deploy:** (ainda não feito — próxima sessão)
-- **Supabase:** (ainda não configurado — próxima sessão)
+- **GitHub:** https://github.com/DGomesdpaulagit/tabuada-rush.git
+- **Deploy (produção):** https://tabuada-rush-rho.vercel.app
+- **Supabase:** https://oevpmbdcvzplbbedrvyt.supabase.co
 
 ---
 
@@ -76,12 +76,19 @@ C:\Users\HP\Documents\TabuadaRush\
 
 ---
 
-## ⚙️ CONFIGURAÇÃO PARA TESTAR AUTH
+## ⚙️ CONFIGURAÇÃO LOCAL
 
-Criar arquivo `.env` na raiz:
+Criar arquivo `.env` na raiz (não commitado):
 ```
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+VITE_SUPABASE_URL=https://oevpmbdcvzplbbedrvyt.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Executar SQL do `SUPABASE_SETUP.md` no painel do Supabase.
+As mesmas variáveis estão configuradas no Vercel para produção.
+
+## 🚀 DEPLOY
+
+- Plataforma: Vercel
+- Projeto: `davi-gomes-de-paula-s-projects/tabuada-rush`
+- Branch: `main` → auto-deploy ativo
+- Para redesploiar: `vercel --prod --yes` ou push no GitHub

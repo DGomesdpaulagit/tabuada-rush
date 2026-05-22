@@ -4,6 +4,17 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.1.1] — 2026-05-22 — DEPLOY VERCEL
+
+### Adicionado
+- Deploy em produção: https://tabuada-rush-rho.vercel.app
+- Variáveis de ambiente configuradas no Vercel (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)
+
+### Corrigido
+- Conflito de merge no `index.html` resolvido via force push (remote tinha versão v1 vanilla)
+
+---
+
 ## [2.1.0] — 2026-05-22 — FASE 2: AUTH + AUDIO + CLOUD
 
 ### Adicionado

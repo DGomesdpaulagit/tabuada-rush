@@ -1,0 +1,40 @@
+# 🐛 BUGS.md
+
+---
+
+## ✅ RESOLVIDOS
+
+| ID | Bug | Causa | Solução | Data |
+|----|-----|-------|---------|------|
+| B001 | Sobrevivência mostrava 0:00 nos resultados | Timer não iniciava para survival mode | Timer agora conta up para todos modos sem countdown | 2026-05-22 |
+
+---
+
+## 🔴 ATIVOS
+
+| ID | Bug | Prioridade | Reprodução |
+|----|-----|-----------|------------|
+| — | Nenhum bug ativo registrado | — | — |
+
+---
+
+## 🟡 A INVESTIGAR
+
+| ID | Comportamento | Contexto |
+|----|---------------|---------|
+| B002 | `onEnd` pode ser stale no GamePage effect | `useEffect([state.phase])` não inclui `onEnd` na dep array — pode causar dados incorretos se `handleGameEnd` recriado durante partida longa |
+
+---
+
+## 📝 TEMPLATE
+
+```
+**ID:** BXXX
+**Status:** Ativo / Resolvido
+**Prioridade:** Alta / Média / Baixa
+**Descrição:** O que acontece
+**Reprodução:** Passos para reproduzir
+**Causa:** Por que acontece
+**Solução:** Como foi ou será resolvido
+**Data:** YYYY-MM-DD
+```

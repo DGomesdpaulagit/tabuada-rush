@@ -1,0 +1,166 @@
+import { motion } from 'framer-motion';
+import { Home, RotateCcw, Trophy, Target, X, Flame, Clock } from 'lucide-react';
+import { MODES, LEVELS } from '../constants';
+import { getLevelIdx, getAccuracy, getRank, formatTime } from '../utils';
+import { useApp } from '../contexts/AppContext';
+import { Button, pageVariants, pageTransition } from '../components/ui';
+
+export default function ResultsPage({ result, onReplay, onHome }) {
+  const { data } = useApp();
+  const cfg = MODES[result.mode];
+  const accuracy = getAccuracy(result.correct, result.correct + result.wrong);
+  const rank = getRank(result.score);
+  const levelIdx = getLevelIdx(data.xp || 0);
+  const level = LEVELS[levelIdx];
+  const isNewRecord = data.records?.[result.mode] === result.score;
+
+  const stats = [
+    {
+      icon: Trophy,
+      label: 'Pontuação',
+      value: result.score,
+      color: 'bg-violet-100 text-violet-600',
+      big: true,
+    },
+    {
+      icon: Target,
+      label: 'Acertos',
+      value: result.correct,
+      color: 'bg-emerald-100 text-emerald-600',
+    },
+    {
+      icon: X,
+      label: 'Erros',
+      value: result.wrong,
+      color: 'bg-rose-100 text-rose-600',
+    },
+    {
+      icon: Flame,
+      label: 'Melhor Seq.',
+      value: result.bestStreak,
+      color: 'bg-amber-100 text-amber-600',
+    },
+    {
+      icon: Target,
+      label: 'Precisão',
+      value: `${accuracy}%`,
+      color: 'bg-blue-100 text-blue-600',
+    },
+    {
+      icon: Clock,
+      label: 'Tempo',
+      value: formatTime(result.timePlayed || 0),
+      color: 'bg-gray-100 text-gray-600',
+    },
+  ];
+
+  const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+  const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransition}
+      className="flex flex-col gap-5"
+    >
+      {/* Trophy hero */}
+      <div className={`bg-gradient-to-br ${cfg.gradient} rounded-3xl p-8 text-center text-white shadow-xl ${cfg.shadow} shadow-lg`}>
+        <motion.div
+          initial={{ scale: 0, rotate: -20 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.1 }}
+          className="text-6xl mb-4"
+        >
+          🏆
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+        >
+          <p className="text-white/70 text-sm font-bold uppercase tracking-wide mb-1">
+            Fim de Jogo — {cfg.name}
+          </p>
+          <motion.p
+            initial={{ scale: 0.7 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, delay: 0.3 }}
+            className="text-6xl font-black"
+          >
+            {result.score}
+          </motion.p>
+          <p className="text-white/80 text-sm font-semibold mt-1">pontos</p>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span className={`inline-block px-3 py-1 rounded-full text-xs font-black bg-white/20`}>
+              {rank.label}
+            </span>
+            {isNewRecord && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', delay: 0.5 }}
+                className="inline-block px-3 py-1 rounded-full text-xs font-black bg-white/30"
+              >
+                🎉 Novo Recorde!
+              </motion.span>
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Level info */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="flex items-center gap-3 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm"
+      >
+        <span className="text-3xl">{level.badge}</span>
+        <div>
+          <p className="font-black text-gray-800">{level.name}</p>
+          <p className="text-xs text-gray-400 font-semibold">{data.xp} XP acumulados</p>
+        </div>
+      </motion.div>
+
+      {/* Stats grid */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-2 gap-3"
+      >
+        {stats.map((s) => (
+          <motion.div
+            key={s.label}
+            variants={item}
+            className={`bg-white rounded-2xl p-4 border border-gray-100 shadow-sm ${s.big ? 'col-span-2' : ''}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${s.color}`}>
+                <s.icon size={16} />
+              </div>
+              <div>
+                <p className="text-xl font-black text-gray-900">{s.value}</p>
+                <p className="text-xs font-bold text-gray-400">{s.label}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Actions */}
+      <div className="flex gap-3">
+        <Button variant="secondary" onClick={onHome} size="icon">
+          <Home size={18} />
+        </Button>
+        <Button onClick={onReplay} className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 border-0 shadow-lg shadow-violet-200">
+          <RotateCcw size={16} />
+          Jogar Novamente
+        </Button>
+      </div>
+    </motion.div>
+  );
+}

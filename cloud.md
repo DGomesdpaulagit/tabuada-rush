@@ -6,9 +6,9 @@
 
 ## 🔄 ONDE PARAMOS
 
-**Sessão:** 001  
+**Sessão:** 002  
 **Data:** 2026-05-22  
-**Resultado:** Reconstrução completa v2.0.0 — MVP funcionando
+**Resultado:** Implementação da Fase 2 — Auth + Audio + Cloud Sync + Export
 
 ---
 
@@ -24,9 +24,10 @@ npm run dev
 
 ## 📋 PRÓXIMO PASSO IMEDIATO
 
-Testar o timer do Rush chegando em zero e verificar a transição para ResultsPage.
-
-Depois: deploy no Vercel (ver ROADMAP.md).
+1. Configurar Supabase seguindo `SUPABASE_SETUP.md`
+2. Criar `.env` com as credenciais
+3. Testar login/cadastro em browser real
+4. Deploy no Vercel
 
 ---
 
@@ -34,7 +35,8 @@ Depois: deploy no Vercel (ver ROADMAP.md).
 
 - **Dev local:** `http://localhost:3000`
 - **GitHub:** (configurar remote)
-- **Deploy:** (ainda não feito)
+- **Deploy:** (ainda não feito — próxima sessão)
+- **Supabase:** (ainda não configurado — próxima sessão)
 
 ---
 
@@ -42,16 +44,44 @@ Depois: deploy no Vercel (ver ROADMAP.md).
 
 ```
 C:\Users\HP\Documents\TabuadaRush\
-├── src/                   ← código fonte React
-├── MEMORY.md              ← DNA do projeto
-├── MEMORY_CORE.md         ← estado atual
-├── cloud.md               ← este arquivo (continuidade)
-├── CHANGELOG.md           ← histórico de mudanças
-├── BUGS.md                ← bugs e status
-├── DECISIONS.md           ← decisões arquiteturais
-├── ROADMAP.md             ← plano futuro
-├── IDEIAS.md              ← ideias e melhorias
-├── PROMPTS.md             ← prompts úteis
-└── sessions/              ← logs por sessão
-    └── sessao-001.md
+├── src/
+│   ├── contexts/
+│   │   ├── AppContext.jsx     ← data state + cloud sync
+│   │   └── AuthContext.jsx    ← auth state (NEW)
+│   ├── hooks/
+│   │   └── useAudio.js        ← audio toggle hook (NEW)
+│   ├── lib/
+│   │   ├── audioManager.js    ← Web Audio API (NEW)
+│   │   ├── storage.js         ← localStorage
+│   │   └── supabase.js        ← Supabase client (NEW)
+│   ├── pages/
+│   │   ├── AuthPage.jsx       ← login/register UI (NEW)
+│   │   ├── GamePage.jsx       ← + audio feedback
+│   │   ├── MenuPage.jsx       ← + streak, auth btn, audio toggle
+│   │   └── StatsPage.jsx      ← + export JSON/CSV
+│   └── services/
+│       └── sync.js            ← cloud save/load (NEW)
+├── SUPABASE_SETUP.md          ← guia passo a passo (NEW)
+├── .env.example               ← template de env vars (NEW)
+├── MEMORY.md                  ← DNA do projeto
+├── MEMORY_CORE.md             ← estado atual
+├── cloud.md                   ← este arquivo
+├── CHANGELOG.md               ← histórico
+├── BUGS.md                    ← bugs
+├── DECISIONS.md               ← decisões arquiteturais
+└── sessions/                  ← logs por sessão
+    ├── sessao-001.md
+    └── sessao-002.md
 ```
+
+---
+
+## ⚙️ CONFIGURAÇÃO PARA TESTAR AUTH
+
+Criar arquivo `.env` na raiz:
+```
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+```
+
+Executar SQL do `SUPABASE_SETUP.md` no painel do Supabase.

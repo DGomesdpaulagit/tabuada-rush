@@ -1,19 +1,25 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Swords, Star, Zap, Heart, Timer } from 'lucide-react';
+import { Trophy, BarChart2, Swords, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useAudio } from '../hooks/useAudio';
 import { getLevelIdx, getXpProgress } from '../utils';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
 
 const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
 
 export default function MenuPage({ onStart, onNavigate }) {
-  const { data } = useApp();
+  const { data, cloudSyncing } = useApp();
+  const { user, signOut } = useAuth();
+  const { enabled: audioEnabled, toggle: toggleAudio } = useAudio();
+
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = LEVELS[levelIdx];
   const { pct, toNext } = getXpProgress(data.xp || 0);
   const todayStr = new Date().toISOString().split('T')[0];
   const dailyDone = data.currentDailyDate === todayStr;
+  const streak = data.currentStreak || 0;
 
   const container = {
     hidden: {},
@@ -34,7 +40,36 @@ export default function MenuPage({ onStart, onNavigate }) {
       className="flex flex-col gap-6"
     >
       {/* Header */}
-      <div className="text-center pt-2">
+      <div className="relative text-center pt-2">
+        {/* Controls: audio + auth */}
+        <div className="absolute right-0 top-1 flex items-center gap-2">
+          <button
+            onClick={toggleAudio}
+            title={audioEnabled ? 'Desativar sons' : 'Ativar sons'}
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+          >
+            {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          </button>
+
+          {user ? (
+            <button
+              onClick={signOut}
+              title={`Sair (${user.email})`}
+              className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+            >
+              <LogOut size={15} />
+            </button>
+          ) : (
+            <button
+              onClick={() => onNavigate('auth')}
+              title="Entrar / Criar conta"
+              className="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 hover:bg-violet-200 transition-colors"
+            >
+              <LogIn size={15} />
+            </button>
+          )}
+        </div>
+
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -48,6 +83,30 @@ export default function MenuPage({ onStart, onNavigate }) {
         <p className="text-gray-400 text-sm font-semibold mt-1">
           Memorize a tabuada. 5 minutos por dia.
         </p>
+
+        {/* Cloud sync indicator */}
+        {cloudSyncing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center gap-1 mt-1 text-xs text-violet-400 font-semibold"
+          >
+            <Cloud size={11} className="animate-pulse" />
+            Sincronizando...
+          </motion.div>
+        )}
+
+        {/* Logged in badge */}
+        {user && !cloudSyncing && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-1 mt-1 text-xs text-emerald-500 font-semibold"
+          >
+            <Cloud size={11} />
+            {user.email}
+          </motion.div>
+        )}
       </div>
 
       {/* Level card */}
@@ -64,11 +123,30 @@ export default function MenuPage({ onStart, onNavigate }) {
               {level.badge} {level.name}
             </p>
           </div>
-          <div className="text-right">
-            <p className="text-violet-200 text-xs font-bold">XP Total</p>
-            <p className="text-xl font-black">{data.xp || 0}</p>
+
+          <div className="flex items-center gap-4">
+            {/* Streak badge */}
+            {streak > 0 && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.2 }}
+                className="text-center"
+              >
+                <p className="text-violet-200 text-xs font-bold">Sequência</p>
+                <p className="text-xl font-black">
+                  🔥 {streak} {streak === 1 ? 'dia' : 'dias'}
+                </p>
+              </motion.div>
+            )}
+
+            <div className="text-right">
+              <p className="text-violet-200 text-xs font-bold">XP Total</p>
+              <p className="text-xl font-black">{data.xp || 0}</p>
+            </div>
           </div>
         </div>
+
         <Progress value={pct} colorClass="bg-white/60" className="bg-white/20 h-2" />
         {LEVELS[levelIdx + 1] && (
           <p className="text-violet-200 text-xs mt-2 font-semibold">

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
+import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, getLevelIdx } from './utils';
 import { LEVELS, ACHIEVEMENTS } from './constants';
 
@@ -11,10 +12,11 @@ import RecordsPage from './pages/RecordsPage';
 import StatsPage from './pages/StatsPage';
 import AchievementsPage from './pages/AchievementsPage';
 import BattlePage from './pages/BattlePage';
+import AuthPage from './pages/AuthPage';
 
-// ── ACHIEVEMENT TOAST ──────────────────────────────────────────────────────
 import { motion, AnimatePresence as AP } from 'framer-motion';
 
+// ── ACHIEVEMENT TOAST ──────────────────────────────────────────────────────
 function AchievementToast({ achievement, onDone }) {
   return (
     <motion.div
@@ -38,10 +40,10 @@ function AchievementToast({ achievement, onDone }) {
 }
 
 // ── MAIN APP ───────────────────────────────────────────────────────────────
-
 export default function App() {
   const { data, update } = useApp();
-  const [screen, setScreen] = useState('menu'); // menu | game | results | records | stats | achievements | battle
+  const { user } = useAuth();
+  const [screen, setScreen] = useState('menu');
   const [activeMode, setActiveMode] = useState(null);
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);
@@ -69,19 +71,16 @@ export default function App() {
         const bestScore = Math.max(prev.bestScore || 0, result.score);
         const xp = (prev.xp || 0) + result.score;
 
-        // Accuracy for this session
         const sessionTotal = result.correct + result.wrong;
         const sessionAccuracy =
           sessionTotal > 0 ? Math.round((result.correct / sessionTotal) * 100) : 0;
         const bestAccuracy = Math.max(prev.bestAccuracy || 0, sessionAccuracy);
 
-        // Daily
         const dailyCompleted =
           result.mode === 'daily' && result.dailyDate
             ? (prev.dailyCompleted || 0) + 1
             : prev.dailyCompleted || 0;
 
-        // Mode-specific bests
         const survivalBest =
           result.mode === 'survival'
             ? Math.max(prev.survivalBest || 0, result.correct)
@@ -91,17 +90,18 @@ export default function App() {
             ? Math.max(prev.speedBest || 0, result.correct)
             : prev.speedBest || 0;
 
-        // Day streak
+        // Day streak: increment if last play was yesterday, keep if today, reset otherwise
         const lastPlay = prev.lastPlayDate;
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yStr = yesterday.toISOString().split('T')[0];
         const currentStreak =
-          lastPlay === yStr || lastPlay === today
-            ? (prev.currentStreak || 0) + (lastPlay === today ? 0 : 1)
+          lastPlay === yStr
+            ? (prev.currentStreak || 0) + 1
+            : lastPlay === today
+            ? prev.currentStreak || 1
             : 1;
 
-        // Session log
         const session = {
           mode: result.mode,
           score: result.score,
@@ -136,7 +136,7 @@ export default function App() {
         };
       });
 
-      // Check level up
+      // Level up check
       const prevLevelIdx = getLevelIdx(data.xp || 0);
       const newLevelIdx = getLevelIdx(newData.xp || 0);
       if (newLevelIdx > prevLevelIdx) {
@@ -148,7 +148,19 @@ export default function App() {
         });
       }
 
-      // Check achievements
+      // New record check
+      const isNewRecord =
+        !data.records?.[result.mode] || result.score > data.records[result.mode];
+      if (isNewRecord && result.score > 0) {
+        showAchievement({
+          id: '_record',
+          icon: '🏆',
+          title: 'Novo Recorde!',
+          desc: `${result.score} pts em ${result.mode}`,
+        });
+      }
+
+      // Achievement check
       const newAchievements = checkNewAchievements(newData);
       if (newAchievements.length) {
         update((prev) => ({
@@ -186,6 +198,13 @@ export default function App() {
               onNavigate={setScreen}
             />
           )}
+          {screen === 'auth' && (
+            <AuthPage
+              key="auth"
+              onBack={() => setScreen('menu')}
+              onSuccess={() => setScreen('menu')}
+            />
+          )}
           {screen === 'game' && activeMode && (
             <GamePage
               key={`game-${activeMode}`}
@@ -217,11 +236,11 @@ export default function App() {
         </AnimatePresence>
       </div>
 
-      {/* Achievement toasts */}
+      {/* Achievement / level-up toasts */}
       <AP>
         {achievementQueue[0] && (
           <AchievementToast
-            key={achievementQueue[0].id}
+            key={achievementQueue[0].id + achievementQueue[0].title}
             achievement={achievementQueue[0]}
             onDone={() => setAchievementQueue((q) => q.slice(1))}
           />

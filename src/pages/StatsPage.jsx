@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -15,6 +15,16 @@ function CustomTooltip({ active, payload, label }) {
       <p className="font-black text-violet-600">{payload[0].value} pts</p>
     </div>
   );
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function StatsPage({ onBack }) {
@@ -41,6 +51,52 @@ export default function StatsPage({ onBack }) {
     const labels = { rush: 'Rush', survival: 'Sobrevivência', speed: 'Velocidade', daily: 'Diário' };
     return labels[best[0]] || best[0];
   })();
+
+  function exportJSON() {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      stats: {
+        xp: data.xp,
+        totalGames: data.totalGames,
+        totalCorrect: data.totalCorrect,
+        totalWrong: data.totalWrong,
+        bestStreak: data.bestStreak,
+        bestScore: data.bestScore,
+        bestAccuracy: data.bestAccuracy,
+        currentStreak: data.currentStreak,
+        dailyCompleted: data.dailyCompleted,
+        survivalBest: data.survivalBest,
+        speedBest: data.speedBest,
+      },
+      records: data.records || {},
+      achievements: data.achievements || [],
+      sessions: data.sessions || [],
+    };
+    downloadFile(
+      JSON.stringify(payload, null, 2),
+      `tabuada-rush-${new Date().toISOString().split('T')[0]}.json`,
+      'application/json'
+    );
+  }
+
+  function exportCSV() {
+    const rows = [
+      ['Data', 'Modo', 'Pontos', 'Acertos', 'Erros'],
+      ...sessions.map((s) => [
+        s.date ? new Date(s.date).toLocaleString('pt-BR') : '',
+        s.mode || '',
+        s.score ?? 0,
+        s.correct ?? 0,
+        s.wrong ?? 0,
+      ]),
+    ];
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    downloadFile(
+      csv,
+      `tabuada-rush-historico-${new Date().toISOString().split('T')[0]}.csv`,
+      'text/csv;charset=utf-8;'
+    );
+  }
 
   return (
     <motion.div
@@ -184,6 +240,37 @@ export default function StatsPage({ onBack }) {
         >
           <p className="text-xs font-bold text-violet-400 uppercase tracking-wide">Modo Favorito</p>
           <p className="text-xl font-black text-violet-700 mt-1">{bestMode}</p>
+        </motion.div>
+      )}
+
+      {/* Export section */}
+      {sessions.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+        >
+          <p className="font-black text-gray-800 mb-1">Exportar Dados</p>
+          <p className="text-xs text-gray-400 font-semibold mb-4">
+            Baixe seu histórico completo de {sessions.length} partidas
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={exportJSON}
+              className="flex items-center justify-center gap-2 h-11 rounded-2xl bg-violet-50 text-violet-700 font-bold text-sm border border-violet-200 hover:bg-violet-100 transition-colors"
+            >
+              <Download size={14} />
+              JSON
+            </button>
+            <button
+              onClick={exportCSV}
+              className="flex items-center justify-center gap-2 h-11 rounded-2xl bg-emerald-50 text-emerald-700 font-bold text-sm border border-emerald-200 hover:bg-emerald-100 transition-colors"
+            >
+              <Download size={14} />
+              CSV
+            </button>
+          </div>
         </motion.div>
       )}
 

@@ -4,6 +4,7 @@ import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime } from '../utils';
 import { Button, Progress } from '../components/ui';
+import { audio } from '../lib/audioManager';
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
@@ -92,17 +93,21 @@ export default function GamePage({ mode, onEnd, onBack }) {
   const cfg = MODES[mode];
   const [state, dispatch] = useReducer(reducer, mode, init);
   const [inputVal, setInputVal] = useState('');
-  const [inputState, setInputState] = useState('idle'); // idle | correct | wrong
+  const [inputState, setInputState] = useState('idle');
   const [showCombo, setShowCombo] = useState(false);
   const inputRef = useRef(null);
   const timerRef = useRef(null);
   const phaseRef = useRef(state.phase);
   phaseRef.current = state.phase;
 
+  // Resume audio context on first interaction
+  useEffect(() => {
+    audio.resume();
+  }, []);
+
   // Timer
   useEffect(() => {
     if (cfg.timer === null) {
-      // survival & daily: count up to track elapsed time
       timerRef.current = setInterval(() => {
         if (phaseRef.current === 'playing' || phaseRef.current === 'feedback') {
           dispatch({ type: 'TICK_UP' });
@@ -110,7 +115,6 @@ export default function GamePage({ mode, onEnd, onBack }) {
       }, 1000);
       return () => clearInterval(timerRef.current);
     }
-    // countdown modes (rush, speed)
     timerRef.current = setInterval(() => {
       if (phaseRef.current === 'playing' || phaseRef.current === 'feedback') {
         dispatch({ type: 'TICK' });
@@ -119,10 +123,23 @@ export default function GamePage({ mode, onEnd, onBack }) {
     return () => clearInterval(timerRef.current);
   }, [cfg.timer, cfg.lives]);
 
+  // Timer warning sound for last 5 seconds
+  useEffect(() => {
+    if (cfg.timer && state.time > 0 && state.time <= 5 && state.phase === 'playing') {
+      audio.timerWarning();
+    }
+  }, [state.time, cfg.timer, state.phase]);
+
   // Handle game end
   useEffect(() => {
     if (state.phase === 'ended') {
       clearInterval(timerRef.current);
+      // Play victory if any correct answers, otherwise game over
+      if (state.correct > 0) {
+        audio.victory();
+      } else {
+        audio.gameOver();
+      }
       const timePlayed = cfg.timer
         ? cfg.timer - state.time
         : state.time;
@@ -158,13 +175,20 @@ export default function GamePage({ mode, onEnd, onBack }) {
     if (val === state.question.ans) {
       setInputState('correct');
       dispatch({ type: 'CORRECT', modeId: mode });
-      if ((state.streak + 1) % 5 === 0 && state.streak + 1 >= 5) {
+
+      const newStreak = state.streak + 1;
+      if (newStreak % 5 === 0 && newStreak >= 5) {
+        audio.combo();
         setShowCombo(true);
         setTimeout(() => setShowCombo(false), 900);
+      } else {
+        audio.correct();
       }
+
       setTimeout(() => dispatch({ type: 'NEXT' }), 420);
     } else {
       setInputState('wrong');
+      audio.wrong();
       dispatch({ type: 'WRONG' });
       setTimeout(() => dispatch({ type: 'NEXT' }), 950);
     }

@@ -7,6 +7,8 @@
 | ID | Bug | Causa | Solução | Data |
 |----|-----|-------|---------|------|
 | B001 | Sobrevivência mostrava 0:00 nos resultados | Timer não iniciava para survival mode | Timer agora conta up para todos modos sem countdown | 2026-05-22 |
+| B003 | Animações Framer Motion travadas em opacity 0 em dev | React.StrictMode + AnimatePresence mode="wait" no React 18 | Removido StrictMode de main.jsx | 2026-05-22 |
+| B004 | Streak incrementava múltiplas vezes no mesmo dia | Lógica: se lastPlay === today → incrementava mesmo assim | Corrigido: mantém valor quando lastPlay === today | 2026-05-22 |
 
 ---
 

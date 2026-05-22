@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.1.0] — 2026-05-22 — FASE 2: AUTH + AUDIO + CLOUD
+
+### Adicionado
+- Sistema de áudio via Web Audio API (zero arquivos — 100% sintetizado)
+  - 10 sons: correct, wrong, combo, levelUp, achievement, gameOver, victory, click, timerWarning, newRecord
+  - Mute/unmute com persistência em localStorage
+  - Hook `useAudio` para toggle no UI
+- Autenticação com Supabase (email/senha)
+  - AuthPage com tabs login/cadastro, validação e feedback
+  - Login opcional — app funciona 100% sem conta
+  - Botão de logout no header do menu
+- Sincronização em nuvem via Supabase
+  - Migração automática: localStorage → Supabase no primeiro login
+  - Sync automático após cada partida
+  - Degradação graceful sem credenciais configuradas
+- Exportação de dados na StatsPage
+  - JSON completo (stats + conquistas + histórico)
+  - CSV do histórico de sessões
+- Streak diária visível no level card (🔥 N dias)
+- Toast "Novo Recorde!" além de level up e conquistas
+- `SUPABASE_SETUP.md` — guia passo a passo para configurar backend
+- `.env.example` — template de variáveis de ambiente
+
+### Melhorado
+- MenuPage: controles de áudio e auth no header
+- GamePage: sons em todos os eventos (acerto, erro, combo, timer, fim)
+- AppContext: sync automático com cloud quando logado
+- Lógica de streak mais precisa (não duplica em jogos múltiplos no mesmo dia)
+
+### Corrigido
+- Removido React.StrictMode (conflito com Framer Motion AnimatePresence)
+- Bug de streak: mantém valor se já jogou hoje (não incrementa duas vezes)
+
+---
+
 ## [2.0.0] — 2026-05-22 — RECONSTRUÇÃO COMPLETA
 
 ### Adicionado

@@ -263,9 +263,16 @@ export default function App() {
           score: result.score,
           correct: result.correct,
           wrong: result.wrong,
+          avgMs: result.avgMs || 0, // tempo médio de resposta da partida (ms)
           date: new Date().toISOString(),
         };
         const sessions = [...(prev.sessions || []), session].slice(-100);
+
+        // Recorde de velocidade: menor tempo médio de resposta por partida
+        let fastestAvgMs = prev.fastestAvgMs ?? null;
+        if (result.avgMs > 0) {
+          fastestAvgMs = fastestAvgMs == null ? result.avgMs : Math.min(fastestAvgMs, result.avgMs);
+        }
 
         return {
           ...prev,
@@ -280,6 +287,7 @@ export default function App() {
           survivalBest,
           speedBest,
           modesPlayed: allModesPlayed,
+          fastestAvgMs,
           currentStreak,
           bestDayStreak,
           streakGoalBase,

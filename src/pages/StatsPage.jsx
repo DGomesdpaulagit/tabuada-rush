@@ -235,6 +235,20 @@ export default function StatsPage({ onBack }) {
               </p>
             </div>
           </div>
+          {monthly.avgMs > 0 && (
+            <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100 mt-3 flex items-center justify-between">
+              <span className="text-xs font-bold text-gray-400">Tempo médio de resposta</span>
+              <span className="text-sm font-black text-gray-900 flex items-center gap-2">
+                {(monthly.avgMs / 1000).toFixed(1)}s
+                {monthly.avgMsDelta != null && monthly.avgMsDelta !== 0 && (
+                  <span className={`text-xs font-black ${monthly.avgMsDelta > 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                    {monthly.avgMsDelta > 0 ? '▲' : '▼'} {(Math.abs(monthly.avgMsDelta) / 1000).toFixed(1)}s
+                    {monthly.avgMsDelta > 0 ? ' + rápido' : ' + lento'}
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
           <div className="flex items-center justify-between mt-3 px-1 text-sm font-semibold text-gray-500">
             <span>Modo favorito: <b className="text-gray-800">{monthly.favoriteMode}</b></span>
             <span>🔥 {monthly.streak} {monthly.streak === 1 ? 'dia' : 'dias'}</span>

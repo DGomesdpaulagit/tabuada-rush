@@ -99,6 +99,9 @@ export default function GamePage({ mode, onEnd, onBack }) {
   const timerRef = useRef(null);
   const phaseRef = useRef(state.phase);
   phaseRef.current = state.phase;
+  // Medição de tempo de resposta por questão (para análise de velocidade real)
+  const questionShownAt = useRef(0);
+  const responseTimes = useRef([]);
 
   // Resume audio context on first interaction
   useEffect(() => {
@@ -143,6 +146,10 @@ export default function GamePage({ mode, onEnd, onBack }) {
       const timePlayed = cfg.timer
         ? cfg.timer - state.time
         : state.time;
+      const times = responseTimes.current;
+      const avgMs = times.length
+        ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+        : 0;
       setTimeout(() => {
         onEnd({
           mode,
@@ -151,6 +158,7 @@ export default function GamePage({ mode, onEnd, onBack }) {
           wrong: state.wrong,
           bestStreak: state.bestStreak,
           timePlayed,
+          avgMs,
           totalQuestions: cfg.questions || state.answered,
           dailyDate: mode === 'daily' ? new Date().toISOString().split('T')[0] : null,
         });
@@ -158,11 +166,12 @@ export default function GamePage({ mode, onEnd, onBack }) {
     }
   }, [state.phase]);
 
-  // Focus input on question change
+  // Focus input on question change + marca quando a questão foi exibida
   useEffect(() => {
     if (state.phase === 'playing') {
       setInputVal('');
       setInputState('idle');
+      questionShownAt.current = Date.now();
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [state.question, state.phase]);
@@ -171,6 +180,10 @@ export default function GamePage({ mode, onEnd, onBack }) {
     if (state.phase !== 'playing') return;
     const val = parseInt(inputVal, 10);
     if (isNaN(val) || inputVal.trim() === '') return;
+
+    // Registra o tempo de resposta (ignora outliers/AFK > 60s)
+    const dt = questionShownAt.current ? Date.now() - questionShownAt.current : 0;
+    if (dt > 0 && dt < 60000) responseTimes.current.push(dt);
 
     if (val === state.question.ans) {
       setInputState('correct');

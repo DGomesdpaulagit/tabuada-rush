@@ -15,6 +15,7 @@ const DEFAULTS = {
   dailyCompleted: 0,
   survivalBest: 0,
   speedBest: 0,
+  fastestAvgMs: null,    // menor tempo médio de resposta por partida (recorde de velocidade)
   currentDailyDate: null,
   currentDailyScore: null,
   currentStreak: 0,          // ofensiva diária atual (dias consecutivos praticando)

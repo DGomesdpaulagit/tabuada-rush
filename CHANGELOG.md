@@ -4,6 +4,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.7.1] — 2026-05-26 — ANÁLISE: TEMPO MÉDIO DE RESPOSTA REAL
+
+### Adicionado
+- Captura de tempo de resposta por questão (GamePage) → `avgMs` por partida + recorde `fastestAvgMs`
+- Insights de velocidade baseados em tempo real (recente vs anterior), com fallback para o proxy antigo
+- Resumo mensal mostra tempo médio de resposta com variação (mais rápido/lento) vs mês anterior
+
+### Nota
+- Retrocompatível (sessões antigas sem tempo usam o proxy). Visual preservado.
+
+---
+
 ## [2.7.0] — 2026-05-26 — ANÁLISE INTELIGENTE DO USUÁRIO
 
 ### Adicionado

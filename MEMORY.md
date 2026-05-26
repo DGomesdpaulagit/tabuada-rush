@@ -132,8 +132,9 @@ src/
     daily: Number,
   },
   sessions: [               // Últimas 100 sessões
-    { mode, score, correct, wrong, date }
+    { mode, score, correct, wrong, avgMs, date }  // avgMs [v2.7.1] = tempo médio de resposta (ms)
   ],
+  fastestAvgMs: null,       // [v2.7.1] recorde: menor tempo médio de resposta por partida
   achievements: [],         // IDs de conquistas desbloqueadas
   modesPlayed: [],          // Modos já jogados (para conquista 'all_modes')
   dailyCompleted: 0,        // Quantas vezes completou o Desafio Diário
@@ -285,8 +286,10 @@ reservado para a futura página "Ranking de QI Matemático".
 NÃO é IA real — interpreta dados reais e gera textos automáticos.
 - `utils/analysis.js` → `analyzeUser(data)` = `{ headline, summary, insights[], monthly }`.
 - Fontes: sessões (`{mode,score,correct,wrong,date}`) + stats. Recente vs anterior p/ tendência.
-- Frases VARIADAS e DETERMINÍSTICAS (seed por dados) — evolução, precisão, velocidade (proxy modo
-  Velocidade/speedBest), modo forte/favorito, ofensiva. Estado inicial acolhedor sem dados.
+- Frases VARIADAS e DETERMINÍSTICAS (seed por dados) — evolução, precisão, velocidade, modo
+  forte/favorito, ofensiva. Estado inicial acolhedor sem dados.
+- [v2.7.1] Velocidade usa TEMPO MÉDIO de resposta real (`avgMs` por sessão, capturado na GamePage):
+  compara recente vs anterior. Fallback p/ proxy (modo Velocidade/speedBest) sem dados cronometrados.
 - `monthly` = resumo do mês (partidas, dias ativos, precisão+Δ, pontos/partida+Δ, modo favorito).
 - UI: StatsPage (cards "Análise Inteligente" + "Resumo de {mês}") e MenuPage (banner de insight → stats).
 

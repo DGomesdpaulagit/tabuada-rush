@@ -57,6 +57,22 @@ const SPEED_GOOD = [
   'Sua velocidade nos desafios rápidos impressiona.',
   'Reflexo afiado nos modos contra o tempo.',
 ];
+// Velocidade baseada em TEMPO MÉDIO real de resposta (%t = segundos)
+const SPEED_FASTER = [
+  'Você está respondendo mais rápido — média de %ss!',
+  'Seu tempo médio caiu para ~%ss. Mais ágil!',
+  'Reflexo afiado: agora você responde em ~%ss.',
+];
+const SPEED_SLOWER = [
+  'Você está respondendo com mais calma — foco na precisão.',
+  'Seu tempo subiu um pouco; sem pressa, o importante é acertar.',
+  'Ritmo mais tranquilo nas últimas partidas.',
+];
+const SPEED_STEADY = [
+  'Seu tempo médio está estável em ~%ss.',
+  'Ritmo de resposta constante (~%ss).',
+  'Você mantém ~%ss por questão.',
+];
 const MODE_STRONG = [
   'Seu modo mais forte é o %s.',
   'Você brilha no modo %s.',
@@ -86,6 +102,16 @@ function pickMode(arr, seed, label) {
 }
 function pickNum(arr, seed, n) {
   return pick(arr, seed).replace('%n', n);
+}
+function pickTime(arr, seed, t) {
+  return pick(arr, seed).replace('%s', t);
+}
+
+// Tempo médio de resposta (ms) de uma lista de sessões (só as cronometradas)
+function meanRespMs(list) {
+  const t = list.filter((s) => s.avgMs > 0);
+  if (!t.length) return 0;
+  return t.reduce((a, s) => a + s.avgMs, 0) / t.length;
 }
 
 function sessAcc(list) {
@@ -130,6 +156,9 @@ function buildMonthly(sessions, data) {
     monthList.map((s) => new Date(s.date).toISOString().split('T')[0])
   ).size;
 
+  const monthMs = meanRespMs(monthList);
+  const prevMs = meanRespMs(prevList);
+
   return {
     monthName: now.toLocaleDateString('pt-BR', { month: 'long' }),
     games: monthList.length,
@@ -141,6 +170,9 @@ function buildMonthly(sessions, data) {
     favoriteMode: favKey ? MODE_LABELS[favKey] : '—',
     bestStreak: data.bestStreak || 0,
     streak: data.currentStreak || 0,
+    avgMs: monthMs > 0 ? Math.round(monthMs) : 0,
+    // Δ orientado: positivo = ficou MAIS RÁPIDO (tempo caiu) vs mês anterior
+    avgMsDelta: monthMs > 0 && prevMs > 0 ? Math.round(prevMs - monthMs) : null,
   };
 }
 
@@ -212,13 +244,31 @@ export function analyzeUser(data = {}) {
   else
     insights.push({ icon: '🎯', tone: 'warning', text: pick(PREC_LOW, seed) });
 
-  // Velocidade (proxy: acertos no modo Velocidade, recente vs anterior)
+  // Velocidade — usa TEMPO MÉDIO de resposta real (recente vs anterior).
+  // Fallback para o proxy (acertos no modo Velocidade) quando não há tempo registrado.
+  const recentMs = meanRespMs(recent);
+  const olderMs = meanRespMs(older);
   const speedR = recent.filter((s) => s.mode === 'speed');
   const speedO = older.filter((s) => s.mode === 'speed');
-  if (speedR.length && speedO.length && avgCorrect(speedR) > avgCorrect(speedO))
+  if (recentMs > 0 && olderMs > 0) {
+    const secs = (recentMs / 1000).toFixed(1);
+    if (recentMs < olderMs * 0.9)
+      insights.push({ icon: '⚡', tone: 'positive', text: pickTime(SPEED_FASTER, seed, secs) });
+    else if (recentMs > olderMs * 1.15)
+      insights.push({ icon: '🐢', tone: 'neutral', text: pick(SPEED_SLOWER, seed) });
+    else
+      insights.push({ icon: '⚡', tone: 'neutral', text: pickTime(SPEED_STEADY, seed, secs) });
+  } else if (recentMs > 0) {
+    insights.push({
+      icon: '⚡',
+      tone: 'neutral',
+      text: pickTime(SPEED_STEADY, seed, (recentMs / 1000).toFixed(1)),
+    });
+  } else if (speedR.length && speedO.length && avgCorrect(speedR) > avgCorrect(speedO)) {
     insights.push({ icon: '⚡', tone: 'positive', text: pick(SPEED_UP, seed) });
-  else if ((data.speedBest || 0) >= 15)
+  } else if ((data.speedBest || 0) >= 15) {
     insights.push({ icon: '⚡', tone: 'positive', text: pick(SPEED_GOOD, seed) });
+  }
 
   // Modo forte / favorito
   if (strongest)

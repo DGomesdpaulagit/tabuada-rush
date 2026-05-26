@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.8.1] — 2026-05-26 — AJUSTES: HEADER (ÁUDIO) + LOGIN CONDICIONAL
+
+### Removido
+- Botão de áudio/volume separado do header do menu (som/música/volume já ficam nas Configurações)
+
+### Alterado
+- Botão de login no header só aparece quando o usuário NÃO está logado (logout/conta ficam nas Configurações)
+
+### Nota
+- Sem mudança visual; apenas remoção de redundâncias e lógica de exibição
+
+---
+
 ## [2.8.0] — 2026-05-26 — FASE 4 / BLOCO 6: CONFIGURAÇÕES GERAIS
 
 ### Adicionado

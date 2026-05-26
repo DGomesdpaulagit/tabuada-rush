@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud, Sparkles, Settings } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { useAudio } from '../hooks/useAudio';
 import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
@@ -12,8 +11,7 @@ const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
 
 export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const { data, cloudSyncing } = useApp();
-  const { user, signOut } = useAuth();
-  const { enabled: audioEnabled, toggle: toggleAudio } = useAudio();
+  const { user } = useAuth();
 
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = LEVELS[levelIdx];
@@ -51,16 +49,9 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
     >
       {/* Header */}
       <div className="relative text-center pt-2">
-        {/* Controls: audio + auth */}
+        {/* Controles: configurações (áudio/som/música agora ficam dentro dela)
+            + login apenas quando o usuário NÃO está logado (conta fica nas configs) */}
         <div className="absolute right-0 top-1 flex items-center gap-2">
-          <button
-            onClick={toggleAudio}
-            title={audioEnabled ? 'Desativar sons' : 'Ativar sons'}
-            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-          >
-            {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-          </button>
-
           <button
             onClick={() => onNavigate('settings')}
             title="Configurações"
@@ -69,15 +60,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             <Settings size={15} />
           </button>
 
-          {user ? (
-            <button
-              onClick={signOut}
-              title={`Sair (${user.email})`}
-              className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-            >
-              <LogOut size={15} />
-            </button>
-          ) : (
+          {!user && (
             <button
               onClick={() => onNavigate('auth')}
               title="Entrar / Criar conta"

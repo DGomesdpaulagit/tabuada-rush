@@ -6,10 +6,10 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-05-25  
-**Versão:** 2.4.0  
-**Status:** ✅ Fase 2/Bloco 3 — Ranking de QI Matemático (104 personagens) + perfil integrado  
-**Servidor dev:** `http://localhost:3000` (npm run dev)
+**Data:** 2026-05-26  
+**Versão:** 2.5.0  
+**Status:** ✅ Deploy automático (Vercel↔GitHub) + XP rebalanceado (curva íngreme, ganho modesto)  
+**Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
 

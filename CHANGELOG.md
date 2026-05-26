@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.5.0] — 2026-05-26 — DEPLOY AUTOMÁTICO + REBALANCEAMENTO DE XP
+
+### Adicionado
+- Rotina de fim de bloco/sessão (`CLAUDE.md`): registros → push → deploy auto → resumo
+- Deploy automático via integração Git Vercel↔GitHub (push em `main` publica produção)
+
+### Alterado
+- **XP mais "real" / difícil de subir de nível:**
+  - Curva de níveis íngreme (deltas crescentes ~×1.235); topo 90.000 → **227.900 XP**
+  - Ganho de XP por partida agora é modesto: `round(score×0.5) + bônus diário(20) + ofensiva(≤30)` (antes: score cheio + bônus maiores)
+
+### Nota
+- Retrocompatível (níveis por XP); identidade visual inalterada
+
+---
+
 ## [2.4.0] — 2026-05-25 — FASE 2 / BLOCO 3: RANKING DE QI MATEMÁTICO
 
 ### Adicionado

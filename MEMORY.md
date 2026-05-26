@@ -170,10 +170,10 @@ diffLevel:
   3 → questionsAnswered ≥ 30   (pool: 2..10)
 ```
 
-**XP (v2.3)** = `score da partida + bônus diário (+30) + bônus de ofensiva (min(streak,20)×2)`.
+**XP (v2.5 — modelo "real"):** ganho modesto por partida = `round(score×0.5) + bônus diário (20) + bônus de ofensiva (min(streak,30))`. (Antes, v2.3: score cheio + bônus maiores — subia rápido demais.)
 
-**Níveis (v2.3):** `LEVELS[]` tem **28 níveis**, cada um com `name`, `title` (identidade), `badge` (emoji/avatar) e `xp`.
-Progressão: Iniciante → Aprendiz → Estudante → … → Mestre → Grão-Mestre → … → Gênio Matemático → Lenda → Lenda Numérica → Mito → Transcendente (90.000 XP).
+**Níveis (v2.5):** `LEVELS[]` tem **28 níveis** (`name`, `title`, `badge`, `xp`). Curva ÍNGREME (deltas crescentes ~×1.235) para dificultar a progressão: topo **227.900 XP** (era 90.000).
+Progressão: Iniciante → Aprendiz → Estudante → … → Mestre → Grão-Mestre → … → Gênio Matemático → Lenda → Lenda Numérica → Mito → Transcendente.
 `getLevelIdx()` é baseado puramente em XP (retrocompatível).
 
 ---

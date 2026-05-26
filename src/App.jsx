@@ -104,12 +104,13 @@ export default function App() {
         // Recorde de ofensiva diária
         const bestDayStreak = Math.max(prev.bestDayStreak || 0, currentStreak);
 
-        // XP: pontuação da partida + bônus por desafio diário + bônus de ofensiva.
-        // Assim o XP vem de partidas, acertos/desempenho (já embutidos no score),
-        // desafios e da ofensiva diária mantida.
-        const dailyBonus = result.mode === 'daily' ? 30 : 0;
-        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 20) * 2 : 0;
-        const xp = (prev.xp || 0) + result.score + dailyBonus + streakBonus;
+        // XP "real" (v2.5): ganho MODESTO por partida para que subir de nível seja
+        // mais difícil. O XP é uma FRAÇÃO do score (não o score bruto) + bônus de
+        // desafio diário e de ofensiva mantida. Combinado com a curva íngreme em LEVELS.
+        const gameXp = Math.round(result.score * 0.5);
+        const dailyBonus = result.mode === 'daily' ? 20 : 0;
+        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 30) : 0;
+        const xp = (prev.xp || 0) + gameXp + dailyBonus + streakBonus;
 
         const session = {
           mode: result.mode,

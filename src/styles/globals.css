@@ -77,7 +77,13 @@ input[type='number'] {
    permanecem. Tints claros de destaque viram tints ESCUROS do mesmo hue,
    só para legibilidade — NÃO é um redesign.
    ════════════════════════════════════════════════════════════════════════ */
+/* Fundo global da aplicação — adapta ao tema (claro = cor original do projeto) */
+.app-shell { background-color: var(--background); }
+
+/* No escuro, a TELA INTEIRA escurece: html (overscroll/mobile), body e o container raiz */
+html.dark { background-color: hsl(240 12% 11%); }
 html.dark body { background-color: hsl(240 12% 11%); color: hsl(240 10% 90%); }
+html.dark .app-shell { background-color: hsl(240 12% 11%) !important; }
 
 /* Superfícies neutras */
 html.dark .bg-white { background-color: hsl(240 10% 16%) !important; }

@@ -4,6 +4,14 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.8.2] — 2026-05-26 — MODO ESCURO: FUNDO GLOBAL DA TELA
+
+### Corrigido
+- No modo escuro, a tela inteira agora escurece (html, body e container raiz), não só os cards
+- Container raiz passou de `bg-[hsl(...)]` fixo para classe `.app-shell` adaptativa (modo claro inalterado)
+
+---
+
 ## [2.8.1] — 2026-05-26 — AJUSTES: HEADER (ÁUDIO) + LOGIN CONDICIONAL
 
 ### Removido

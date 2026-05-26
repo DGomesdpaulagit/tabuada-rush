@@ -369,7 +369,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-dvh bg-[hsl(250,30%,98%)] font-nunito">
+    <div className="min-h-dvh app-shell font-nunito">
       <div className="max-w-lg mx-auto px-4 py-6 min-h-dvh">
         <AnimatePresence mode="wait">
           {screen === 'menu' && (

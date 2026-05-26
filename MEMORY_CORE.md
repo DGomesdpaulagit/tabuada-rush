@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.8.1  
-**Status:** ✅ Configurações completas; header limpo (áudio centralizado nas configs; login só quando deslogado)  
+**Versão:** 2.8.2  
+**Status:** ✅ Configurações + modo escuro com fundo global da tela (html/body/.app-shell)  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

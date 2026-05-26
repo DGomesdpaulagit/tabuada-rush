@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.10.0  
-**Status:** ✅ Push c/ app fechado implementado (tabela+Edge Function+cliente); falta usuário definir segredos+cron  
+**Versão:** 2.11.0  
+**Status:** ✅ Catálogo de Progresso entregue (XP, níveis, evolução, marcos, registro). Build limpo.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -59,6 +59,8 @@
 - [x] **[v2.4] 104 personagens** (`constants/characters.js`) em 4 categorias (26 cada)
 - [x] **[v2.4] computeQI / getQiInfo** (`utils`) — QI lúdico 70–200 → posição/personagem
 - [x] **[v2.4] QI no card de perfil** (linha pequena, clicável → ranking)
+- [x] **[v2.11 — Fase 5/Bloco 8] Catálogo de Progresso** (`CatalogPage`): Progresso Geral, XP, Evolução (semana/mês/total), Marcos, Catálogo de Níveis (28), Registro de Evolução
+- [x] **[v2.11] `progressLog`** no storage + `detectProgressEvents()` (marcos de nível/XP/ofensiva/recorde) anexados no `handleGameEnd`
 
 ---
 

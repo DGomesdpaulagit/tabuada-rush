@@ -27,6 +27,7 @@ const DEFAULTS = {
   coins: 0,                  // moedas do jogo (economia — uso completo em bloco futuro)
   qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
+  progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
 };
 
 export const storage = {

@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -16,6 +16,7 @@ import RecordsPage from './pages/RecordsPage';
 import StatsPage from './pages/StatsPage';
 import AchievementsPage from './pages/AchievementsPage';
 import RankingPage from './pages/RankingPage';
+import CatalogPage from './pages/CatalogPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 
@@ -279,7 +280,7 @@ export default function App() {
           fastestAvgMs = fastestAvgMs == null ? result.avgMs : Math.min(fastestAvgMs, result.avgMs);
         }
 
-        return {
+        const nextState = {
           ...prev,
           xp,
           totalGames,
@@ -307,6 +308,12 @@ export default function App() {
           currentDailyDate: result.mode === 'daily' ? today : prev.currentDailyDate,
           currentDailyScore: result.mode === 'daily' ? result.score : prev.currentDailyScore,
         };
+
+        // Registro de evolução: anexa os novos marcos atingidos nesta partida.
+        const events = detectProgressEvents(prev, nextState);
+        nextState.progressLog = [...(prev.progressLog || []), ...events].slice(-50);
+
+        return nextState;
       });
 
       // Level up check
@@ -446,6 +453,9 @@ export default function App() {
           )}
           {screen === 'ranking' && (
             <RankingPage key="ranking" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'catalog' && (
+            <CatalogPage key="catalog" onBack={() => setScreen('menu')} />
           )}
           {screen === 'settings' && (
             <SettingsPage

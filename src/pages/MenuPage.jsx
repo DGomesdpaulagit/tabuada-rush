@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, TrendingUp } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -202,6 +202,25 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           <Progress value={goalPct} colorClass="bg-amber-300" className="bg-white/20 h-1.5" />
         </div>
       </motion.div>
+
+      {/* Catálogo de Progresso — acesso destacado */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => onNavigate('catalog')}
+        className="flex items-center gap-3 w-full text-left bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl px-4 py-3 border border-violet-100 hover:border-violet-300 transition-colors"
+      >
+        <span className="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center shrink-0">
+          <TrendingUp size={16} />
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-black text-violet-700 leading-tight">Catálogo de Progresso</p>
+          <p className="text-xs font-semibold text-violet-400">Veja sua evolução e jornada completa</p>
+        </div>
+      </motion.button>
 
       {/* Insight da Análise Inteligente (toque para ver detalhes) */}
       <motion.button

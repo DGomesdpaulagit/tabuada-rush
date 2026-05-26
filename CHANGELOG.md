@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.11.0] — 2026-05-26 — CATÁLOGO DE PROGRESSO (FASE 5 / BLOCO 8)
+
+### Adicionado
+- Página **Catálogo de Progresso** (`pages/CatalogPage.jsx`): Progresso Geral, Experiência (XP), Sua Evolução (semana/mês/total), Marcos de Progresso, Catálogo de Níveis (28) e Registro de Evolução (timeline)
+- `detectProgressEvents()` em `utils` — detecta novos marcos (nível, XP, ofensiva, recorde) por partida
+- `progressLog` no storage (últimos 50 marcos), preenchido no `handleGameEnd` e sincronizado com a nuvem
+- Botão destacado "Catálogo de Progresso" no MenuPage (rota `catalog`)
+
+### Mantido
+- Identidade visual inalterada (paleta violeta, Nunito, cards `rounded-3xl`, Framer Motion). Sem redesign.
+
+---
+
 ## [2.10.0] — 2026-05-26 — PUSH COM APP FECHADO (WEB PUSH + SUPABASE)
 
 ### Adicionado

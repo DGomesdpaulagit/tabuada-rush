@@ -151,6 +151,83 @@ export function getQiInfo(data = {}) {
   };
 }
 
+// ── REGISTRO DE EVOLUÇÃO (marcos do progresso) ──────────────────────────────
+
+// Marcos de XP acumulado que viram registro na jornada do usuário.
+const XP_MILESTONES = [1000, 5000, 10000, 25000, 50000, 100000, 200000];
+// Marcos de ofensiva (recorde de dias) — alinhados às conquistas/recompensas.
+const STREAK_MILESTONES = [5, 10, 15, 20, 35, 40, 100, 250, 365];
+const MODE_LABELS_PT = {
+  rush: 'Rush',
+  survival: 'Sobrevivência',
+  speed: 'Velocidade',
+  daily: 'Desafio Diário',
+};
+
+// Compara o estado anterior com o novo e devolve a lista de NOVOS marcos
+// atingidos (subida de nível, marcos de XP, ofensiva e melhora de recorde).
+// Cada evento: { type, icon, title, detail, date }.
+export function detectProgressEvents(prev = {}, next = {}) {
+  const events = [];
+  const date = new Date().toISOString();
+
+  // Subidas de nível (uma entrada por nível ganho)
+  const prevIdx = getLevelIdx(prev.xp || 0);
+  const nextIdx = getLevelIdx(next.xp || 0);
+  for (let i = prevIdx + 1; i <= nextIdx; i++) {
+    events.push({
+      type: 'level',
+      icon: LEVELS[i].badge,
+      title: `Nível ${i + 1}: ${LEVELS[i].name}`,
+      detail: LEVELS[i].title,
+      date,
+    });
+  }
+
+  // Marcos de XP acumulado
+  for (const m of XP_MILESTONES) {
+    if ((prev.xp || 0) < m && (next.xp || 0) >= m) {
+      events.push({
+        type: 'xp',
+        icon: '✨',
+        title: `${m.toLocaleString('pt-BR')} XP acumulados`,
+        detail: 'Marco de experiência',
+        date,
+      });
+    }
+  }
+
+  // Marcos de ofensiva (pelo recorde de dias consecutivos)
+  for (const m of STREAK_MILESTONES) {
+    if ((prev.bestDayStreak || 0) < m && (next.bestDayStreak || 0) >= m) {
+      events.push({
+        type: 'streak',
+        icon: '🔥',
+        title: `${m} dias de ofensiva`,
+        detail: 'Sequência diária mantida',
+        date,
+      });
+    }
+  }
+
+  // Melhora de recorde por modo (só quando já existia um recorde anterior)
+  for (const mode of Object.keys(next.records || {})) {
+    const before = prev.records?.[mode];
+    const after = next.records[mode];
+    if (before != null && after > before) {
+      events.push({
+        type: 'record',
+        icon: '🏆',
+        title: `Novo recorde em ${MODE_LABELS_PT[mode] || mode}`,
+        detail: `${after} pontos`,
+        date,
+      });
+    }
+  }
+
+  return events;
+}
+
 // ── ACHIEVEMENTS ──────────────────────────────────────────────────────────
 
 export function checkNewAchievements(savedData) {

@@ -54,6 +54,7 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
     StatsPage.jsx        — Dashboard estatísticas + LineChart Recharts
     AchievementsPage.jsx — Grade de conquistas desbloqueadas/bloqueadas
     RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria)
+    CatalogPage.jsx      — [v2.11] Catálogo de Progresso (XP, níveis, evolução, marcos, registro)
     SettingsPage.jsx     — [v2.8] Configurações (som, tema, conta, notificações, acessibilidade)
   App.jsx                — Orquestrador: navegação, handleGameEnd, toasts de conquistas
   main.jsx               — Entry point React
@@ -243,6 +244,17 @@ Sistema **lúdico** (NÃO mede QI real) — gamificação/identidade/progressão
   + lista completa por categoria com destaque "VOCÊ" no personagem atual.
 - **Perfil (MenuPage):** linha pequena `{emoji} QI {qi} · {personagem}` abaixo do nível, clicável → ranking.
 - Acesso: botão "Ranking QI" no menu (ocupa o espaço do antigo "2 Jogadores").
+
+---
+
+## 📖 CATÁLOGO DE PROGRESSO (v2.11 — Fase 5/Bloco 8)
+
+Página dedicada (`CatalogPage`) que reúne a evolução do usuário num só lugar, sem redesign.
+
+- **Acesso:** botão destacado "Catálogo de Progresso" no MenuPage (gradiente violeta claro, `TrendingUp`) → rota `catalog`.
+- **Seções:** Progresso Geral (hero violeta) · Experiência (XP no nível + total + barra) · Sua Evolução (semana/mês/total — partidas + precisão) · Marcos de Progresso (4 StatCards) · Catálogo de Níveis (28 níveis: desbloqueado/atual/futuro) · Registro de Evolução (timeline de marcos).
+- **Registro (`progressLog`):** `detectProgressEvents(prev, next)` em `utils` compara o estado antes/depois de cada partida e gera marcos `{type,icon,title,detail,date}` (type: level/xp/streak/record). Anexados no `handleGameEnd` (atômico, dentro do `update`), `slice(-50)`. Marcos de XP: 1k/5k/10k/25k/50k/100k/200k. Ofensiva: por `bestDayStreak` cruzando 5/10/15/20/35/40/100/250/365. Recorde: só melhora sobre recorde existente.
+- **Evolução:** mês reusa `analyzeUser().monthly`; semana = janela de 7 dias das sessões.
 
 ---
 

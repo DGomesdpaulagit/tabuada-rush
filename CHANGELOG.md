@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.10.0] — 2026-05-26 — PUSH COM APP FECHADO (WEB PUSH + SUPABASE)
+
+### Adicionado
+- Web Push real (notificação com app fechado): `lib/push.js` (subscribe/unsubscribe) + handler `push` no SW
+- Tabela `push_subscriptions` + Edge Function `send-streak-reminders` (envia lembrete de ofensiva a quem não jogou hoje)
+- Toggle de Lembretes assina/cancela o push (quando logado); reassina ao logar
+- `PUSH_SETUP.md` com os 2 passos manuais (segredos VAPID/CRON + agendar cron)
+
+### Pendente (ação do usuário)
+- Definir os segredos da Edge Function e agendar o cron no Supabase (SQL pronto). Push exige login; iOS exige PWA instalada.
+
+---
+
 ## [2.9.1] — 2026-05-26 — NOTIFICAÇÕES: CORREÇÃO MOBILE (SERVICE WORKER)
 
 ### Corrigido

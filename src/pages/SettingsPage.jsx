@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { prefs } from '../lib/prefs';
 import { audio } from '../lib/audioManager';
 import { enableNotifications } from '../lib/notify';
+import { subscribeToPush, unsubscribeFromPush } from '../lib/push';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 
 // ── Switch on/off no estilo do projeto ──────────────────────────────────────
@@ -77,12 +78,24 @@ export default function SettingsPage({ onBack, onNavigate }) {
     if (v) audio.startMusic();
     else audio.stopMusic();
   };
-  // Notificações reais: pede permissão ao ativar
+  // Notificações reais: pede permissão e assina o push (lembrete com app fechado)
   const toggleNotif = async (v) => {
-    if (!v) { setNotif(false); prefs.update({ notifications: false }); setNotifMsg(''); return; }
+    if (!v) {
+      setNotif(false); prefs.update({ notifications: false }); setNotifMsg('');
+      await unsubscribeFromPush();
+      return;
+    }
     const res = await enableNotifications();
     if (res === 'granted') {
-      setNotif(true); prefs.update({ notifications: true }); setNotifMsg('');
+      setNotif(true); prefs.update({ notifications: true });
+      if (user) {
+        const ok = await subscribeToPush(user.id);
+        setNotifMsg(ok
+          ? 'Lembretes ativados — você será avisado mesmo com o app fechado.'
+          : 'Lembretes ativados neste dispositivo.');
+      } else {
+        setNotifMsg('Ativado! Faça login para receber lembretes com o app fechado.');
+      }
     } else {
       setNotif(false); prefs.update({ notifications: false });
       setNotifMsg(res === 'denied'

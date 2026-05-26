@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.9.1  
-**Status:** ✅ Notificações reais via Service Worker (mobile OK, foreground); push c/ app fechado = bloco futuro (VAPID+backend)  
+**Versão:** 2.10.0  
+**Status:** ✅ Push c/ app fechado implementado (tabela+Edge Function+cliente); falta usuário definir segredos+cron  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

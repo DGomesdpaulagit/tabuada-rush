@@ -39,7 +39,9 @@ src/
   lib/prefs.js           — [v2.8] preferências (tema/acessibilidade/notificações) + applyPrefs
   lib/audioManager.js    — Web Audio (SFX) + [v2.9] música de fundo gerada (startMusic/stopMusic)
   lib/notify.js          — [v2.9] notificações reais; [v2.9.1] via SW showNotification (mobile OK)
-public/sw.js             — [v2.9.1] Service Worker: notificationclick + push (pronto p/ backend)
+  lib/push.js            — [v2.10] Web Push (subscribe/unsubscribe) → salva no Supabase
+public/sw.js             — [v2.9.1] Service Worker: notificationclick + [v2.10] push exibe notificação
+supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de ofensiva (cron diário)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)

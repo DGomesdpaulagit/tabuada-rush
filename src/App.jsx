@@ -7,6 +7,7 @@ import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
 import { maybeStreakReminder } from './lib/notify';
+import { subscribeToPush } from './lib/push';
 
 import MenuPage from './pages/MenuPage';
 import GamePage from './pages/GamePage';
@@ -384,6 +385,11 @@ export default function App() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Mantém a inscrição de push atualizada quando o usuário loga (se notificações ON)
+  useEffect(() => {
+    if (user && prefs.get().notifications) subscribeToPush(user.id);
+  }, [user]);
 
   const handleStart = useCallback((mode) => {
     setActiveMode(mode);

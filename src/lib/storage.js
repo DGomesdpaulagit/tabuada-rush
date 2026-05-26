@@ -17,9 +17,14 @@ const DEFAULTS = {
   speedBest: 0,
   currentDailyDate: null,
   currentDailyScore: null,
-  currentStreak: 0,      // ofensiva diária atual (dias consecutivos praticando)
-  bestDayStreak: 0,      // maior ofensiva diária já atingida (recorde)
-  streakGoal: 7,         // meta pessoal de ofensiva (dias) escolhida pelo usuário
+  currentStreak: 0,          // ofensiva diária atual (dias consecutivos praticando)
+  bestDayStreak: 0,          // maior ofensiva diária já atingida (recorde — não reseta)
+  streakGoal: null,          // meta pessoal de ofensiva (null = ainda não definida → abre modal)
+  streakGoalBase: 0,         // valor da ofensiva quando a meta atual foi definida (base do progresso)
+  streakRewardsClaimed: [],  // marcos de recompensa (40/100/250/365) já resgatados
+  pendingStreakReward: null, // marco com recompensa pendente de escolha (ou null)
+  coins: 0,                  // moedas do jogo (economia — uso completo em bloco futuro)
+  qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
 };
 

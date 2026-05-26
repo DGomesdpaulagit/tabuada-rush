@@ -4,6 +4,25 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.6.0] — 2026-05-26 — SISTEMA DE OFENSIVA AVANÇADO
+
+### Adicionado
+- Reset automático da ofensiva ao perder um dia OU virar o ano (recordes/conquistas não resetam)
+- Modal de definição de meta no login/novos ciclos (opções 5/10/15/20/35/40 dias)
+- Nova meta solicitada ao bater a anterior (progresso relativo à base)
+- Conquistas de Ofensiva (5/10/15/20/35/40/100/250/365 dias) na página de Conquistas
+- Recompensas por marco de ofensiva (40/100/250/365): escolher Nível / +QI / +XP / Moedas
+- Base de moedas (`coins`, exibida no card) e bônus de QI (`qiBonus` somado ao QI)
+- Modais GoalModal e RewardModal no estilo do projeto
+
+### Alterado
+- Card de perfil: meta agora abre modal (pills removidas); progresso relativo à base; chip de moedas
+
+### Nota
+- Identidade visual preservada; retrocompatível
+
+---
+
 ## [2.5.1] — 2026-05-26 — POLISH: ANIMAÇÕES DE EVOLUÇÃO
 
 ### Adicionado

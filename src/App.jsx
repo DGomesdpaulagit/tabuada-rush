@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo } from './utils';
-import { LEVELS, ACHIEVEMENTS } from './constants';
+import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 
 import MenuPage from './pages/MenuPage';
 import GamePage from './pages/GamePage';
@@ -39,6 +39,95 @@ function AchievementToast({ achievement, onDone }) {
   );
 }
 
+// ── MODAL: DEFINIR META DE OFENSIVA ─────────────────────────────────────────
+function GoalModal({ onSelect, onClose }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
+      >
+        <div className="text-center text-4xl mb-1">🔥</div>
+        <h3 className="text-xl font-black text-gray-900 text-center">Defina sua meta de ofensiva</h3>
+        <p className="text-sm text-gray-400 font-semibold text-center mt-1 mb-5">
+          Quantos dias seguidos você quer praticar?
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {STREAK_GOALS.map((g) => (
+            <button
+              key={g}
+              onClick={() => onSelect(g)}
+              className="py-4 rounded-2xl bg-violet-50 border border-violet-200 text-violet-700 font-black hover:bg-violet-100 hover:scale-[1.03] active:scale-95 transition-all"
+            >
+              {g}
+              <span className="block text-xs font-bold text-violet-400">dias</span>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ── MODAL: ESCOLHER RECOMPENSA DE OFENSIVA (40/100/250/365 dias) ─────────────
+function RewardModal({ milestone, onChoose }) {
+  const opts = [
+    { id: 'level', icon: '⭐', label: 'Subir de Nível', desc: 'Avança 1 nível agora' },
+    { id: 'qi', icon: '🧠', label: '+5 de QI', desc: 'Bônus permanente de QI' },
+    { id: 'xp', icon: '✨', label: `+${milestone * 20} XP`, desc: 'Ganho direto de XP' },
+    { id: 'coins', icon: '🪙', label: `+${milestone * 5} moedas`, desc: 'Moedas do jogo' },
+  ];
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
+      >
+        <div className="text-center text-4xl mb-1">🎉</div>
+        <h3 className="text-xl font-black text-gray-900 text-center">
+          Ofensiva de {milestone} dias!
+        </h3>
+        <p className="text-sm text-gray-400 font-semibold text-center mt-1 mb-5">
+          Escolha sua recompensa
+        </p>
+        <div className="flex flex-col gap-3">
+          {opts.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => onChoose(o.id)}
+              className="flex items-center gap-3 p-3 rounded-2xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50 active:scale-[0.98] transition-all text-left"
+            >
+              <span className="text-2xl">{o.icon}</span>
+              <div>
+                <p className="font-black text-gray-900 text-sm">{o.label}</p>
+                <p className="text-xs text-gray-400 font-semibold">{o.desc}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ── MAIN APP ───────────────────────────────────────────────────────────────
 export default function App() {
   const { data, update } = useApp();
@@ -47,10 +136,44 @@ export default function App() {
   const [activeMode, setActiveMode] = useState(null);
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);
+  const [goalModalManual, setGoalModalManual] = useState(false);
 
   const showAchievement = useCallback((a) => {
     setAchievementQueue((q) => [...q, a]);
   }, []);
+
+  // Escolha de meta de ofensiva (login / nova meta após bater a anterior)
+  const chooseGoal = useCallback(
+    (g) => {
+      update((prev) => ({ ...prev, streakGoal: g, streakGoalBase: prev.currentStreak || 0 }));
+      setGoalModalManual(false);
+    },
+    [update]
+  );
+
+  // Escolha de recompensa ao bater marco de ofensiva (40/100/250/365)
+  const chooseReward = useCallback(
+    (choice) => {
+      update((prev) => {
+        const m = prev.pendingStreakReward;
+        if (m == null) return prev;
+        const claimed = [...(prev.streakRewardsClaimed || []), m];
+        const patch = { streakRewardsClaimed: claimed, pendingStreakReward: null };
+        if (choice === 'level') {
+          const idx = getLevelIdx(prev.xp || 0);
+          patch.xp = Math.max(prev.xp || 0, LEVELS[Math.min(idx + 1, LEVELS.length - 1)].xp);
+        } else if (choice === 'qi') {
+          patch.qiBonus = (prev.qiBonus || 0) + 5;
+        } else if (choice === 'xp') {
+          patch.xp = (prev.xp || 0) + m * 20;
+        } else if (choice === 'coins') {
+          patch.coins = (prev.coins || 0) + m * 5;
+        }
+        return { ...prev, ...patch };
+      });
+    },
+    [update]
+  );
 
   const handleGameEnd = useCallback(
     (result) => {
@@ -89,20 +212,43 @@ export default function App() {
             ? Math.max(prev.speedBest || 0, result.correct)
             : prev.speedBest || 0;
 
-        // Day streak: increment if last play was yesterday, keep if today, reset otherwise
+        // Ofensiva diária (ano-aware): +1 se jogou ontem (mesmo ano), mantém se já jogou
+        // hoje, senão reinicia em 1. Virada de ano sempre reinicia.
         const lastPlay = prev.lastPlayDate;
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yStr = yesterday.toISOString().split('T')[0];
-        const currentStreak =
-          lastPlay === yStr
-            ? (prev.currentStreak || 0) + 1
-            : lastPlay === today
-            ? prev.currentStreak || 1
-            : 1;
+        const yearTurn =
+          lastPlay && new Date(lastPlay).getFullYear() < new Date(today).getFullYear();
+        const currentStreak = yearTurn
+          ? 1
+          : lastPlay === yStr
+          ? (prev.currentStreak || 0) + 1
+          : lastPlay === today
+          ? prev.currentStreak || 1
+          : 1;
 
-        // Recorde de ofensiva diária
+        // Recorde de ofensiva diária (não reseta nunca)
         const bestDayStreak = Math.max(prev.bestDayStreak || 0, currentStreak);
+
+        // Base da meta: se a ofensiva caiu abaixo da base (reset), rebaseia para 0.
+        let streakGoalBase = prev.streakGoalBase || 0;
+        if (currentStreak <= streakGoalBase) streakGoalBase = 0;
+
+        // Meta batida? (progresso = ofensiva − base). Ao bater, zera a meta para
+        // forçar a escolha de uma nova meta no modal.
+        const goal = prev.streakGoal;
+        const metaHit = goal != null && currentStreak - streakGoalBase >= goal;
+        const nextStreakGoal = metaHit ? null : goal;
+
+        // Marco de recompensa (40/100/250/365) atingido e ainda não resgatado?
+        const claimedRewards = prev.streakRewardsClaimed || [];
+        const pendingStreakReward =
+          STREAK_REWARD_MILESTONES.find(
+            (m) => currentStreak >= m && !claimedRewards.includes(m)
+          ) ||
+          prev.pendingStreakReward ||
+          null;
 
         // XP "real" (v2.5): ganho MODESTO por partida para que subir de nível seja
         // mais difícil. O XP é uma FRAÇÃO do score (não o score bruto) + bônus de
@@ -136,6 +282,9 @@ export default function App() {
           modesPlayed: allModesPlayed,
           currentStreak,
           bestDayStreak,
+          streakGoalBase,
+          streakGoal: nextStreakGoal,
+          pendingStreakReward,
           lastPlayDate: today,
           sessions,
           records: {
@@ -219,6 +368,7 @@ export default function App() {
               key="menu"
               onStart={handleStart}
               onNavigate={setScreen}
+              onEditGoal={() => setGoalModalManual(true)}
             />
           )}
           {screen === 'auth' && (
@@ -268,6 +418,23 @@ export default function App() {
             onDone={() => setAchievementQueue((q) => q.slice(1))}
           />
         )}
+      </AP>
+
+      {/* Modais de ofensiva — só no menu. Recompensa tem prioridade sobre a meta. */}
+      <AP>
+        {screen === 'menu' && data.pendingStreakReward != null ? (
+          <RewardModal
+            key="reward"
+            milestone={data.pendingStreakReward}
+            onChoose={chooseReward}
+          />
+        ) : screen === 'menu' && (data.streakGoal == null || goalModalManual) ? (
+          <GoalModal
+            key="goal"
+            onSelect={chooseGoal}
+            onClose={goalModalManual ? () => setGoalModalManual(false) : undefined}
+          />
+        ) : null}
       </AP>
     </div>
   );

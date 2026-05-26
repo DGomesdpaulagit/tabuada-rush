@@ -140,9 +140,14 @@ src/
   speedBest: 0,             // Melhor # acertos no modo Velocidade
   currentDailyDate: null,   // Data do último desafio diário completo
   currentDailyScore: null,  // Pontuação do último desafio diário
-  currentStreak: 0,         // Ofensiva diária atual (dias consecutivos)
-  bestDayStreak: 0,         // [v2.3] Recorde de ofensiva diária
-  streakGoal: 7,            // [v2.3] Meta pessoal de ofensiva (7/15/30/100)
+  currentStreak: 0,         // Ofensiva diária atual (reset por dia perdido / virada de ano)
+  bestDayStreak: 0,         // Recorde de ofensiva diária (NÃO reseta)
+  streakGoal: null,         // [v2.6] Meta de ofensiva (null = abre modal). Opções 5/10/15/20/35/40
+  streakGoalBase: 0,        // [v2.6] Ofensiva quando a meta foi definida (base do progresso)
+  streakRewardsClaimed: [], // [v2.6] Marcos de recompensa já resgatados (40/100/250/365)
+  pendingStreakReward: null,// [v2.6] Marco com recompensa pendente de escolha
+  coins: 0,                 // [v2.6] Moedas do jogo (economia completa em bloco futuro)
+  qiBonus: 0,               // [v2.6] Bônus de QI via recompensas de ofensiva
   lastPlayDate: null,       // Última data que jogou (YYYY-MM-DD)
 }
 ```

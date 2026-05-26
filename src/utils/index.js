@@ -98,8 +98,30 @@ export function computeQI(data = {}) {
   const levelIdx = getLevelIdx(data.xp || 0);
   const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;         // progresso geral
 
-  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts;
+  const bonus = data.qiBonus || 0; // bônus de QI ganho em recompensas de ofensiva
+  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + bonus;
   return Math.max(QI_MIN, Math.min(QI_MAX, Math.round(raw)));
+}
+
+// Reinicia a ofensiva se o usuário perdeu um dia OU virou o ano (conquistas e
+// recordes NÃO são afetados). Deve rodar ao abrir o app / logar.
+export function applyStreakDecay(data = {}) {
+  const last = data.lastPlayDate;
+  if (!last) return data;
+  const today = todayStr();
+  if (last === today) return data; // já praticou hoje — ofensiva intacta
+
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  const yStr = y.toISOString().split('T')[0];
+
+  const missedDay = last !== yStr; // não jogou nem ontem nem hoje → perdeu a ofensiva
+  const yearTurn = new Date(last).getFullYear() < new Date(today).getFullYear();
+
+  if ((missedDay || yearTurn) && (data.currentStreak || 0) > 0) {
+    return { ...data, currentStreak: 0, streakGoalBase: 0 };
+  }
+  return data;
 }
 
 // Mapeia o QI para uma posição na lista de personagens (índice 0 = mais baixo).

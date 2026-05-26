@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { storage } from '../lib/storage';
+import { applyStreakDecay } from '../utils';
 import { useAuth } from './AuthContext';
 import { loadCloudData, saveCloudData } from '../services/sync';
 
@@ -7,7 +8,12 @@ const Ctx = createContext(null);
 
 export function AppProvider({ children }) {
   const { user } = useAuth();
-  const [data, setData] = useState(() => storage.get());
+  // Ao iniciar, aplica o reset de ofensiva (dia perdido / virada de ano) e persiste.
+  const [data, setData] = useState(() => {
+    const decayed = applyStreakDecay(storage.get());
+    storage.set(decayed);
+    return decayed;
+  });
   const [cloudSyncing, setCloudSyncing] = useState(false);
 
   // When user logs in: load cloud data or migrate local → cloud
@@ -17,8 +23,9 @@ export function AppProvider({ children }) {
     loadCloudData(user.id).then((cloudData) => {
       setCloudSyncing(false);
       if (cloudData && Object.keys(cloudData).length > 0) {
-        storage.set(cloudData);
-        setData(cloudData);
+        const decayed = applyStreakDecay(cloudData); // reset de ofensiva também no login
+        storage.set(decayed);
+        setData(decayed);
       } else {
         // First login: push localStorage data to cloud
         const localData = storage.get();

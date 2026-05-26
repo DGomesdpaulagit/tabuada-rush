@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.5.0  
-**Status:** ✅ Deploy automático (Vercel↔GitHub) + XP rebalanceado (curva íngreme, ganho modesto)  
+**Versão:** 2.6.0  
+**Status:** ✅ Sistema de ofensiva avançado (reset diário/ano, metas, recompensas 40/100/250/365, conquistas, moedas-base)  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

@@ -108,8 +108,13 @@ export const LEVELS = [
   { name: 'Transcendente',     title: 'Calculadora Humana',      xp: 227900, badge: '♾️' },
 ];
 
-// Metas de ofensiva diária disponíveis para o usuário escolher
-export const STREAK_GOALS = [7, 15, 30, 100];
+// Metas de ofensiva diária que o usuário pode escolher (modal de login / nova meta)
+export const STREAK_GOALS = [5, 10, 15, 20, 35, 40];
+
+// Marcos de ofensiva (dias consecutivos absolutos) que dão ESCOLHA DE RECOMPENSA.
+// A partir de 40 dias e seguindo em 100, 250, 365. Após a virada de ano a ofensiva
+// reinicia (as conquistas, não).
+export const STREAK_REWARD_MILESTONES = [40, 100, 250, 365];
 
 // ── ACHIEVEMENTS ───────────────────────────────────────────────────────────
 
@@ -241,5 +246,79 @@ export const ACHIEVEMENTS = [
     icon: '⚡',
     category: 'Modos',
     check: (s) => s.speedBest >= 20,
+  },
+
+  // ── OFENSIVA (dias consecutivos jogando) ──────────────────────────────────
+  {
+    id: 'ofensiva_5',
+    title: 'Faísca',
+    desc: 'Mantenha 5 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 5,
+  },
+  {
+    id: 'ofensiva_10',
+    title: 'Chama Acesa',
+    desc: 'Mantenha 10 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 10,
+  },
+  {
+    id: 'ofensiva_15',
+    title: 'Constância',
+    desc: 'Mantenha 15 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 15,
+  },
+  {
+    id: 'ofensiva_20',
+    title: 'Disciplina',
+    desc: 'Mantenha 20 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 20,
+  },
+  {
+    id: 'ofensiva_35',
+    title: 'Inabalável',
+    desc: 'Mantenha 35 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 35,
+  },
+  {
+    id: 'ofensiva_40',
+    title: 'Fogo Eterno',
+    desc: 'Mantenha 40 dias de ofensiva',
+    icon: '🔥',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 40,
+  },
+  {
+    id: 'ofensiva_100',
+    title: 'Centena em Chamas',
+    desc: 'Mantenha 100 dias de ofensiva',
+    icon: '💯',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 100,
+  },
+  {
+    id: 'ofensiva_250',
+    title: 'Inferno Imparável',
+    desc: 'Mantenha 250 dias de ofensiva',
+    icon: '🌋',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 250,
+  },
+  {
+    id: 'ofensiva_365',
+    title: 'Ano de Fogo',
+    desc: 'Mantenha 365 dias de ofensiva',
+    icon: '🎆',
+    category: 'Ofensiva',
+    check: (s) => (s.bestDayStreak || 0) >= 365,
   },
 ];

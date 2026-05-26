@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud } from 'lucide-react';
-import { MODE_LIST, LEVELS, STREAK_GOALS } from '../constants';
+import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../hooks/useAudio';
@@ -9,8 +9,8 @@ import { Button, Progress, pageVariants, pageTransition } from '../components/ui
 
 const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
 
-export default function MenuPage({ onStart, onNavigate }) {
-  const { data, update, cloudSyncing } = useApp();
+export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
+  const { data, cloudSyncing } = useApp();
   const { user, signOut } = useAuth();
   const { enabled: audioEnabled, toggle: toggleAudio } = useAudio();
 
@@ -22,11 +22,12 @@ export default function MenuPage({ onStart, onNavigate }) {
   const dailyDone = data.currentDailyDate === todayStr;
   const streak = data.currentStreak || 0;
   const bestDayStreak = data.bestDayStreak || 0;
-  const streakGoal = data.streakGoal || 7;
-  const goalPct = Math.min((streak / streakGoal) * 100, 100);
+  const coins = data.coins || 0;
+  const streakGoal = data.streakGoal; // pode ser null (meta ainda não definida)
+  const streakGoalBase = data.streakGoalBase || 0;
+  const metaProgress = Math.max(0, streak - streakGoalBase); // progresso rumo à meta atual
+  const goalPct = streakGoal ? Math.min((metaProgress / streakGoal) * 100, 100) : 0;
   const qiInfo = getQiInfo(data);
-
-  const setGoal = (g) => update((prev) => ({ ...prev, streakGoal: g }));
 
   const container = {
     hidden: {},
@@ -151,6 +152,7 @@ export default function MenuPage({ onStart, onNavigate }) {
           <div className="text-right shrink-0">
             <p className="text-violet-200 text-xs font-bold">XP Total</p>
             <p className="text-xl font-black">{data.xp || 0}</p>
+            <p className="text-amber-200 text-xs font-bold mt-0.5">🪙 {coins}</p>
           </div>
         </div>
 
@@ -188,25 +190,23 @@ export default function MenuPage({ onStart, onNavigate }) {
             <p className="text-violet-200 text-xs font-bold uppercase tracking-wide">
               Meta de Ofensiva
             </p>
-            <p className="text-xs font-bold text-white/90">
-              {Math.min(streak, streakGoal)}/{streakGoal} dias
-            </p>
+            {streakGoal ? (
+              <button
+                onClick={onEditGoal}
+                className="text-xs font-bold text-white/90 hover:text-white transition-colors"
+              >
+                {Math.min(metaProgress, streakGoal)}/{streakGoal} dias · alterar
+              </button>
+            ) : (
+              <button
+                onClick={onEditGoal}
+                className="text-xs font-black bg-white text-violet-700 px-3 py-1 rounded-full hover:bg-violet-50 transition-colors"
+              >
+                Definir meta
+              </button>
+            )}
           </div>
           <Progress value={goalPct} colorClass="bg-amber-300" className="bg-white/20 h-1.5" />
-          <div className="flex gap-2 mt-3">
-            {STREAK_GOALS.map((g) => (
-              <button
-                key={g}
-                onClick={() => setGoal(g)}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-colors
-                  ${streakGoal === g
-                    ? 'bg-white text-violet-700'
-                    : 'bg-white/15 text-white/80 hover:bg-white/25'}`}
-              >
-                {g}d
-              </button>
-            ))}
-          </div>
         </div>
       </motion.div>
 

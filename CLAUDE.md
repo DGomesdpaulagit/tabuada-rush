@@ -19,10 +19,14 @@ violeta, fonte Nunito. **Não alterar a identidade visual** ao implementar featu
 3. **Deploy no Vercel**: AUTOMÁTICO via integração Git (Vercel↔GitHub). O push do passo 2
    dispara o deploy de produção sozinho — NÃO rodar `npx vercel` (o token CLI expirou).
    - Fallback manual (só se a integração cair): o usuário roda `vercel login` e então `npx vercel --prod --yes`.
-4. **Obsidian**: os `.md` de registro vivem nesta pasta (vault). Mantê-los atualizados JÁ cobre o Obsidian.
+4. **Resumo final** (apresentar ao usuário no chat): o que foi feito neste bloco
+   + **próximos passos, sessões e etapas** (roadmap do que vem a seguir). Deve bater com a
+   seção "Próximos passos" da `sessions/sessao-00X.md`.
 
-Observação: esta rotina é executada por mim ao final de cada bloco enquanto a sessão está
-ativa. Não é um hook automático (deploy cego a cada parada seria arriscado).
+Notas:
+- **Obsidian**: os `.md` de registro vivem nesta pasta (que é o vault). Mantê-los atualizados JÁ cobre o Obsidian.
+- Esta rotina é executada por mim ao final de cada bloco enquanto a sessão está ativa.
+  Não é um hook automático (deploy cego a cada parada seria arriscado).
 
 ## Estrutura
 - `src/constants/` — `index.js` (MODES, LEVELS 28 c/ title, ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).

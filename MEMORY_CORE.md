@@ -102,7 +102,8 @@
 
 Ao concluir cada bloco/sessão: (1) registros completos (.md = vault Obsidian),
 (2) commit + `git push origin main`, (3) deploy Vercel AUTOMÁTICO via integração Git
-(o push dispara — não usar CLI, token expirou). Detalhes em `CLAUDE.md`.
+(o push dispara — não usar CLI, token expirou), (4) resumo final ao usuário: o que foi
+feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`.
 
 ---
 

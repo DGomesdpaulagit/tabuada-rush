@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud, Sparkles } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useAudio } from '../hooks/useAudio';
 import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
+import { analyzeUser } from '../utils/analysis';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
 
 const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
@@ -28,6 +29,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const metaProgress = Math.max(0, streak - streakGoalBase); // progresso rumo à meta atual
   const goalPct = streakGoal ? Math.min((metaProgress / streakGoal) * 100, 100) : 0;
   const qiInfo = getQiInfo(data);
+  const analysisHeadline = analyzeUser(data).headline;
 
   const container = {
     hidden: {},
@@ -209,6 +211,20 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           <Progress value={goalPct} colorClass="bg-amber-300" className="bg-white/20 h-1.5" />
         </div>
       </motion.div>
+
+      {/* Insight da Análise Inteligente (toque para ver detalhes) */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        onClick={() => onNavigate('stats')}
+        className="flex items-center gap-3 w-full text-left bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm hover:border-violet-200 transition-colors"
+      >
+        <span className="w-8 h-8 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
+          <Sparkles size={15} />
+        </span>
+        <p className="text-sm font-bold text-gray-600 leading-snug">{analysisHeadline}</p>
+      </motion.button>
 
       {/* Mode grid */}
       <div>

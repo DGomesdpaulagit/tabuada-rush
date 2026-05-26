@@ -4,6 +4,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.7.0] — 2026-05-26 — ANÁLISE INTELIGENTE DO USUÁRIO
+
+### Adicionado
+- Motor de análise (`utils/analysis.js`): textos automáticos data-driven (evolução, precisão, velocidade, modos, ofensiva), frases variadas e determinísticas
+- Dashboard (StatsPage): card "Análise Inteligente" (resumo + observações por tom) e "Resumo do Mês" (indicadores com deltas vs mês anterior)
+- Menu: banner de insight clicável que leva às Estatísticas
+
+### Nota
+- Não é IA real — interpreta dados reais do usuário. Identidade visual preservada.
+
+---
+
 ## [2.6.0] — 2026-05-26 — SISTEMA DE OFENSIVA AVANÇADO
 
 ### Adicionado

@@ -1,11 +1,31 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
 import { getAccuracy, formatDate } from '../utils';
+import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
+
+// Cores por tom das observações da análise
+const TONE = {
+  positive: 'bg-emerald-50 border-emerald-100 text-emerald-700',
+  warning: 'bg-amber-50 border-amber-100 text-amber-700',
+  neutral: 'bg-violet-50 border-violet-100 text-violet-700',
+};
+
+// Mostra a variação (delta) de um indicador mensal vs o mês anterior
+function Delta({ value, suffix = '' }) {
+  if (value == null) return null;
+  if (value === 0) return <span className="text-xs font-bold text-gray-400">=</span>;
+  const up = value > 0;
+  return (
+    <span className={`text-xs font-black ${up ? 'text-emerald-600' : 'text-rose-500'}`}>
+      {up ? '▲' : '▼'} {Math.abs(value)}{suffix}
+    </span>
+  );
+}
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
@@ -32,6 +52,8 @@ export default function StatsPage({ onBack }) {
   const sessions = data.sessions || [];
   const totalAnswers = (data.totalCorrect || 0) + (data.totalWrong || 0);
   const accuracy = getAccuracy(data.totalCorrect || 0, totalAnswers);
+  const analysis = analyzeUser(data);
+  const monthly = analysis.monthly;
 
   const chartData = sessions
     .slice(-20)
@@ -152,6 +174,73 @@ export default function StatsPage({ onBack }) {
           delay={0.2}
         />
       </div>
+
+      {/* Análise Inteligente */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.22 }}
+        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles size={16} className="text-violet-500" />
+          <p className="font-black text-gray-800">Análise Inteligente</p>
+        </div>
+        <p className="text-sm text-gray-500 font-semibold leading-snug mb-4">{analysis.summary}</p>
+        <div className="flex flex-col gap-2">
+          {analysis.insights.map((ins, i) => (
+            <div
+              key={i}
+              className={`flex items-start gap-3 rounded-2xl p-3 border ${TONE[ins.tone] || TONE.neutral}`}
+            >
+              <span className="text-lg leading-none">{ins.icon}</span>
+              <p className="text-sm font-bold leading-snug">{ins.text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Resumo Mensal automático */}
+      {monthly && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28 }}
+          className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <Calendar size={16} className="text-violet-500" />
+            <p className="font-black text-gray-800 capitalize">Resumo de {monthly.monthName}</p>
+          </div>
+          <p className="text-xs text-gray-400 font-semibold mb-4">Seu relatório pessoal do mês</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100">
+              <p className="text-xs font-bold text-gray-400">Partidas</p>
+              <p className="text-xl font-black text-gray-900">{monthly.games}</p>
+            </div>
+            <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100">
+              <p className="text-xs font-bold text-gray-400">Dias ativos</p>
+              <p className="text-xl font-black text-gray-900">{monthly.daysActive}</p>
+            </div>
+            <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100">
+              <p className="text-xs font-bold text-gray-400">Precisão</p>
+              <p className="text-xl font-black text-gray-900 flex items-center gap-2">
+                {monthly.accuracy}% <Delta value={monthly.accDelta} suffix="%" />
+              </p>
+            </div>
+            <div className="rounded-2xl bg-gray-50 p-3 border border-gray-100">
+              <p className="text-xs font-bold text-gray-400">Pontos/partida</p>
+              <p className="text-xl font-black text-gray-900 flex items-center gap-2">
+                {monthly.avgScore} <Delta value={monthly.scoreDelta} />
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-3 px-1 text-sm font-semibold text-gray-500">
+            <span>Modo favorito: <b className="text-gray-800">{monthly.favoriteMode}</b></span>
+            <span>🔥 {monthly.streak} {monthly.streak === 1 ? 'dia' : 'dias'}</span>
+          </div>
+        </motion.div>
+      )}
 
       {/* Chart */}
       <motion.div

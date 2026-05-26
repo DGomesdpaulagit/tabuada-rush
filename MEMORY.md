@@ -36,7 +36,8 @@ src/
   constants/index.js     — MODES, LEVELS (28, c/ title), ACHIEVEMENTS, STREAK_GOALS
   constants/characters.js — [v2.4] 104 personagens do Ranking de QI + TIERS
   lib/storage.js         — persistência localStorage
-  utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo
+  utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
+  utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
   pages/
@@ -276,6 +277,18 @@ Mesmas 20 perguntas para todos usuários no mesmo dia.
 Removido completamente em 2026-05-25 (sessão 004). O espaço no menu foi
 substituído por um placeholder "Ranking em breve" (botão disabled, ícone Medal),
 reservado para a futura página "Ranking de QI Matemático".
+
+---
+
+## 🧩 ANÁLISE INTELIGENTE (v2.7 — Fase 3/Bloco 5)
+
+NÃO é IA real — interpreta dados reais e gera textos automáticos.
+- `utils/analysis.js` → `analyzeUser(data)` = `{ headline, summary, insights[], monthly }`.
+- Fontes: sessões (`{mode,score,correct,wrong,date}`) + stats. Recente vs anterior p/ tendência.
+- Frases VARIADAS e DETERMINÍSTICAS (seed por dados) — evolução, precisão, velocidade (proxy modo
+  Velocidade/speedBest), modo forte/favorito, ofensiva. Estado inicial acolhedor sem dados.
+- `monthly` = resumo do mês (partidas, dias ativos, precisão+Δ, pontos/partida+Δ, modo favorito).
+- UI: StatsPage (cards "Análise Inteligente" + "Resumo de {mês}") e MenuPage (banner de insight → stats).
 
 ---
 

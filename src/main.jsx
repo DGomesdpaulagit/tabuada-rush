@@ -8,6 +8,13 @@ import './styles/globals.css';
 // Aplica tema/acessibilidade antes do render (evita "flash" do tema errado)
 applyPrefs();
 
+// Registra o Service Worker (necessário p/ notificações reais no mobile e base do push futuro)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
     <AppProvider>

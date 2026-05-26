@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.9.1] — 2026-05-26 — NOTIFICAÇÕES: CORREÇÃO MOBILE (SERVICE WORKER)
+
+### Corrigido
+- Service Worker agora é registrado (`public/sw.js`) e as notificações usam `registration.showNotification` → funcionam no mobile/Android (antes `new Notification()` quebrava)
+- Ícones movidos para `public/icons/` (resolvem em dev e produção); SW servido em `/sw.js`
+- Handler `notificationclick` (foca/abre o app) e `push` prontos (push real depende de backend VAPID — bloco futuro)
+- Mensagens de lembrete focadas em ofensiva, com variação
+
+### Limite honesto
+- Notificações com app FECHADO/minimizado/tela bloqueada ainda exigem Push API + backend (não entregue nesta versão). iOS exige PWA instalada + Web Push.
+
+---
+
 ## [2.9.0] — 2026-05-26 — MÚSICA DE FUNDO REAL + NOTIFICAÇÕES REAIS
 
 ### Adicionado

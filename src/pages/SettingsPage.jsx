@@ -245,7 +245,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
 
       {/* SOBRE */}
       <div className="text-center text-xs text-gray-400 font-semibold">
-        Tabuada Rush · v2.9.0
+        Tabuada Rush · v2.9.1
       </div>
 
       <Button variant="secondary" onClick={onBack} className="w-full">

@@ -38,7 +38,8 @@ src/
   lib/storage.js         — persistência localStorage (dados do jogo)
   lib/prefs.js           — [v2.8] preferências (tema/acessibilidade/notificações) + applyPrefs
   lib/audioManager.js    — Web Audio (SFX) + [v2.9] música de fundo gerada (startMusic/stopMusic)
-  lib/notify.js          — [v2.9] notificações reais (permissão + lembrete de ofensiva)
+  lib/notify.js          — [v2.9] notificações reais; [v2.9.1] via SW showNotification (mobile OK)
+public/sw.js             — [v2.9.1] Service Worker: notificationclick + push (pronto p/ backend)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)

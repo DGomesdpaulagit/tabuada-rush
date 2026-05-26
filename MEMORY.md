@@ -35,7 +35,8 @@ date-fns 3
 src/
   constants/index.js     — MODES, LEVELS (28, c/ title), ACHIEVEMENTS, STREAK_GOALS
   constants/characters.js — [v2.4] 104 personagens do Ranking de QI + TIERS
-  lib/storage.js         — persistência localStorage
+  lib/storage.js         — persistência localStorage (dados do jogo)
+  lib/prefs.js           — [v2.8] preferências (tema/acessibilidade/notificações) + applyPrefs
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
@@ -48,6 +49,7 @@ src/
     StatsPage.jsx        — Dashboard estatísticas + LineChart Recharts
     AchievementsPage.jsx — Grade de conquistas desbloqueadas/bloqueadas
     RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria)
+    SettingsPage.jsx     — [v2.8] Configurações (som, tema, conta, notificações, acessibilidade)
   App.jsx                — Orquestrador: navegação, handleGameEnd, toasts de conquistas
   main.jsx               — Entry point React
   styles/globals.css     — CSS variables + Tailwind base
@@ -292,6 +294,20 @@ NÃO é IA real — interpreta dados reais e gera textos automáticos.
   compara recente vs anterior. Fallback p/ proxy (modo Velocidade/speedBest) sem dados cronometrados.
 - `monthly` = resumo do mês (partidas, dias ativos, precisão+Δ, pontos/partida+Δ, modo favorito).
 - UI: StatsPage (cards "Análise Inteligente" + "Resumo de {mês}") e MenuPage (banner de insight → stats).
+
+---
+
+## ⚙️ CONFIGURAÇÕES / TEMA (v2.8 — Fase 4/Bloco 6)
+
+- `SettingsPage` (acesso por engrenagem no header, ao lado do som): Som (efeitos/volume/música),
+  Aparência (tema claro/escuro), Acessibilidade (texto grande/reduzir animações/alto contraste),
+  Notificações (lembretes), Conta (progresso + login/logout/sync).
+- `lib/prefs.js` (`tr_prefs`): theme/music/notifications/largeText/reduceMotion/highContrast.
+  `applyPrefs()` aplica classes no `<html>` (`dark`/`large-text`/`reduce-motion`/`high-contrast`),
+  chamado em `main.jsx` antes do render. Áudio segue no `audioManager` (tr_audio/tr_volume).
+- **Tema escuro (globals.css):** adapta APENAS neutros (bg-white/gray, text-gray, bordas, inputs)
+  e converte tints `*-50/-100`/gradientes para versões escuras do MESMO hue. Cores fortes da marca
+  preservadas. `darkMode: 'class'` no tailwind.config. NÃO é redesign — foco em legibilidade/contraste.
 
 ---
 

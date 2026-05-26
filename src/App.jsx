@@ -12,6 +12,7 @@ import RecordsPage from './pages/RecordsPage';
 import StatsPage from './pages/StatsPage';
 import AchievementsPage from './pages/AchievementsPage';
 import RankingPage from './pages/RankingPage';
+import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
@@ -413,6 +414,13 @@ export default function App() {
           )}
           {screen === 'ranking' && (
             <RankingPage key="ranking" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'settings' && (
+            <SettingsPage
+              key="settings"
+              onBack={() => setScreen('menu')}
+              onNavigate={setScreen}
+            />
           )}
         </AnimatePresence>
       </div>

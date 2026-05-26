@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud, Sparkles } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, Volume2, VolumeX, LogIn, LogOut, Cloud, Sparkles, Settings } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -59,6 +59,14 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
           >
             {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          </button>
+
+          <button
+            onClick={() => onNavigate('settings')}
+            title="Configurações"
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+          >
+            <Settings size={15} />
           </button>
 
           {user ? (

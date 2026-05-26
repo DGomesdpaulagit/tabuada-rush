@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.8.0] — 2026-05-26 — FASE 4 / BLOCO 6: CONFIGURAÇÕES GERAIS
+
+### Adicionado
+- Página de Configurações (botão de engrenagem ao lado do som no menu)
+- Som: efeitos (on/off), volume (slider), música (toggle preparado)
+- Tema Claro/Escuro — adapta neutros e contraste, preserva as cores da marca (`darkMode: 'class'`)
+- Acessibilidade: texto grande, reduzir animações, alto contraste
+- Notificações: toggle de lembretes (estrutura preparada)
+- Conta: progresso (nível/QI/XP/moedas), login/logout, status de sincronização
+- Preferências persistidas (`lib/prefs.js`), aplicadas no load sem flash
+
+### Nota
+- Modo claro inalterado; modo escuro só adapta legibilidade/contraste. Sem redesign.
+
+---
+
 ## [2.7.2] — 2026-05-26 — GRÁFICO DE EVOLUÇÃO FOCADO NO DESAFIO DIÁRIO
 
 ### Alterado

@@ -70,3 +70,93 @@ input[type='number'] {
   outline-offset: 2px;
   border-radius: 8px;
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   TEMA ESCURO — adapta APENAS neutros + contraste. As cores fortes da marca
+   (gradientes violeta/rosa/âmbar/esmeralda sólidos, ícones, texto branco)
+   permanecem. Tints claros de destaque viram tints ESCUROS do mesmo hue,
+   só para legibilidade — NÃO é um redesign.
+   ════════════════════════════════════════════════════════════════════════ */
+html.dark body { background-color: hsl(240 12% 11%); color: hsl(240 10% 90%); }
+
+/* Superfícies neutras */
+html.dark .bg-white { background-color: hsl(240 10% 16%) !important; }
+html.dark .bg-gray-50 { background-color: hsl(240 10% 14%) !important; }
+html.dark .bg-gray-100 { background-color: hsl(240 8% 22%) !important; }
+html.dark .bg-gray-200 { background-color: hsl(240 8% 28%) !important; }
+
+/* Textos neutros */
+html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: hsl(240 12% 92%) !important; }
+html.dark .text-gray-600, html.dark .text-gray-500 { color: hsl(240 8% 74%) !important; }
+html.dark .text-gray-400, html.dark .text-gray-300 { color: hsl(240 8% 60%) !important; }
+
+/* Bordas neutras */
+html.dark .border-gray-50, html.dark .border-gray-100,
+html.dark .border-gray-200, html.dark .border-gray-300 { border-color: hsl(240 8% 26%) !important; }
+
+/* Inputs e scrollbar */
+html.dark input { background-color: hsl(240 10% 18%) !important; color: hsl(240 12% 92%) !important; }
+html.dark ::-webkit-scrollbar-thumb { background: hsl(240 6% 35%); }
+
+/* Tints de destaque CLAROS → ESCUROS do mesmo hue (mantém a identidade) */
+html.dark .bg-violet-50 { background-color: hsl(262 35% 17%) !important; }
+html.dark .bg-violet-100 { background-color: hsl(262 32% 24%) !important; }
+html.dark .bg-emerald-50 { background-color: hsl(152 35% 14%) !important; }
+html.dark .bg-emerald-100 { background-color: hsl(152 30% 20%) !important; }
+html.dark .bg-amber-50 { background-color: hsl(38 40% 15%) !important; }
+html.dark .bg-amber-100 { background-color: hsl(38 38% 22%) !important; }
+html.dark .bg-rose-50 { background-color: hsl(350 35% 16%) !important; }
+html.dark .bg-blue-50 { background-color: hsl(217 38% 16%) !important; }
+html.dark .bg-blue-100 { background-color: hsl(217 35% 22%) !important; }
+html.dark .bg-slate-100 { background-color: hsl(215 18% 24%) !important; }
+
+/* Gradientes de tint claro (mode cards, banners, ranking) → escuros do mesmo hue */
+html.dark .from-violet-50 { --tw-gradient-from: hsl(262 35% 16%) var(--tw-gradient-from-position) !important; }
+html.dark .to-purple-50 { --tw-gradient-to: hsl(271 38% 19%) var(--tw-gradient-to-position) !important; }
+html.dark .from-rose-50 { --tw-gradient-from: hsl(350 35% 16%) var(--tw-gradient-from-position) !important; }
+html.dark .to-pink-50 { --tw-gradient-to: hsl(330 35% 18%) var(--tw-gradient-to-position) !important; }
+html.dark .from-amber-50 { --tw-gradient-from: hsl(38 40% 15%) var(--tw-gradient-from-position) !important; }
+html.dark .to-orange-50 { --tw-gradient-to: hsl(25 40% 17%) var(--tw-gradient-to-position) !important; }
+html.dark .from-emerald-50 { --tw-gradient-from: hsl(152 35% 14%) var(--tw-gradient-from-position) !important; }
+html.dark .to-teal-50 { --tw-gradient-to: hsl(173 38% 16%) var(--tw-gradient-to-position) !important; }
+html.dark .from-slate-50 { --tw-gradient-from: hsl(215 16% 18%) var(--tw-gradient-from-position) !important; }
+html.dark .to-gray-50 { --tw-gradient-to: hsl(240 8% 16%) var(--tw-gradient-to-position) !important; }
+html.dark .from-blue-50 { --tw-gradient-from: hsl(217 38% 16%) var(--tw-gradient-from-position) !important; }
+html.dark .to-sky-50 { --tw-gradient-to: hsl(199 40% 17%) var(--tw-gradient-to-position) !important; }
+
+/* Texto de destaque (escuro) → mais claro p/ ler sobre tints escuros */
+html.dark .text-violet-700, html.dark .text-violet-600 { color: hsl(262 70% 78%) !important; }
+html.dark .text-emerald-700, html.dark .text-emerald-600 { color: hsl(152 55% 65%) !important; }
+html.dark .text-amber-700, html.dark .text-amber-600 { color: hsl(38 85% 65%) !important; }
+html.dark .text-rose-700, html.dark .text-rose-600 { color: hsl(350 75% 72%) !important; }
+html.dark .text-blue-700, html.dark .text-blue-600 { color: hsl(217 75% 72%) !important; }
+html.dark .text-slate-600 { color: hsl(215 20% 72%) !important; }
+
+/* Bordas de destaque claras → escuras do mesmo hue */
+html.dark .border-violet-100, html.dark .border-violet-200 { border-color: hsl(262 30% 30%) !important; }
+html.dark .border-emerald-100, html.dark .border-emerald-200 { border-color: hsl(152 28% 26%) !important; }
+html.dark .border-amber-100, html.dark .border-amber-200 { border-color: hsl(38 32% 28%) !important; }
+html.dark .border-rose-100, html.dark .border-rose-200 { border-color: hsl(350 30% 30%) !important; }
+html.dark .border-blue-100, html.dark .border-blue-200 { border-color: hsl(217 30% 30%) !important; }
+html.dark .border-slate-200 { border-color: hsl(215 16% 30%) !important; }
+
+/* ════════ ACESSIBILIDADE ════════ */
+/* Texto grande (escala todos os rem) */
+html.large-text { font-size: 18px; }
+
+/* Reduzir animações (transições/animações CSS) */
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Alto contraste — reforça leitura de textos/bordas neutros */
+html.high-contrast .text-gray-400, html.high-contrast .text-gray-500 { color: hsl(240 10% 30%) !important; }
+html.high-contrast .border-gray-100, html.high-contrast .border-gray-200 { border-color: hsl(240 10% 55%) !important; }
+html.dark.high-contrast body { color: hsl(0 0% 100%); }
+html.dark.high-contrast .text-gray-400, html.dark.high-contrast .text-gray-500 { color: hsl(240 10% 88%) !important; }
+html.dark.high-contrast .border-gray-100, html.dark.high-contrast .border-gray-200 { border-color: hsl(240 10% 45%) !important; }

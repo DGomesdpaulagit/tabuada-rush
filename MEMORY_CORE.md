@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.7.2  
-**Status:** ✅ Análise Inteligente + tempo real; gráfico de evolução focado no Desafio Diário  
+**Versão:** 2.8.0  
+**Status:** ✅ Página de Configurações (som, tema claro/escuro, conta, notificações, acessibilidade) + prefs persistidas  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

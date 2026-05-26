@@ -1,0 +1,234 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
+  Type, Contrast, Sparkles, Cloud,
+} from 'lucide-react';
+import { LEVELS } from '../constants';
+import { getLevelIdx, getQiInfo } from '../utils';
+import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
+import { prefs } from '../lib/prefs';
+import { audio } from '../lib/audioManager';
+import { Button, pageVariants, pageTransition } from '../components/ui';
+
+// ── Switch on/off no estilo do projeto ──────────────────────────────────────
+function Toggle({ on, onChange }) {
+  return (
+    <button
+      onClick={() => onChange(!on)}
+      className={`w-11 h-6 rounded-full relative shrink-0 transition-colors ${on ? 'bg-violet-600' : 'bg-gray-300'}`}
+      aria-pressed={on}
+    >
+      <span
+        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`}
+      />
+    </button>
+  );
+}
+
+function Row({ icon, label, desc, children }) {
+  return (
+    <div className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
+      {icon && (
+        <span className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 shrink-0">
+          {icon}
+        </span>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-gray-800">{label}</p>
+        {desc && <p className="text-xs text-gray-400 font-semibold leading-snug">{desc}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <div className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+      <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">{title}</p>
+      {children}
+    </div>
+  );
+}
+
+export default function SettingsPage({ onBack, onNavigate }) {
+  const { data, cloudSyncing } = useApp();
+  const { user, signOut } = useAuth();
+
+  const p = prefs.get();
+  const [theme, setThemeState] = useState(p.theme);
+  const [music, setMusic] = useState(p.music);
+  const [notifications, setNotif] = useState(p.notifications);
+  const [largeText, setLarge] = useState(p.largeText);
+  const [reduceMotion, setRM] = useState(p.reduceMotion);
+  const [highContrast, setHC] = useState(p.highContrast);
+  const [sfx, setSfx] = useState(audio.enabled);
+  const [volume, setVolume] = useState(audio.volume);
+
+  const setTheme = (t) => { setThemeState(t); prefs.update({ theme: t }); audio.click(); };
+  const toggleMusic = (v) => { setMusic(v); prefs.update({ music: v }); };
+  const toggleNotif = (v) => { setNotif(v); prefs.update({ notifications: v }); };
+  const toggleLarge = (v) => { setLarge(v); prefs.update({ largeText: v }); };
+  const toggleRM = (v) => { setRM(v); prefs.update({ reduceMotion: v }); };
+  const toggleHC = (v) => { setHC(v); prefs.update({ highContrast: v }); };
+  const toggleSfx = (v) => { setSfx(v); audio.setEnabled(v); if (v) audio.correct(); };
+  const changeVol = (v) => { setVolume(v); audio.setVolume(v); };
+
+  const levelIdx = getLevelIdx(data.xp || 0);
+  const level = LEVELS[levelIdx];
+  const qi = getQiInfo(data);
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransition}
+      className="flex flex-col gap-5"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onBack}
+          className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+        >
+          <ArrowLeft size={18} />
+        </button>
+        <div>
+          <h2 className="text-xl font-black text-gray-900">Configurações</h2>
+          <p className="text-sm text-gray-400 font-semibold">Preferências e acessibilidade</p>
+        </div>
+      </div>
+
+      {/* SOM */}
+      <Section title="Som">
+        <Row icon={<Volume2 size={15} />} label="Efeitos sonoros" desc="Sons de acerto, erro, combo...">
+          <Toggle on={sfx} onChange={toggleSfx} />
+        </Row>
+        <Row icon={<Volume2 size={15} />} label="Volume" desc={`${Math.round(volume * 100)}%`}>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={Math.round(volume * 100)}
+            onChange={(e) => changeVol(Number(e.target.value) / 100)}
+            onPointerUp={() => sfx && audio.click()}
+            className="w-28 accent-violet-600"
+          />
+        </Row>
+        <Row icon={<Music size={15} />} label="Música" desc="Trilha de fundo (em breve)">
+          <Toggle on={music} onChange={toggleMusic} />
+        </Row>
+      </Section>
+
+      {/* APARÊNCIA */}
+      <Section title="Aparência">
+        <p className="text-sm font-bold text-gray-800 mb-1">Tema</p>
+        <p className="text-xs text-gray-400 font-semibold mb-3">
+          Adapta leitura e contraste — mantém as cores do jogo.
+        </p>
+        <div className="flex gap-2">
+          {[
+            { id: 'light', label: 'Claro', icon: <Sun size={15} /> },
+            { id: 'dark', label: 'Escuro', icon: <Moon size={15} /> },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTheme(t.id)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-2xl text-sm font-black border transition-colors
+                ${theme === t.id
+                  ? 'bg-violet-600 text-white border-violet-600'
+                  : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+            >
+              {t.icon}
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </Section>
+
+      {/* ACESSIBILIDADE */}
+      <Section title="Acessibilidade">
+        <Row icon={<Type size={15} />} label="Texto grande" desc="Aumenta o tamanho das fontes">
+          <Toggle on={largeText} onChange={toggleLarge} />
+        </Row>
+        <Row icon={<Sparkles size={15} />} label="Reduzir animações" desc="Menos movimento na interface">
+          <Toggle on={reduceMotion} onChange={toggleRM} />
+        </Row>
+        <Row icon={<Contrast size={15} />} label="Alto contraste" desc="Reforça leitura de textos e bordas">
+          <Toggle on={highContrast} onChange={toggleHC} />
+        </Row>
+      </Section>
+
+      {/* NOTIFICAÇÕES */}
+      <Section title="Notificações">
+        <Row icon={<Bell size={15} />} label="Lembretes" desc="Avisos para manter sua ofensiva (em breve)">
+          <Toggle on={notifications} onChange={toggleNotif} />
+        </Row>
+      </Section>
+
+      {/* CONTA */}
+      <Section title="Conta">
+        <div className="flex items-center gap-3 py-2">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center text-2xl shrink-0">
+            {level.badge}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-black text-gray-900 leading-tight truncate">{level.name}</p>
+            <p className="text-xs text-gray-400 font-semibold truncate">
+              {level.title} · {qi.char.emoji} {qi.char.name}
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-2 mb-3">
+          {[
+            { label: 'XP', value: data.xp || 0 },
+            { label: 'QI', value: qi.qi },
+            { label: 'Moedas', value: data.coins || 0 },
+          ].map((s) => (
+            <div key={s.label} className="rounded-2xl bg-gray-50 border border-gray-100 p-2 text-center">
+              <p className="text-base font-black text-gray-900">{s.value}</p>
+              <p className="text-[11px] font-bold text-gray-400">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {user ? (
+          <>
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 mb-3">
+              <Cloud size={13} className={cloudSyncing ? 'animate-pulse' : ''} />
+              {cloudSyncing ? 'Sincronizando...' : `Conectado: ${user.email}`}
+            </div>
+            <Button variant="secondary" onClick={signOut} className="w-full">
+              <LogOut size={16} />
+              Sair da conta
+            </Button>
+          </>
+        ) : (
+          <>
+            <p className="text-xs text-gray-400 font-semibold mb-3">
+              Entre para sincronizar seu progresso na nuvem entre dispositivos.
+            </p>
+            <Button variant="secondary" onClick={() => onNavigate('auth')} className="w-full">
+              <LogIn size={16} />
+              Entrar / Criar conta
+            </Button>
+          </>
+        )}
+      </Section>
+
+      {/* SOBRE */}
+      <div className="text-center text-xs text-gray-400 font-semibold">
+        Tabuada Rush · v2.8.0
+      </div>
+
+      <Button variant="secondary" onClick={onBack} className="w-full">
+        <ArrowLeft size={16} />
+        Voltar ao Menu
+      </Button>
+    </motion.div>
+  );
+}

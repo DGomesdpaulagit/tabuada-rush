@@ -4,6 +4,9 @@ class AudioManager {
     this._ctx = null;
     this.enabled = JSON.parse(localStorage.getItem('tr_audio') ?? 'true');
     this.volume = parseFloat(localStorage.getItem('tr_volume') ?? '0.6');
+    this.musicOn = false;     // música de fundo tocando?
+    this._musicTimer = null;
+    this._musicStep = 0;
   }
 
   get ctx() {
@@ -106,6 +109,53 @@ class AudioManager {
   newRecord() {
     // Sparkling ascending run
     this._seq([523.25, 587.33, 659.25, 783.99, 880, 1046.5], 0.065);
+  }
+
+  // ── MÚSICA DE FUNDO (ambiente, gerada — sem arquivos) ───────────────────────
+  // Loop suave de notas (pentatônica de Dó) + drone grave ocasional. Volume baixo,
+  // independente dos efeitos sonoros (controle próprio), respeita o volume geral.
+  _musicNote(freq, dur = 1.8, vol = 0.05) {
+    if (this.volume <= 0) return;
+    try {
+      const ctx = this.ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const v = Math.max(0.0008, vol * this.volume);
+      const t = ctx.currentTime;
+      gain.gain.setValueAtTime(0.0008, t);
+      gain.gain.exponentialRampToValueAtTime(v, t + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+    } catch {
+      // ignore
+    }
+  }
+
+  startMusic() {
+    if (this.musicOn) return;
+    this.musicOn = true;
+    this.resume();
+    const melody = [261.63, 329.63, 392.0, 440.0, 392.0, 329.63]; // C4 E4 G4 A4 G4 E4
+    const step = () => {
+      if (!this.musicOn) return;
+      this._musicNote(melody[this._musicStep % melody.length]);
+      if (this._musicStep % melody.length === 0) this._musicNote(130.81, 2.4, 0.04); // drone C3
+      this._musicStep++;
+    };
+    step();
+    this._musicTimer = setInterval(step, 1500);
+  }
+
+  stopMusic() {
+    this.musicOn = false;
+    if (this._musicTimer) clearInterval(this._musicTimer);
+    this._musicTimer = null;
   }
 }
 

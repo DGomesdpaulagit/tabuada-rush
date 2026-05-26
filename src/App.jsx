@@ -1,9 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
+import { prefs } from './lib/prefs';
+import { audio } from './lib/audioManager';
+import { maybeStreakReminder } from './lib/notify';
 
 import MenuPage from './pages/MenuPage';
 import GamePage from './pages/GamePage';
@@ -358,6 +361,29 @@ export default function App() {
     },
     [data, update, showAchievement]
   );
+
+  // Música de fundo (no 1º gesto, p/ a política de autoplay) + lembrete de ofensiva
+  useEffect(() => {
+    const p = prefs.get();
+    let startMusic;
+    if (p.music) {
+      startMusic = () => {
+        audio.startMusic();
+        window.removeEventListener('pointerdown', startMusic);
+        window.removeEventListener('keydown', startMusic);
+      };
+      window.addEventListener('pointerdown', startMusic);
+      window.addEventListener('keydown', startMusic);
+    }
+    if (p.notifications) maybeStreakReminder(data);
+    return () => {
+      if (startMusic) {
+        window.removeEventListener('pointerdown', startMusic);
+        window.removeEventListener('keydown', startMusic);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStart = useCallback((mode) => {
     setActiveMode(mode);

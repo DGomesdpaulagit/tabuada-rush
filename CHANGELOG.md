@@ -4,6 +4,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.9.0] — 2026-05-26 — MÚSICA DE FUNDO REAL + NOTIFICAÇÕES REAIS
+
+### Adicionado
+- Música de fundo ambiente gerada via Web Audio API (sem arquivos), com loop suave + drone; toggle nas Configurações
+- Notificações reais (Web Notifications API): permissão ao ativar + lembrete local de ofensiva ao abrir o app (1×/dia)
+- Música inicia no 1º gesto do usuário (política de autoplay); independente dos efeitos, respeita o volume geral
+
+### Nota
+- Notificações com app fechado (Push) ficam para bloco futuro. Identidade visual inalterada.
+
+---
+
 ## [2.8.2] — 2026-05-26 — MODO ESCURO: FUNDO GLOBAL DA TELA
 
 ### Corrigido

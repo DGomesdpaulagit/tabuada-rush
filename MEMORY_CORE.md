@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.8.2  
-**Status:** ✅ Configurações + modo escuro com fundo global da tela (html/body/.app-shell)  
+**Versão:** 2.9.0  
+**Status:** ✅ Música de fundo (gerada) + notificações reais (permissão + lembrete de ofensiva)  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

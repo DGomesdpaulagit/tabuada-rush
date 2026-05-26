@@ -10,6 +10,7 @@ import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { prefs } from '../lib/prefs';
 import { audio } from '../lib/audioManager';
+import { enableNotifications } from '../lib/notify';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 
 // ── Switch on/off no estilo do projeto ──────────────────────────────────────
@@ -66,10 +67,29 @@ export default function SettingsPage({ onBack, onNavigate }) {
   const [highContrast, setHC] = useState(p.highContrast);
   const [sfx, setSfx] = useState(audio.enabled);
   const [volume, setVolume] = useState(audio.volume);
+  const [notifMsg, setNotifMsg] = useState('');
 
   const setTheme = (t) => { setThemeState(t); prefs.update({ theme: t }); audio.click(); };
-  const toggleMusic = (v) => { setMusic(v); prefs.update({ music: v }); };
-  const toggleNotif = (v) => { setNotif(v); prefs.update({ notifications: v }); };
+  // Música real: liga/desliga a trilha gerada no audioManager
+  const toggleMusic = (v) => {
+    setMusic(v);
+    prefs.update({ music: v });
+    if (v) audio.startMusic();
+    else audio.stopMusic();
+  };
+  // Notificações reais: pede permissão ao ativar
+  const toggleNotif = async (v) => {
+    if (!v) { setNotif(false); prefs.update({ notifications: false }); setNotifMsg(''); return; }
+    const res = await enableNotifications();
+    if (res === 'granted') {
+      setNotif(true); prefs.update({ notifications: true }); setNotifMsg('');
+    } else {
+      setNotif(false); prefs.update({ notifications: false });
+      setNotifMsg(res === 'denied'
+        ? 'Permissão negada — ative as notificações nas configurações do navegador.'
+        : 'Seu navegador não suporta notificações.');
+    }
+  };
   const toggleLarge = (v) => { setLarge(v); prefs.update({ largeText: v }); };
   const toggleRM = (v) => { setRM(v); prefs.update({ reduceMotion: v }); };
   const toggleHC = (v) => { setHC(v); prefs.update({ highContrast: v }); };
@@ -119,7 +139,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
             className="w-28 accent-violet-600"
           />
         </Row>
-        <Row icon={<Music size={15} />} label="Música" desc="Trilha de fundo (em breve)">
+        <Row icon={<Music size={15} />} label="Música" desc="Trilha de fundo ambiente">
           <Toggle on={music} onChange={toggleMusic} />
         </Row>
       </Section>
@@ -165,9 +185,12 @@ export default function SettingsPage({ onBack, onNavigate }) {
 
       {/* NOTIFICAÇÕES */}
       <Section title="Notificações">
-        <Row icon={<Bell size={15} />} label="Lembretes" desc="Avisos para manter sua ofensiva (em breve)">
+        <Row icon={<Bell size={15} />} label="Lembretes" desc="Aviso para manter sua ofensiva ao abrir o app">
           <Toggle on={notifications} onChange={toggleNotif} />
         </Row>
+        {notifMsg && (
+          <p className="text-xs font-bold text-amber-600 mt-1">{notifMsg}</p>
+        )}
       </Section>
 
       {/* CONTA */}
@@ -222,7 +245,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
 
       {/* SOBRE */}
       <div className="text-center text-xs text-gray-400 font-semibold">
-        Tabuada Rush · v2.8.0
+        Tabuada Rush · v2.9.0
       </div>
 
       <Button variant="secondary" onClick={onBack} className="w-full">

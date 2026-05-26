@@ -37,6 +37,8 @@ src/
   constants/characters.js — [v2.4] 104 personagens do Ranking de QI + TIERS
   lib/storage.js         — persistência localStorage (dados do jogo)
   lib/prefs.js           — [v2.8] preferências (tema/acessibilidade/notificações) + applyPrefs
+  lib/audioManager.js    — Web Audio (SFX) + [v2.9] música de fundo gerada (startMusic/stopMusic)
+  lib/notify.js          — [v2.9] notificações reais (permissão + lembrete de ofensiva)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)

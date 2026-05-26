@@ -70,16 +70,44 @@ export const MODES = {
 export const MODE_LIST = Object.values(MODES);
 
 // ── LEVELS ─────────────────────────────────────────────────────────────────
+// Progressão de 28 níveis. Cada nível tem nome, título (identidade do usuário),
+// emoji (também usado como avatar) e XP necessário. A curva é gradual no início
+// (recompensa rápida) e cada vez mais íngreme (progressão de longo prazo).
+// getLevelIdx() é puramente baseado em XP, então a expansão é retrocompatível.
 
 export const LEVELS = [
-  { name: 'Iniciante',   xp: 0,    badge: '🌱' },
-  { name: 'Aprendiz',    xp: 100,  badge: '📚' },
-  { name: 'Calculador',  xp: 300,  badge: '🧮' },
-  { name: 'Ágil',        xp: 600,  badge: '⚡' },
-  { name: 'Expert',      xp: 1000, badge: '🎯' },
-  { name: 'Mestre',      xp: 1500, badge: '🏆' },
-  { name: 'Lenda',       xp: 2500, badge: '👑' },
+  { name: 'Iniciante',         title: 'Primeiros Passos',        xp: 0,     badge: '🌱' },
+  { name: 'Aprendiz',          title: 'Aprendiz Curioso',        xp: 100,   badge: '📚' },
+  { name: 'Estudante',         title: 'Estudante Dedicado',      xp: 250,   badge: '✏️' },
+  { name: 'Calculador',        title: 'Calculador Iniciante',    xp: 450,   badge: '🧮' },
+  { name: 'Praticante',        title: 'Praticante Constante',    xp: 700,   badge: '🎯' },
+  { name: 'Ágil',              title: 'Mente Ágil',              xp: 1000,  badge: '⚡' },
+  { name: 'Veloz',             title: 'Raciocínio Veloz',        xp: 1400,  badge: '🚀' },
+  { name: 'Hábil',             title: 'Hábil nos Números',       xp: 1900,  badge: '🎲' },
+  { name: 'Competente',        title: 'Competente Confiante',    xp: 2500,  badge: '💪' },
+  { name: 'Avançado',          title: 'Pensador Avançado',       xp: 3200,  badge: '📐' },
+  { name: 'Estrategista',      title: 'Estrategista Numérico',   xp: 4000,  badge: '♟️' },
+  { name: 'Tático',            title: 'Tático da Tabuada',       xp: 5000,  badge: '🗺️' },
+  { name: 'Perito',            title: 'Perito em Cálculo',       xp: 6200,  badge: '🔬' },
+  { name: 'Especialista',      title: 'Especialista Matemático', xp: 7600,  badge: '🎓' },
+  { name: 'Exímio',            title: 'Exímio Calculista',       xp: 9200,  badge: '✨' },
+  { name: 'Virtuoso',          title: 'Virtuoso dos Números',    xp: 11000, badge: '🎼' },
+  { name: 'Mestre',            title: 'Mestre da Tabuada',       xp: 13000, badge: '🏅' },
+  { name: 'Grão-Mestre',       title: 'Grão-Mestre Numérico',    xp: 15500, badge: '🥇' },
+  { name: 'Sábio',             title: 'Sábio dos Cálculos',      xp: 18500, badge: '📜' },
+  { name: 'Erudito',           title: 'Erudito Matemático',      xp: 22000, badge: '🦉' },
+  { name: 'Prodígio',          title: 'Prodígio dos Números',    xp: 26000, badge: '💫' },
+  { name: 'Gênio',             title: 'Gênio em Ascensão',       xp: 31000, badge: '🧩' },
+  { name: 'Gênio Matemático',  title: 'Gênio Matemático',        xp: 37000, badge: '🧠' },
+  { name: 'Mente Brilhante',   title: 'Mente Brilhante',         xp: 44000, badge: '💡' },
+  { name: 'Lenda',             title: 'Lenda Viva',              xp: 52000, badge: '👑' },
+  { name: 'Lenda Numérica',    title: 'Lenda Numérica',          xp: 62000, badge: '🔱' },
+  { name: 'Mito',              title: 'Mito da Matemática',      xp: 75000, badge: '🌟' },
+  { name: 'Transcendente',     title: 'Calculadora Humana',      xp: 90000, badge: '♾️' },
 ];
+
+// Metas de ofensiva diária disponíveis para o usuário escolher
+export const STREAK_GOALS = [7, 15, 30, 100];
 
 // ── ACHIEVEMENTS ───────────────────────────────────────────────────────────
 

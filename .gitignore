@@ -3,3 +3,4 @@ dist/
 .obsidian/
 *.local
 .env
+.vercel

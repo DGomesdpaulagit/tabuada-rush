@@ -121,6 +121,7 @@ export default function ResultsPage({ result, onReplay, onHome }) {
         <span className="text-3xl">{level.badge}</span>
         <div>
           <p className="font-black text-gray-800">{level.name}</p>
+          <p className="text-xs text-violet-500 font-bold">{level.title}</p>
           <p className="text-xs text-gray-400 font-semibold">{data.xp} XP acumulados</p>
         </div>
       </motion.div>

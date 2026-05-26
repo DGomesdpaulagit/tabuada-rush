@@ -17,7 +17,9 @@ const DEFAULTS = {
   speedBest: 0,
   currentDailyDate: null,
   currentDailyScore: null,
-  currentStreak: 0,
+  currentStreak: 0,      // ofensiva diária atual (dias consecutivos praticando)
+  bestDayStreak: 0,      // maior ofensiva diária já atingida (recorde)
+  streakGoal: 7,         // meta pessoal de ofensiva (dias) escolhida pelo usuário
   lastPlayDate: null,
 };
 

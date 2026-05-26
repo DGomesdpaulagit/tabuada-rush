@@ -1,4 +1,5 @@
 import { LEVELS, ACHIEVEMENTS } from '../constants';
+import { CHARACTERS, TIERS, QI_MIN, QI_MAX } from '../constants/characters';
 
 // ── QUESTION GENERATION ────────────────────────────────────────────────────
 
@@ -75,6 +76,57 @@ export function getRank(score) {
   if (score >= 250)  return { label: 'Raro',     color: 'text-blue-500' };
   if (score >= 100)  return { label: 'Comum',    color: 'text-emerald-600' };
   return { label: 'Iniciante', color: 'text-gray-500' };
+}
+
+// ── QI MATEMÁTICO (lúdico — gamificação, NÃO mede QI real) ──────────────────
+
+// Calcula um "QI Matemático" divertido a partir do desempenho do usuário.
+// Combina: precisão, velocidade, ofensiva, consistência e progresso (nível).
+export function computeQI(data = {}) {
+  const totalCorrect = data.totalCorrect || 0;
+  const totalWrong = data.totalWrong || 0;
+  const answered = totalCorrect + totalWrong;
+
+  const acc = answered > 0 ? totalCorrect / answered : 0;
+  const accPts = acc * 40;                                          // precisão (lifetime)
+  const bestAccPts = ((data.bestAccuracy || 0) / 100) * 10;          // melhor precisão
+  const speedPts = (Math.min(data.speedBest || 0, 30) / 30) * 20;    // velocidade (modo Velocidade)
+  const streakPts =
+    (Math.min(data.bestDayStreak || 0, 30) / 30) * 15 +              // ofensiva (recorde)
+    (Math.min(data.currentStreak || 0, 15) / 15) * 5;                // ofensiva (atual)
+  const consistencyPts = (Math.min(data.totalGames || 0, 50) / 50) * 20; // consistência
+  const levelIdx = getLevelIdx(data.xp || 0);
+  const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;         // progresso geral
+
+  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts;
+  return Math.max(QI_MIN, Math.min(QI_MAX, Math.round(raw)));
+}
+
+// Mapeia o QI para uma posição na lista de personagens (índice 0 = mais baixo).
+// Retorna progresso fracionário até o próximo personagem.
+export function getQiInfo(data = {}) {
+  const qi = computeQI(data);
+  const len = CHARACTERS.length;
+  const span = QI_MAX - QI_MIN || 1;
+  const ratio = Math.max(0, Math.min(1, (qi - QI_MIN) / span));
+  const pos = ratio * (len - 1);
+  const idx = Math.max(0, Math.min(len - 1, Math.floor(pos)));
+  const frac = pos - idx; // 0..1 — progresso até o próximo personagem
+
+  const char = CHARACTERS[idx];
+  const nextChar = CHARACTERS[idx + 1] || null;
+  const tier = TIERS[char.tier];
+
+  return {
+    qi,
+    idx,
+    position: idx + 1,
+    total: len,
+    char,
+    tier,
+    nextChar,
+    pctToNext: nextChar ? Math.round(frac * 100) : 100,
+  };
 }
 
 // ── ACHIEVEMENTS ──────────────────────────────────────────────────────────

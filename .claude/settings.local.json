@@ -11,7 +11,25 @@
       "Bash(Start-Sleep -Milliseconds 500)",
       "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
       "PowerShell(Stop-Process -Force)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git rebase *)",
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git push *)",
+      "Bash(vercel --version)",
+      "Bash(vercel whoami *)",
+      "Bash(vercel --yes)",
+      "Bash(vercel --yes --name tabuada-rush)",
+      "Bash(vercel env *)",
+      "Bash(vercel --prod --yes)",
+      "Bash(git commit -m ' *)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__read_console_messages",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "PowerShell(New-Item -ItemType Directory -Path \"C:\\\\Users\\\\HP\\\\Documents\\\\AprohLife\\\\sessions\" -Force)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174)"
     ]
   }
 }

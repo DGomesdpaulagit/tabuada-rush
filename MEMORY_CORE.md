@@ -6,9 +6,9 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-05-22  
-**Versão:** 2.1.0  
-**Status:** ✅ MVP + Auth + Audio + Export — build limpo  
+**Data:** 2026-05-25  
+**Versão:** 2.4.0  
+**Status:** ✅ Fase 2/Bloco 3 — Ranking de QI Matemático (104 personagens) + perfil integrado  
 **Servidor dev:** `http://localhost:3000` (npm run dev)
 
 ---
@@ -46,16 +46,28 @@
 - [x] **[NOVO v2.1] Streak diária visível no level card**
   - 🔥 N dias exibido no card de nível
 - [x] Sistema de memória persistente (MEMORY.md, MEMORY_CORE.md, etc.)
+- [x] **[v2.2 — Fase 1/Bloco 1] Modo 2 Jogadores removido** (BattlePage deletado, rota e botão removidos, sem código morto)
+- [x] **[v2.2] Espaço de Ranking preparado** — placeholder "Ranking em breve" (Medal, disabled) no MenuPage
+- [x] **[v2.3 — Fase 2/Bloco 2] Sistema de níveis 28 níveis** com `name` + `title` + `badge` + `xp`
+- [x] **[v2.3] Sistema de títulos** do usuário (muda por nível), visível no perfil e ResultsPage
+- [x] **[v2.3] XP integrado** — score + bônus de diário (+30) + bônus de ofensiva
+- [x] **[v2.3] Ofensiva diária + recorde** (`currentStreak` + `bestDayStreak`)
+- [x] **[v2.3] Meta de ofensiva** (`streakGoal` 7/15/30/100) com progresso, no card de perfil
+- [x] **[v2.3] Card de perfil completo** (avatar, título, nível, XP, ofensiva, recorde, meta)
+- [x] **[v2.3] Desafio Diário desbloqueado** (sempre acessível; badge "✓ hoje" informativo)
+- [x] **[v2.4 — Fase 2/Bloco 3] Ranking de QI Matemático** — página `RankingPage` + botão "Ranking QI"
+- [x] **[v2.4] 104 personagens** (`constants/characters.js`) em 4 categorias (26 cada)
+- [x] **[v2.4] computeQI / getQiInfo** (`utils`) — QI lúdico 70–200 → posição/personagem
+- [x] **[v2.4] QI no card de perfil** (linha pequena, clicável → ranking)
 
 ---
 
 ## 🎯 PRÓXIMA SESSÃO — PRIORIDADES
 
-1. **Deploy no Vercel** — configurar env vars + SUPABASE_SETUP.md pronto
-2. **Configurar Supabase** — seguir SUPABASE_SETUP.md, testar login real
-3. **Testes completos** — em browser real (não preview headless)
-4. **Melhorias visuais opcionais** — partículas, ResultsPage, combos
-5. **Leaderboard** — usando Supabase (future feature)
+1. Testar RankingPage em browser real (transições Framer Motion)
+2. Blocos futuros: loja, moedas, recompensas avançadas, temporadas, sistema social, dashboard, análise inteligente, gráficos avançados, catálogo completo, marketplace, missões
+3. **Leaderboard global** — usando Supabase (future feature)
+4. Possível polish: animação ao subir de classificação / nível; auto-scroll ao personagem atual
 
 ---
 
@@ -83,6 +95,13 @@
 | `src/utils/index.js` | getDailyQuestions, calcPoints, checkNewAchievements |
 | `SUPABASE_SETUP.md` | Guia passo a passo para configurar backend |
 | `.env.example` | Template de variáveis de ambiente |
+
+---
+
+## 🔁 ROTINA DE FIM DE BLOCO/SESSÃO (obrigatória — pedida pelo Davi)
+
+Ao concluir cada bloco/sessão: (1) registros completos (.md = vault Obsidian),
+(2) commit + `git push origin main`, (3) `npx vercel --prod --yes`. Detalhes em `CLAUDE.md`.
 
 ---
 

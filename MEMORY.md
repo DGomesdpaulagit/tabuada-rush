@@ -33,9 +33,10 @@ date-fns 3
 ### Estrutura de Pastas
 ```
 src/
-  constants/index.js     — MODES, LEVELS, ACHIEVEMENTS
+  constants/index.js     — MODES, LEVELS (28, c/ title), ACHIEVEMENTS, STREAK_GOALS
+  constants/characters.js — [v2.4] 104 personagens do Ranking de QI + TIERS
   lib/storage.js         — persistência localStorage
-  utils/index.js         — questionGenerator, scoring, dates
+  utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
   pages/
@@ -45,7 +46,7 @@ src/
     RecordsPage.jsx      — Recordes por modo
     StatsPage.jsx        — Dashboard estatísticas + LineChart Recharts
     AchievementsPage.jsx — Grade de conquistas desbloqueadas/bloqueadas
-    BattlePage.jsx       — Modo 2 jogadores local (split screen)
+    RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria)
   App.jsx                — Orquestrador: navegação, handleGameEnd, toasts de conquistas
   main.jsx               — Entry point React
   styles/globals.css     — CSS variables + Tailwind base
@@ -108,7 +109,7 @@ src/
 - Timer: sem (conta elapsed time)
 - Perguntas: 20 por dia, geradas com seed determinística (data)
 - Seed: `YYYYMMDD → seededRng` — mesmas perguntas para todos no mesmo dia
-- Bloqueio: após completar hoje, botão desabilitado até amanhã
+- [v2.3] SEM bloqueio: sempre acessível; badge "✓ hoje" apenas informativo. Conta para ofensiva, gera XP (+bônus) e atualiza progresso
 
 ---
 
@@ -139,7 +140,9 @@ src/
   speedBest: 0,             // Melhor # acertos no modo Velocidade
   currentDailyDate: null,   // Data do último desafio diário completo
   currentDailyScore: null,  // Pontuação do último desafio diário
-  currentStreak: 0,         // Sequência de dias jogando
+  currentStreak: 0,         // Ofensiva diária atual (dias consecutivos)
+  bestDayStreak: 0,         // [v2.3] Recorde de ofensiva diária
+  streakGoal: 7,            // [v2.3] Meta pessoal de ofensiva (7/15/30/100)
   lastPlayDate: null,       // Última data que jogou (YYYY-MM-DD)
 }
 ```
@@ -167,8 +170,25 @@ diffLevel:
   3 → questionsAnswered ≥ 30   (pool: 2..10)
 ```
 
-XP = pontuação da partida. Levels em `LEVELS[]`:
-`Iniciante → Aprendiz → Calculador → Ágil → Expert → Mestre → Lenda`
+**XP (v2.3)** = `score da partida + bônus diário (+30) + bônus de ofensiva (min(streak,20)×2)`.
+
+**Níveis (v2.3):** `LEVELS[]` tem **28 níveis**, cada um com `name`, `title` (identidade), `badge` (emoji/avatar) e `xp`.
+Progressão: Iniciante → Aprendiz → Estudante → … → Mestre → Grão-Mestre → … → Gênio Matemático → Lenda → Lenda Numérica → Mito → Transcendente (90.000 XP).
+`getLevelIdx()` é baseado puramente em XP (retrocompatível).
+
+---
+
+## 👤 SISTEMA DE PERFIL (v2.3 — Fase 2/Bloco 2)
+
+Card de perfil no MenuPage (mesmo gradiente violeta), com:
+- **Avatar:** emoji do nível em círculo `bg-white/15`
+- **Título:** `LEVELS[idx].title` — muda conforme o nível (ex.: "Estrategista Numérico", "Calculadora Humana")
+- **Nível + XP Total + barra de XP** + "X XP para <próximo>"
+- **Ofensiva diária:** atual (🔥 `currentStreak`) + recorde (🏆 `bestDayStreak`)
+- **Meta de ofensiva:** `streakGoal` (pills 7/15/30/100) + barra de progresso `currentStreak/streakGoal`
+
+Títulos também aparecem na ResultsPage (abaixo do nome do nível).
+Constante `STREAK_GOALS = [7, 15, 30, 100]` em `constants/index.js`.
 
 ---
 
@@ -188,8 +208,27 @@ MenuPage
   → RecordsPage
   → StatsPage
   → AchievementsPage
-  → BattlePage (modo 2P local, dados não persistidos)
+  → RankingPage (Ranking de QI Matemático)
 ```
+
+---
+
+## 🧠 RANKING DE QI MATEMÁTICO (v2.4 — Fase 2/Bloco 3)
+
+Sistema **lúdico** (NÃO mede QI real) — gamificação/identidade/progressão.
+
+- **Dados:** `src/constants/characters.js` → `CHARACTERS` (104, ordenados do menor ao maior
+  nível intelectual), `TIERS` (baixo/medio/alto/genio com cores e classificação) e `QI_MIN`/`QI_MAX` (70/200).
+- **Personagens:** FAMOSOS e reconhecíveis (Patrick → Einstein) — `{ name, emoji, tier, desc }`.
+  Nomes são apenas rótulos/referências; avatar é emoji (sem imagens externas). Ordem: Patrick Estrela (piso) → Albert Einstein (topo).
+- **Cálculo:** `computeQI(data)` em `utils` combina precisão (lifetime + melhor), velocidade (speedBest),
+  ofensiva (currentStreak + bestDayStreak), consistência (totalGames) e progresso (nível). Faixa 70–200.
+- **Mapeamento:** `getQiInfo(data)` → QI mapeado para índice/posição via `ratio*(len-1)` (limiares
+  DERIVADOS do índice — escalável, sem números hardcoded) + progresso até o próximo personagem.
+- **Página `RankingPage`:** hero do usuário (QI, personagem, classificação, posição #X/Y, progresso)
+  + lista completa por categoria com destaque "VOCÊ" no personagem atual.
+- **Perfil (MenuPage):** linha pequena `{emoji} QI {qi} · {personagem}` abaixo do nível, clicável → ranking.
+- Acesso: botão "Ranking QI" no menu (ocupa o espaço do antigo "2 Jogadores").
 
 ---
 
@@ -227,12 +266,11 @@ Mesmas 20 perguntas para todos usuários no mesmo dia.
 
 ---
 
-## 🏟️ MODO BATALHA 2 JOGADORES
+## 🏟️ MODO BATALHA 2 JOGADORES — REMOVIDO (v2.2, Fase 1/Bloco 1)
 
-- Split screen horizontal (dois painéis side-by-side)
-- Cada painel: header com score/vidas próprias, pergunta própria, input próprio
-- Vence quem acertar 10 perguntas primeiro
-- Dados NÃO são persistidos (sessão temporária)
+Removido completamente em 2026-05-25 (sessão 004). O espaço no menu foi
+substituído por um placeholder "Ranking em breve" (botão disabled, ícone Medal),
+reservado para a futura página "Ranking de QI Matemático".
 
 ---
 

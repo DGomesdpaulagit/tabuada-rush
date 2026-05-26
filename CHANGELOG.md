@@ -4,6 +4,63 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.4.0] — 2026-05-25 — FASE 2 / BLOCO 3: RANKING DE QI MATEMÁTICO
+
+### Adicionado
+- **Sistema "Ranking de QI Matemático"** (lúdico — não mede QI real)
+- Página de Ranking (`RankingPage.jsx`): hero do usuário (QI, personagem, classificação, posição, progresso) + lista completa por categoria com destaque do personagem atual
+- **104 personagens** (`constants/characters.js`) em 4 categorias (baixo/médio/alto/gênio), 26 cada — **personagens famosos e reconhecíveis** (Patrick → Einstein) com nome, emoji/avatar, descrição e posição
+- Cálculo de QI (`computeQI`) baseado em precisão, velocidade, ofensiva, consistência e progresso; faixa lúdica 70–200
+- `getQiInfo` mapeia QI → posição/personagem/tier + progresso até o próximo
+- Botão "Ranking QI" no menu (substitui o placeholder "Ranking em breve")
+- Linha de QI/classificação no card de perfil (pequena, integrada, clicável)
+
+### Nota
+- Identidade visual, cores e estética originais preservadas (avatares = emoji, tokens de cor do projeto)
+
+---
+
+## [2.3.0] — 2026-05-25 — FASE 2 / BLOCO 2: PERFIL E IDENTIDADE DO USUÁRIO
+
+### Adicionado
+- Sistema de níveis expandido: **7 → 28 níveis**, cada um com nome, **título** e emoji/avatar
+- Sistema de títulos do usuário (muda conforme o nível) — visível no card de perfil e na ResultsPage
+- Sistema de ofensiva diária com recorde (`bestDayStreak`)
+- Meta de ofensiva pessoal (`streakGoal`: 7/15/30/100 dias) com barra de progresso e seleção por pills
+- Card de perfil expandido: avatar, título, nível, XP, barra de progresso, ofensiva, recorde e meta — no mesmo gradiente violeta
+- XP agora também vem de bônus: desafio diário (+30) e ofensiva diária mantida
+
+### Melhorado
+- `handleGameEnd`: cálculo de XP integra score + bônus de diário + bônus de ofensiva
+- Persistência: novos campos `bestDayStreak` e `streakGoal` (retrocompatível via DEFAULTS)
+
+### Corrigido / Alterado
+- **Desafio Diário não fica mais bloqueado** — sempre acessível; badge "✓ hoje" apenas informativo
+
+### Nota
+- Identidade visual, cores, layout e estética originais 100% preservados
+
+---
+
+## [2.2.0] — 2026-05-25 — FASE 1 / BLOCO 1: REMOÇÃO DO 2 JOGADORES
+
+### Removido
+- Modo 2 Jogadores completamente removido (sem código morto)
+  - Deletado `src/pages/BattlePage.jsx`
+  - Removido import + rota `battle` em `App.jsx`
+  - Removido botão "2 Jogadores" e ícone `Swords` do `MenuPage.jsx`
+
+### Adicionado
+- Placeholder "Ranking em breve" (botão desabilitado, ícone `Medal`) no lugar do antigo botão 2 Jogadores — reserva o espaço para a futura página "Ranking de QI Matemático"
+
+### Melhorado
+- Card de perfil (level card) marcado estruturalmente para futuras adições (ofensiva, ranking, QI, recompensas) — sem alteração visual
+
+### Nota
+- Identidade visual, cores, layout e estética originais 100% preservados
+
+---
+
 ## [2.1.1] — 2026-05-22 — DEPLOY VERCEL
 
 ### Adicionado

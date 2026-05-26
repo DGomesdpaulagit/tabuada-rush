@@ -11,7 +11,7 @@ import ResultsPage from './pages/ResultsPage';
 import RecordsPage from './pages/RecordsPage';
 import StatsPage from './pages/StatsPage';
 import AchievementsPage from './pages/AchievementsPage';
-import BattlePage from './pages/BattlePage';
+import RankingPage from './pages/RankingPage';
 import AuthPage from './pages/AuthPage';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
@@ -69,7 +69,6 @@ export default function App() {
         const totalWrong = (prev.totalWrong || 0) + result.wrong;
         const bestStreak = Math.max(prev.bestStreak || 0, result.bestStreak);
         const bestScore = Math.max(prev.bestScore || 0, result.score);
-        const xp = (prev.xp || 0) + result.score;
 
         const sessionTotal = result.correct + result.wrong;
         const sessionAccuracy =
@@ -102,6 +101,16 @@ export default function App() {
             ? prev.currentStreak || 1
             : 1;
 
+        // Recorde de ofensiva diária
+        const bestDayStreak = Math.max(prev.bestDayStreak || 0, currentStreak);
+
+        // XP: pontuação da partida + bônus por desafio diário + bônus de ofensiva.
+        // Assim o XP vem de partidas, acertos/desempenho (já embutidos no score),
+        // desafios e da ofensiva diária mantida.
+        const dailyBonus = result.mode === 'daily' ? 30 : 0;
+        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 20) * 2 : 0;
+        const xp = (prev.xp || 0) + result.score + dailyBonus + streakBonus;
+
         const session = {
           mode: result.mode,
           score: result.score,
@@ -125,6 +134,7 @@ export default function App() {
           speedBest,
           modesPlayed: allModesPlayed,
           currentStreak,
+          bestDayStreak,
           lastPlayDate: today,
           sessions,
           records: {
@@ -230,8 +240,8 @@ export default function App() {
           {screen === 'achievements' && (
             <AchievementsPage key="achievements" onBack={() => setScreen('menu')} />
           )}
-          {screen === 'battle' && (
-            <BattlePage key="battle" onBack={() => setScreen('menu')} />
+          {screen === 'ranking' && (
+            <RankingPage key="ranking" onBack={() => setScreen('menu')} />
           )}
         </AnimatePresence>
       </div>

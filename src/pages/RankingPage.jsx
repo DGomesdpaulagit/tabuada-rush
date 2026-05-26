@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { CHARACTERS, TIERS, TIER_ORDER } from '../constants/characters';
@@ -9,6 +10,15 @@ export default function RankingPage({ onBack }) {
   const { data } = useApp();
   const info = getQiInfo(data);
   const { qi, idx, position, total, char, tier, nextChar, pctToNext } = info;
+
+  // Auto-scroll até o personagem atual ao abrir (após a transição de página).
+  const currentRef = useRef(null);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      currentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 450);
+    return () => clearTimeout(t);
+  }, []);
 
   // Agrupa os personagens por categoria, preservando a ordem global (índice).
   const groups = TIER_ORDER.map((t) => ({
@@ -109,6 +119,7 @@ export default function RankingPage({ onBack }) {
                 return (
                   <div
                     key={c.name + i}
+                    ref={isCurrent ? currentRef : null}
                     className={`flex items-center gap-3 rounded-2xl p-3 border transition-all
                       ${isCurrent
                         ? `bg-gradient-to-br ${t.gradientLight} ${t.border} ring-2 ring-offset-1 ${t.text} shadow-sm`

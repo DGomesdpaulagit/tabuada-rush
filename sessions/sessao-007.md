@@ -66,11 +66,22 @@ Problema: subia de nível rápido demais (nível 8 com ~3-4 partidas), pois XP =
 
 ---
 
+## ➕ CONTINUAÇÃO — Polish escolhido (animação + auto-scroll)
+
+Usuário escolheu 2 dos 3 itens de polish (leaderboard adiado):
+
+- **Auto-scroll no Ranking** (`RankingPage.jsx`): `useRef` na linha do personagem atual +
+  `scrollIntoView({behavior:'smooth', block:'center'})` em `useEffect` (delay 450ms p/ a transição).
+- **Animação ao subir de classificação** (`App.jsx` `handleGameEnd`): além do toast de level-up
+  já existente, novo toast "Nova Classificação!" quando `getQiInfo(newData).idx > getQiInfo(data).idx`
+  (reaproveita o `AchievementToast` animado e a fila de toasts). Ícone = emoji do novo personagem.
+- Sem erros de build; identidade visual mantida.
+- **D030 — Reusar a fila de toasts:** classificação-up usa o mesmo sistema de toast das conquistas/level-up (zero UI nova, consistente).
+
+---
+
 ## 📋 PRÓXIMOS PASSOS / SESSÕES / ETAPAS
 
-1. **Polish (pendente de escolha do usuário):**
-   - animação ao subir de nível/classificação
-   - auto-scroll até o personagem atual na página de Ranking
-   - leaderboard global via Supabase (bloco maior)
+1. **Polish restante:** leaderboard global via Supabase (bloco maior — adiado).
 2. **Blocos futuros do roadmap:** loja, moedas, recompensas avançadas, temporadas, sistema social, dashboard, análise inteligente, gráficos avançados, catálogo completo, marketplace, missões.
 3. Validar o novo balanceamento de XP em uso real e ajustar fator (0.5) / curva se necessário.

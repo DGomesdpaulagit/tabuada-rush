@@ -4,6 +4,14 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.5.1] — 2026-05-26 — POLISH: ANIMAÇÕES DE EVOLUÇÃO
+
+### Adicionado
+- Auto-scroll até o personagem atual ao abrir a página de Ranking de QI
+- Toast animado "Nova Classificação!" ao subir de personagem no Ranking (além do toast de level-up já existente)
+
+---
+
 ## [2.5.0] — 2026-05-26 — DEPLOY AUTOMÁTICO + REBALANCEAMENTO DE XP
 
 ### Adicionado

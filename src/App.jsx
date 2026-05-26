@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo } from './utils';
 import { LEVELS, ACHIEVEMENTS } from './constants';
 
 import MenuPage from './pages/MenuPage';
@@ -156,6 +156,18 @@ export default function App() {
           icon: LEVELS[newLevelIdx].badge,
           title: `Nível: ${LEVELS[newLevelIdx].name}!`,
           desc: `Você subiu para o nível ${newLevelIdx + 1}`,
+        });
+      }
+
+      // Subiu de classificação no Ranking de QI?
+      const prevQi = getQiInfo(data);
+      const newQi = getQiInfo(newData);
+      if (newQi.idx > prevQi.idx) {
+        showAchievement({
+          id: '_qi_up',
+          icon: newQi.char.emoji,
+          title: 'Nova Classificação!',
+          desc: `Agora você é ${newQi.char.name} · QI ${newQi.qi}`,
         });
       }
 

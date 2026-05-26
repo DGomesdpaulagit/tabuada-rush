@@ -101,7 +101,8 @@
 ## 🔁 ROTINA DE FIM DE BLOCO/SESSÃO (obrigatória — pedida pelo Davi)
 
 Ao concluir cada bloco/sessão: (1) registros completos (.md = vault Obsidian),
-(2) commit + `git push origin main`, (3) `npx vercel --prod --yes`. Detalhes em `CLAUDE.md`.
+(2) commit + `git push origin main`, (3) deploy Vercel AUTOMÁTICO via integração Git
+(o push dispara — não usar CLI, token expirou). Detalhes em `CLAUDE.md`.
 
 ---
 

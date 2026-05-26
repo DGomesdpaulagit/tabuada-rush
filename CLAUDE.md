@@ -16,8 +16,9 @@ violeta, fonte Nunito. **Não alterar a identidade visual** ao implementar featu
      e `BUGS.md`/`DECISIONS.md` quando aplicável.
 2. **Commit + Push no GitHub**: `git add -A` (o `.gitignore` já protege `.env`/`.vercel`/`.obsidian`)
    → commit descritivo → `git push origin main`.
-3. **Deploy no Vercel** (produção): `npx vercel --prod --yes`
-   (projeto já linkado em `.vercel/`; env vars do Supabase já configuradas).
+3. **Deploy no Vercel**: AUTOMÁTICO via integração Git (Vercel↔GitHub). O push do passo 2
+   dispara o deploy de produção sozinho — NÃO rodar `npx vercel` (o token CLI expirou).
+   - Fallback manual (só se a integração cair): o usuário roda `vercel login` e então `npx vercel --prod --yes`.
 4. **Obsidian**: os `.md` de registro vivem nesta pasta (vault). Mantê-los atualizados JÁ cobre o Obsidian.
 
 Observação: esta rotina é executada por mim ao final de cada bloco enquanto a sessão está

@@ -4,6 +4,13 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.7.2] — 2026-05-26 — GRÁFICO DE EVOLUÇÃO FOCADO NO DESAFIO DIÁRIO
+
+### Alterado
+- O gráfico "Evolução de Pontos" passa a considerar apenas as partidas do Desafio Diário (título e estado vazio atualizados)
+
+---
+
 ## [2.7.1] — 2026-05-26 — ANÁLISE: TEMPO MÉDIO DE RESPOSTA REAL
 
 ### Adicionado

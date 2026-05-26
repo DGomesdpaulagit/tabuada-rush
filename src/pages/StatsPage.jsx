@@ -55,7 +55,9 @@ export default function StatsPage({ onBack }) {
   const analysis = analyzeUser(data);
   const monthly = analysis.monthly;
 
+  // Gráfico de evolução considera SOMENTE as partidas do Desafio Diário
   const chartData = sessions
+    .filter((s) => s.mode === 'daily')
     .slice(-20)
     .map((s, i) => ({
       name: s.date ? formatDate(s.date) : `#${i + 1}`,
@@ -263,12 +265,13 @@ export default function StatsPage({ onBack }) {
         transition={{ delay: 0.25 }}
         className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
       >
-        <p className="font-black text-gray-800 mb-4">Evolução de Pontos</p>
+        <p className="font-black text-gray-800 mb-1">Evolução — Desafio Diário</p>
+        <p className="text-xs text-gray-400 font-semibold mb-4">Pontuação nas suas partidas do Desafio Diário</p>
         {chartData.length < 2 ? (
           <EmptyState
             icon="📈"
-            title="Poucas partidas"
-            description="Jogue mais algumas partidas para ver seu gráfico de evolução."
+            title="Poucos desafios diários"
+            description="Jogue mais alguns Desafios Diários para ver sua evolução."
           />
         ) : (
           <ResponsiveContainer width="100%" height={180}>

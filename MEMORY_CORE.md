@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-26  
-**Versão:** 2.7.1  
-**Status:** ✅ Análise Inteligente + tempo médio de resposta REAL (velocidade rica, recorde fastestAvgMs)  
+**Versão:** 2.7.2  
+**Status:** ✅ Análise Inteligente + tempo real; gráfico de evolução focado no Desafio Diário  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

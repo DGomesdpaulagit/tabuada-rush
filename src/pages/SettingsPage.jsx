@@ -13,8 +13,9 @@ import { audio } from '../lib/audioManager';
 import { enableNotifications } from '../lib/notify';
 import { subscribeToPush, unsubscribeFromPush } from '../lib/push';
 import { Button, pageVariants, pageTransition } from '../components/ui';
-import { storage } from '../lib/storage';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { storage, DEFAULTS } from '../lib/storage';
+import { saveCloudData } from '../services/sync';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 // ── Switch on/off no estilo do projeto ──────────────────────────────────────
 function Toggle({ on, onChange }) {
@@ -114,18 +115,16 @@ export default function SettingsPage({ onBack, onNavigate }) {
   const { data, cloudSyncing } = useApp();
   const { user, signOut } = useAuth();
 
-  // Reset completo: apaga localStorage + dados na nuvem (se logado) + recarrega
+  // Reset completo: grava DEFAULTS na nuvem + no localStorage + recarrega.
+  // Usar saveCloudData (upsert com DEFAULTS) em vez de setar null evita que o
+  // AppContext restaure dados antigos ao fazer login logo após o reset.
   const handleReset = useCallback(async () => {
-    if (user && isSupabaseConfigured && supabase) {
+    if (user && isSupabaseConfigured) {
       try {
-        // Zera o campo data no Supabase para evitar que o cloud sync restaure os dados
-        await supabase
-          .from('profiles')
-          .update({ data: null })
-          .eq('id', user.id);
+        await saveCloudData(user.id, { ...DEFAULTS });
       } catch { /* ignora — reset local continua de qualquer forma */ }
     }
-    storage.clear();
+    storage.set({ ...DEFAULTS });
     window.location.reload();
   }, [user]);
 

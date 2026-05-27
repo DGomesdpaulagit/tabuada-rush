@@ -1,6 +1,6 @@
 const KEY = 'tabuada_rush_v2';
 
-const DEFAULTS = {
+export const DEFAULTS = {
   xp: 0,
   totalGames: 0,
   totalCorrect: 0,

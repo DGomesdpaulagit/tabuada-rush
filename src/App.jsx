@@ -6,7 +6,7 @@ import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressE
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
-import { maybeStreakReminder } from './lib/notify';
+import { maybeStreakReminder, maybeMissionExpireReminder } from './lib/notify';
 import { subscribeToPush } from './lib/push';
 
 import MenuPage from './pages/MenuPage';
@@ -534,7 +534,10 @@ export default function App() {
       window.addEventListener('pointerdown', startMusic);
       window.addEventListener('keydown', startMusic);
     }
-    if (p.notifications) maybeStreakReminder(data);
+    if (p.notifications) {
+      maybeStreakReminder(data);
+      maybeMissionExpireReminder(data.missionsData);
+    }
     return () => {
       if (startMusic) {
         window.removeEventListener('pointerdown', startMusic);

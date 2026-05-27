@@ -1,4 +1,7 @@
 // Notificações reais via Web Notifications API.
+// maybeMissionExpireReminder: avisa sobre missões diárias prestes a expirar.
+//   Dispara quando restam ≤ 2h do dia e há missões pendentes/não resgatadas.
+//   Se o app estiver aberto 2–6h antes da meia-noite, agenda para 1h antes.
 // Usa o Service Worker (registration.showNotification) — compatível com mobile,
 // inclusive Android Chrome (onde `new Notification()` é proibido). Fallback para
 // `new Notification()` no desktop sem SW.
@@ -66,6 +69,68 @@ function reminderMessage(streak) {
   return pool[seed % pool.length];
 }
 
+// ── LEMBRETE DE MISSÕES EXPIRANDO ─────────────────────────────────────────
+// Importações inline para evitar ciclo (missions importa storage, notify não depende deles)
+export function maybeMissionExpireReminder(missionsData) {
+  if (!notificationsSupported() || Notification.permission !== 'granted') return;
+
+  const now     = new Date();
+  const midnight = new Date(now); midnight.setHours(24, 0, 0, 0);
+  const msLeft  = midnight - now;
+  const ONE_HOUR = 3_600_000;
+  const today   = now.toISOString().split('T')[0];
+  const remKey  = `tr_mission_remind_${today}`;
+
+  if (localStorage.getItem(remKey)) return; // já lembrou hoje
+
+  // Verifica o estado atual das missões diárias
+  const checkMissions = (md) => {
+    if (!md?.daily?.missions) return { unfinished: 0, unclaimed: 0 };
+    const ms = md.daily.missions;
+    return {
+      unfinished: ms.filter((m) => !m.completed).length,
+      unclaimed:  ms.filter((m) => m.completed && !m.rewardClaimed).length,
+    };
+  };
+
+  const fireNotif = (md, msRemaining) => {
+    const { unfinished, unclaimed } = checkMissions(md);
+    if (unfinished === 0 && unclaimed === 0) return; // tudo ok, sem aviso
+    localStorage.setItem(remKey, '1');
+
+    const hLeft = Math.ceil(msRemaining / ONE_HOUR);
+    let msg;
+    if (unclaimed > 0 && unfinished === 0) {
+      msg = `Você tem ${unclaimed} recompensa${unclaimed > 1 ? 's' : ''} para resgatar antes da meia-noite!`;
+    } else if (msRemaining <= ONE_HOUR) {
+      msg = `Menos de 1h! ${unfinished} missão${unfinished > 1 ? 'ões' : ''} diária${unfinished > 1 ? 's' : ''} ainda por completar.`;
+    } else {
+      msg = `Faltam ${hLeft}h — não perca suas missões diárias de hoje!`;
+    }
+    showNotif('Missões Expirando ⏰', msg);
+  };
+
+  if (msLeft <= 2 * ONE_HOUR) {
+    // Dentro das últimas 2h do dia → notifica agora
+    fireNotif(missionsData, msLeft);
+  } else if (msLeft <= 6 * ONE_HOUR) {
+    // 2–6h restantes → agenda para exatamente 1h antes da meia-noite
+    const delay = msLeft - ONE_HOUR;
+    setTimeout(() => {
+      // Relê o storage para verificar o estado mais recente
+      try {
+        const raw = localStorage.getItem('tabuada_rush_v2');
+        const freshMd = raw ? JSON.parse(raw)?.missionsData : missionsData;
+        fireNotif(freshMd, ONE_HOUR);
+      } catch {
+        fireNotif(missionsData, ONE_HOUR);
+      }
+    }, delay);
+  }
+  // > 6h: não agenda (abrirá o app novamente antes disso)
+}
+
+// ── LEMBRETE DE OFENSIVA ──────────────────────────────────────────────────
 // Lembrete local ao abrir o app (1×/dia) se ainda não jogou hoje.
 export function maybeStreakReminder(data = {}) {
   if (!notificationsSupported() || Notification.permission !== 'granted') return;

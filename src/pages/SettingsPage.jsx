@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
@@ -14,6 +14,7 @@ import { enableNotifications } from '../lib/notify';
 import { subscribeToPush, unsubscribeFromPush } from '../lib/push';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import { storage } from '../lib/storage';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 // ── Switch on/off no estilo do projeto ──────────────────────────────────────
 function Toggle({ on, onChange }) {
@@ -30,24 +31,40 @@ function Toggle({ on, onChange }) {
   );
 }
 
-function ResetButton() {
+function ResetButton({ onReset, hasCloud }) {
   const [confirm, setConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    await onReset();
+    // onReset faz reload, mas se falhar:
+    setLoading(false);
+  };
+
   if (confirm) {
     return (
       <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={16} className="text-rose-600 shrink-0" />
           <p className="text-sm font-black text-rose-700">Tem certeza? Esta ação não pode ser desfeita.</p>
         </div>
+        {hasCloud && (
+          <p className="text-xs text-rose-500 font-semibold mb-3">
+            ☁️ Seus dados na nuvem também serão apagados.
+          </p>
+        )}
         <div className="flex gap-2">
           <button
-            onClick={() => { storage.clear(); window.location.reload(); }}
-            className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-black hover:bg-rose-700 active:scale-[0.98] transition-all"
+            onClick={handleConfirm}
+            disabled={loading}
+            className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-black hover:bg-rose-700 active:scale-[0.98] transition-all disabled:opacity-60"
           >
-            Sim, apagar tudo
+            {loading ? 'Apagando...' : 'Sim, apagar tudo'}
           </button>
           <button
             onClick={() => setConfirm(false)}
+            disabled={loading}
             className="flex-1 py-2.5 rounded-xl bg-gray-200 text-gray-700 text-sm font-black hover:bg-gray-300 active:scale-[0.98] transition-all"
           >
             Cancelar
@@ -96,6 +113,21 @@ function Section({ title, children }) {
 export default function SettingsPage({ onBack, onNavigate }) {
   const { data, cloudSyncing } = useApp();
   const { user, signOut } = useAuth();
+
+  // Reset completo: apaga localStorage + dados na nuvem (se logado) + recarrega
+  const handleReset = useCallback(async () => {
+    if (user && isSupabaseConfigured && supabase) {
+      try {
+        // Zera o campo data no Supabase para evitar que o cloud sync restaure os dados
+        await supabase
+          .from('profiles')
+          .update({ data: null })
+          .eq('id', user.id);
+      } catch { /* ignora — reset local continua de qualquer forma */ }
+    }
+    storage.clear();
+    window.location.reload();
+  }, [user]);
 
   const p = prefs.get();
   const [theme, setThemeState] = useState(p.theme);
@@ -297,14 +329,14 @@ export default function SettingsPage({ onBack, onNavigate }) {
       {/* ZONA DE PERIGO */}
       <Section title="Zona de Perigo">
         <p className="text-xs text-gray-400 font-semibold mb-3">
-          Apaga todo o progresso local (XP, conquistas, recordes, moedas). Irreversível.
+          Apaga todo o progresso local e na nuvem (XP, conquistas, recordes, moedas). Irreversível.
         </p>
-        <ResetButton />
+        <ResetButton onReset={handleReset} hasCloud={!!user} />
       </Section>
 
       {/* SOBRE */}
       <div className="text-center text-xs text-gray-400 font-semibold">
-        Tabuada Rush · v3.0
+        Tabuada Rush · v3.1
       </div>
 
       <Button variant="secondary" onClick={onBack} className="w-full">

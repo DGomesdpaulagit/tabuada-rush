@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
-  Type, Contrast, Sparkles, Cloud,
+  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle,
 } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { getLevelIdx, getQiInfo } from '../utils';
@@ -13,6 +13,7 @@ import { audio } from '../lib/audioManager';
 import { enableNotifications } from '../lib/notify';
 import { subscribeToPush, unsubscribeFromPush } from '../lib/push';
 import { Button, pageVariants, pageTransition } from '../components/ui';
+import { storage } from '../lib/storage';
 
 // ── Switch on/off no estilo do projeto ──────────────────────────────────────
 function Toggle({ on, onChange }) {
@@ -25,6 +26,43 @@ function Toggle({ on, onChange }) {
       <span
         className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`}
       />
+    </button>
+  );
+}
+
+function ResetButton() {
+  const [confirm, setConfirm] = useState(false);
+  if (confirm) {
+    return (
+      <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle size={16} className="text-rose-600 shrink-0" />
+          <p className="text-sm font-black text-rose-700">Tem certeza? Esta ação não pode ser desfeita.</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { storage.clear(); window.location.reload(); }}
+            className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-black hover:bg-rose-700 active:scale-[0.98] transition-all"
+          >
+            Sim, apagar tudo
+          </button>
+          <button
+            onClick={() => setConfirm(false)}
+            className="flex-1 py-2.5 rounded-xl bg-gray-200 text-gray-700 text-sm font-black hover:bg-gray-300 active:scale-[0.98] transition-all"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <button
+      onClick={() => setConfirm(true)}
+      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-rose-200 text-rose-600 text-sm font-black hover:bg-rose-50 active:scale-[0.98] transition-all"
+    >
+      <Trash2 size={15} />
+      Resetar Progresso
     </button>
   );
 }
@@ -256,9 +294,17 @@ export default function SettingsPage({ onBack, onNavigate }) {
         )}
       </Section>
 
+      {/* ZONA DE PERIGO */}
+      <Section title="Zona de Perigo">
+        <p className="text-xs text-gray-400 font-semibold mb-3">
+          Apaga todo o progresso local (XP, conquistas, recordes, moedas). Irreversível.
+        </p>
+        <ResetButton />
+      </Section>
+
       {/* SOBRE */}
       <div className="text-center text-xs text-gray-400 font-semibold">
-        Tabuada Rush · v2.9.1
+        Tabuada Rush · v3.0
       </div>
 
       <Button variant="secondary" onClick={onBack} className="w-full">

@@ -82,21 +82,25 @@ export function getRank(score) {
 
 // Calcula um "QI Matemático" divertido a partir do desempenho do usuário.
 // Combina: precisão, velocidade, ofensiva, consistência e progresso (nível).
+// computeQI v3.0 — caps elevados: chegar ao QI máximo exige muito mais jogo.
+//   Caps anteriores → novos caps (tudo mais difícil):
+//   speedBest: 30 → 80  |  bestDayStreak: 30 → 120  |  totalGames: 50 → 300
+//   Isso significa que só jogadores muito dedicados chegam perto de QI 200.
 export function computeQI(data = {}) {
   const totalCorrect = data.totalCorrect || 0;
   const totalWrong = data.totalWrong || 0;
   const answered = totalCorrect + totalWrong;
 
   const acc = answered > 0 ? totalCorrect / answered : 0;
-  const accPts = acc * 40;                                          // precisão (lifetime)
-  const bestAccPts = ((data.bestAccuracy || 0) / 100) * 10;          // melhor precisão
-  const speedPts = (Math.min(data.speedBest || 0, 30) / 30) * 20;    // velocidade (modo Velocidade)
+  const accPts = acc * 40;                                              // precisão lifetime (0–40)
+  const bestAccPts = ((data.bestAccuracy || 0) / 100) * 10;            // melhor precisão (0–10)
+  const speedPts = (Math.min(data.speedBest || 0, 80) / 80) * 20;     // cap: 80 respostas (era 30)
   const streakPts =
-    (Math.min(data.bestDayStreak || 0, 30) / 30) * 15 +              // ofensiva (recorde)
-    (Math.min(data.currentStreak || 0, 15) / 15) * 5;                // ofensiva (atual)
-  const consistencyPts = (Math.min(data.totalGames || 0, 50) / 50) * 20; // consistência
+    (Math.min(data.bestDayStreak || 0, 120) / 120) * 15 +              // cap: 120 dias (era 30)
+    (Math.min(data.currentStreak || 0, 60) / 60) * 5;                  // cap: 60 dias (era 15)
+  const consistencyPts = (Math.min(data.totalGames || 0, 300) / 300) * 20; // cap: 300 partidas (era 50)
   const levelIdx = getLevelIdx(data.xp || 0);
-  const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;         // progresso geral
+  const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;           // progresso de nível (0–30)
 
   const bonus = data.qiBonus || 0; // bônus de QI ganho em recompensas de ofensiva
   const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + bonus;

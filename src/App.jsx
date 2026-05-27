@@ -262,14 +262,14 @@ export default function App() {
           prev.pendingStreakReward ||
           null;
 
-        // XP v2.15 — calibrado para progressão realista (bem mais difícil):
-        //   score × 0.2 por partida + bônus diário + bônus de ofensiva (caps menores).
-        //   Combinado com thresholds ×3 em LEVELS → ~7× mais difícil que v2.5.
-        //   Estimativa: ~60–80 XP/dia (jogo regular) → nível 5 em ~1.5 meses.
-        const gameXp = Math.round(result.score * 0.2);
-        const dailyBonus = result.mode === 'daily' ? 12 : 0;
-        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 15) : 0;
-        const xp = (prev.xp || 0) + gameXp + dailyBonus + streakBonus;
+        // XP v3.0 — 100% baseado em desempenho, sem bônus de dias jogados.
+        //   Cada modo tem seu próprio xpMultiplier (definido em constants/index.js).
+        //   Rush = multiplicador mais baixo (5 min → score alto, XP difícil de acumular).
+        //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
+        //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
+        const MODE_XP_MULT = { rush: 0.18, survival: 0.30, speed: 0.25, daily: 0.40, zen: 0 };
+        const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
+        const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
         const coinsEarned =

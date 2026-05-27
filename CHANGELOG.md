@@ -4,6 +4,36 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.1.1] — 2026-05-27 — RANKING, MISSÕES, XP, REVISÃO, TOASTS
+
+### Modificado — Ranking de QI
+- Homem-Aranha movido para tier `alto`, posicionado acima de Hermione Granger
+
+### Modificado — Menu Principal
+- Botão "Catálogo de Progresso" removido do menu — acesso exclusivo via Estatísticas/Evolução
+
+### Modificado — Missões Semanais (dificuldade real de 1 semana)
+- 35 e 60 partidas (~5–9/dia), semana perfeita (7 desafios diários), 1000 e 2000 acertos,
+  streak de 20, score de 800, precisão de 95% — targets 3–4× maiores que antes
+
+### Modificado — Missões Mensais (dificuldade real de 1 mês)
+- 120 e 250 partidas, 4000 e 8000 acertos, 25 dias de ofensiva, 22 desafios diários,
+  score de 1200 em uma única partida
+
+### Modificado — Sistema de XP (~35% mais difícil)
+- Rush: 0.18 → 0.12 | Survival: 0.30 → 0.20 | Speed: 0.25 → 0.16
+- Daily: 0.40 → 0.28 | Review: 0.25 → 0.16
+- Atualizado em `constants/index.js`, `App.jsx` e `ResultsPage.jsx`
+
+### Melhorado — Modo Revisão
+- Score de dificuldade composto: 50% taxa de erro + 30% tempo médio de resposta
+  (avgMs cap 6000ms) + 20% volume absoluto de erros (cap 80 erros)
+
+### Corrigido — Pop-ups no Mobile
+- Toast de conquista e loja: `left-1/2 -translate-x-1/2` → `left-4 right-4 max-w-sm mx-auto` — não corta mais em telas pequenas
+
+---
+
 ## [3.1.0] — 2026-05-27 — MODOS ZEN & REVISÃO, MASCOTE, INSANE COMBO, PARTÍCULAS, PWA
 
 ### Adicionado — Modos de Treino

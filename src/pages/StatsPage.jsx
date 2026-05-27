@@ -375,6 +375,62 @@ export default function StatsPage({ onBack, onNavigate }) {
         )}
       </motion.div>
 
+      {/* ── Histórico Semanal de Erros ──────────────────────────────────── */}
+      {sessions.length > 0 && (() => {
+        const last7 = Array.from({ length: 7 }, (_, i) => {
+          const d = new Date();
+          d.setDate(d.getDate() - (6 - i));
+          return d.toISOString().split('T')[0];
+        });
+        const errorsByDay = last7.map((day) => {
+          const dayErrors = sessions
+            .filter((s) => s.date && s.date.startsWith(day))
+            .reduce((sum, s) => sum + (s.wrong || 0), 0);
+          const d = new Date(day + 'T12:00:00');
+          const label = d.toLocaleDateString('pt-BR', { weekday: 'short' });
+          const dayNum = d.toLocaleDateString('pt-BR', { day: '2-digit' });
+          return { label, dayNum, errors: dayErrors };
+        });
+        const maxErr = Math.max(...errorsByDay.map((d) => d.errors), 1);
+        const totalWeekErr = errorsByDay.reduce((s, d) => s + d.errors, 0);
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <p className="font-black text-gray-800">Erros — Últimos 7 Dias</p>
+              <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full">
+                {totalWeekErr} total
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 font-semibold mb-4">Erros por dia na semana</p>
+            <div className="flex items-end justify-between gap-1 h-24">
+              {errorsByDay.map((d, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <div className="w-full flex flex-col justify-end" style={{ height: '64px' }}>
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(d.errors / maxErr) * 64}px` }}
+                      transition={{ duration: 0.5, ease: 'easeOut', delay: 0.35 + i * 0.04 }}
+                      className={`w-full rounded-t-lg ${d.errors > 0 ? 'bg-rose-400' : 'bg-gray-100'}`}
+                      style={{ minHeight: d.errors > 0 ? '4px' : '2px' }}
+                    />
+                  </div>
+                  {d.errors > 0 && (
+                    <span className="text-[10px] font-black text-rose-500">{d.errors}</span>
+                  )}
+                  <span className="text-[9px] font-bold text-gray-400 capitalize">{d.label}</span>
+                  <span className="text-[9px] font-semibold text-gray-300">{d.dayNum}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+      })()}
+
       {/* Per-mode breakdown */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}

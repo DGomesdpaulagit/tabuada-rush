@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, TrendingUp, ShoppingBag, Map, Leaf } from 'lucide-react';
-import { MODE_LIST, LEVELS } from '../constants';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, TrendingUp, ShoppingBag, Map, Leaf, BookOpen } from 'lucide-react';
+import { MODE_LIST, TRAINING_MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
@@ -9,7 +9,7 @@ import { SHOP_ITEM_MAP } from '../constants/shop';
 import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
 
-const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
+const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star, zen: Leaf, review: BookOpen };
 
 export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const { data, cloudSyncing } = useApp();
@@ -296,6 +296,42 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             );
           })}
         </motion.div>
+      </div>
+
+      {/* ── Modos de Treino: Zen · Revisão ───────────────────────────────── */}
+      <div>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 px-1">
+          Treino
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          {TRAINING_MODE_LIST.map((tmode) => {
+            const Icon = modeIcons[tmode.id];
+            return (
+              <motion.button
+                key={tmode.id}
+                whileHover={{ scale: 1.03, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => onStart(tmode.id)}
+                className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all
+                  bg-gradient-to-br ${tmode.gradientLight} border hover:shadow-md
+                  ${tmode.shadow} hover:shadow-lg ${tmode.border}`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${tmode.gradient} shadow-sm`}
+                >
+                  <Icon size={18} className="text-white" />
+                </div>
+                <p className={`font-black text-sm ${tmode.text}`}>{tmode.name}</p>
+                <p className="text-gray-400 text-xs mt-0.5 font-semibold">{tmode.description}</p>
+                {tmode.id === 'zen' && (
+                  <span className="absolute top-2 right-2 text-[9px] font-black text-teal-500 bg-teal-50 px-1.5 py-0.5 rounded-full">
+                    Sem XP
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Fase 7: Loja · Missões · Temporada ──────────────────────────── */}

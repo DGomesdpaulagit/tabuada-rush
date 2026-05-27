@@ -19,7 +19,8 @@ export const MODES = {
     lives: null,
     questions: null,
     bonusTime: 1,
-    xpMultiplier: 0.18,   // ⚠️ mais difícil de pontuar XP — score alto mas tempo longo
+    xpMultiplier: 0.18,
+    group: 'main',
   },
   survival: {
     id: 'survival',
@@ -36,7 +37,8 @@ export const MODES = {
     lives: 3,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0.30,   // pressão de 3 vidas — XP moderado
+    xpMultiplier: 0.30,
+    group: 'main',
   },
   speed: {
     id: 'speed',
@@ -53,7 +55,8 @@ export const MODES = {
     lives: null,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0.25,   // sprint de 60s — XP médio
+    xpMultiplier: 0.25,
+    group: 'main',
   },
   daily: {
     id: 'daily',
@@ -70,11 +73,52 @@ export const MODES = {
     lives: null,
     questions: 20,
     bonusTime: 0,
-    xpMultiplier: 0.40,   // questões fixas, mais desafiador — maior recompensa
+    xpMultiplier: 0.40,
+    group: 'main',
+  },
+  // ── MODOS DE TREINO — aprendizado sem pressão competitiva ─────────────────
+  zen: {
+    id: 'zen',
+    name: 'Zen',
+    emoji: '🧘',
+    description: 'Treino livre, sem pressão',
+    gradient: 'from-teal-400 to-cyan-500',
+    gradientLight: 'from-teal-50 to-cyan-50',
+    shadow: 'shadow-teal-200',
+    text: 'text-teal-600',
+    border: 'border-teal-200',
+    bg: 'bg-teal-500',
+    timer: null,
+    lives: null,
+    questions: null,
+    bonusTime: 0,
+    xpMultiplier: 0,      // treino puro — sem XP
+    group: 'training',
+  },
+  review: {
+    id: 'review',
+    name: 'Revisão',
+    emoji: '📚',
+    description: 'Foca onde você mais erra',
+    gradient: 'from-blue-500 to-indigo-600',
+    gradientLight: 'from-blue-50 to-indigo-50',
+    shadow: 'shadow-blue-200',
+    text: 'text-blue-600',
+    border: 'border-blue-200',
+    bg: 'bg-blue-500',
+    timer: null,
+    lives: null,
+    questions: 15,        // 15 questões focadas nas tabuadas mais erradas
+    bonusTime: 0,
+    xpMultiplier: 0.25,   // estudo focado — XP médio
+    group: 'training',
   },
 };
 
-export const MODE_LIST = Object.values(MODES);
+// Modos exibidos no grid principal do menu (os 4 clássicos)
+export const MODE_LIST = Object.values(MODES).filter((m) => m.group === 'main');
+// Modos de treino (Zen + Revisão)
+export const TRAINING_MODE_LIST = Object.values(MODES).filter((m) => m.group === 'training');
 
 // ── LEVELS ─────────────────────────────────────────────────────────────────
 // Progressão de 28 níveis. Cada nível tem nome, título (identidade do usuário),

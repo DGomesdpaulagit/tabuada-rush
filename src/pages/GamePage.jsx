@@ -6,11 +6,43 @@ import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatT
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 
+// ── MASCOTE ────────────────────────────────────────────────────────────────
+const MASCOT = {
+  idle:    { emoji: '🤓', bg: 'bg-violet-100', text: 'Prontos!' },
+  correct: { emoji: '🤩', bg: 'bg-emerald-100', text: 'Isso aí!' },
+  wrong:   { emoji: '😬', bg: 'bg-rose-100',    text: 'Ops...' },
+  combo:   { emoji: '🔥', bg: 'bg-amber-100',   text: 'Combo!' },
+  insane:  { emoji: '🤯', bg: 'bg-purple-100',  text: 'INSANE!' },
+};
+
+function Mascot({ mood }) {
+  const m = MASCOT[mood] || MASCOT.idle;
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={mood}
+        initial={{ scale: 0.6, opacity: 0, y: 6 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.6, opacity: 0, y: -6 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${m.bg} w-fit mx-auto`}
+      >
+        <span className="text-xl leading-none">{m.emoji}</span>
+        <span className="text-xs font-black text-gray-700">{m.text}</span>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
-function init(mode) {
+function init({ mode, customQuestions }) {
   const cfg = MODES[mode];
-  const dailyQs = mode === 'daily' ? getDailyQuestions(cfg.questions || 20) : null;
+  const qs = customQuestions || (
+    (mode === 'daily' || (cfg.questions && mode !== 'zen'))
+      ? getDailyQuestions(cfg.questions || 20)
+      : null
+  );
   return {
     phase: 'playing',
     score: 0,
@@ -20,8 +52,8 @@ function init(mode) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: dailyQs ? dailyQs[0] : getRandomQuestion(1),
-    dailyQs,
+    question: qs ? qs[0] : getRandomQuestion(1),
+    dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
     lastCorrect: null,
@@ -89,26 +121,33 @@ function reducer(state, action) {
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────
 
-export default function GamePage({ mode, onEnd, onBack }) {
+export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
   const cfg = MODES[mode];
-  const [state, dispatch] = useReducer(reducer, mode, init);
+
+  // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
+  const initArgRef = useRef({ mode, customQuestions });
+  const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
+
   const [inputVal, setInputVal] = useState('');
   const [inputState, setInputState] = useState('idle');
   const [showCombo, setShowCombo] = useState(false);
+  const [isInsane, setIsInsane] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [mascotMood, setMascotMood] = useState('idle');
+
   const inputRef = useRef(null);
   const timerRef = useRef(null);
   const phaseRef = useRef(state.phase);
   phaseRef.current = state.phase;
-  // Medição de tempo de resposta por questão (para análise de velocidade real)
+
+  // Medição de tempo de resposta por questão
   const questionShownAt = useRef(0);
   const responseTimes = useRef([]);
-  // Registro por questão (para o Catálogo de Precisão: desempenho por tabuada)
+  // Registro por questão (Catálogo de Precisão)
   const questionLog = useRef([]);
 
   // Resume audio context on first interaction
-  useEffect(() => {
-    audio.resume();
-  }, []);
+  useEffect(() => { audio.resume(); }, []);
 
   // Timer
   useEffect(() => {
@@ -128,7 +167,7 @@ export default function GamePage({ mode, onEnd, onBack }) {
     return () => clearInterval(timerRef.current);
   }, [cfg.timer, cfg.lives]);
 
-  // Timer warning sound for last 5 seconds
+  // Timer warning sound (últimos 5s)
   useEffect(() => {
     if (cfg.timer && state.time > 0 && state.time <= 5 && state.phase === 'playing') {
       audio.timerWarning();
@@ -139,15 +178,10 @@ export default function GamePage({ mode, onEnd, onBack }) {
   useEffect(() => {
     if (state.phase === 'ended') {
       clearInterval(timerRef.current);
-      // Play victory if any correct answers, otherwise game over
-      if (state.correct > 0) {
-        audio.victory();
-      } else {
-        audio.gameOver();
-      }
-      const timePlayed = cfg.timer
-        ? cfg.timer - state.time
-        : state.time;
+      if (state.correct > 0) audio.victory();
+      else audio.gameOver();
+
+      const timePlayed = cfg.timer ? cfg.timer - state.time : state.time;
       const times = responseTimes.current;
       const avgMs = times.length
         ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
@@ -169,7 +203,7 @@ export default function GamePage({ mode, onEnd, onBack }) {
     }
   }, [state.phase]);
 
-  // Focus input on question change + marca quando a questão foi exibida
+  // Focus input + marca quando a questão foi exibida
   useEffect(() => {
     if (state.phase === 'playing') {
       setInputVal('');
@@ -184,11 +218,9 @@ export default function GamePage({ mode, onEnd, onBack }) {
     const val = parseInt(inputVal, 10);
     if (isNaN(val) || inputVal.trim() === '') return;
 
-    // Registra o tempo de resposta (ignora outliers/AFK > 60s)
     const dt = questionShownAt.current ? Date.now() - questionShownAt.current : 0;
     if (dt > 0 && dt < 60000) responseTimes.current.push(dt);
 
-    // Registro por questão (tabuada = fator a; tempo só se válido)
     questionLog.current.push({
       a: state.question.a,
       b: state.question.b,
@@ -201,20 +233,40 @@ export default function GamePage({ mode, onEnd, onBack }) {
       dispatch({ type: 'CORRECT', modeId: mode });
 
       const newStreak = state.streak + 1;
-      if (newStreak % 5 === 0 && newStreak >= 5) {
+
+      // ── INSANE COMBO (≥ 10) ou COMBO normal (múltiplo de 5) ──────────
+      if (newStreak >= 10 && newStreak % 5 === 0) {
         audio.combo();
+        setIsInsane(true);
         setShowCombo(true);
+        setMascotMood('insane');
+        // Screen shake
+        setShake(true);
+        setTimeout(() => setShake(false), 500);
+        setTimeout(() => { setShowCombo(false); setIsInsane(false); }, 1200);
+      } else if (newStreak % 5 === 0 && newStreak >= 5) {
+        audio.combo();
+        setIsInsane(false);
+        setShowCombo(true);
+        setMascotMood('combo');
         setTimeout(() => setShowCombo(false), 900);
       } else {
         audio.correct();
+        setMascotMood('correct');
       }
-
-      setTimeout(() => dispatch({ type: 'NEXT' }), 420);
+      setTimeout(() => {
+        dispatch({ type: 'NEXT' });
+        setMascotMood((m) => (m === 'correct' ? 'idle' : m));
+      }, 420);
     } else {
       setInputState('wrong');
       audio.wrong();
       dispatch({ type: 'WRONG' });
-      setTimeout(() => dispatch({ type: 'NEXT' }), 950);
+      setMascotMood('wrong');
+      setTimeout(() => {
+        dispatch({ type: 'NEXT' });
+        setMascotMood('idle');
+      }, 950);
     }
   }, [state.phase, state.question, state.streak, inputVal, mode]);
 
@@ -235,167 +287,208 @@ export default function GamePage({ mode, onEnd, onBack }) {
   const diffLabels = ['', 'Nível 1', 'Nível 2', 'Nível 3'];
   const diffColors = ['', 'text-gray-400', 'text-amber-500', 'text-rose-500'];
 
+  const isZen = mode === 'zen';
+  const isReview = mode === 'review';
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -24 }}
-      transition={{ duration: 0.3 }}
+      animate={shake ? { x: [0, -10, 10, -8, 8, -5, 5, 0] } : {}}
+      transition={{ duration: 0.4 }}
       className="flex flex-col gap-4"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-        >
-          <Home size={18} />
-        </button>
-
-        <div
-          className={`text-center transition-colors ${urgent ? 'text-rose-500' : cfg.text}`}
-        >
-          <p className="text-xs font-bold uppercase tracking-wide opacity-60">
-            {cfg.timer ? 'Tempo' : cfg.questions ? 'Questão' : 'Tempo'}
-          </p>
-          <p className={`text-3xl font-black tabular-nums ${urgent ? 'animate-pulse' : ''}`}>
-            {cfg.questions
-              ? `${state.dailyIdx + 1}/${cfg.questions}`
-              : formatTime(state.time)}
-          </p>
-        </div>
-
-        <div className="text-right">
-          <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Pontos</p>
-          <motion.p
-            key={state.score}
-            initial={{ scale: 1.3, color: '#7C3AED' }}
-            animate={{ scale: 1, color: '#111827' }}
-            transition={{ duration: 0.25 }}
-            className="text-3xl font-black tabular-nums"
+      {/* Initial entrance */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -24 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col gap-4"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
           >
-            {state.score}
-          </motion.p>
-        </div>
-      </div>
+            <Home size={18} />
+          </button>
 
-      {/* Progress bar */}
-      <Progress
-        value={cfg.timer ? progress : (cfg.questions ? progress : 0)}
-        colorClass={urgent ? 'bg-rose-500' : `bg-gradient-to-r ${cfg.gradient}`}
-        className="h-1.5"
-      />
+          <div className={`text-center transition-colors ${urgent ? 'text-rose-500' : cfg.text}`}>
+            {isZen ? (
+              <div className="text-center">
+                <p className="text-xs font-bold uppercase tracking-wide opacity-60 text-teal-500">Modo Zen</p>
+                <p className="text-2xl font-black text-teal-600">🧘 {formatTime(state.time)}</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-bold uppercase tracking-wide opacity-60">
+                  {cfg.timer ? 'Tempo' : cfg.questions ? 'Questão' : 'Tempo'}
+                </p>
+                <p className={`text-3xl font-black tabular-nums ${urgent ? 'animate-pulse' : ''}`}>
+                  {cfg.questions
+                    ? `${state.dailyIdx + 1}/${cfg.questions}`
+                    : formatTime(state.time)}
+                </p>
+              </>
+            )}
+          </div>
 
-      {/* Mode info row */}
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
-          {cfg.lives !== null && (
-            <div className="flex gap-1">
-              {Array.from({ length: 3 }, (_, i) => (
-                <motion.span
-                  key={i}
-                  animate={{ scale: i >= (state.lives ?? 3) ? 0.7 : 1, opacity: i >= (state.lives ?? 3) ? 0.3 : 1 }}
-                  className="text-xl"
+          <div className="text-right">
+            {isZen ? (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Acertos</p>
+                <p className="text-3xl font-black tabular-nums text-teal-600">{state.correct}</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Pontos</p>
+                <motion.p
+                  key={state.score}
+                  initial={{ scale: 1.3, color: '#7C3AED' }}
+                  animate={{ scale: 1, color: '#111827' }}
+                  transition={{ duration: 0.25 }}
+                  className="text-3xl font-black tabular-nums"
                 >
-                  ❤️
-                </motion.span>
-              ))}
-            </div>
-          )}
+                  {state.score}
+                </motion.p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        {!isZen && (
+          <Progress
+            value={cfg.timer ? progress : (cfg.questions ? progress : 0)}
+            colorClass={urgent ? 'bg-rose-500' : `bg-gradient-to-r ${cfg.gradient}`}
+            className="h-1.5"
+          />
+        )}
+
+        {/* Mode info row */}
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            {cfg.lives !== null && (
+              <div className="flex gap-1">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <motion.span
+                    key={i}
+                    animate={{ scale: i >= (state.lives ?? 3) ? 0.7 : 1, opacity: i >= (state.lives ?? 3) ? 0.3 : 1 }}
+                    className="text-xl"
+                  >
+                    ❤️
+                  </motion.span>
+                ))}
+              </div>
+            )}
+            <AnimatePresence>
+              {state.streak >= 3 && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  className="flex items-center gap-1 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-black"
+                >
+                  🔥 {state.streak}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <span className={`text-xs font-bold ${isZen ? 'text-teal-500' : diffColors[diffLevel]}`}>
+            {isZen ? 'Sem pressão 🌿' : isReview ? '📚 Revisão' : diffLabels[diffLevel]}
+          </span>
+        </div>
+
+        {/* Question card */}
+        <div className={`bg-gradient-to-br ${cfg.gradientLight} rounded-3xl p-8 border ${cfg.border}`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${state.question?.a}-${state.question?.b}-${state.answered}`}
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={
+                inputState === 'correct'
+                  ? { opacity: 1, scale: [1, 1.08, 1], y: 0 }
+                  : inputState === 'wrong'
+                  ? { opacity: 1, scale: 1, y: 0, x: [0, -8, 8, -6, 6, -3, 3, 0] }
+                  : { opacity: 1, scale: 1, y: 0 }
+              }
+              exit={{ opacity: 0, scale: 0.85, y: -10 }}
+              transition={{ duration: 0.25, type: inputState === 'correct' ? 'spring' : 'tween' }}
+              className="text-center"
+            >
+              <p className="text-7xl font-black text-gray-900 tracking-tight">
+                {state.question?.a} × {state.question?.b}
+              </p>
+              <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Feedback overlay */}
           <AnimatePresence>
-            {state.streak >= 3 && (
+            {state.phase === 'feedback' && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="flex items-center gap-1 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-black"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="mt-4 text-center"
               >
-                🔥 {state.streak}
+                {state.lastCorrect ? (
+                  <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-emerald-200">
+                    <span>✓</span>
+                    <span>{isZen ? 'Correto!' : `Correto! +${calcPoints(diffLevel, state.streak)}`}</span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-rose-200">
+                    <X size={16} />
+                    <span>Errou! Resp: {state.question?.ans}</span>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-        <span className={`text-xs font-bold ${diffColors[diffLevel]}`}>
-          {diffLabels[diffLevel]}
-        </span>
-      </div>
 
-      {/* Question card */}
-      <div className={`bg-gradient-to-br ${cfg.gradientLight} rounded-3xl p-8 border ${cfg.border}`}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${state.question?.a}-${state.question?.b}-${state.answered}`}
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={
-              inputState === 'correct'
-                ? { opacity: 1, scale: [1, 1.08, 1], y: 0 }
-                : inputState === 'wrong'
-                ? { opacity: 1, scale: 1, y: 0, x: [0, -8, 8, -6, 6, -3, 3, 0] }
-                : { opacity: 1, scale: 1, y: 0 }
-            }
-            exit={{ opacity: 0, scale: 0.85, y: -10 }}
-            transition={{ duration: 0.25, type: inputState === 'correct' ? 'spring' : 'tween' }}
-            className="text-center"
+        {/* Mascote */}
+        <Mascot mood={mascotMood} />
+
+        {/* Answer input */}
+        <div className="flex gap-3">
+          <input
+            ref={inputRef}
+            type="number"
+            inputMode="numeric"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            onKeyDown={handleKey}
+            placeholder="Sua resposta..."
+            disabled={state.phase !== 'playing'}
+            className={`flex-1 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
+              ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
+              ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
+              ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-violet-400' : ''}
+            `}
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={state.phase !== 'playing' || inputVal.trim() === ''}
+            className={`h-14 px-6 bg-gradient-to-r ${cfg.gradient} border-0 shadow-md`}
           >
-            <p className="text-7xl font-black text-gray-900 tracking-tight">
-              {state.question?.a} × {state.question?.b}
-            </p>
-            <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
-          </motion.div>
-        </AnimatePresence>
+            OK
+          </Button>
+        </div>
 
-        {/* Feedback overlay */}
-        <AnimatePresence>
-          {state.phase === 'feedback' && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="mt-4 text-center"
-            >
-              {state.lastCorrect ? (
-                <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-emerald-200">
-                  <span>✓</span>
-                  <span>Correto! +{calcPoints(diffLevel, state.streak)}</span>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-rose-200">
-                  <X size={16} />
-                  <span>Errou! Resp: {state.question?.ans}</span>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        {/* Botão Encerrar — apenas no modo Zen (sem fim natural) */}
+        {isZen && (
+          <button
+            onClick={() => dispatch({ type: 'END' })}
+            className="w-full py-3 rounded-2xl border border-teal-200 text-teal-600 text-sm font-black hover:bg-teal-50 active:scale-[0.98] transition-all"
+          >
+            🧘 Encerrar Treino
+          </button>
+        )}
+      </motion.div>
 
-      {/* Answer input */}
-      <div className="flex gap-3">
-        <input
-          ref={inputRef}
-          type="number"
-          inputMode="numeric"
-          value={inputVal}
-          onChange={(e) => setInputVal(e.target.value)}
-          onKeyDown={handleKey}
-          placeholder="Sua resposta..."
-          disabled={state.phase !== 'playing'}
-          className={`flex-1 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
-            ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
-            ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
-            ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-violet-400' : ''}
-          `}
-        />
-        <Button
-          onClick={handleSubmit}
-          disabled={state.phase !== 'playing' || inputVal.trim() === ''}
-          className={`h-14 px-6 bg-gradient-to-r ${cfg.gradient} border-0 shadow-md`}
-        >
-          OK
-        </Button>
-      </div>
-
-      {/* Combo popup */}
+      {/* COMBO popup */}
       <AnimatePresence>
         {showCombo && (
           <motion.div
@@ -403,11 +496,14 @@ export default function GamePage({ mode, onEnd, onBack }) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0, opacity: 0, y: -20 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
-              bg-gradient-to-r from-amber-400 to-orange-500 text-white
-              px-8 py-4 rounded-3xl font-black text-2xl shadow-2xl shadow-amber-300 pointer-events-none"
+            className={`fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
+              pointer-events-none px-8 py-4 rounded-3xl font-black shadow-2xl
+              ${isInsane
+                ? 'bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 text-white text-3xl shadow-purple-400'
+                : 'bg-gradient-to-r from-amber-400 to-orange-500 text-white text-2xl shadow-amber-300'
+              }`}
           >
-            🔥 COMBO ×{state.streak}!
+            {isInsane ? `🤯 INSANE COMBO! ×${state.streak}` : `🔥 COMBO ×${state.streak}!`}
           </motion.div>
         )}
       </AnimatePresence>

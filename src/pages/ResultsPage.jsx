@@ -14,6 +14,10 @@ export default function ResultsPage({ result, onReplay, onHome }) {
   const level = LEVELS[levelIdx];
   const isNewRecord = data.records?.[result.mode] === result.score;
 
+  // XP ganho nesta partida (mesmo cálculo de App.jsx)
+  const MODE_XP_MULT = { rush: 0.18, survival: 0.30, speed: 0.25, daily: 0.40, zen: 0, review: 0.25 };
+  const xpEarned = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
+
   const stats = [
     {
       icon: Trophy,
@@ -52,6 +56,24 @@ export default function ResultsPage({ result, onReplay, onHome }) {
       value: formatTime(result.timePlayed || 0),
       color: 'bg-gray-100 text-gray-600',
     },
+    // Tempo médio de resposta — só mostra quando disponível
+    ...(result.avgMs > 0
+      ? [{
+          icon: Clock,
+          label: 'Tempo Médio/Resp.',
+          value: `${(result.avgMs / 1000).toFixed(1)}s`,
+          color: 'bg-indigo-100 text-indigo-600',
+        }]
+      : []),
+    // XP ganho — não mostra em modo Zen (xp = 0)
+    ...(xpEarned > 0
+      ? [{
+          icon: Trophy,
+          label: 'XP Ganho',
+          value: `+${xpEarned} XP`,
+          color: 'bg-amber-100 text-amber-600',
+        }]
+      : []),
   ];
 
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };

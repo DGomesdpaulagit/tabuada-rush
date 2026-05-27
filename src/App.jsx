@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -140,6 +140,94 @@ function RewardModal({ milestone, onChoose }) {
   );
 }
 
+// ── LEVEL-UP PARTICLE BURST ───────────────────────────────────────────────
+const BURST_COLORS = ['#7C3AED', '#A855F7', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#F97316', '#EF4444'];
+const BURST_PARTICLES = Array.from({ length: 28 }, (_, i) => ({
+  id: i,
+  angle: (i / 28) * 360,
+  color: BURST_COLORS[i % BURST_COLORS.length],
+  distance: 90 + (i % 4) * 30,
+  size: 7 + (i % 3) * 4,
+}));
+
+function LevelUpBurst({ level, onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 1400);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[80] flex items-center justify-center">
+      {/* Texto central */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: [0, 1.3, 1], opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.2, times: [0, 0.3, 0.6, 1] }}
+        className="absolute text-center select-none"
+      >
+        <div className="text-6xl mb-1">{level?.badge}</div>
+        <div className="text-2xl font-black text-white drop-shadow-lg bg-violet-600/80 px-4 py-2 rounded-2xl">
+          LEVEL UP!
+        </div>
+      </motion.div>
+
+      {/* Partículas */}
+      {BURST_PARTICLES.map((p) => {
+        const rad = (p.angle * Math.PI) / 180;
+        return (
+          <motion.div
+            key={p.id}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+            animate={{ x: Math.cos(rad) * p.distance, y: Math.sin(rad) * p.distance, opacity: 0, scale: 0.2 }}
+            transition={{ duration: 0.85, ease: 'easeOut', delay: 0.05 }}
+            style={{
+              position: 'absolute',
+              width: p.size,
+              height: p.size,
+              borderRadius: '50%',
+              backgroundColor: p.color,
+              boxShadow: `0 0 6px ${p.color}`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+// ── PWA INSTALL BANNER ────────────────────────────────────────────────────
+function InstallBanner({ onInstall, onDismiss }) {
+  return (
+    <motion.div
+      initial={{ y: 120, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 120, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+      className="fixed bottom-5 left-4 right-4 z-50 bg-white rounded-2xl px-4 py-3.5 shadow-xl border border-violet-100 flex items-center gap-3 max-w-lg mx-auto"
+    >
+      <span className="text-3xl shrink-0">📱</span>
+      <div className="flex-1 min-w-0">
+        <p className="font-black text-gray-900 text-sm leading-tight">Instalar o App</p>
+        <p className="text-xs text-gray-400 font-semibold">Jogue offline e acesse mais rápido!</p>
+      </div>
+      <div className="flex gap-2 shrink-0">
+        <button
+          onClick={onDismiss}
+          className="text-xs font-bold text-gray-400 px-3 py-1.5 rounded-xl hover:bg-gray-100 transition-colors"
+        >
+          Agora não
+        </button>
+        <button
+          onClick={onInstall}
+          className="text-xs font-black text-white bg-violet-600 px-3 py-1.5 rounded-xl hover:bg-violet-700 transition-colors"
+        >
+          Instalar
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
 // ── MAIN APP ───────────────────────────────────────────────────────────────
 export default function App() {
   const { data, update } = useApp();
@@ -149,6 +237,11 @@ export default function App() {
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);
   const [goalModalManual, setGoalModalManual] = useState(false);
+  const [customQuestions, setCustomQuestions] = useState(null);
+  const [showParticles, setShowParticles] = useState(false);
+  const [particlesLevel, setParticlesLevel] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
+  const deferredPrompt = useRef(null);
 
   const showAchievement = useCallback((a) => {
     setAchievementQueue((q) => [...q, a]);
@@ -267,7 +360,7 @@ export default function App() {
         //   Rush = multiplicador mais baixo (5 min → score alto, XP difícil de acumular).
         //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
         //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
-        const MODE_XP_MULT = { rush: 0.18, survival: 0.30, speed: 0.25, daily: 0.40, zen: 0 };
+        const MODE_XP_MULT = { rush: 0.18, survival: 0.30, speed: 0.25, daily: 0.40, zen: 0, review: 0.25 };
         const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
         const xp = (prev.xp || 0) + gameXp;
 
@@ -354,7 +447,7 @@ export default function App() {
         return nextState;
       });
 
-      // Level up check
+      // Level up check + partículas de celebração
       const prevLevelIdx = getLevelIdx(data.xp || 0);
       const newLevelIdx = getLevelIdx(newData.xp || 0);
       if (newLevelIdx > prevLevelIdx) {
@@ -364,6 +457,9 @@ export default function App() {
           title: `Nível: ${LEVELS[newLevelIdx].name}!`,
           desc: `Você subiu para o nível ${newLevelIdx + 1}`,
         });
+        // Dispara explosão de partículas
+        setParticlesLevel(LEVELS[newLevelIdx]);
+        setShowParticles(true);
       }
 
       // Subiu de classificação no Ranking de QI?
@@ -453,10 +549,28 @@ export default function App() {
     if (user && prefs.get().notifications) subscribeToPush(user.id);
   }, [user]);
 
+  // PWA install prompt — captura o evento 'beforeinstallprompt' do browser
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      deferredPrompt.current = e;
+      // Mostra banner após 3s na primeira vez (não briga com outros modais)
+      setTimeout(() => setShowInstall(true), 3000);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
   const handleStart = useCallback((mode) => {
+    // Modo Revisão: gera questões focadas nas tabuadas com mais erros do jogador
+    if (mode === 'review') {
+      setCustomQuestions(getRevisionQuestions(data.tableStats));
+    } else {
+      setCustomQuestions(null);
+    }
     setActiveMode(mode);
     setScreen('game');
-  }, []);
+  }, [data.tableStats]);
 
   const handleReplay = useCallback(() => {
     setScreen('game');
@@ -485,6 +599,7 @@ export default function App() {
             <GamePage
               key={`game-${activeMode}`}
               mode={activeMode}
+              customQuestions={customQuestions}
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}
             />
@@ -541,6 +656,35 @@ export default function App() {
             key={achievementQueue[0].id + achievementQueue[0].title}
             achievement={achievementQueue[0]}
             onDone={() => setAchievementQueue((q) => q.slice(1))}
+          />
+        )}
+      </AP>
+
+      {/* ── Explosão de partículas ao subir de nível ──────────────────── */}
+      <AP>
+        {showParticles && (
+          <LevelUpBurst
+            key="burst"
+            level={particlesLevel}
+            onDone={() => setShowParticles(false)}
+          />
+        )}
+      </AP>
+
+      {/* ── PWA Install Banner ─────────────────────────────────────────── */}
+      <AP>
+        {showInstall && screen === 'menu' && (
+          <InstallBanner
+            key="install"
+            onInstall={async () => {
+              setShowInstall(false);
+              if (deferredPrompt.current) {
+                deferredPrompt.current.prompt();
+                await deferredPrompt.current.userChoice;
+                deferredPrompt.current = null;
+              }
+            }}
+            onDismiss={() => setShowInstall(false)}
           />
         )}
       </AP>

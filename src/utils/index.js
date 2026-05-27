@@ -40,6 +40,31 @@ export function getDiffLevel(questionsAnswered) {
   return 1;
 }
 
+// Gera questões para o Modo Revisão: foca nas tabuadas com maior taxa de erro.
+// Se o usuário tem poucos dados (< 2 tentativas por tabuada), usa pool completo.
+export function getRevisionQuestions(tableStats, count = 15) {
+  const entries = Object.entries(tableStats || {})
+    .map(([a, s]) => ({
+      a: Number(a),
+      errRate: s.wrong / Math.max(s.correct + s.wrong, 1),
+      total: s.correct + s.wrong,
+    }))
+    .filter((t) => t.total >= 2)
+    .sort((a, b) => b.errRate - a.errRate);
+
+  // Top 3–5 tabuadas com mais erros, ou fallback com pool padrão
+  const pool =
+    entries.length >= 2
+      ? entries.slice(0, Math.min(5, entries.length)).map((t) => t.a)
+      : [2, 3, 4, 5, 6, 7, 8, 9];
+
+  return Array.from({ length: count }, () => {
+    const a = pool[Math.floor(Math.random() * pool.length)];
+    const b = Math.floor(Math.random() * 10) + 1;
+    return { a, b, ans: a * b };
+  });
+}
+
 // ── SCORING ────────────────────────────────────────────────────────────────
 
 export function calcPoints(diffLevel, streak) {

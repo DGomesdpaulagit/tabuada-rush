@@ -262,12 +262,13 @@ export default function App() {
           prev.pendingStreakReward ||
           null;
 
-        // XP "real" (v2.5): ganho MODESTO por partida para que subir de nível seja
-        // mais difícil. O XP é uma FRAÇÃO do score (não o score bruto) + bônus de
-        // desafio diário e de ofensiva mantida. Combinado com a curva íngreme em LEVELS.
-        const gameXp = Math.round(result.score * 0.5);
-        const dailyBonus = result.mode === 'daily' ? 20 : 0;
-        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 30) : 0;
+        // XP v2.15 — calibrado para progressão realista (bem mais difícil):
+        //   score × 0.2 por partida + bônus diário + bônus de ofensiva (caps menores).
+        //   Combinado com thresholds ×3 em LEVELS → ~7× mais difícil que v2.5.
+        //   Estimativa: ~60–80 XP/dia (jogo regular) → nível 5 em ~1.5 meses.
+        const gameXp = Math.round(result.score * 0.2);
+        const dailyBonus = result.mode === 'daily' ? 12 : 0;
+        const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 15) : 0;
         const xp = (prev.xp || 0) + gameXp + dailyBonus + streakBonus;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────

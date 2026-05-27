@@ -37,15 +37,15 @@ function AchievementToast({ achievement, onDone }) {
       exit={{ opacity: 0, y: 80, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 260, damping: 22 }}
       onAnimationComplete={() => setTimeout(onDone, 2500)}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none
-        bg-white border border-gray-100 shadow-2xl rounded-3xl px-5 py-4 flex items-center gap-4
-        max-w-xs w-full mx-4"
+      className="fixed bottom-6 left-4 right-4 z-50 pointer-events-none
+        bg-white border border-gray-100 shadow-2xl rounded-3xl px-4 py-4 flex items-center gap-3
+        max-w-sm mx-auto"
     >
-      <span className="text-4xl">{achievement.icon}</span>
-      <div>
+      <span className="text-4xl shrink-0">{achievement.icon}</span>
+      <div className="min-w-0 flex-1">
         <p className="text-xs font-bold text-violet-500 uppercase tracking-wide">Conquista Desbloqueada!</p>
-        <p className="font-black text-gray-900">{achievement.title}</p>
-        <p className="text-xs text-gray-400 font-semibold">{achievement.desc}</p>
+        <p className="font-black text-gray-900 leading-tight">{achievement.title}</p>
+        <p className="text-xs text-gray-400 font-semibold leading-snug">{achievement.desc}</p>
       </div>
     </motion.div>
   );
@@ -360,7 +360,7 @@ export default function App() {
         //   Rush = multiplicador mais baixo (5 min → score alto, XP difícil de acumular).
         //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
         //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
-        const MODE_XP_MULT = { rush: 0.18, survival: 0.30, speed: 0.25, daily: 0.40, zen: 0, review: 0.25 };
+        const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0, review: 0.16 };
         const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
         const xp = (prev.xp || 0) + gameXp;
 

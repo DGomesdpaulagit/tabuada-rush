@@ -40,19 +40,25 @@ export function getDiffLevel(questionsAnswered) {
   return 1;
 }
 
-// Gera questões para o Modo Revisão: foca nas tabuadas com maior taxa de erro.
-// Se o usuário tem poucos dados (< 2 tentativas por tabuada), usa pool completo.
+// Gera questões para o Modo Revisão com score de dificuldade composto:
+//   50% taxa de erro  |  30% tempo médio de resposta  |  20% volume absoluto de erros
+// Se houver poucos dados (< 2 tentativas por tabuada), usa pool padrão.
 export function getRevisionQuestions(tableStats, count = 15) {
   const entries = Object.entries(tableStats || {})
-    .map(([a, s]) => ({
-      a: Number(a),
-      errRate: s.wrong / Math.max(s.correct + s.wrong, 1),
-      total: s.correct + s.wrong,
-    }))
+    .map(([a, s]) => {
+      const total = (s.correct || 0) + (s.wrong || 0);
+      const errRate = total > 0 ? (s.wrong || 0) / total : 0;
+      // avgMs: tempo médio por acerto — mais lento = mais difícil (cap 6000ms)
+      const avgMs = (s.count || 0) > 0 ? (s.totalMs || 0) / s.count : 3000;
+      const msScore = Math.min(avgMs / 6000, 1);
+      // volume absoluto de erros normalizado (cap 80 erros)
+      const wrongVol = Math.min((s.wrong || 0) / 80, 1);
+      const difficulty = errRate * 0.5 + msScore * 0.3 + wrongVol * 0.2;
+      return { a: Number(a), difficulty, total };
+    })
     .filter((t) => t.total >= 2)
-    .sort((a, b) => b.errRate - a.errRate);
+    .sort((a, b) => b.difficulty - a.difficulty);
 
-  // Top 3–5 tabuadas com mais erros, ou fallback com pool padrão
   const pool =
     entries.length >= 2
       ? entries.slice(0, Math.min(5, entries.length)).map((t) => t.a)

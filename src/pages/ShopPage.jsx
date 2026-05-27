@@ -186,7 +186,7 @@ export default function ShopPage({ onBack }) {
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-bold px-5 py-3 rounded-2xl shadow-xl z-50 whitespace-nowrap"
+            className="fixed bottom-6 left-4 right-4 max-w-sm mx-auto bg-gray-900 text-white text-sm font-bold px-5 py-3 rounded-2xl shadow-xl z-50 text-center"
           >
             {toastMsg}
           </motion.div>

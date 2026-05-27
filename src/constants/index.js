@@ -19,7 +19,7 @@ export const MODES = {
     lives: null,
     questions: null,
     bonusTime: 1,
-    xpMultiplier: 0.18,
+    xpMultiplier: 0.12,
     group: 'main',
   },
   survival: {
@@ -37,7 +37,7 @@ export const MODES = {
     lives: 3,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0.30,
+    xpMultiplier: 0.20,
     group: 'main',
   },
   speed: {
@@ -55,7 +55,7 @@ export const MODES = {
     lives: null,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0.25,
+    xpMultiplier: 0.16,
     group: 'main',
   },
   daily: {
@@ -73,7 +73,7 @@ export const MODES = {
     lives: null,
     questions: 20,
     bonusTime: 0,
-    xpMultiplier: 0.40,
+    xpMultiplier: 0.28,
     group: 'main',
   },
   // ── MODOS DE TREINO — aprendizado sem pressão competitiva ─────────────────
@@ -110,7 +110,7 @@ export const MODES = {
     lives: null,
     questions: 15,        // 15 questões focadas nas tabuadas mais erradas
     bonusTime: 0,
-    xpMultiplier: 0.25,   // estudo focado — XP médio
+    xpMultiplier: 0.16,   // estudo focado — XP médio
     group: 'training',
   },
 };

@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.1.0] — 2026-05-27 — MODOS ZEN & REVISÃO, MASCOTE, INSANE COMBO, PARTÍCULAS, PWA
+
+### Adicionado — Modos de Treino
+- **Modo Zen**: treino livre sem timer/vidas/pontuação/XP — botão "Encerrar Treino" manual
+- **Modo Revisão**: 15 questões focadas nas tabuadas com maior taxa de erro (`getRevisionQuestions`)
+- `TRAINING_MODE_LIST`: seção "Treino" separada no menu (não mistura com os 4 modos principais)
+- `MODES.zen` e `MODES.review` em `constants/index.js`; `getRevisionQuestions` em `utils/index.js`
+
+### Adicionado — Mascote Matemático
+- Personagem emoji no GamePage que reage em tempo real: 🤓 idle · 🤩 acerto · 😬 erro · 🔥 combo · 🤯 INSANE
+- Animação spring suave com Framer Motion (AnimatePresence mode="wait")
+
+### Adicionado — INSANE COMBO!
+- Streak ≥ 10 (múltiplo de 5): texto "🤯 INSANE COMBO! ×N" com gradient roxo-rosa
+- Screen shake: container oscila em X via Framer Motion ao INSANE COMBO
+- Combo padrão (streak múltiplo de 5, < 10): mantido com amber/orange
+
+### Adicionado — Explosão de Partículas (Level Up)
+- Ao subir de nível: 28 partículas coloridas explodem do centro da tela (1,4s)
+- Texto "LEVEL UP!" animado com badge do novo nível
+
+### Adicionado — PWA Install Prompt
+- Captura `beforeinstallprompt` do browser
+- Banner "Instalar o App" aparece após 3s no menu
+- Dispara `deferredPrompt.prompt()` no click; banner dismissível
+
+### Modificado — ResultsPage
+- Nova stat "Tempo Médio/Resp." (avgMs em segundos) — só exibe se dado disponível
+- Nova stat "XP Ganho" — calculado com multiplicador por modo, oculto em Zen
+
+### Adicionado — StatsPage
+- Seção "Erros — Últimos 7 Dias": gráfico de barras verticais com erros/dia da semana
+
+---
+
 ## [3.0.0] — 2026-05-27 — CALIBRAÇÃO v3.0: XP POR MODO, QI MAIS DIFÍCIL, RESET
 
 ### Modificado — Sistema de XP

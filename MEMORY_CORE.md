@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-27  
-**Versão:** 3.0.0  
-**Status:** ✅ Calibração v3.0 completa. Build limpo. Deploy Vercel disparado.  
+**Versão:** 3.1.0  
+**Status:** ✅ v3.1 completa. Build limpo. Deploy Vercel disparado.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -77,19 +77,24 @@
   - `MissionsPage.jsx`: progresso, resgates, badge de notificação no menu
   - `constants/seasons.js` + `SeasonsPage.jsx`: Temporada 1 "Despertar Matemático", trilha 10 marcos, XP separado
   - `handleGameEnd` integrado: coins earned, season XP, missions update a cada partida
+- [x] **[v3.1] Modos Zen e Revisão, mascote, INSANE COMBO, partículas level-up, PWA**
+  - `MODES.zen`: treino livre, XP zero, botão "Encerrar Treino"
+  - `MODES.review`: 15 questões focadas nas piores tabuadas (`getRevisionQuestions`)
+  - `TRAINING_MODE_LIST`: seção "Treino" separada no menu
+  - GamePage: mascote reativo (🤓/🤩/😬/🔥/🤯), INSANE COMBO ao streak ≥ 10, screen shake
+  - ResultsPage: stat "Tempo Médio/Resp." + "XP Ganho"
+  - StatsPage: gráfico "Erros — Últimos 7 Dias" (barras por dia da semana)
+  - App: `LevelUpBurst` (28 partículas coloridas ao subir nível), `InstallBanner` (PWA)
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — PRIORIDADES (v3.0 features)
+## 🎯 PRÓXIMA SESSÃO — PRIORIDADES (v3.2+)
 
-1. **Modo Zen** — sem timer, sem pontuação, treinamento livre (não ganha XP)
-2. **Animação level-up** — explosão de partículas ao subir de nível
-3. **Mascote matemático** — personagem pequeno que reage ao acerto/erro/combo
-4. **INSANE COMBO!** — texto épico + screen shake ao atingir combo alto
-5. **Gráfico de tempo médio de resposta** — por partida no ResultsPage
-6. **Histórico semanal de erros** — lista visual dos erros da semana
-7. **Modo Revisão** — foca nas tabuadas com maior taxa de erro do jogador
-8. **PWA install prompt** — banner para instalar o app
+1. **Leaderboard global** — Supabase rankings por modo
+2. **Compartilhar resultado** — imagem gerada para redes sociais
+3. **Notificação de missão expirando** — push antes de resetar sem completar
+4. **Expansão da loja** — mais itens (avatares, efeitos de partícula)
+5. **Streak calendar heatmap** — calendário visual de dias jogados
 
 ---
 

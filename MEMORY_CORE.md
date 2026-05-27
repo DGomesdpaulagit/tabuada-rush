@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-27  
-**Versão:** 2.12.0  
-**Status:** ✅ Catálogo de Precisão entregue (precisão, velocidade, erros, por tabuada, histórico). Build limpo.  
+**Versão:** 2.13.0  
+**Status:** ✅ Dashboards de Acertos e Erros adicionados como sub-páginas internas da StatsPage. Build limpo.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -63,15 +63,20 @@
 - [x] **[v2.11] `progressLog`** no storage + `detectProgressEvents()` (marcos de nível/XP/ofensiva/recorde) anexados no `handleGameEnd`
 - [x] **[v2.12 — Fase 5/Bloco 9] Catálogo de Precisão** (`AccuracyCatalogPage`, acesso dentro da Estatísticas): precisão (geral/semana/mês/modo), velocidade, erros, precisão por tabuada, histórico (LineChart)
 - [x] **[v2.12] `tableStats`** no storage — GamePage registra por questão (`{a,b,correct,ms}`) → `handleGameEnd` agrega por tabuada (fator `a`)
+- [x] **[v2.13 — Bloco 10] Dashboards de Acertos e Erros** — sub-páginas internas da StatsPage: botões "Acertos" (emerald) e "Erros" (rose) na StatsPage → `HitsPage.jsx` / `ErrorsPage.jsx`
+  - Filtros: Período (Hoje/Mês/Ano/Todos) + seletor de mês + Modo
+  - Texto inteligente automático gerado a partir dos dados reais no topo
+  - Gráficos de evolução (precisão/erros por partida, LineChart), barras por modo, barras por tabuada (erros)
+  - KPI cards, barra de taxa visual, destaques (maior sequência / tabuada mais difícil)
 
 ---
 
 ## 🎯 PRÓXIMA SESSÃO — PRIORIDADES
 
-1. Testar RankingPage em browser real (transições Framer Motion)
-2. Blocos futuros: loja, moedas, recompensas avançadas, temporadas, sistema social, dashboard, análise inteligente, gráficos avançados, catálogo completo, marketplace, missões
+1. Testar dashboards Acertos/Erros em browser real (jogar partidas para popular dados)
+2. Blocos futuros: loja, moedas, recompensas avançadas, temporadas, sistema social, leaderboard global, marketplace, missões
 3. **Leaderboard global** — usando Supabase (future feature)
-4. Possível polish: animação ao subir de classificação / nível; auto-scroll ao personagem atual
+4. Economia/Loja (moedas — `coins: 0` já existe no schema)
 
 ---
 
@@ -95,6 +100,8 @@
 | `src/contexts/AuthContext.jsx` | Auth state + signIn/signUp/signOut |
 | `src/contexts/AppContext.jsx` | Data state + cloud sync |
 | `src/services/sync.js` | loadCloudData + saveCloudData |
+| `src/pages/HitsPage.jsx` | Dashboard de Acertos (sub-página interna de StatsPage) |
+| `src/pages/ErrorsPage.jsx` | Dashboard de Erros (sub-página interna de StatsPage) |
 | `src/constants/index.js` | MODES, LEVELS, ACHIEVEMENTS |
 | `src/utils/index.js` | getDailyQuestions, calcPoints, checkNewAchievements |
 | `SUPABASE_SETUP.md` | Guia passo a passo para configurar backend |
@@ -107,7 +114,7 @@
 Ao concluir cada bloco/sessão: (1) registros completos (.md = vault Obsidian),
 (2) commit + `git push origin main`, (3) deploy Vercel AUTOMÁTICO via integração Git
 (o push dispara — não usar CLI, token expirou), (4) resumo final ao usuário: o que foi
-feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`.
+feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do projeto
 
 ---
 

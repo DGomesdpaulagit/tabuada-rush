@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.13.0] — 2026-05-27 — DASHBOARDS DE ACERTOS E ERROS (BLOCO 10)
+
+### Adicionado
+- **Dashboard de Acertos** (`pages/HitsPage.jsx`) — sub-página interna da StatsPage: texto inteligente automático (topo), filtros (Período: Hoje/Mês/Ano/Todos + seletor de mês + Modo), KPI cards (Precisão, Total Acertos, Melhor Sessão, Partidas), barra visual de taxa de acerto, gráfico de evolução da precisão (LineChart), precisão por modo (barras animadas), destaque de maior sequência
+- **Dashboard de Erros** (`pages/ErrorsPage.jsx`) — sub-página interna da StatsPage: texto inteligente automático (construtivo), mesmos filtros, KPI cards (Taxa de Erro, Total Erros, Partidas, Tabuada Difícil), barra visual de taxa de erro, gráfico de evolução dos erros (LineChart), erros por modo (barras coloridas por severidade), erros por tabuada (barras do histório global), destaque da tabuada mais difícil
+- Dois botões de acesso (`CheckCircle` emerald / `XCircle` rose) na StatsPage, logo abaixo dos 4 cards principais
+
+### Técnico
+- Navegação via `view` state local em `StatsPage` (`'main' | 'hits' | 'errors'`) — sem rota nova no App.jsx, sem remover nada existente
+- Filtros reativos via `useMemo`; meses disponíveis calculados a partir dos dados reais
+
+### Mantido
+- Toda a StatsPage original intacta (summary cards, análise inteligente, resumo mensal, gráfico diário, por modo, exportação)
+- Identidade visual inalterada (paleta violeta/emerald/rose, Nunito, `rounded-3xl`)
+
+---
+
 ## [2.12.0] — 2026-05-27 — CATÁLOGO DE PRECISÃO (FASE 5 / BLOCO 9)
 
 ### Adicionado

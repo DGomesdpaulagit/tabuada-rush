@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair, CheckCircle, XCircle } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -7,6 +8,8 @@ import { useApp } from '../contexts/AppContext';
 import { getAccuracy, formatDate } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
+import HitsPage from './HitsPage';
+import ErrorsPage from './ErrorsPage';
 
 // Cores por tom das observações da análise
 const TONE = {
@@ -48,6 +51,12 @@ function downloadFile(content, filename, type) {
 }
 
 export default function StatsPage({ onBack, onNavigate }) {
+  const [view, setView] = useState('main'); // 'main' | 'hits' | 'errors'
+
+  // Sub-páginas internas — renderizadas no lugar desta página
+  if (view === 'hits')   return <HitsPage   onBack={() => setView('main')} />;
+  if (view === 'errors') return <ErrorsPage onBack={() => setView('main')} />;
+
   const { data } = useApp();
   const sessions = data.sessions || [];
   const totalAnswers = (data.totalCorrect || 0) + (data.totalWrong || 0);
@@ -197,6 +206,46 @@ export default function StatsPage({ onBack, onNavigate }) {
           </div>
         </motion.button>
       )}
+
+      {/* Dashboards: Acertos / Erros */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.22 }}
+        className="grid grid-cols-2 gap-3"
+      >
+        {/* Acertos */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setView('hits')}
+          className="flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-emerald-100 hover:shadow-emerald-200 transition-shadow"
+        >
+          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+            <CheckCircle size={16} />
+          </span>
+          <div>
+            <p className="text-sm font-black leading-tight">Acertos</p>
+            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Precisão e evolução</p>
+          </div>
+        </motion.button>
+
+        {/* Erros */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setView('errors')}
+          className="flex flex-col items-start gap-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-rose-100 hover:shadow-rose-200 transition-shadow"
+        >
+          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+            <XCircle size={16} />
+          </span>
+          <div>
+            <p className="text-sm font-black leading-tight">Erros</p>
+            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Dificuldades e falhas</p>
+          </div>
+        </motion.button>
+      </motion.div>
 
       {/* Análise Inteligente */}
       <motion.div

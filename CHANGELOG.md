@@ -4,6 +4,25 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.0.0] — 2026-05-27 — CALIBRAÇÃO v3.0: XP POR MODO, QI MAIS DIFÍCIL, RESET
+
+### Modificado — Sistema de XP
+- XP é agora **100% baseado em performance** (score × multiplicador por modo)
+- Rush `0.18` · Survival `0.30` · Speed `0.25` · Daily `0.40`  — Rush penalizado pois 5min gera scores altos facilmente
+- **Removidos** bônus de streak diário e bônus de Desafio Diário — XP é mérito do jogador
+- Progresso LEVELS recalibrado para curva ×2: nível 5 em ~1 mês, nível 10 em ~5 meses, nível 28 = lendário
+
+### Modificado — QI Matemático (mais difícil)
+- `computeQI`: caps elevados para exigir muito mais jogo antes de chegar ao QI máximo
+  - `speedBest`: 30 → 80 respostas  |  `bestDayStreak`: 30 → 120 dias  |  `totalGames`: 50 → 300 partidas
+- Só jogadores muito dedicados chegam perto de QI 200
+
+### Adicionado — Reset de Progresso
+- **`SettingsPage`**: seção "Zona de Perigo" com botão "Resetar Progresso"
+- Confirmação em 2 etapas (anti-clique acidental) — apaga localStorage e recarrega o app
+
+---
+
 ## [2.14.0] — 2026-05-27 — FASE 7: MOEDAS, LOJA, MISSÕES E TEMPORADAS
 
 ### Adicionado — Sistema de Moedas e Loja

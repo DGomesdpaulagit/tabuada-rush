@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-27  
-**Versão:** 2.14.0  
-**Status:** ✅ Fase 7 completa (Moedas, Loja, Missões, Temporadas). Build limpo.  
+**Versão:** 3.0.0  
+**Status:** ✅ Calibração v3.0 completa. Build limpo. Deploy Vercel disparado.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -64,6 +64,12 @@
 - [x] **[v2.12 — Fase 5/Bloco 9] Catálogo de Precisão** (`AccuracyCatalogPage`, acesso dentro da Estatísticas): precisão (geral/semana/mês/modo), velocidade, erros, precisão por tabuada, histórico (LineChart)
 - [x] **[v2.12] `tableStats`** no storage — GamePage registra por questão (`{a,b,correct,ms}`) → `handleGameEnd` agrega por tabuada (fator `a`)
 - [x] **[v2.13 — Bloco 10] Dashboards de Acertos e Erros** — sub-páginas internas da StatsPage
+- [x] **[v3.0 — Calibração] XP puro por performance + QI mais difícil + Reset de progresso**
+  - XP = score × multiplicador por modo (Rush 0.18, Survival 0.30, Speed 0.25, Daily 0.40)
+  - Removidos bônus de streak/dia — XP é 100% mérito do jogador
+  - LEVELS com thresholds ×2 (equilíbrio): nível 5 em ~1 mês, nível 10 em ~5 meses
+  - computeQI mais difícil: caps speedBest→80, totalGames→300, bestDayStreak→120
+  - SettingsPage: botão "Resetar Progresso" com confirmação de 2 etapas (Zona de Perigo)
 - [x] **[v2.14 — FASE 7] Sistema de Moedas, Loja, Missões e Temporadas**
   - `constants/shop.js`: 4 raridades, 12 itens (molduras/títulos/temas de card)
   - `ShopPage.jsx`: compra e equipa itens; cosméticos refletem no card de perfil (MenuPage)
@@ -74,12 +80,16 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — PRIORIDADES
+## 🎯 PRÓXIMA SESSÃO — PRIORIDADES (v3.0 features)
 
-1. **Testar Fase 7 em browser real** — ganhar moedas jogando, comprar item na loja, equipar cosmético, completar missão diária, verificar trilha da temporada
-2. **Expansão de conteúdo** — mais itens na loja (avatares, efeitos de partícula), mais missões no pool
-3. **Leaderboard global** — Supabase rankings (pendente da Fase original)
-4. **Notificações de missão** — push quando missão diária está prestes a expirar sem ser completada
+1. **Modo Zen** — sem timer, sem pontuação, treinamento livre (não ganha XP)
+2. **Animação level-up** — explosão de partículas ao subir de nível
+3. **Mascote matemático** — personagem pequeno que reage ao acerto/erro/combo
+4. **INSANE COMBO!** — texto épico + screen shake ao atingir combo alto
+5. **Gráfico de tempo médio de resposta** — por partida no ResultsPage
+6. **Histórico semanal de erros** — lista visual dos erros da semana
+7. **Modo Revisão** — foca nas tabuadas com maior taxa de erro do jogador
+8. **PWA install prompt** — banner para instalar o app
 
 ---
 

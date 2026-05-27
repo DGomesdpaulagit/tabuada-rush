@@ -37,6 +37,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 ### Adicionado — StatsPage
 - Seção "Erros — Últimos 7 Dias": gráfico de barras verticais com erros/dia da semana
 
+### Adicionado — Notificação de Missão Expirando
+- `maybeMissionExpireReminder(missionsData)` em `src/lib/notify.js`
+- ≤ 2h antes da meia-noite: notifica imediatamente (missões pendentes ou resgates disponíveis)
+- 2–6h: agenda `setTimeout` para 1h antes da meia-noite
+- Deduplicação por dia via localStorage; mensagens diferenciadas por estado
+
+### Modificado — Reset de Progresso (Cloud)
+- `handleReset` em SettingsPage agora apaga também o campo `data` no Supabase antes de limpar localStorage
+- Evita restauração automática dos dados ao fazer login novamente
+- UI: alerta "☁️ Seus dados na nuvem também serão apagados" quando o usuário está logado
+- Estado `loading` com feedback visual durante o processo
+
 ---
 
 ## [3.0.0] — 2026-05-27 — CALIBRAÇÃO v3.0: XP POR MODO, QI MAIS DIFÍCIL, RESET

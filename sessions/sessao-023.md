@@ -2,7 +2,7 @@
 
 **Data:** 2026-05-27  
 **Versão resultante:** 3.1.0  
-**Status:** ✅ Completa — build limpo, commit `2100d4e`, Vercel disparado
+**Status:** ✅ Completa — build limpo, commit `9c8f1b0`, Vercel disparado
 
 ---
 
@@ -103,13 +103,34 @@ const MASCOT = {
 - Label: dia abreviado (seg, ter...) + número do dia
 - Total da semana exibido como badge rosa
 
+### 11. Notificação de Missão Expirando
+**Arquivo:** `src/lib/notify.js` — função `maybeMissionExpireReminder(missionsData)`
+
+- Chamada em App.jsx quando o app abre (useEffect de música/notificações)
+- Verifica hora restante até meia-noite e estado das missões diárias:
+  - ≤ 2h restantes: notifica imediatamente com mensagem contextual
+  - 2–6h restantes: agenda `setTimeout` para exatamente 1h antes da meia-noite
+  - > 6h: não faz nada (usuário abrirá novamente antes)
+- Deduplica via `localStorage.setItem('tr_mission_remind_YYYY-MM-DD', '1')`
+- Mensagens diferenciadas: pendentes vs só para resgatar vs combo
+
+### 12. Reset de Progresso Aprimorado (Supabase)
+**Arquivo:** `src/pages/SettingsPage.jsx`
+
+- `handleReset` agora é assíncrono com `useCallback`
+- Se usuário logado: faz `supabase.from('profiles').update({data: null})` antes de limpar localStorage
+- Evita que o cloud sync restaure os dados ao fazer login novamente
+- UI `ResetButton`: aceita props `onReset` e `hasCloud`
+  - Mostra aviso "☁️ Seus dados na nuvem também serão apagados." quando logado
+  - Estado `loading` com texto "Apagando..."
+
 ---
 
 ## 📋 Próximos Passos (v3.2+)
 
 1. Leaderboard global (Supabase)
 2. Compartilhar resultado
-3. Notificação de missão expirando
+3. Push notifications backend (VAPID) para missões com app fechado
 4. Expansão da loja
 5. Streak calendar heatmap
 

@@ -92,7 +92,7 @@
 
 1. **Leaderboard global** — Supabase rankings por modo
 2. **Compartilhar resultado** — imagem gerada para redes sociais
-3. **Notificação de missão expirando** — push antes de resetar sem completar
+3. **Push notifications backend** — VAPID + Supabase Edge Function para missões com app fechado
 4. **Expansão da loja** — mais itens (avatares, efeitos de partícula)
 5. **Streak calendar heatmap** — calendário visual de dias jogados
 
@@ -148,7 +148,7 @@ feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do
 Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
-3. `sessions/sessao-002.md` — última sessão
+3. `sessions/sessao-023.md` — última sessão
 4. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

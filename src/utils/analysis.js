@@ -144,8 +144,11 @@ function buildMonthly(sessions, data) {
   const py = m === 0 ? y - 1 : y;
   const prevList = sessions.filter((s) => sameMonth(s, pm, py));
 
-  const accuracy = Math.round(sessAcc(monthList) * 100);
-  const prevAcc = prevList.length ? Math.round(sessAcc(prevList) * 100) : null;
+  // Precisão mensal sem Sobrevivência (lógica distinta → não comparável)
+  const monthListAcc = monthList.filter((s) => s.mode !== 'survival');
+  const prevListAcc  = prevList.filter((s) => s.mode !== 'survival');
+  const accuracy = Math.round(sessAcc(monthListAcc) * 100);
+  const prevAcc = prevListAcc.length ? Math.round(sessAcc(prevListAcc) * 100) : null;
   const avgS = Math.round(avgScore(monthList));
   const prevAvg = prevList.length ? Math.round(avgScore(prevList)) : null;
 
@@ -179,14 +182,15 @@ function buildMonthly(sessions, data) {
 export function analyzeUser(data = {}) {
   const sessions = (data.sessions || []).filter((s) => s && s.date);
   const totalGames = data.totalGames || 0;
-  const totalCorrect = data.totalCorrect || 0;
-  const totalWrong = data.totalWrong || 0;
-  const overallAcc =
-    totalCorrect + totalWrong > 0
-      ? Math.round((totalCorrect / (totalCorrect + totalWrong)) * 100)
-      : 0;
+  const totalCorrect = data.totalCorrect || 0; // mantido para seed
   const streak = data.currentStreak || 0;
   const seed = totalGames * 3 + totalCorrect; // estável por estado, varia entre usuários
+
+  // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
+  const nonSurvSessions = sessions.filter((s) => s.mode !== 'survival');
+  const nsC = nonSurvSessions.reduce((a, s) => a + (s.correct || 0), 0);
+  const nsW = nonSurvSessions.reduce((a, s) => a + (s.wrong   || 0), 0);
+  const overallAcc = nsC + nsW > 0 ? Math.round((nsC / (nsC + nsW)) * 100) : 0;
 
   // Pouca informação → estado inicial acolhedor
   if (totalGames === 0 || sessions.length === 0) {
@@ -208,8 +212,14 @@ export function analyzeUser(data = {}) {
 
   const recentScore = avgScore(recent);
   const olderScore = avgScore(older);
-  const recentAcc = sessAcc(recent);
-  const olderAcc = sessAcc(older);
+
+  // Precisão: janelas sem Sobrevivência para não distorcer as métricas
+  const nns = nonSurvSessions.length;
+  const halfNs = Math.max(1, Math.min(5, Math.floor(nns / 2)));
+  const recentNs = nonSurvSessions.slice(-halfNs);
+  const olderNs  = nns >= halfNs * 2 ? nonSurvSessions.slice(-halfNs * 2, -halfNs) : [];
+  const recentAcc = sessAcc(recentNs);
+  const olderAcc  = sessAcc(olderNs);
 
   // Modo favorito (mais jogado) e mais forte (maior precisão, mín. 2 partidas)
   const counts = {};
@@ -234,10 +244,10 @@ export function analyzeUser(data = {}) {
       insights.push({ icon: '📊', tone: 'neutral', text: pick(EVOL_STABLE, seed) });
   }
 
-  // Precisão
+  // Precisão (calculada sem Sobrevivência)
   if (overallAcc >= 90)
     insights.push({ icon: '🎯', tone: 'positive', text: pick(PREC_HIGH, seed) });
-  else if (older.length && recentAcc > olderAcc + 0.05)
+  else if (olderNs.length && recentAcc > olderAcc + 0.05)
     insights.push({ icon: '🎯', tone: 'positive', text: pick(PREC_UP, seed) });
   else if (overallAcc >= 70)
     insights.push({ icon: '🎯', tone: 'neutral', text: pick(PREC_OK, seed) });

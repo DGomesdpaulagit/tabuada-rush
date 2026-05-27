@@ -61,33 +61,37 @@ export default function AccuracyCatalogPage({ onBack }) {
   const { data } = useApp();
   const sessions = (data.sessions || []).filter((s) => s && s.date);
 
-  const totalCorrect = data.totalCorrect || 0;
-  const totalWrong = data.totalWrong || 0;
+  // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
+  // Ainda aparece individualmente na seção "Por modo"
+  const nonSurvSessions = sessions.filter((s) => s.mode !== 'survival');
+
+  const totalCorrect = nonSurvSessions.reduce((a, s) => a + (s.correct || 0), 0);
+  const totalWrong   = nonSurvSessions.reduce((a, s) => a + (s.wrong   || 0), 0);
   const answered = totalCorrect + totalWrong;
   const overallAcc = getAccuracy(totalCorrect, answered);
   const errorRate = answered ? Math.round((totalWrong / answered) * 100) : 0;
 
-  // Janelas de tempo
+  // Janelas de tempo (sem Sobrevivência)
   const now = Date.now();
-  const week = windowStats(sessions.filter((s) => new Date(s.date).getTime() >= now - 7 * DAY));
+  const week = windowStats(nonSurvSessions.filter((s) => new Date(s.date).getTime() >= now - 7 * DAY));
   const monthly = analyzeUser(data).monthly;
 
-  // Evolução da precisão: metade recente vs metade anterior
-  const n = sessions.length;
+  // Evolução da precisão: metade recente vs metade anterior (sem Sobrevivência)
+  const n = nonSurvSessions.length;
   const half = Math.max(1, Math.min(8, Math.floor(n / 2)));
-  const recent = sessions.slice(-half);
-  const older = n >= half * 2 ? sessions.slice(-half * 2, -half) : [];
+  const recent = nonSurvSessions.slice(-half);
+  const older = n >= half * 2 ? nonSurvSessions.slice(-half * 2, -half) : [];
   const recentAcc = windowStats(recent).accuracy;
   const olderAcc = older.length ? windowStats(older).accuracy : null;
   const accDelta = olderAcc != null ? recentAcc - olderAcc : null;
 
-  // Velocidade
+  // Velocidade — todas as sessões (tempo/resposta é válido em qualquer modo)
   const speedAll = windowStats(sessions).avgMs;
   const speedRecent = windowStats(recent).avgMs;
   const speedBestMs = data.fastestAvgMs || 0;
   const speedDelta = speedAll > 0 && speedRecent > 0 ? speedRecent - speedAll : null;
 
-  // Por modo
+  // Por modo (inclui Sobrevivência individualmente)
   const perMode = MODES_META.map((m) => {
     const list = sessions.filter((s) => s.mode === m.id);
     const ws = windowStats(list);
@@ -110,8 +114,8 @@ export default function AccuracyCatalogPage({ onBack }) {
     .sort((a, b) => a.a - b.a);
   const hardest = tables.filter((t) => t.count >= 3).sort((a, b) => a.acc - b.acc)[0] || null;
 
-  // Histórico de precisão (por partida, últimas 20)
-  const chartData = sessions.slice(-20).map((s, i) => {
+  // Histórico de precisão (por partida, últimas 20 — sem Sobrevivência)
+  const chartData = nonSurvSessions.slice(-20).map((s, i) => {
     const tot = (s.correct || 0) + (s.wrong || 0);
     return {
       name: s.date ? formatDate(s.date) : `#${i + 1}`,
@@ -140,7 +144,7 @@ export default function AccuracyCatalogPage({ onBack }) {
         </button>
         <div>
           <h2 className="text-xl font-black text-gray-900">Catálogo de Precisão</h2>
-          <p className="text-sm text-gray-400 font-semibold">Seu desempenho matemático real</p>
+          <p className="text-sm text-gray-400 font-semibold">Modos clássicos (Sobrevivência exibida separadamente)</p>
         </div>
       </div>
 

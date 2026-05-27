@@ -32,7 +32,10 @@ function filterSessions(sessions, timeFilter, monthFilter, yearFilter, modeFilte
     out = out.filter(s => s.date && new Date(s.date).getFullYear() === yearFilter);
   }
 
-  if (modeFilter !== 'todos') {
+  // "Todos" exclui Sobrevivência: lógica diferente (termina em 3 erros) → stats individuais
+  if (modeFilter === 'todos') {
+    out = out.filter(s => s.mode !== 'survival');
+  } else {
     out = out.filter(s => s.mode === modeFilter);
   }
   return out;
@@ -302,6 +305,11 @@ export default function ErrorsPage({ onBack }) {
               </button>
             ))}
           </div>
+          {modeFilter === 'todos' && (
+            <p className="text-xs text-amber-600 font-semibold mt-2">
+              ⚡ Sobrevivência aparece separadamente — selecione para ver suas estatísticas individuais
+            </p>
+          )}
         </div>
       </motion.div>
 

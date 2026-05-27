@@ -59,8 +59,11 @@ export default function StatsPage({ onBack, onNavigate }) {
 
   const { data } = useApp();
   const sessions = data.sessions || [];
-  const totalAnswers = (data.totalCorrect || 0) + (data.totalWrong || 0);
-  const accuracy = getAccuracy(data.totalCorrect || 0, totalAnswers);
+  // Precisão Global exclui Sobrevivência (termina após 3 erros → distorce a taxa)
+  const nonSurvSessions = sessions.filter(s => s.mode !== 'survival');
+  const nsCorrect = nonSurvSessions.reduce((sum, s) => sum + (s.correct || 0), 0);
+  const nsWrong   = nonSurvSessions.reduce((sum, s) => sum + (s.wrong   || 0), 0);
+  const accuracy = getAccuracy(nsCorrect, nsCorrect + nsWrong);
   const analysis = analyzeUser(data);
   const monthly = analysis.monthly;
 

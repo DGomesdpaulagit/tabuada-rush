@@ -24,7 +24,13 @@ const DEFAULTS = {
   streakGoalBase: 0,         // valor da ofensiva quando a meta atual foi definida (base do progresso)
   streakRewardsClaimed: [],  // marcos de recompensa (40/100/250/365) já resgatados
   pendingStreakReward: null, // marco com recompensa pendente de escolha (ou null)
-  coins: 0,                  // moedas do jogo (economia — uso completo em bloco futuro)
+  coins: 0,                  // moedas do jogo (economia)
+  ownedItems: [],            // ids dos itens comprados na loja
+  equippedItems: {},         // { frame, card, title } → id do item equipado em cada slot
+  missionsData: null,        // { daily, weekly, monthly } — controlado por utils/missions.js
+  seasonXp: 0,               // XP exclusivo da temporada (separado do XP de nível)
+  seasonRewards: [],         // xpRequired[] de recompensas de temporada já resgatadas
+  seasonId: 'temporada_1',   // id da temporada ativa no momento do save
   qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50

@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, TrendingUp } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, TrendingUp, ShoppingBag, Map, Leaf } from 'lucide-react';
 import { MODE_LIST, LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
 import { analyzeUser } from '../utils/analysis';
+import { SHOP_ITEM_MAP } from '../constants/shop';
+import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
 
 const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star };
@@ -28,6 +30,16 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const goalPct = streakGoal ? Math.min((metaProgress / streakGoal) * 100, 100) : 0;
   const qiInfo = getQiInfo(data);
   const analysisHeadline = analyzeUser(data).headline;
+
+  // ── Cosméticos equipados ───────────────────────────────────────────────────
+  const equippedItems  = data.equippedItems || {};
+  const equippedFrame  = equippedItems.frame  ? SHOP_ITEM_MAP[equippedItems.frame]  : null;
+  const equippedCard   = equippedItems.card   ? SHOP_ITEM_MAP[equippedItems.card]   : null;
+  const equippedTitle  = equippedItems.title  ? SHOP_ITEM_MAP[equippedItems.title]  : null;
+  const frameStyle     = equippedFrame?.frameStyle || '';
+  const cardGradient   = equippedCard?.cardGradient  || 'from-violet-600 to-purple-600';
+  const displayTitle   = equippedTitle?.displayTitle  || level.title;
+  const unclaimedMissions = countUnclaimedMissions(data.missionsData);
 
   const container = {
     hidden: {},
@@ -117,7 +129,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-3xl p-5 text-white shadow-lg shadow-violet-200"
+        className={`bg-gradient-to-r ${cardGradient} rounded-3xl p-5 text-white shadow-lg shadow-violet-200`}
       >
         {/* Topo: avatar + título/nível + XP total */}
         <div className="flex items-center gap-3 mb-3">
@@ -125,13 +137,13 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
-            className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0"
+            className={`w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0 ${frameStyle}`}
           >
             {level.badge}
           </motion.div>
           <div className="flex-1 min-w-0">
-            <p className="text-violet-200 text-xs font-bold uppercase tracking-wide truncate">
-              {level.title}
+            <p className="text-white/70 text-xs font-bold uppercase tracking-wide truncate">
+              {displayTitle}
             </p>
             <p className="text-2xl font-black leading-tight truncate">{level.name}</p>
             {/* Classificação intelectual (Ranking de QI) — pequena e integrada */}
@@ -284,6 +296,40 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             );
           })}
         </motion.div>
+      </div>
+
+      {/* ── Fase 7: Loja · Missões · Temporada ──────────────────────────── */}
+      <div className="grid grid-cols-3 gap-2">
+        <button
+          onClick={() => onNavigate('shop')}
+          className="flex flex-col items-center gap-1.5 py-3 bg-amber-50 border border-amber-200 rounded-2xl hover:bg-amber-100 transition-colors active:scale-[0.97]"
+        >
+          <ShoppingBag size={18} className="text-amber-600" />
+          <span className="text-xs font-black text-amber-700">Loja</span>
+        </button>
+
+        <div className="relative">
+          <button
+            onClick={() => onNavigate('missions')}
+            className="w-full flex flex-col items-center gap-1.5 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl hover:bg-emerald-100 transition-colors active:scale-[0.97]"
+          >
+            <Map size={18} className="text-emerald-600" />
+            <span className="text-xs font-black text-emerald-700">Missões</span>
+          </button>
+          {unclaimedMissions > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 z-10 shadow-sm">
+              {unclaimedMissions}
+            </span>
+          )}
+        </div>
+
+        <button
+          onClick={() => onNavigate('seasons')}
+          className="flex flex-col items-center gap-1.5 py-3 bg-violet-50 border border-violet-200 rounded-2xl hover:bg-violet-100 transition-colors active:scale-[0.97]"
+        >
+          <Leaf size={18} className="text-violet-600" />
+          <span className="text-xs font-black text-violet-700">Temporada</span>
+        </button>
       </div>
 
       {/* Action buttons */}

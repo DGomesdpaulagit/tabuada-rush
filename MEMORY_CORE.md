@@ -7,8 +7,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-27  
-**Versão:** 2.13.0  
-**Status:** ✅ Dashboards de Acertos e Erros adicionados como sub-páginas internas da StatsPage. Build limpo.  
+**Versão:** 2.14.0  
+**Status:** ✅ Fase 7 completa (Moedas, Loja, Missões, Temporadas). Build limpo.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -63,20 +63,23 @@
 - [x] **[v2.11] `progressLog`** no storage + `detectProgressEvents()` (marcos de nível/XP/ofensiva/recorde) anexados no `handleGameEnd`
 - [x] **[v2.12 — Fase 5/Bloco 9] Catálogo de Precisão** (`AccuracyCatalogPage`, acesso dentro da Estatísticas): precisão (geral/semana/mês/modo), velocidade, erros, precisão por tabuada, histórico (LineChart)
 - [x] **[v2.12] `tableStats`** no storage — GamePage registra por questão (`{a,b,correct,ms}`) → `handleGameEnd` agrega por tabuada (fator `a`)
-- [x] **[v2.13 — Bloco 10] Dashboards de Acertos e Erros** — sub-páginas internas da StatsPage: botões "Acertos" (emerald) e "Erros" (rose) na StatsPage → `HitsPage.jsx` / `ErrorsPage.jsx`
-  - Filtros: Período (Hoje/Mês/Ano/Todos) + seletor de mês + Modo
-  - Texto inteligente automático gerado a partir dos dados reais no topo
-  - Gráficos de evolução (precisão/erros por partida, LineChart), barras por modo, barras por tabuada (erros)
-  - KPI cards, barra de taxa visual, destaques (maior sequência / tabuada mais difícil)
+- [x] **[v2.13 — Bloco 10] Dashboards de Acertos e Erros** — sub-páginas internas da StatsPage
+- [x] **[v2.14 — FASE 7] Sistema de Moedas, Loja, Missões e Temporadas**
+  - `constants/shop.js`: 4 raridades, 12 itens (molduras/títulos/temas de card)
+  - `ShopPage.jsx`: compra e equipa itens; cosméticos refletem no card de perfil (MenuPage)
+  - `constants/missions.js` + `utils/missions.js`: pools diário/semanal/mensal, LCG determinístico, reset automático
+  - `MissionsPage.jsx`: progresso, resgates, badge de notificação no menu
+  - `constants/seasons.js` + `SeasonsPage.jsx`: Temporada 1 "Despertar Matemático", trilha 10 marcos, XP separado
+  - `handleGameEnd` integrado: coins earned, season XP, missions update a cada partida
 
 ---
 
 ## 🎯 PRÓXIMA SESSÃO — PRIORIDADES
 
-1. Testar dashboards Acertos/Erros em browser real (jogar partidas para popular dados)
-2. Blocos futuros: loja, moedas, recompensas avançadas, temporadas, sistema social, leaderboard global, marketplace, missões
-3. **Leaderboard global** — usando Supabase (future feature)
-4. Economia/Loja (moedas — `coins: 0` já existe no schema)
+1. **Testar Fase 7 em browser real** — ganhar moedas jogando, comprar item na loja, equipar cosmético, completar missão diária, verificar trilha da temporada
+2. **Expansão de conteúdo** — mais itens na loja (avatares, efeitos de partícula), mais missões no pool
+3. **Leaderboard global** — Supabase rankings (pendente da Fase original)
+4. **Notificações de missão** — push quando missão diária está prestes a expirar sem ser completada
 
 ---
 
@@ -102,6 +105,13 @@
 | `src/services/sync.js` | loadCloudData + saveCloudData |
 | `src/pages/HitsPage.jsx` | Dashboard de Acertos (sub-página interna de StatsPage) |
 | `src/pages/ErrorsPage.jsx` | Dashboard de Erros (sub-página interna de StatsPage) |
+| `src/pages/ShopPage.jsx` | Loja de cosméticos (compra/equipa) |
+| `src/pages/MissionsPage.jsx` | Missões diárias/semanais/mensais |
+| `src/pages/SeasonsPage.jsx` | Trilha de temporada com recompensas |
+| `src/constants/shop.js` | Itens da loja, raridades, categorias |
+| `src/constants/missions.js` | Pools de missões por período |
+| `src/constants/seasons.js` | Temporadas, calcSeasonXp |
+| `src/utils/missions.js` | Lógica completa de missões |
 | `src/constants/index.js` | MODES, LEVELS, ACHIEVEMENTS |
 | `src/utils/index.js` | getDailyQuestions, calcPoints, checkNewAchievements |
 | `SUPABASE_SETUP.md` | Guia passo a passo para configurar backend |

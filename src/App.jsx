@@ -20,6 +20,11 @@ import CatalogPage from './pages/CatalogPage';
 import AccuracyCatalogPage from './pages/AccuracyCatalogPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
+import ShopPage from './pages/ShopPage';
+import MissionsPage from './pages/MissionsPage';
+import SeasonsPage from './pages/SeasonsPage';
+import { calcSeasonXp } from './constants/seasons';
+import { updateMissions, getNewlyCompleted } from './utils/missions';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
 
@@ -265,6 +270,18 @@ export default function App() {
         const streakBonus = currentStreak > 1 ? Math.min(currentStreak, 30) : 0;
         const xp = (prev.xp || 0) + gameXp + dailyBonus + streakBonus;
 
+        // ── Moedas ganhas nesta partida ─────────────────────────────────────
+        const coinsEarned =
+          Math.max(1, Math.floor((result.score || 0) * 0.1)) +
+          (result.mode === 'daily' ? 5 : 0) +
+          (currentStreak > 1 ? 2 : 0);
+
+        // ── XP de temporada (separado do XP de nível) ───────────────────────
+        const earnedSeasonXp = calcSeasonXp(result, currentStreak);
+
+        // ── Atualiza progresso das missões ──────────────────────────────────
+        const updatedMissionsData = updateMissions(prev.missionsData, result, currentStreak);
+
         const session = {
           mode: result.mode,
           score: result.score,
@@ -324,6 +341,9 @@ export default function App() {
           },
           currentDailyDate: result.mode === 'daily' ? today : prev.currentDailyDate,
           currentDailyScore: result.mode === 'daily' ? result.score : prev.currentDailyScore,
+          coins: (prev.coins || 0) + coinsEarned,
+          seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
+          missionsData: updatedMissionsData,
         };
 
         // Registro de evolução: anexa os novos marcos atingidos nesta partida.
@@ -378,6 +398,23 @@ export default function App() {
         }));
         newAchievements.forEach((a, i) => {
           setTimeout(() => showAchievement(a), i * 3000);
+        });
+      }
+
+      // Missões recém-completadas → toast
+      const newlyCompletedMissions = getNewlyCompleted(data.missionsData, newData.missionsData);
+      if (newlyCompletedMissions.length) {
+        newlyCompletedMissions.forEach((m, i) => {
+          setTimeout(
+            () =>
+              showAchievement({
+                id: `_mission_${m.id}`,
+                icon: m.emoji,
+                title: `Missão: ${m.title}`,
+                desc: `+${m.reward} moedas para resgatar!`,
+              }),
+            (newAchievements.length + i) * 3000
+          );
         });
       }
 
@@ -483,6 +520,15 @@ export default function App() {
               onBack={() => setScreen('menu')}
               onNavigate={setScreen}
             />
+          )}
+          {screen === 'shop' && (
+            <ShopPage key="shop" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'missions' && (
+            <MissionsPage key="missions" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'seasons' && (
+            <SeasonsPage key="seasons" onBack={() => setScreen('menu')} />
           )}
         </AnimatePresence>
       </div>

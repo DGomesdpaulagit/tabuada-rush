@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.14.0] — 2026-05-27 — FASE 7: MOEDAS, LOJA, MISSÕES E TEMPORADAS
+
+### Adicionado — Sistema de Moedas e Loja
+- **`constants/shop.js`**: 4 raridades (comum/raro/épico/lendário), 12 itens (4 molduras, 3 títulos, 5 temas de card), `SHOP_ITEM_MAP`, `SHOP_CATEGORIES`
+- **`ShopPage.jsx`**: tabs de categoria, grid de itens com badge de raridade, compra (deduz moedas), equipar/desequipar por slot (`frame`/`card`/`title`)
+- Cosméticos aplicados no `MenuPage`: card usa gradiente do tema equipado, avatar usa ring da moldura, título do perfil vem do item de título
+
+### Adicionado — Sistema de Missões
+- **`constants/missions.js`**: pool de 11 diárias, 7 semanais, 5 mensais
+- **`utils/missions.js`**: `getActiveMissions` (reset automático), `updateMissions`, `countUnclaimedMissions`, `getNewlyCompleted`, `claimMission` — seleção determinística via LCG com seed de data
+- **`MissionsPage.jsx`**: tabs Diárias/Semanais/Mensais, countdown de reset, cards de missão com barra de progresso, botão "Resgatar" (+moedas)
+- Badge numérico vermelho no botão Missões do menu quando há recompensas pendentes
+- Toast "Missão concluída" após fim de partida quando nova missão é completada
+
+### Adicionado — Sistema de Temporadas
+- **`constants/seasons.js`**: Temporada 1 "Despertar Matemático" (mai–jul 2026), 10 marcos de recompensa (100 → 10 000 XP), `getActiveSeason()`, `calcSeasonXp()`
+- **`SeasonsPage.jsx`**: hero com gradiente, barra de XP de temporada, trilha de recompensas com estados (bloqueado/atingido/resgatável/resgatado), dica de ganho de XP
+
+### Modificado
+- **`storage.js`**: 6 novos campos em DEFAULTS (`ownedItems`, `equippedItems`, `missionsData`, `seasonXp`, `seasonRewards`, `seasonId`)
+- **`App.jsx`**: `handleGameEnd` calcula e salva `coinsEarned`, `earnedSeasonXp`, `updatedMissionsData`; 3 novas rotas (`shop`, `missions`, `seasons`)
+- **`MenuPage.jsx`**: 3 botões novos em grid-cols-3 (Loja/Missões/Temporada), cosméticos aplicados dinamicamente
+
+---
+
 ## [2.13.0] — 2026-05-27 — DASHBOARDS DE ACERTOS E ERROS (BLOCO 10)
 
 ### Adicionado

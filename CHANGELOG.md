@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [2.12.0] — 2026-05-27 — CATÁLOGO DE PRECISÃO (FASE 5 / BLOCO 9)
+
+### Adicionado
+- Página **Catálogo de Precisão** (`pages/AccuracyCatalogPage.jsx`), acessada de dentro da Estatísticas: Desempenho Matemático, Taxa de Acerto (geral/semana/mês/por modo + evolução), Velocidade (geral/recente/melhor/por modo), Erros (total/taxa/por modo), Precisão por Tabuada e Histórico de Precisão (LineChart)
+- Tracking por questão no `GamePage` → agregado em `tableStats` (desempenho por tabuada: fator `a`), no `handleGameEnd` e sincronizado com a nuvem
+- `tableStats` no storage
+- Botão "Catálogo de Precisão" dentro da `StatsPage` (rota `accuracy`)
+
+### Mantido
+- Identidade visual inalterada (paleta violeta, Nunito, cards `rounded-3xl`, Recharts no padrão existente). Sem redesign.
+
+---
+
 ## [2.11.0] — 2026-05-26 — CATÁLOGO DE PROGRESSO (FASE 5 / BLOCO 8)
 
 ### Adicionado

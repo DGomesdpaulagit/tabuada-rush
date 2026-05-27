@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -47,7 +47,7 @@ function downloadFile(content, filename, type) {
   URL.revokeObjectURL(url);
 }
 
-export default function StatsPage({ onBack }) {
+export default function StatsPage({ onBack, onNavigate }) {
   const { data } = useApp();
   const sessions = data.sessions || [];
   const totalAnswers = (data.totalCorrect || 0) + (data.totalWrong || 0);
@@ -176,6 +176,27 @@ export default function StatsPage({ onBack }) {
           delay={0.2}
         />
       </div>
+
+      {/* Catálogo de Precisão — acesso destacado */}
+      {onNavigate && (
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate('accuracy')}
+          className="flex items-center gap-3 w-full text-left bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl px-4 py-3 border border-violet-100 hover:border-violet-300 transition-colors"
+        >
+          <span className="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center shrink-0">
+            <Crosshair size={16} />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-black text-violet-700 leading-tight">Catálogo de Precisão</p>
+            <p className="text-xs font-semibold text-violet-400">Precisão, velocidade, erros e por tabuada</p>
+          </div>
+        </motion.button>
+      )}
 
       {/* Análise Inteligente */}
       <motion.div

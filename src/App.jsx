@@ -17,6 +17,7 @@ import StatsPage from './pages/StatsPage';
 import AchievementsPage from './pages/AchievementsPage';
 import RankingPage from './pages/RankingPage';
 import CatalogPage from './pages/CatalogPage';
+import AccuracyCatalogPage from './pages/AccuracyCatalogPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 
@@ -280,6 +281,21 @@ export default function App() {
           fastestAvgMs = fastestAvgMs == null ? result.avgMs : Math.min(fastestAvgMs, result.avgMs);
         }
 
+        // Desempenho por tabuada (fator a) — agrega o registro por questão da partida.
+        const tableStats = { ...(prev.tableStats || {}) };
+        for (const q of result.questions || []) {
+          if (q == null || q.a == null) continue;
+          const k = String(q.a);
+          const t = tableStats[k]
+            ? { ...tableStats[k] }
+            : { correct: 0, wrong: 0, totalMs: 0, count: 0 };
+          if (q.correct) t.correct += 1;
+          else t.wrong += 1;
+          if (q.ms > 0) t.totalMs += q.ms;
+          t.count += 1;
+          tableStats[k] = t;
+        }
+
         const nextState = {
           ...prev,
           xp,
@@ -294,6 +310,7 @@ export default function App() {
           speedBest,
           modesPlayed: allModesPlayed,
           fastestAvgMs,
+          tableStats,
           currentStreak,
           bestDayStreak,
           streakGoalBase,
@@ -446,7 +463,10 @@ export default function App() {
             <RecordsPage key="records" onBack={() => setScreen('menu')} />
           )}
           {screen === 'stats' && (
-            <StatsPage key="stats" onBack={() => setScreen('menu')} />
+            <StatsPage key="stats" onBack={() => setScreen('menu')} onNavigate={setScreen} />
+          )}
+          {screen === 'accuracy' && (
+            <AccuracyCatalogPage key="accuracy" onBack={() => setScreen('stats')} />
           )}
           {screen === 'achievements' && (
             <AchievementsPage key="achievements" onBack={() => setScreen('menu')} />

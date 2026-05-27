@@ -102,6 +102,8 @@ export default function GamePage({ mode, onEnd, onBack }) {
   // Medição de tempo de resposta por questão (para análise de velocidade real)
   const questionShownAt = useRef(0);
   const responseTimes = useRef([]);
+  // Registro por questão (para o Catálogo de Precisão: desempenho por tabuada)
+  const questionLog = useRef([]);
 
   // Resume audio context on first interaction
   useEffect(() => {
@@ -161,6 +163,7 @@ export default function GamePage({ mode, onEnd, onBack }) {
           avgMs,
           totalQuestions: cfg.questions || state.answered,
           dailyDate: mode === 'daily' ? new Date().toISOString().split('T')[0] : null,
+          questions: questionLog.current,
         });
       }, 300);
     }
@@ -184,6 +187,14 @@ export default function GamePage({ mode, onEnd, onBack }) {
     // Registra o tempo de resposta (ignora outliers/AFK > 60s)
     const dt = questionShownAt.current ? Date.now() - questionShownAt.current : 0;
     if (dt > 0 && dt < 60000) responseTimes.current.push(dt);
+
+    // Registro por questão (tabuada = fator a; tempo só se válido)
+    questionLog.current.push({
+      a: state.question.a,
+      b: state.question.b,
+      correct: val === state.question.ans,
+      ms: dt > 0 && dt < 60000 ? dt : 0,
+    });
 
     if (val === state.question.ans) {
       setInputState('correct');

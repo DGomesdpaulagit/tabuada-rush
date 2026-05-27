@@ -28,6 +28,7 @@ const DEFAULTS = {
   qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
+  tableStats: {},            // desempenho por tabuada (fator a): { [a]: { correct, wrong, totalMs, count } }
 };
 
 export const storage = {

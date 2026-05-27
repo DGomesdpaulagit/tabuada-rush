@@ -55,6 +55,7 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
     AchievementsPage.jsx — Grade de conquistas desbloqueadas/bloqueadas
     RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria)
     CatalogPage.jsx      — [v2.11] Catálogo de Progresso (XP, níveis, evolução, marcos, registro)
+    AccuracyCatalogPage.jsx — [v2.12] Catálogo de Precisão (precisão, velocidade, erros, por tabuada, histórico)
     SettingsPage.jsx     — [v2.8] Configurações (som, tema, conta, notificações, acessibilidade)
   App.jsx                — Orquestrador: navegação, handleGameEnd, toasts de conquistas
   main.jsx               — Entry point React
@@ -159,6 +160,8 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   coins: 0,                 // [v2.6] Moedas do jogo (economia completa em bloco futuro)
   qiBonus: 0,               // [v2.6] Bônus de QI via recompensas de ofensiva
   lastPlayDate: null,       // Última data que jogou (YYYY-MM-DD)
+  progressLog: [],          // [v2.11] Marcos da jornada (nível/XP/ofensiva/recorde) — últimos 50
+  tableStats: {},           // [v2.12] Desempenho por tabuada: { [a]: { correct, wrong, totalMs, count } }
 }
 ```
 
@@ -255,6 +258,17 @@ Página dedicada (`CatalogPage`) que reúne a evolução do usuário num só lug
 - **Seções:** Progresso Geral (hero violeta) · Experiência (XP no nível + total + barra) · Sua Evolução (semana/mês/total — partidas + precisão) · Marcos de Progresso (4 StatCards) · Catálogo de Níveis (28 níveis: desbloqueado/atual/futuro) · Registro de Evolução (timeline de marcos).
 - **Registro (`progressLog`):** `detectProgressEvents(prev, next)` em `utils` compara o estado antes/depois de cada partida e gera marcos `{type,icon,title,detail,date}` (type: level/xp/streak/record). Anexados no `handleGameEnd` (atômico, dentro do `update`), `slice(-50)`. Marcos de XP: 1k/5k/10k/25k/50k/100k/200k. Ofensiva: por `bestDayStreak` cruzando 5/10/15/20/35/40/100/250/365. Recorde: só melhora sobre recorde existente.
 - **Evolução:** mês reusa `analyzeUser().monthly`; semana = janela de 7 dias das sessões.
+
+---
+
+## 🎯 CATÁLOGO DE PRECISÃO (v2.12 — Fase 5/Bloco 9)
+
+Página dedicada (`AccuracyCatalogPage`) sobre o desempenho matemático real. Sem redesign.
+
+- **Acesso:** botão "Catálogo de Precisão" DENTRO da `StatsPage` → rota `accuracy` (volta para `stats`). `StatsPage` recebe `onNavigate`.
+- **Seções:** Desempenho Matemático (hero) · Taxa de Acerto (geral/semana/mês/por modo + evolução recente×anterior) · Velocidade (geral/recente/melhor=`fastestAvgMs`/por modo) · Erros (total/taxa/por modo) · Precisão por Tabuada · Estatísticas Matemáticas (StatCards) · Histórico de Precisão (LineChart Recharts, verde).
+- **`tableStats`:** o jogo é só multiplicação → a quebra é POR TABUADA (fator `a`, 2–10). `GamePage` registra cada questão em `useRef` (`{a,b,correct,ms}`) e envia em `onEnd.questions`; `handleGameEnd` agrega em `tableStats` (`{ [a]: { correct, wrong, totalMs, count } }`), atômico no `update`. Maior dificuldade = menor % de acerto (mín. 3 respostas).
+- **Honestidade:** soma/subtração/divisão NÃO existem no jogo → não foram inventadas. "Operação" = tabuada.
 
 ---
 

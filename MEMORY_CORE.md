@@ -6,9 +6,9 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-05-26  
-**Versão:** 2.11.0  
-**Status:** ✅ Catálogo de Progresso entregue (XP, níveis, evolução, marcos, registro). Build limpo.  
+**Data:** 2026-05-27  
+**Versão:** 2.12.0  
+**Status:** ✅ Catálogo de Precisão entregue (precisão, velocidade, erros, por tabuada, histórico). Build limpo.  
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -61,6 +61,8 @@
 - [x] **[v2.4] QI no card de perfil** (linha pequena, clicável → ranking)
 - [x] **[v2.11 — Fase 5/Bloco 8] Catálogo de Progresso** (`CatalogPage`): Progresso Geral, XP, Evolução (semana/mês/total), Marcos, Catálogo de Níveis (28), Registro de Evolução
 - [x] **[v2.11] `progressLog`** no storage + `detectProgressEvents()` (marcos de nível/XP/ofensiva/recorde) anexados no `handleGameEnd`
+- [x] **[v2.12 — Fase 5/Bloco 9] Catálogo de Precisão** (`AccuracyCatalogPage`, acesso dentro da Estatísticas): precisão (geral/semana/mês/modo), velocidade, erros, precisão por tabuada, histórico (LineChart)
+- [x] **[v2.12] `tableStats`** no storage — GamePage registra por questão (`{a,b,correct,ms}`) → `handleGameEnd` agrega por tabuada (fator `a`)
 
 ---
 

@@ -57,10 +57,27 @@
 
 ---
 
+## Bloco 2 — XP×2 visual + ResultsPage + painel Stats
+
+**Commit:** c1c9109
+
+### GamePage — badge ⚡ XP ×2
+- Badge "⚡ XP ×2" aparece na linha de info (ao lado do streak) quando `powerups.xp2 > 0`
+- AnimatePresence para entrada/saída suave
+
+### ResultsPage — destaque quando XP Dobrado foi usado
+- `xp2Used` calculado em App.jsx antes do update (`data.powerups.xp2 > 0`) e enviado no `result`
+- Banner roxo "XP Dobrado foi usado!" com cálculo base → dobrado visível
+- Card de XP com fundo violeta e label "XP Ganho ⚡×2"
+- `xpEarned` já reflete o ×2 na tela de resultados
+
+### StatsPage — painel de estoque de power-ups
+- Seção "⚡ Power-ups" com os 3 consumíveis e contador de estoque
+- Cores ativas vs cinza quando vazio
+- Link para Loja quando sem estoque
+
 ## Próximos passos
 
-1. **Testar power-ups** em produção (vida extra no Survival, +60s no Rush, XP Dobrado)
-2. **Feedback de XP Dobrado**: mostrar indicador visual "⚡ XP ×2 ativo" no GamePage quando `powerups.xp2 > 0`
-3. **ResultsPage**: mostrar "+XP dobrado" quando XP Dobrado foi consumido na partida
-4. **ShopPage**: botão "Como usar?" com dica rápida para cada power-up
-5. **Conquistas**: considerar conquistas ligadas ao uso de power-ups
+1. **Testar em produção**: vida extra no Survival, +60s no Rush, XP Dobrado
+2. **Conquistas ligadas a power-ups** (ex: "Use 10 power-ups")
+3. **ShopPage**: tooltip/dica de como usar cada power-up em jogo

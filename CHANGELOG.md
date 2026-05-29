@@ -4,6 +4,21 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.2.1] — 2026-05-29 — XP×2 VISUAL, RESULTADOS E STATS DE POWER-UPS
+
+### Adicionado — Badge ⚡ XP ×2 no GamePage
+- Badge "⚡ XP ×2" aparece na linha de info durante a partida quando XP Dobrado está ativo
+
+### Adicionado — Destaque de XP Dobrado no ResultsPage
+- Banner roxo "XP Dobrado foi usado!" com valor base → dobrado
+- Card de XP com fundo e texto violeta quando xp2Used=true
+
+### Adicionado — Painel de Power-ups nas Estatísticas
+- Seção "⚡ Power-ups" exibe estoque de cada consumível com cor ativa/vazia
+- Link para Loja quando estoque está zerado
+
+---
+
 ## [3.2.0] — 2026-05-29 — POWER-UPS, LOJA, MOEDAS E RUSH SCORING
 
 ### Adicionado — Power-ups consumíveis na Loja

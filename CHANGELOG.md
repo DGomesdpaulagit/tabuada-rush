@@ -4,6 +4,33 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.2.0] — 2026-05-29 — POWER-UPS, LOJA, MOEDAS E RUSH SCORING
+
+### Adicionado — Power-ups consumíveis na Loja
+- **Vida Extra (80🪙):** modal ao perder última vida no Survival — usa 1 vida do estoque
+- **+60s Rush (120🪙):** botão visível durante o Rush quando há estoque; adiciona 60s
+- **XP Dobrado (200🪙):** dobra o XP da próxima partida concluída; consome 1 unidade
+
+### Modificado — Loja completamente reformulada
+- 3 categorias: ⚡ Poder (power-ups consumíveis), 🖼️ Molduras, 🎨 Temas
+- Adjetivos de título removidos; contador de estoque visível no badge
+- Molduras: 800 / 1500 / 3000 / 8000 🪙 | Temas: 600 / 600 / 600 / 1500 / 4000 🪙
+- Tab padrão: "Poder" (power-ups)
+
+### Modificado — Rush scoring (score médio ~300–400 pts)
+- `scoreScale: 0.25` no modo Rush; `calcPoints()` recebe parâmetro scale
+- Score bruto escalado para nível comparável a Survival/Speed (era ~1400 pts médios)
+
+### Modificado — Economia de moedas (cap 15/partida)
+- **Antes:** 0.1 × score (Rush inflava para 140+ moedas); **Agora:** 0.3 × acertos, cap 15
+- +2 moedas no Desafio Diário, +1 ao manter ofensiva
+
+### Melhorado — Integração de power-ups no GamePage
+- Prop `powerups` e `onUsePowerup` passados ao GamePage pelo App.jsx
+- XP×2 consome 1 unidade e dobra o XP ao salvar resultado
+
+---
+
 ## [3.1.1] — 2026-05-27 — RANKING, MISSÕES, XP, REVISÃO, TOASTS
 
 ### Modificado — Ranking de QI

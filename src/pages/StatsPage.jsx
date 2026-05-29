@@ -478,6 +478,60 @@ export default function StatsPage({ onBack, onNavigate }) {
         </motion.div>
       )}
 
+      {/* ── Estoque de Power-ups ─────────────────────────────────────────── */}
+      {(() => {
+        const powerups = data.powerups || {};
+        const items = [
+          { key: 'life', emoji: '❤️‍🔥', name: 'Vida Extra',   desc: 'Restaura 1 vida no Survival',   color: 'bg-rose-50 border-rose-100 text-rose-700' },
+          { key: 'time', emoji: '⏱️',   name: '+60s Rush',    desc: 'Adiciona 60s no Rush',           color: 'bg-violet-50 border-violet-100 text-violet-700' },
+          { key: 'xp2',  emoji: '⚡',   name: 'XP Dobrado',   desc: 'Dobra o XP da próxima partida', color: 'bg-amber-50 border-amber-100 text-amber-700' },
+        ];
+        const totalStock = items.reduce((sum, i) => sum + (powerups[i.key] || 0), 0);
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38 }}
+            className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <p className="font-black text-gray-800">⚡ Power-ups</p>
+              {totalStock === 0 && (
+                <span className="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">Sem estoque</span>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 font-semibold mb-4">Consumíveis disponíveis na sua mochila</p>
+            <div className="flex flex-col gap-2">
+              {items.map(({ key, emoji, name, desc, color }) => {
+                const count = powerups[key] || 0;
+                return (
+                  <div
+                    key={key}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl border ${
+                      count > 0 ? color : 'bg-gray-50 border-gray-100 text-gray-400'
+                    }`}
+                  >
+                    <span className="text-xl leading-none">{emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-black leading-tight ${count > 0 ? '' : 'text-gray-400'}`}>{name}</p>
+                      <p className="text-xs font-semibold opacity-70 leading-snug">{desc}</p>
+                    </div>
+                    <span className={`text-lg font-black tabular-nums ${count > 0 ? '' : 'text-gray-300'}`}>
+                      ×{count}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            {totalStock === 0 && (
+              <p className="text-xs text-center text-gray-400 font-semibold mt-3">
+                Compre power-ups na <span className="text-violet-500 font-black">Loja</span> com suas moedas 🪙
+              </p>
+            )}
+          </motion.div>
+        );
+      })()}
+
       {/* Export section */}
       {sessions.length > 0 && (
         <motion.div

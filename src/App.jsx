@@ -523,7 +523,9 @@ export default function App() {
         });
       }
 
-      setLastResult(result);
+      // xp2Used: verifica ANTES do update (data ainda tem o valor antigo, xp2 > 0 = estava ativo)
+      const xp2Used = (data.powerups?.xp2 || 0) > 0;
+      setLastResult({ ...result, xp2Used });
       setScreen('results');
     },
     [data, update, showAchievement]

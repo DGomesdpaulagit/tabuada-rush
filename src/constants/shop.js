@@ -31,95 +31,100 @@ export const RARITIES = {
 };
 
 // ── ITENS DA LOJA ─────────────────────────────────────────────────────────────
-// category: 'frame' | 'title' | 'card'
-// Para 'card': cardGradient define o gradiente aplicado no card de perfil
-// Para 'frame': frameStyle define o ring do avatar
-// Para 'title': o displayTitle sobrescreve o título de nível no card
+//
+// category: 'powerup' | 'frame' | 'card'
+//
+// powerup — consumíveis que afetam o gameplay:
+//   powerupKey: chave em data.powerups (ex: 'life', 'time', 'xp2')
+//   Comprar incrementa o contador. Usar decrementa.
+//
+// frame — moldura do avatar (cosmético permanente); frameStyle = classe Tailwind
+// card  — tema do card de perfil (cosmético permanente); cardGradient = classe Tailwind
 
 export const SHOP_ITEMS = [
-  // ── MOLDURAS (frame) ────────────────────────────────────────────────────────
+
+  // ── POWER-UPS (consumíveis) ───────────────────────────────────────────────
+  {
+    id: 'powerup_life',
+    category: 'powerup',
+    powerupKey: 'life',
+    name: 'Vida Extra',
+    emoji: '❤️‍🔥',
+    desc: 'Sobrevivência: restaura 1 vida quando você perder a última. Não deixa o jogo acabar!',
+    price: 80,
+    rarity: 'common',
+  },
+  {
+    id: 'powerup_time',
+    category: 'powerup',
+    powerupKey: 'time',
+    name: '+60s Rush',
+    emoji: '⏱️',
+    desc: 'Rush: adiciona 60 segundos ao cronômetro durante a partida. Use quando o tempo apertar!',
+    price: 120,
+    rarity: 'rare',
+  },
+  {
+    id: 'powerup_xp2',
+    category: 'powerup',
+    powerupKey: 'xp2',
+    name: 'XP Dobrado',
+    emoji: '⚡',
+    desc: 'Dobra o XP ganho na sua próxima partida completada (qualquer modo, exceto Zen).',
+    price: 200,
+    rarity: 'epic',
+  },
+
+  // ── MOLDURAS (frame) ─────────────────────────────────────────────────────
   {
     id: 'frame_gold',
     category: 'frame',
     name: 'Moldura Dourada',
     emoji: '🥇',
-    desc: 'Um contorno dourado elegante para o avatar',
-    price: 500,
+    desc: 'Contorno dourado para o avatar — sinal de dedicação',
+    price: 800,
     rarity: 'rare',
     frameStyle: 'ring-2 ring-amber-400',
-  },
-  {
-    id: 'frame_diamond',
-    category: 'frame',
-    name: 'Moldura Diamante',
-    emoji: '💎',
-    desc: 'Brilho de diamante para os verdadeiros mestres',
-    price: 1500,
-    rarity: 'epic',
-    frameStyle: 'ring-2 ring-cyan-400',
   },
   {
     id: 'frame_fire',
     category: 'frame',
     name: 'Moldura de Fogo',
     emoji: '🔥',
-    desc: 'Chamas que mostram sua dedicação',
-    price: 800,
-    rarity: 'rare',
+    desc: 'Chamas que mostram sua intensidade nos treinos',
+    price: 1500,
+    rarity: 'epic',
     frameStyle: 'ring-2 ring-orange-400',
+  },
+  {
+    id: 'frame_diamond',
+    category: 'frame',
+    name: 'Moldura Diamante',
+    emoji: '💎',
+    desc: 'Brilho de diamante — reservada para os verdadeiros mestres',
+    price: 3000,
+    rarity: 'epic',
+    frameStyle: 'ring-2 ring-cyan-400',
   },
   {
     id: 'frame_galaxy',
     category: 'frame',
     name: 'Moldura Galáxia',
     emoji: '🌌',
-    desc: 'O universo cabe no seu perfil',
-    price: 5000,
+    desc: 'O universo no seu perfil — apenas para lendas',
+    price: 8000,
     rarity: 'legendary',
-    frameStyle: 'ring-2 ring-violet-400',
+    frameStyle: 'ring-2 ring-violet-400 ring-offset-1 ring-offset-violet-900',
   },
 
-  // ── TÍTULOS ESPECIAIS (title) ───────────────────────────────────────────────
-  {
-    id: 'title_calculista',
-    category: 'title',
-    name: 'Calculista',
-    emoji: '🧮',
-    desc: 'Título personalizado de calculista',
-    price: 200,
-    rarity: 'common',
-    displayTitle: 'Calculista',
-  },
-  {
-    id: 'title_genio',
-    category: 'title',
-    name: 'Gênio Oculto',
-    emoji: '🧠',
-    desc: 'Mostre que a mente é sua arma secreta',
-    price: 1000,
-    rarity: 'epic',
-    displayTitle: 'Gênio Oculto',
-  },
-  {
-    id: 'title_lenda',
-    category: 'title',
-    name: 'A Lenda',
-    emoji: '👑',
-    desc: 'Apenas os melhores carregam esse título',
-    price: 3000,
-    rarity: 'legendary',
-    displayTitle: 'A Lenda',
-  },
-
-  // ── TEMAS DE CARD (card) ────────────────────────────────────────────────────
-  // cardGradient é a classe Tailwind aplicada ao bg do card de perfil
+  // ── TEMAS DE CARD (card) ─────────────────────────────────────────────────
   {
     id: 'card_ocean',
     category: 'card',
     name: 'Tema Oceano',
     emoji: '🌊',
     desc: 'Gradiente azul profundo e sereno',
-    price: 300,
+    price: 600,
     rarity: 'common',
     cardGradient: 'from-blue-600 to-cyan-600',
   },
@@ -129,7 +134,7 @@ export const SHOP_ITEMS = [
     name: 'Tema Pôr do Sol',
     emoji: '🌅',
     desc: 'Tons quentes de laranja e rosa',
-    price: 300,
+    price: 600,
     rarity: 'common',
     cardGradient: 'from-orange-500 to-rose-600',
   },
@@ -139,7 +144,7 @@ export const SHOP_ITEMS = [
     name: 'Tema Floresta',
     emoji: '🌿',
     desc: 'Verde esmeralda que transmite calma',
-    price: 300,
+    price: 600,
     rarity: 'common',
     cardGradient: 'from-emerald-600 to-teal-700',
   },
@@ -149,7 +154,7 @@ export const SHOP_ITEMS = [
     name: 'Tema Noturno',
     emoji: '🌙',
     desc: 'Escuro e misterioso para os notívagos',
-    price: 800,
+    price: 1500,
     rarity: 'rare',
     cardGradient: 'from-slate-700 to-gray-900',
   },
@@ -158,8 +163,8 @@ export const SHOP_ITEMS = [
     category: 'card',
     name: 'Tema Cósmico',
     emoji: '✨',
-    desc: 'Um visual épico de estrelas e cosmos',
-    price: 2000,
+    desc: 'Visual épico de estrelas e cosmos',
+    price: 4000,
     rarity: 'epic',
     cardGradient: 'from-indigo-600 via-purple-600 to-pink-600',
   },
@@ -170,7 +175,7 @@ export const SHOP_ITEM_MAP = Object.fromEntries(SHOP_ITEMS.map((i) => [i.id, i])
 
 // Categorias para os tabs da loja
 export const SHOP_CATEGORIES = [
-  { id: 'frame', label: 'Molduras', emoji: '🖼️' },
-  { id: 'title', label: 'Títulos',  emoji: '🏷️' },
-  { id: 'card',  label: 'Temas',    emoji: '🎨' },
+  { id: 'powerup', label: 'Poder',    emoji: '⚡' },
+  { id: 'frame',   label: 'Molduras', emoji: '🖼️' },
+  { id: 'card',    label: 'Temas',    emoji: '🎨' },
 ];

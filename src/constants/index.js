@@ -20,6 +20,7 @@ export const MODES = {
     questions: null,
     bonusTime: 1,
     xpMultiplier: 0.12,
+    scoreScale: 0.25,   // Rush dura 5 min → score bruto muito alto; escala para ~300 pontos médios
     group: 'main',
   },
   survival: {

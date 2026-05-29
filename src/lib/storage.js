@@ -25,8 +25,9 @@ export const DEFAULTS = {
   streakRewardsClaimed: [],  // marcos de recompensa (40/100/250/365) já resgatados
   pendingStreakReward: null, // marco com recompensa pendente de escolha (ou null)
   coins: 0,                  // moedas do jogo (economia)
-  ownedItems: [],            // ids dos itens comprados na loja
-  equippedItems: {},         // { frame, card, title } → id do item equipado em cada slot
+  powerups: {},              // { life: N, time: N, xp2: N } — consumíveis da loja
+  ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
+  equippedItems: {},         // { frame, card } → id do item equipado em cada slot
   missionsData: null,        // { daily, weekly, monthly } — controlado por utils/missions.js
   seasonXp: 0,               // XP exclusivo da temporada (separado do XP de nível)
   seasonRewards: [],         // xpRequired[] de recompensas de temporada já resgatadas

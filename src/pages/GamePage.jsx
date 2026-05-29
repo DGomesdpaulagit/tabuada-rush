@@ -70,7 +70,7 @@ function reducer(state, action) {
       return { ...state, time: state.time + 1 };
     case 'CORRECT': {
       const streak = state.streak + 1;
-      const pts = calcPoints(getDiffLevel(state.answered), streak);
+      const pts = calcPoints(getDiffLevel(state.answered), streak, action.scoreScale || 1);
       const addTime = action.modeId === 'rush' ? MODES.rush.bonusTime : 0;
       return {
         ...state,
@@ -112,6 +112,11 @@ function reducer(state, action) {
         lastCorrect: null,
       };
     }
+    case 'ADD_TIME':
+      return { ...state, time: state.time + 60 };
+    case 'CONTINUE':
+      // Retoma o Modo Sobrevivência com 1 vida restaurada
+      return { ...state, phase: 'playing', lives: 1 };
     case 'END':
       return { ...state, phase: 'ended' };
     default:
@@ -121,7 +126,7 @@ function reducer(state, action) {
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────
 
-export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
+export default function GamePage({ mode, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
   const cfg = MODES[mode];
 
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
@@ -134,6 +139,9 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
   const [isInsane, setIsInsane] = useState(false);
   const [shake, setShake] = useState(false);
   const [mascotMood, setMascotMood] = useState('idle');
+  // Power-up: vida extra no Survival
+  const [showLifePrompt, setShowLifePrompt] = useState(false);
+  const pendingEndRef = useRef(null); // callback de onEnd adiado
 
   const inputRef = useRef(null);
   const timerRef = useRef(null);
@@ -178,28 +186,38 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
   useEffect(() => {
     if (state.phase === 'ended') {
       clearInterval(timerRef.current);
-      if (state.correct > 0) audio.victory();
-      else audio.gameOver();
 
       const timePlayed = cfg.timer ? cfg.timer - state.time : state.time;
       const times = responseTimes.current;
       const avgMs = times.length
         ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
         : 0;
-      setTimeout(() => {
-        onEnd({
-          mode,
-          score: state.score,
-          correct: state.correct,
-          wrong: state.wrong,
-          bestStreak: state.bestStreak,
-          timePlayed,
-          avgMs,
-          totalQuestions: cfg.questions || state.answered,
-          dailyDate: mode === 'daily' ? new Date().toISOString().split('T')[0] : null,
-          questions: questionLog.current,
-        });
-      }, 300);
+
+      const callEnd = () => onEnd({
+        mode,
+        score: state.score,
+        correct: state.correct,
+        wrong: state.wrong,
+        bestStreak: state.bestStreak,
+        timePlayed,
+        avgMs,
+        totalQuestions: cfg.questions || state.answered,
+        dailyDate: mode === 'daily' ? new Date().toISOString().split('T')[0] : null,
+        questions: questionLog.current,
+      });
+
+      // Verifica se pode usar Vida Extra (Survival, perdeu todas as vidas)
+      const diedInSurvival = mode === 'survival' && state.lives !== null && state.lives <= 0;
+      if (diedInSurvival && (powerups.life || 0) > 0) {
+        audio.gameOver();
+        pendingEndRef.current = callEnd;
+        setShowLifePrompt(true);
+        return;
+      }
+
+      if (state.correct > 0) audio.victory();
+      else audio.gameOver();
+      setTimeout(callEnd, 300);
     }
   }, [state.phase]);
 
@@ -230,7 +248,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
 
     if (val === state.question.ans) {
       setInputState('correct');
-      dispatch({ type: 'CORRECT', modeId: mode });
+      dispatch({ type: 'CORRECT', modeId: mode, scoreScale: cfg.scoreScale || 1 });
 
       const newStreak = state.streak + 1;
 
@@ -275,6 +293,30 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
     [handleSubmit]
   );
 
+  // ── Power-up handlers ──────────────────────────────────────────────────────
+  const handleUseLive = () => {
+    onUsePowerup?.('life');
+    dispatch({ type: 'CONTINUE' });
+    setShowLifePrompt(false);
+    // Reinicia o intervalo (foi limpo no ended effect)
+    timerRef.current = setInterval(() => {
+      if (phaseRef.current === 'playing' || phaseRef.current === 'feedback') {
+        dispatch({ type: 'TICK_UP' });
+      }
+    }, 1000);
+  };
+
+  const handleDeclineLive = () => {
+    setShowLifePrompt(false);
+    pendingEndRef.current?.();
+    pendingEndRef.current = null;
+  };
+
+  const handleAddTime = () => {
+    onUsePowerup?.('time');
+    dispatch({ type: 'ADD_TIME' });
+  };
+
   // Derived
   const urgent = cfg.timer && state.time <= 15;
   const progress = cfg.timer
@@ -296,6 +338,47 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
       transition={{ duration: 0.4 }}
       className="flex flex-col gap-4"
     >
+      {/* ── Vida Extra: prompt ao perder última vida no Survival ─────────── */}
+      <AnimatePresence>
+        {showLifePrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6"
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+              className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center"
+            >
+              <p className="text-5xl mb-3">❤️‍🔥</p>
+              <p className="text-xl font-black text-gray-900 mb-1">Perdeu a última vida!</p>
+              <p className="text-sm text-gray-500 font-semibold mb-4">
+                Você tem <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span> no estoque.
+                Quer usar 1 para continuar?
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={handleUseLive}
+                  className="w-full py-3 rounded-2xl bg-violet-600 text-white font-black text-sm hover:bg-violet-700 active:scale-[0.98] transition-all"
+                >
+                  ❤️ Usar Vida Extra e Continuar
+                </button>
+                <button
+                  onClick={handleDeclineLive}
+                  className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-600 font-bold text-sm hover:bg-gray-200 active:scale-[0.98] transition-all"
+                >
+                  Encerrar partida
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Initial entrance */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -486,6 +569,24 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions }) {
             🧘 Encerrar Treino
           </button>
         )}
+
+        {/* Botão +60s — apenas no Rush, quando há estoque */}
+        <AnimatePresence>
+          {mode === 'rush' && (powerups.time || 0) > 0 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              onClick={handleAddTime}
+              className="w-full py-2.5 rounded-2xl border border-violet-200 bg-violet-50 text-violet-700 text-sm font-black hover:bg-violet-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            >
+              ⏱️ Usar +60s Rush
+              <span className="bg-violet-200 text-violet-800 text-xs font-black px-2 py-0.5 rounded-full">
+                ×{powerups.time}
+              </span>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* COMBO popup */}

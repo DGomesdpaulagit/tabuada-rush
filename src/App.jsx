@@ -361,14 +361,18 @@ export default function App() {
         //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
         //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
         const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0, review: 0.16 };
-        const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
+        // Power-up XP Dobrado: dobra o XP desta partida e consome 1 unidade do estoque
+        const xp2Active = (prev.powerups?.xp2 || 0) > 0;
+        const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) * (xp2Active ? 2 : 1);
         const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
+        // Cap: 15 moedas/partida = 0.3 × acertos (não depende do score para evitar
+        // inflação causada pela duração do Rush). +2 bônus no Desafio Diário, +1 ofensiva.
         const coinsEarned =
-          Math.max(1, Math.floor((result.score || 0) * 0.1)) +
-          (result.mode === 'daily' ? 5 : 0) +
-          (currentStreak > 1 ? 2 : 0);
+          Math.min(15, Math.max(1, Math.floor((result.correct || 0) * 0.3))) +
+          (result.mode === 'daily' ? 2 : 0) +
+          (currentStreak > 1 ? 1 : 0);
 
         // ── XP de temporada (separado do XP de nível) ───────────────────────
         const earnedSeasonXp = calcSeasonXp(result, currentStreak);
@@ -438,6 +442,10 @@ export default function App() {
           coins: (prev.coins || 0) + coinsEarned,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
+          // Consome 1 unidade do XP Dobrado se estava ativo
+          powerups: xp2Active
+            ? { ...(prev.powerups || {}), xp2: Math.max(0, (prev.powerups?.xp2 || 0) - 1) }
+            : (prev.powerups || {}),
         };
 
         // Registro de evolução: anexa os novos marcos atingidos nesta partida.
@@ -605,6 +613,16 @@ export default function App() {
               customQuestions={customQuestions}
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}
+              powerups={data.powerups || {}}
+              onUsePowerup={(key) =>
+                update((prev) => ({
+                  ...prev,
+                  powerups: {
+                    ...(prev.powerups || {}),
+                    [key]: Math.max(0, ((prev.powerups || {})[key] || 0) - 1),
+                  },
+                }))
+              }
             />
           )}
           {screen === 'results' && lastResult && (

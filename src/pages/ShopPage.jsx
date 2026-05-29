@@ -7,24 +7,40 @@ import { pageVariants, pageTransition } from '../components/ui';
 
 export default function ShopPage({ onBack }) {
   const { data, update } = useApp();
-  const [activeTab, setActiveTab] = useState('frame');
+  const [activeTab, setActiveTab] = useState('powerup');
   const [toastMsg, setToastMsg] = useState(null);
 
-  const coins        = data.coins        || 0;
-  const ownedItems   = data.ownedItems   || [];
+  const coins         = data.coins         || 0;
+  const ownedItems    = data.ownedItems    || [];
   const equippedItems = data.equippedItems || {};
+  const powerups      = data.powerups      || {};
 
   const showToast = (msg) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 2200);
   };
 
-  const buyItem = (item) => {
+  // ── Comprar cosmético (permanente) ──────────────────────────────────────────
+  const buyCosmetic = (item) => {
     if (coins < item.price || ownedItems.includes(item.id)) return;
     update((prev) => ({
       ...prev,
       coins: (prev.coins || 0) - item.price,
       ownedItems: [...(prev.ownedItems || []), item.id],
+    }));
+    showToast(`${item.emoji} ${item.name} adquirido!`);
+  };
+
+  // ── Comprar consumível (incrementa contador) ────────────────────────────────
+  const buyPowerup = (item) => {
+    if (coins < item.price) return;
+    update((prev) => ({
+      ...prev,
+      coins: (prev.coins || 0) - item.price,
+      powerups: {
+        ...(prev.powerups || {}),
+        [item.powerupKey]: ((prev.powerups || {})[item.powerupKey] || 0) + 1,
+      },
     }));
     showToast(`${item.emoji} ${item.name} adquirido!`);
   };
@@ -62,7 +78,7 @@ export default function ShopPage({ onBack }) {
         </button>
         <div className="flex-1">
           <h2 className="text-xl font-black text-gray-900">Loja</h2>
-          <p className="text-xs font-semibold text-gray-400">Personalize seu perfil</p>
+          <p className="text-xs font-semibold text-gray-400">Power-ups e cosméticos</p>
         </div>
         <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
           <span className="text-sm">🪙</span>
@@ -87,13 +103,25 @@ export default function ShopPage({ onBack }) {
         ))}
       </div>
 
+      {/* Power-ups: explicação */}
+      {activeTab === 'powerup' && (
+        <div className="bg-violet-50 border border-violet-100 rounded-2xl px-4 py-3">
+          <p className="text-xs font-bold text-violet-600 leading-snug">
+            ⚡ Power-ups são <strong>consumíveis</strong> — cada uso desconta 1 unidade do seu estoque.
+            Você pode comprar vários de cada!
+          </p>
+        </div>
+      )}
+
       {/* Items list */}
       <div className="flex flex-col gap-3">
         {items.map((item) => {
-          const rarity    = RARITIES[item.rarity];
-          const owned     = ownedItems.includes(item.id);
-          const equipped  = equippedItems[item.category] === item.id;
-          const canAfford = coins >= item.price;
+          const rarity      = RARITIES[item.rarity];
+          const isPowerup   = item.category === 'powerup';
+          const count       = isPowerup ? (powerups[item.powerupKey] || 0) : 0;
+          const owned       = !isPowerup && ownedItems.includes(item.id);
+          const equipped    = !isPowerup && equippedItems[item.category] === item.id;
+          const canAfford   = coins >= item.price;
 
           return (
             <motion.div
@@ -108,11 +136,18 @@ export default function ShopPage({ onBack }) {
                   : `${rarity.bg} ${rarity.border}`
               }`}
             >
-              {/* Emoji badge */}
-              <div
-                className={`w-12 h-12 rounded-xl ${rarity.bg} border ${rarity.border} flex items-center justify-center text-2xl shrink-0`}
-              >
-                {item.emoji}
+              {/* Emoji + contador de estoque */}
+              <div className="relative shrink-0">
+                <div
+                  className={`w-12 h-12 rounded-xl ${rarity.bg} border ${rarity.border} flex items-center justify-center text-2xl`}
+                >
+                  {item.emoji}
+                </div>
+                {isPowerup && count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-violet-600 text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow">
+                    {count}
+                  </span>
+                )}
               </div>
 
               {/* Info */}
@@ -126,11 +161,29 @@ export default function ShopPage({ onBack }) {
                   </span>
                 </div>
                 <p className="text-xs text-gray-400 font-semibold leading-snug">{item.desc}</p>
+                {isPowerup && count > 0 && (
+                  <p className="text-[11px] font-bold text-violet-500 mt-0.5">
+                    Estoque: {count} uso{count !== 1 ? 's' : ''}
+                  </p>
+                )}
               </div>
 
               {/* Action */}
               <div className="shrink-0">
-                {owned ? (
+                {isPowerup ? (
+                  // Consumível: sempre pode comprar mais
+                  <button
+                    onClick={() => buyPowerup(item)}
+                    disabled={!canAfford}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
+                      canAfford
+                        ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                    }`}
+                  >
+                    🪙 {item.price.toLocaleString('pt-BR')}
+                  </button>
+                ) : owned ? (
                   <button
                     onClick={() => toggleEquip(item)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
@@ -143,7 +196,7 @@ export default function ShopPage({ onBack }) {
                   </button>
                 ) : (
                   <button
-                    onClick={() => buyItem(item)}
+                    onClick={() => buyCosmetic(item)}
                     disabled={!canAfford}
                     className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
                       canAfford
@@ -160,15 +213,15 @@ export default function ShopPage({ onBack }) {
         })}
       </div>
 
-      {/* How to earn coins */}
+      {/* Como ganhar moedas */}
       <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
         <p className="text-xs font-black text-amber-700 mb-2">Como ganhar moedas? 🪙</p>
         <ul className="space-y-1">
           {[
-            ['🎮', 'Pontuação × 0.1 por partida'],
-            ['🌟', '+5 moedas por Desafio Diário'],
-            ['🔥', '+2 moedas ao manter ofensiva'],
-            ['🗺️', 'Complete missões para bônus'],
+            ['🎮', 'Até 15 moedas por partida (0.3 × acertos)'],
+            ['🌟', '+2 moedas por Desafio Diário'],
+            ['🔥', '+1 moeda ao manter ofensiva'],
+            ['🗺️', 'Complete missões para bônus maiores'],
           ].map(([emoji, text]) => (
             <li key={text} className="flex items-center gap-2 text-xs text-amber-600 font-semibold">
               <span>{emoji}</span>

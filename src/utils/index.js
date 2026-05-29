@@ -73,11 +73,11 @@ export function getRevisionQuestions(tableStats, count = 15) {
 
 // ── SCORING ────────────────────────────────────────────────────────────────
 
-export function calcPoints(diffLevel, streak) {
+export function calcPoints(diffLevel, streak, scale = 1) {
   const base = 10;
   const diff = (diffLevel - 1) * 5;
   const combo = streak >= 5 ? Math.floor(streak / 5) * 2 : 0;
-  return base + diff + combo;
+  return Math.max(1, Math.round((base + diff + combo) * scale));
 }
 
 export function getLevelIdx(xp) {

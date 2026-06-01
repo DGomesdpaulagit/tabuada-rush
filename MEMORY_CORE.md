@@ -7,9 +7,9 @@
 ## 🗂️ INSTRUÇÃO PERMANENTE — DOCUMENTO
 
 **Quando o usuário (Davi) disser "documento" neste projeto:**
-→ Atualizar o arquivo `.docx` do projeto — ele fica em `C:\Users\HP\Downloads\` (ou onde Davi indicar). **NÃO está dentro da pasta do projeto** e não é commitado no Git.
-→ Procurar o `.docx` mais recente na pasta Downloads (ex: `Tabuada (2).docx`, `Tabuada (3).docx`, etc.).
+→ Atualizar o arquivo `C:\Users\HP\Documents\TabuadaRush - jogo\Tabuada (2).docx` (dentro da pasta do projeto — pode ser commitado no Git).
 → Ler o documento completo primeiro (via skill `anthropic-skills:docx` ou agente), identificar onde parou, e acrescentar as mudanças da sessão atual mantendo a formatação/estilo existente.
+→ Após atualizar, fazer commit do `.docx` junto com os demais arquivos da sessão.
 → O documento registra o histórico completo do projeto: versões, funcionalidades, sessões de desenvolvimento.
 
 ---

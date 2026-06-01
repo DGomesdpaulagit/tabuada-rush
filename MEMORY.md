@@ -8,7 +8,7 @@
 
 **Palavra-chave:** "documento"  
 **Ação:** Sempre que Davi disser "documento", atualizar o arquivo Word do projeto.  
-**Arquivo:** `.docx` mais recente em `C:\Users\HP\Downloads\` (ex: `Tabuada (2).docx`). **NÃO fica dentro da pasta do projeto e não é commitado no Git.**  
+**Arquivo:** `C:\Users\HP\Documents\TabuadaRush - jogo\Tabuada (2).docx` — fica **dentro da pasta do projeto** e **é commitado no Git** junto com os demais arquivos da sessão.  
 **Como:** Usar o skill `anthropic-skills:docx` ou agente → ler o doc completo → identificar onde parou → acrescentar mudanças da sessão atual → salvar mantendo formatação e estilo originais.  
 **Conteúdo do doc:** Histórico completo do projeto — versões, funcionalidades, sessões de desenvolvimento, arquitetura.
 

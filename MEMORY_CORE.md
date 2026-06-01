@@ -4,6 +4,17 @@
 
 ---
 
+## 🗂️ INSTRUÇÃO PERMANENTE — DOCUMENTO
+
+**Quando o usuário (Davi) disser "documento" neste projeto:**
+→ Atualizar o arquivo `C:\Users\HP\Downloads\Tabuada (2).docx` (ou a versão mais recente numerada na pasta Downloads).
+→ Ler o documento completo primeiro (via skill `anthropic-skills:docx` ou agente), identificar onde parou, e acrescentar as mudanças da sessão atual mantendo a formatação/estilo existente.
+→ O documento registra o histórico completo do projeto: versões, funcionalidades, sessões de desenvolvimento.
+
+---
+
+---
+
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-05-27  

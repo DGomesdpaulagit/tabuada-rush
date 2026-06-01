@@ -4,6 +4,18 @@
 
 ---
 
+## 📋 INSTRUÇÃO PERMANENTE — DOCUMENTO DO PROJETO
+
+**Palavra-chave:** "documento"  
+**Ação:** Sempre que Davi disser "documento", atualizar o arquivo Word do projeto.  
+**Arquivo:** `C:\Users\HP\Downloads\Tabuada (2).docx` (ou versão mais recente numerada na pasta Downloads)  
+**Como:** Usar o skill `anthropic-skills:docx` ou agente → ler o doc completo → identificar onde parou → acrescentar mudanças da sessão atual → salvar mantendo formatação e estilo originais.  
+**Conteúdo do doc:** Histórico completo do projeto — versões, funcionalidades, sessões de desenvolvimento, arquitetura.
+
+---
+
+---
+
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  

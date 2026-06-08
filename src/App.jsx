@@ -11,6 +11,7 @@ import { subscribeToPush } from './lib/push';
 
 import MenuPage from './pages/MenuPage';
 import ModesPage from './pages/ModesPage';
+import FlashcardPage from './pages/FlashcardPage';
 import GamePage from './pages/GamePage';
 import ResultsPage from './pages/ResultsPage';
 import RecordsPage from './pages/RecordsPage';
@@ -632,7 +633,11 @@ export default function App() {
               key="modes"
               onStart={handleStart}
               onBack={() => setScreen('menu')}
+              onNavigate={setScreen}
             />
+          )}
+          {screen === 'flashcard' && (
+            <FlashcardPage key="flashcard" onBack={() => setScreen('menu')} />
           )}
           {screen === 'game' && activeMode && (
             <GamePage

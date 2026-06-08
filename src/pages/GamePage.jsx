@@ -38,11 +38,20 @@ function Mascot({ mood }) {
 
 function init({ mode, customQuestions }) {
   const cfg = MODES[mode];
-  const qs = customQuestions || (
-    (mode === 'daily' || (cfg.questions && mode !== 'zen'))
-      ? getDailyQuestions(cfg.questions || 20)
-      : null
-  );
+  // Modos com lista fixa de perguntas:
+  //   - daily: usa seed do dia (mesmas para todos)
+  //   - inverse: gera 15 perguntas aleatórias frescas a cada partida
+  //   - outros com cfg.questions e não-zen: usam seed do dia (review usa customQuestions)
+  let qs = customQuestions;
+  if (!qs) {
+    if (mode === 'inverse' && cfg.questions) {
+      qs = Array.from({ length: cfg.questions }, () => getRandomQuestion(3));
+    } else if (mode === 'daily' || (cfg.questions && mode !== 'zen')) {
+      qs = getDailyQuestions(cfg.questions || 20);
+    } else {
+      qs = null;
+    }
+  }
   return {
     phase: 'playing',
     score: 0,
@@ -134,6 +143,8 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
 
   const [inputVal, setInputVal] = useState('');
+  // Modo Inverso: dois inputs (fatores a e b). inputVal segue como "a" para reaproveitar lógica.
+  const [inputValB, setInputValB] = useState('');
   const [inputState, setInputState] = useState('idle');
   const [showCombo, setShowCombo] = useState(false);
   const [isInsane, setIsInsane] = useState(false);
@@ -144,6 +155,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const pendingEndRef = useRef(null); // callback de onEnd adiado
 
   const inputRef = useRef(null);
+  const inputRefB = useRef(null);
   const timerRef = useRef(null);
   const phaseRef = useRef(state.phase);
   phaseRef.current = state.phase;
@@ -225,6 +237,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   useEffect(() => {
     if (state.phase === 'playing') {
       setInputVal('');
+      setInputValB('');
       setInputState('idle');
       questionShownAt.current = Date.now();
       setTimeout(() => inputRef.current?.focus(), 50);
@@ -233,20 +246,30 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
 
   const handleSubmit = useCallback(() => {
     if (state.phase !== 'playing') return;
-    const val = parseInt(inputVal, 10);
-    if (isNaN(val) || inputVal.trim() === '') return;
+
+    const isInverse = !!cfg.inverse;
+    const valA = parseInt(inputVal, 10);
+    const valB = isInverse ? parseInt(inputValB, 10) : null;
+    if (isNaN(valA) || inputVal.trim() === '') return;
+    if (isInverse && (isNaN(valB) || inputValB.trim() === '')) return;
 
     const dt = questionShownAt.current ? Date.now() - questionShownAt.current : 0;
     if (dt > 0 && dt < 60000) responseTimes.current.push(dt);
 
+    // No modo inverso: aceita qualquer par cujo produto bata com a resposta.
+    // Garante que os fatores estão no escopo válido (1..10).
+    const isCorrect = isInverse
+      ? valA >= 1 && valA <= 10 && valB >= 1 && valB <= 10 && valA * valB === state.question.ans
+      : valA === state.question.ans;
+
     questionLog.current.push({
       a: state.question.a,
       b: state.question.b,
-      correct: val === state.question.ans,
+      correct: isCorrect,
       ms: dt > 0 && dt < 60000 ? dt : 0,
     });
 
-    if (val === state.question.ans) {
+    if (isCorrect) {
       setInputState('correct');
       dispatch({ type: 'CORRECT', modeId: mode, scoreScale: cfg.scoreScale || 1 });
 
@@ -286,7 +309,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
         setMascotMood('idle');
       }, 950);
     }
-  }, [state.phase, state.question, state.streak, inputVal, mode]);
+  }, [state.phase, state.question, state.streak, inputVal, inputValB, mode, cfg.inverse]);
 
   const handleKey = useCallback(
     (e) => { if (e.key === 'Enter') handleSubmit(); },
@@ -331,6 +354,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
 
   const isZen = mode === 'zen';
   const isReview = mode === 'review';
+  const isInverse = !!cfg.inverse;
 
   return (
     <motion.div
@@ -512,10 +536,23 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
               transition={{ duration: 0.25, type: inputState === 'correct' ? 'spring' : 'tween' }}
               className="text-center"
             >
-              <p className="text-7xl font-black text-gray-900 tracking-tight">
-                {state.question?.a} × {state.question?.b}
-              </p>
-              <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
+              {isInverse ? (
+                <>
+                  <p className="text-7xl font-black text-gray-900 tracking-tight">
+                    = {state.question?.ans}
+                  </p>
+                  <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>
+                    Quais os dois fatores?
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-7xl font-black text-gray-900 tracking-tight">
+                    {state.question?.a} × {state.question?.b}
+                  </p>
+                  <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
 
@@ -536,7 +573,12 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
                 ) : (
                   <div className="inline-flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-rose-200">
                     <X size={16} />
-                    <span>Errou! Resp: {state.question?.ans}</span>
+                    <span>
+                      Errou!{' '}
+                      {isInverse
+                        ? `Era ${state.question?.a} × ${state.question?.b}`
+                        : `Resp: ${state.question?.ans}`}
+                    </span>
                   </div>
                 )}
               </motion.div>
@@ -547,31 +589,79 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
         {/* Mascote */}
         <Mascot mood={mascotMood} />
 
-        {/* Answer input */}
-        <div className="flex gap-3">
-          <input
-            ref={inputRef}
-            type="number"
-            inputMode="numeric"
-            value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder="Sua resposta..."
-            disabled={state.phase !== 'playing'}
-            className={`flex-1 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
-              ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
-              ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
-              ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-violet-400' : ''}
-            `}
-          />
-          <Button
-            onClick={handleSubmit}
-            disabled={state.phase !== 'playing' || inputVal.trim() === ''}
-            className={`h-14 px-6 bg-gradient-to-r ${cfg.gradient} border-0 shadow-md`}
-          >
-            OK
-          </Button>
-        </div>
+        {/* Answer input(s) */}
+        {isInverse ? (
+          <div className="flex gap-2 items-center">
+            <input
+              ref={inputRef}
+              type="number"
+              inputMode="numeric"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (inputVal.trim() && !inputValB.trim()) inputRefB.current?.focus();
+                  else handleSubmit();
+                }
+              }}
+              placeholder="a"
+              disabled={state.phase !== 'playing'}
+              className={`w-20 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
+                ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
+                ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
+                ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-indigo-400' : ''}
+              `}
+            />
+            <span className="text-2xl font-black text-gray-400">×</span>
+            <input
+              ref={inputRefB}
+              type="number"
+              inputMode="numeric"
+              value={inputValB}
+              onChange={(e) => setInputValB(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder="b"
+              disabled={state.phase !== 'playing'}
+              className={`w-20 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
+                ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
+                ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
+                ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-indigo-400' : ''}
+              `}
+            />
+            <Button
+              onClick={handleSubmit}
+              disabled={state.phase !== 'playing' || inputVal.trim() === '' || inputValB.trim() === ''}
+              className={`h-14 px-6 ml-auto bg-gradient-to-r ${cfg.gradient} border-0 shadow-md`}
+            >
+              OK
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            <input
+              ref={inputRef}
+              type="number"
+              inputMode="numeric"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder="Sua resposta..."
+              disabled={state.phase !== 'playing'}
+              className={`flex-1 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all
+                ${inputState === 'correct' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : ''}
+                ${inputState === 'wrong'   ? 'border-rose-400   bg-rose-50   text-rose-700'    : ''}
+                ${inputState === 'idle'    ? 'border-gray-200   bg-white     text-gray-900 focus:border-violet-400' : ''}
+              `}
+            />
+            <Button
+              onClick={handleSubmit}
+              disabled={state.phase !== 'playing' || inputVal.trim() === ''}
+              className={`h-14 px-6 bg-gradient-to-r ${cfg.gradient} border-0 shadow-md`}
+            >
+              OK
+            </Button>
+          </div>
+        )}
 
         {/* Botão Encerrar — apenas no modo Zen (sem fim natural) */}
         {isZen && (

@@ -1,13 +1,16 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock } from 'lucide-react';
+import { ArrowLeft, Lock, Award } from 'lucide-react';
 import { ACHIEVEMENTS } from '../constants';
 import { useApp } from '../contexts/AppContext';
+import { computeCertificates } from '../utils';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 
 export default function AchievementsPage({ onBack }) {
   const { data } = useApp();
   const unlocked = data.achievements || [];
   const categories = [...new Set(ACHIEVEMENTS.map((a) => a.category))];
+  const certificates = computeCertificates(data.factStats || {});
+  const certsUnlocked = certificates.filter((c) => c.unlocked).length;
 
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
   const item = { hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } };
@@ -52,6 +55,47 @@ export default function AchievementsPage({ onBack }) {
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
             className="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full"
           />
+        </div>
+      </div>
+
+      {/* ── CERTIFICADOS DE DOMÍNIO ──────────────────────────────────────
+          Únicas conquistas que NÃO podem ser compradas — apenas conquistadas
+          por domínio real (todos os 10 fatos da tabuada dominados). */}
+      <div>
+        <div className="flex items-center justify-between mb-3 px-1">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide flex items-center gap-1.5">
+            <Award size={13} className="text-amber-500" />
+            Certificados de Domínio
+          </p>
+          <span className="text-[11px] font-black text-amber-600">
+            {certsUnlocked}/8
+          </span>
+        </div>
+        <p className="text-[11px] text-gray-400 font-semibold mb-3 px-1">
+          Conquistados por domínio real — não podem ser comprados
+        </p>
+        <div className="grid grid-cols-4 gap-2">
+          {certificates.map((c) => (
+            <motion.div
+              key={c.table}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className={`relative rounded-2xl p-3 text-center border transition-all
+                ${c.unlocked
+                  ? 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300 shadow-sm'
+                  : 'bg-gray-50 border-gray-100'}`}
+            >
+              <div className={`text-2xl mb-0.5 ${c.unlocked ? '' : 'grayscale opacity-30'}`}>
+                {c.unlocked ? '🏅' : '🔒'}
+              </div>
+              <p className={`text-sm font-black ${c.unlocked ? 'text-amber-700' : 'text-gray-400'}`}>
+                Tab. {c.table}
+              </p>
+              <p className="text-[10px] font-bold text-gray-400">
+                {c.dominated}/{c.total}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
 

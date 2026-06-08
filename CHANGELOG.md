@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.4.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 2
+
+**Repetição espaçada + Modo Inverso + Certificados de Domínio.** Detalhes em `sessions/sessao-027.md`.
+
+### Adicionado
+- **Modo Flashcard com SRS (SM-2 simplificado)** — `src/pages/FlashcardPage.jsx`
+  - Avaliação 3-níveis: Errei (10 min) · Difícil (1d, cresce devagar) · Fácil (3d, 6d, cresce no ease factor)
+  - Persistência por fato em `srsData[fk] = { interval, easeFactor, reps, nextReview, lastReview }`
+  - Fila de até 20 fatos por sessão (vencidos primeiro, depois novos)
+  - Tela final com resumo `easy/hard/wrong` + pendentes restantes
+  - Badge no menu: "🃏 X flashcards para revisar"
+- **Modo Inverso** — `MODES.inverse` (15 questões, xpMultiplier 0.20)
+  - Mostra "= 56" → dois inputs lado-a-lado para os fatores
+  - Aceita qualquer par válido (7×8 e 8×7 ambos passam)
+  - Card próprio na ModesPage, seção "Recuperação Reversa · Fase 2"
+- **Certificados de Domínio por Tabuada** — 8 certificados (tabuadas 2..9)
+  - Desbloqueados quando todos os 10 fatos da tabuada estão `dominated`
+  - Critério idêntico ao Mapa de Domínio (<1.5s, ≥90% acerto, ≥3 amostras)
+  - Seção dedicada no topo da AchievementsPage (grid 4×2)
+  - **Não compráveis** — único caminho é o domínio real
+- **Utilitários SRS em `utils/index.js`:**
+  - `getAllFactKeys()`, `parseFactKey()`, `updateSrsFact()`
+  - `countDueFlashcards()`, `getReviewQueue()`
+  - `computeCertificates()`
+
+### Removido
+- Banner Desafio Diário do MenuPage (a pedido do usuário) — o desafio continua
+  acessível como card principal dentro da ModesPage
+
+### Filosofia
+> Fase 1 mostrou ao jogador o que ele DOMINA. Fase 2 ensina a MEMORIZAR.
+> SRS é o método científico mais comprovado para memorização de fatos.
+
+---
+
 ## [3.3.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 1
 
 **Base pedagógica + correções críticas.** Detalhes em `sessions/sessao-026.md`.

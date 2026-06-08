@@ -114,6 +114,26 @@ export const MODES = {
     xpMultiplier: 0.16,   // estudo focado — XP médio
     group: 'training',
   },
+  // ── MODO INVERSO — "= 56" → digite os dois fatores ─────────────────────────
+  inverse: {
+    id: 'inverse',
+    name: 'Inverso',
+    emoji: '🔄',
+    description: '"= 56" → diga os dois fatores',
+    gradient: 'from-indigo-500 to-blue-600',
+    gradientLight: 'from-indigo-50 to-blue-50',
+    shadow: 'shadow-indigo-200',
+    text: 'text-indigo-600',
+    border: 'border-indigo-200',
+    bg: 'bg-indigo-500',
+    timer: null,
+    lives: null,
+    questions: 15,        // 15 questões — modo de treino exigente
+    bonusTime: 0,
+    xpMultiplier: 0.20,   // recompensa moderada — modo desafiador
+    inverse: true,        // flag para o GamePage usar duas entradas
+    group: 'advanced',
+  },
 };
 
 // Modos exibidos no grid principal do menu (os 4 clássicos)

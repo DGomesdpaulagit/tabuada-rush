@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.3.0 (Fase 1 da Tabuada Rush 3.0 implementada)
-**Status:** ✅ Fase 1 entregue (sessao-026.md). Próximo: Fase 2 (Repetição Espaçada + Certificados + Modo Inverso).
+**Versão:** 3.4.0 (Fase 2 da Tabuada Rush 3.0 implementada — coração pedagógico)
+**Status:** ✅ Fase 2 entregue (sessao-027.md). Próximo: Fase 3 (Economia e Loja Reformulada).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -40,10 +40,10 @@
    - 🟢 Dominado: <1.5s · ≥90% acerto · ≥3 amostras
    - 🟡 Praticado · 🔴 Problemático (>20% erro) · ⬜ Sem dados
 
-### FASE 2 — Repetição Espaçada (coração do 3.0)
-5. **Modo Flashcard com SRS**: fácil/difícil/errei → intervalos crescentes por fato
-6. **Certificados de Domínio por Tabuada**: conquistados por domínio real, não comprados
-7. **Modo Inverso**: "= 56, quais os fatores?" — treino de recuperação reversa
+### FASE 2 — ✅ ENTREGUE (v3.4.0 · sessao-027.md)
+5. ✅ Modo Flashcard com SRS (SM-2 simplificado) — `FlashcardPage.jsx` · srsData por fato
+6. ✅ Certificados de Domínio (8, tabuadas 2-9) — derivados de factStats, não compráveis
+7. ✅ Modo Inverso — `MODES.inverse`, 15 q, 2 inputs lado-a-lado, aceita qualquer par
 
 ### FASE 3 — Economia e Loja Reformulada
 8. **Power-ups Spot**: comprar no momento de perder (não só pré-compra)
@@ -143,21 +143,24 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 2 (Repetição Espaçada — coração do 3.0)
+## 🎯 PRÓXIMA SESSÃO — FASE 3 (Economia e Loja Reformulada)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-025.md` (visão geral)
-+ `sessions/sessao-026.md` (o que ficou pronto na Fase 1).
+**Ler antes de começar:** `sessions/sessao-027.md` (Fase 2 entregue) +
+`sessions/sessao-025.md` (visão completa do roadmap 3.0).
 
 **Executar nesta ordem:**
-1. **Modo Flashcard com SRS** — `FlashcardPage.jsx`, algoritmo SM-2,
-   campo `srsData[fk] = { interval, nextReview, easeFactor }` no storage.
-   Badge "X fatos para revisar hoje" no menu.
-2. **Certificados de Domínio por tabuada** — 8 certificados (2 ao 9),
-   desbloqueados quando todos os fatos da tabuada estiverem `dominated` (já
-   classificados pelo `MasteryMap`). Não compráveis.
-3. **Modo Inverso** — apresenta "= 56", jogador digita dois fatores.
-   15 questões, xpMultiplier 0.20. Desbloquear card em `ModesPage`.
-4. Build + commit + push + documento + registros.
+1. **Power-ups Spot** — modal de last-chance ao perder (Survival e Rush);
+   alternativa de comprar agora vs usar estoque.
+2. **Seguro de Ofensiva (100🪙)** — `consumables.streakInsurance`: restaura
+   ofensiva quebrada em até 24h. UI: aviso quando ofensiva caiu.
+3. **Congelar Missão Diária (50🪙)** — pausa missão por 24h.
+4. **Apostas de Partida** — antes de iniciar, escolher aposta 10/25/50; 3×
+   se bater recorde, perde se não bater.
+5. **Oferta da Semana na Loja** — seed determinística por segunda-feira,
+   2–3 itens com 40% off.
+6. **Temas de GamePage** — gradiente do card de questão · cor da barra
+   de progresso · visual do combo. Preços 1.000/2.500/5.000 🪙.
+7. Build + commit + push + documento + registros.
 
 ---
 

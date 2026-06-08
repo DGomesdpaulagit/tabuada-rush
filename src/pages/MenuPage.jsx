@@ -3,7 +3,7 @@ import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, Shopp
 import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
+import { getLevelIdx, getXpProgress, getQiInfo, countDueFlashcards } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { SHOP_ITEM_MAP } from '../constants/shop';
 import { countUnclaimedMissions } from '../utils/missions';
@@ -38,6 +38,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const cardGradient   = equippedCard?.cardGradient  || 'from-violet-600 to-purple-600';
   const displayTitle   = equippedTitle?.displayTitle  || level.title;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
+  const dueFlashcards = countDueFlashcards(data.srsData || {});
 
   return (
     <motion.div
@@ -204,50 +205,6 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         </div>
       </motion.div>
 
-      {/* ── BANNER DESAFIO DIÁRIO ───────────────────────────────────────────
-          Card de destaque para o modo mais importante do dia. Sempre visível,
-          mostra estado (feito hoje vs pendente). Leva direto ao modo daily. */}
-      <motion.button
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12 }}
-        whileHover={{ scale: 1.01, y: -1 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => onStart('daily')}
-        className={`relative overflow-hidden w-full text-left rounded-3xl p-5 shadow-lg border transition-all
-          ${dailyDone
-            ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 shadow-emerald-100'
-            : 'bg-gradient-to-br from-amber-400 via-orange-400 to-rose-500 border-amber-300 shadow-amber-200 text-white'}`}
-      >
-        {/* Brilho decorativo */}
-        {!dailyDone && (
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-300/30 rounded-full blur-2xl pointer-events-none" />
-        )}
-        <div className="relative flex items-center gap-3">
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0
-            ${dailyDone ? 'bg-emerald-100' : 'bg-white/20'}`}>
-            {dailyDone ? '✓' : '🌟'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className={`text-[10px] font-black uppercase tracking-wider
-              ${dailyDone ? 'text-emerald-600' : 'text-white/90'}`}>
-              Desafio de Hoje
-            </p>
-            <p className={`text-lg font-black leading-tight
-              ${dailyDone ? 'text-emerald-700' : 'text-white'}`}>
-              {dailyDone ? 'Feito hoje! 🎉' : '20 perguntas únicas'}
-            </p>
-            <p className={`text-xs font-bold mt-0.5
-              ${dailyDone ? 'text-emerald-500' : 'text-white/80'}`}>
-              {dailyDone
-                ? `Pontuação: ${data.currentDailyScore || 0} pts`
-                : 'Mesmas questões para todos · +30 XP'}
-            </p>
-          </div>
-          <ChevronRight size={20} className={dailyDone ? 'text-emerald-500' : 'text-white/80'} />
-        </div>
-      </motion.button>
-
       {/* Insight da Análise Inteligente (toque para ver detalhes) */}
       <motion.button
         initial={{ opacity: 0, y: 8 }}
@@ -283,7 +240,9 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           </p>
           <p className="text-lg font-black leading-tight">Escolher Modo</p>
           <p className="text-xs font-bold text-violet-100 mt-0.5">
-            Rush · Sobrevivência · Velocidade · Treino · +
+            {dueFlashcards > 0
+              ? `🃏 ${dueFlashcards} flashcards para revisar`
+              : 'Rush · Sobrevivência · Velocidade · Treino · +'}
           </p>
         </div>
         <ChevronRight size={22} className="text-white shrink-0" />

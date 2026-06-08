@@ -3,7 +3,7 @@ import {
   ArrowLeft, Zap, Heart, Timer, Star, Leaf, BookOpen, Lock,
   Repeat, Flame, Trophy, Layers,
 } from 'lucide-react';
-import { MODE_LIST, TRAINING_MODE_LIST } from '../constants';
+import { MODE_LIST, TRAINING_MODE_LIST, MODES } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { getLevelIdx } from '../utils';
 import { pageVariants, pageTransition } from '../components/ui';
@@ -17,7 +17,7 @@ const modeIcons = {
   zen: Leaf,
   review: BookOpen,
   flashcard: Repeat,
-  inverse: Layers,
+  inverse: Layers, // ícone neutro de "camadas/fatores" para o modo Inverso
   hard: Flame,
   personal: Trophy,
 };
@@ -50,18 +50,7 @@ const ADVANCED_MODES = [
     locked: true,
     unlockText: 'Em breve · Fase 2',
   },
-  {
-    id: 'inverse',
-    name: 'Inverso',
-    description: '"= 56" → diga os dois fatores',
-    gradient: 'from-indigo-500 to-blue-600',
-    gradientLight: 'from-indigo-50 to-blue-50',
-    shadow: 'shadow-indigo-200',
-    text: 'text-indigo-600',
-    border: 'border-indigo-200',
-    locked: true,
-    unlockText: 'Em breve · Fase 2',
-  },
+  // Inverso liberado na Fase 2 — definido em MODES.inverse e tratado no GamePage
   {
     id: 'hard',
     name: 'Difícil',
@@ -147,7 +136,16 @@ function ModeCard({ mode, locked, unlockText, dailyDoneToday, record, onStart, b
   );
 }
 
-export default function ModesPage({ onStart, onBack }) {
+// Modos da Fase 2 desbloqueados (definidos em MODES, têm comportamento real).
+// Flashcard é um "modo" especial — abre página própria, não passa pelo GamePage.
+const PHASE_2_MODES = [
+  {
+    ...MODES.inverse,
+    description: '"= 56" → diga os dois fatores',
+  },
+];
+
+export default function ModesPage({ onStart, onBack, onNavigate }) {
   const { data } = useApp();
   const todayStr = new Date().toISOString().split('T')[0];
   const dailyDone = data.currentDailyDate === todayStr;
@@ -226,7 +224,64 @@ export default function ModesPage({ onStart, onBack }) {
         </div>
       </div>
 
-      {/* Modos Avançados (placeholders Fase 2+) */}
+      {/* ── Modo Inverso (Fase 2) ────────────────────────────────────────── */}
+      <div>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 px-1">
+          Recuperação Reversa · Fase 2
+        </p>
+        <div className="flex flex-col gap-3">
+          {PHASE_2_MODES.map((mode) => (
+            <ModeCard
+              key={mode.id}
+              mode={mode}
+              locked={false}
+              record={data.records?.[mode.id]}
+              onStart={onStart}
+              badge="NOVO"
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Modo Flashcard (SRS) ─────────────────────────────────────────── */}
+      <div>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 px-1">
+          Memorização Real · Fase 2
+        </p>
+        <p className="text-[11px] text-gray-400 font-semibold mb-3 px-1">
+          Repetição espaçada — o método científico de memorização
+        </p>
+        <motion.button
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onNavigate?.('flashcard')}
+          className="relative overflow-hidden rounded-3xl p-5 text-left w-full transition-all
+            bg-gradient-to-br from-fuchsia-50 to-pink-50 border border-fuchsia-200 shadow-fuchsia-200 hover:shadow-lg"
+        >
+          <div className="absolute top-3 right-3 bg-fuchsia-500 text-white rounded-full px-2.5 py-1 text-[10px] font-black">
+            NOVO
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-fuchsia-500 to-pink-600 shadow-sm shrink-0">
+              <Repeat size={22} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-black text-base text-fuchsia-600 leading-tight">Flashcard</p>
+              <p className="text-gray-500 text-xs font-semibold mt-0.5">
+                Avalie cada fato como Fácil/Difícil/Errei — sistema lembra na hora certa
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between text-[11px] font-bold">
+            <span className="px-2 py-1 rounded-full bg-white/70 text-gray-600">
+              Memorização
+            </span>
+            <span className="text-fuchsia-600 font-black">SRS · SM-2</span>
+          </div>
+        </motion.button>
+      </div>
+
+      {/* Modos Avançados (placeholders Fase 4) */}
       <div>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 px-1">
           Modos Avançados

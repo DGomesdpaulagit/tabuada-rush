@@ -263,6 +263,137 @@ export function detectProgressEvents(prev = {}, next = {}) {
   return events;
 }
 
+// ── SPACED REPETITION (SM-2 simplificado) ───────────────────────────────────
+// srsData[fk] = { interval (dias), nextReview (ISO date), easeFactor, reps, lastReview }
+// Algoritmo: usuário avalia 'easy' | 'hard' | 'wrong' após responder o fato.
+
+const SRS_INITIAL_INTERVALS_MIN = { wrong: 10, hard: 60 * 24, easy: 3 * 60 * 24 }; // minutos
+const SRS_DEFAULT_EASE = 2.5;
+
+// Lista canônica dos 80 fatos fundamentais (chave normalizada min×max).
+export function getAllFactKeys() {
+  const keys = new Set();
+  for (let a = 2; a <= 9; a++) {
+    for (let b = 1; b <= 10; b++) {
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      keys.add(`${lo}x${hi}`);
+    }
+  }
+  return Array.from(keys);
+}
+
+// Decompõe uma chave "loxhi" → { a, b, ans }
+export function parseFactKey(fk) {
+  const [a, b] = fk.split('x').map(Number);
+  return { a, b, ans: a * b };
+}
+
+// Atualiza o registro SRS de um fato dada a avaliação do usuário.
+// quality: 'wrong' | 'hard' | 'easy'.
+export function updateSrsFact(prev = {}, quality, now = Date.now()) {
+  const ease = prev.easeFactor || SRS_DEFAULT_EASE;
+  const reps = (prev.reps || 0) + 1;
+  let interval; // em minutos
+  let newEase = ease;
+
+  if (quality === 'wrong') {
+    interval = SRS_INITIAL_INTERVALS_MIN.wrong; // 10 min
+    newEase = Math.max(1.3, ease - 0.2);
+  } else if (quality === 'hard') {
+    // hard: cresce devagar
+    const prevDays = (prev.interval || 0) / (24 * 60);
+    interval = Math.round(Math.max(1, prevDays * 1.2) * 24 * 60);
+    newEase = Math.max(1.3, ease - 0.05);
+  } else {
+    // easy: cresce no fator de facilidade
+    const prevDays = (prev.interval || 0) / (24 * 60);
+    if (reps === 1) interval = SRS_INITIAL_INTERVALS_MIN.easy;
+    else if (reps === 2) interval = 6 * 24 * 60; // 6 dias
+    else interval = Math.round(prevDays * newEase * 24 * 60);
+    newEase = Math.min(3.0, ease + 0.05);
+  }
+
+  return {
+    interval,
+    easeFactor: newEase,
+    reps,
+    nextReview: new Date(now + interval * 60 * 1000).toISOString(),
+    lastReview: new Date(now).toISOString(),
+  };
+}
+
+// Conta quantos fatos estão DUE (vencidos para revisão) hoje.
+// Fato novo (sem registro) também conta como pendente.
+export function countDueFlashcards(srsData = {}) {
+  const all = getAllFactKeys();
+  const now = Date.now();
+  let due = 0;
+  for (const fk of all) {
+    const rec = srsData[fk];
+    if (!rec || !rec.nextReview) { due += 1; continue; }
+    if (new Date(rec.nextReview).getTime() <= now) due += 1;
+  }
+  return due;
+}
+
+// Devolve a próxima fila de revisão (ordenada por: vencidos primeiro, depois novos).
+export function getReviewQueue(srsData = {}, limit = 20) {
+  const all = getAllFactKeys();
+  const now = Date.now();
+  const due = [];
+  const fresh = [];
+  for (const fk of all) {
+    const rec = srsData[fk];
+    if (!rec || !rec.nextReview) { fresh.push(fk); continue; }
+    const ts = new Date(rec.nextReview).getTime();
+    if (ts <= now) due.push({ fk, ts });
+  }
+  due.sort((a, b) => a.ts - b.ts); // mais atrasado primeiro
+  const queue = [...due.map((d) => d.fk), ...fresh];
+  return queue.slice(0, limit);
+}
+
+// ── CERTIFICADOS DE DOMÍNIO POR TABUADA ─────────────────────────────────────
+// 8 certificados (tabuadas 2–9). Cada um é desbloqueado quando TODOS os fatos
+// daquela tabuada estão "dominated" (mesmo critério do Mapa de Domínio).
+// Critério local — espelha classifyFact em AccuracyCatalogPage.
+
+const CERT_FAST_MS = 1500;
+const CERT_MIN_ACC = 90;
+const CERT_MIN_SAMPLES = 3;
+
+function isFactDominated(stat) {
+  if (!stat || (stat.count || 0) < CERT_MIN_SAMPLES) return false;
+  const tot = (stat.correct || 0) + (stat.wrong || 0);
+  if (tot < CERT_MIN_SAMPLES) return false;
+  const acc = Math.round((stat.correct / tot) * 100);
+  const avgMs = stat.totalMs / stat.count;
+  return acc >= CERT_MIN_ACC && avgMs > 0 && avgMs < CERT_FAST_MS;
+}
+
+// Lista de certificados desbloqueados (tabuadas 2..9).
+// Retorna [{ table: 2..9, dominated, total: 10 }] com flag se já está completo.
+export function computeCertificates(factStats = {}) {
+  const result = [];
+  for (let a = 2; a <= 9; a++) {
+    let dominated = 0;
+    for (let b = 1; b <= 10; b++) {
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      const fk = `${lo}x${hi}`;
+      if (isFactDominated(factStats[fk])) dominated += 1;
+    }
+    result.push({
+      table: a,
+      dominated,
+      total: 10,
+      unlocked: dominated === 10,
+    });
+  }
+  return result;
+}
+
 // ── ACHIEVEMENTS ──────────────────────────────────────────────────────────
 
 export function checkNewAchievements(savedData) {

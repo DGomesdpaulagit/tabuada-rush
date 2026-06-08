@@ -18,10 +18,55 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-05-27  
-**Versão:** 3.1.0  
-**Status:** ✅ v3.1 completa. Build limpo. Deploy Vercel disparado.  
+**Data:** 2026-06-08
+**Versão:** 3.2.1 (produção) → próximo: Tabuada Rush 3.0 (grande transformação pedagógica)
+**Status:** ✅ v3.2.1 estável. Análise estratégica completa (sessao-025.md). Pronto para iniciar Fase 1.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
+
+---
+
+## 🚀 TABUADA RUSH 3.0 — PRÓXIMAS FASES (ler sessao-025.md para detalhes completos)
+
+### FILOSOFIA
+> O Tabuada Rush 2.x praticava tabuada. O 3.0 vai MEMORIZAR tabuada.
+> Método: Repetição Espaçada (Spaced Repetition System — SRS).
+> O nível deve representar domínio real, não tempo jogado.
+
+### FASE 1 — COMEÇAR AQUI (próxima sessão)
+1. **Fix missão impossível:** `mm_score_1200` → ajustar target para 350 pts
+2. **Página de Modos** (`ModesPage.jsx`): todos os modos organizados com cards grandes
+3. **Banner Desafio Diário no Menu**: card de destaque no menu principal (modo mais importante)
+4. **Mapa de Domínio Visual**: grade 8×10 colorida por domínio no Catálogo de Precisão
+   - 🟢 Verde = dominado (<1.5s, >95% acerto)
+   - 🟡 Âmbar = praticado (acerta mas devagar >1.5s)
+   - 🔴 Vermelho = problemático (>20% erro)
+   - ⬜ Cinza = sem dados
+
+### FASE 2 — Repetição Espaçada (coração do 3.0)
+5. **Modo Flashcard com SRS**: fácil/difícil/errei → intervalos crescentes por fato
+6. **Certificados de Domínio por Tabuada**: conquistados por domínio real, não comprados
+7. **Modo Inverso**: "= 56, quais os fatores?" — treino de recuperação reversa
+
+### FASE 3 — Economia e Loja Reformulada
+8. **Power-ups Spot**: comprar no momento de perder (não só pré-compra)
+9. **Seguro de Ofensiva (100🪙)**: restaura ofensiva quebrada em 24h
+10. **Congelar Missão (50🪙)**: pausa missão diária por 24h
+11. **Apostas de Partida**: apostar moedas antes — 3× se bater recorde
+12. **Oferta da Semana na Loja**: 2-3 itens com desconto rotativo toda segunda
+
+### FASE 4 — Novos Modos
+13. **Modo Contra o Relógio Pessoal**: bater seus próprios recordes por fato
+14. **Desafio Semanal Competitivo**: 10 questões iguais para todos, leaderboard semanal
+15. **Modo Difícil**: pool só com tabuadas 7, 8 e 9 — desbloqueado no Nível 8+
+
+### FASE 5 — Social e Retenção
+16. **Leaderboard Desafio Diário**: top 20 global (todas respostas iguais = comparação justa)
+17. **Calendário Heatmap de Ofensiva**: 365 dias, estilo GitHub
+18. **Compartilhar Resultado**: gerar imagem para redes sociais
+
+### FASE 6 — Expansão de Conteúdo
+19. **Tabuada do 11 e 12**: opcional, desbloqueável, pool separado
+20. **Modo Combinado**: "3 × 7 + 4 = ?" para jogadores com certificados de domínio
 
 ---
 
@@ -100,13 +145,16 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — PRIORIDADES (v3.2+)
+## 🎯 PRÓXIMA SESSÃO — INICIAR FASE 1 DA TABUADA RUSH 3.0
 
-1. **Leaderboard global** — Supabase rankings por modo
-2. **Compartilhar resultado** — imagem gerada para redes sociais
-3. **Push notifications backend** — VAPID + Supabase Edge Function para missões com app fechado
-4. **Expansão da loja** — mais itens (avatares, efeitos de partícula)
-5. **Streak calendar heatmap** — calendário visual de dias jogados
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-025.md`
+
+**Executar nesta ordem:**
+1. Fix missão impossível (`mm_score_1200` target → 350)
+2. Criar `ModesPage.jsx` com todos os modos
+3. Adicionar banner do Desafio Diário no MenuPage
+4. Implementar Mapa de Domínio no `AccuracyCatalogPage.jsx`
+5. Build + commit + push + documento
 
 ---
 

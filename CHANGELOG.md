@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [ROADMAP] — 2026-06-08 — TABUADA RUSH 3.0 PLANEJADO
+
+**Transformação pedagógica completa. Detalhes em `sessions/sessao-025.md`.**
+
+### Fase 1 (próxima sessão)
+- Fix missão impossível (mm_score_1200 → 350 pts)
+- Página de Modos (ModesPage) + Banner Desafio Diário no menu
+- Mapa de Domínio Visual (grade 8×10 colorida por domínio real)
+
+### Fase 2 — Repetição Espaçada
+- Modo Flashcard com SRS (spaced repetition system)
+- Certificados de Domínio por tabuada
+- Modo Inverso ("= 56, quais os fatores?")
+
+### Fase 3 — Economia reformulada
+- Power-ups spot (comprar no momento de perder)
+- Seguro de Ofensiva, Congelar Missão, Apostas de Partida
+- Oferta da Semana na loja
+
+### Fase 4 — Novos Modos
+- Modo Contra o Relógio Pessoal
+- Desafio Semanal Competitivo com leaderboard
+- Modo Difícil (tabuadas 7, 8, 9)
+
+### Fases 5–6 — Social, Heatmap, Tabuada 11/12, Modo Combinado
+
+---
+
 ## [3.2.1] — 2026-05-29 — XP×2 VISUAL, RESULTADOS E STATS DE POWER-UPS
 
 ### Adicionado — Badge ⚡ XP ×2 no GamePage

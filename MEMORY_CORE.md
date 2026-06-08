@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.4.0 (Fase 2 da Tabuada Rush 3.0 implementada — coração pedagógico)
-**Status:** ✅ Fase 2 entregue (sessao-027.md). Próximo: Fase 3 (Economia e Loja Reformulada).
+**Versão:** 3.5.0 (Fase 3 da Tabuada Rush 3.0 — Economia e Loja Reformulada)
+**Status:** ✅ Fase 3 entregue (sessao-028.md). Próximo: Fase 4 (Novos Modos — Difícil, Recorde Pessoal, Desafio Semanal).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -45,12 +45,13 @@
 6. ✅ Certificados de Domínio (8, tabuadas 2-9) — derivados de factStats, não compráveis
 7. ✅ Modo Inverso — `MODES.inverse`, 15 q, 2 inputs lado-a-lado, aceita qualquer par
 
-### FASE 3 — Economia e Loja Reformulada
-8. **Power-ups Spot**: comprar no momento de perder (não só pré-compra)
-9. **Seguro de Ofensiva (100🪙)**: restaura ofensiva quebrada em 24h
-10. **Congelar Missão (50🪙)**: pausa missão diária por 24h
-11. **Apostas de Partida**: apostar moedas antes — 3× se bater recorde
-12. **Oferta da Semana na Loja**: 2-3 itens com desconto rotativo toda segunda
+### FASE 3 — ✅ ENTREGUE (v3.5.0 · sessao-028.md)
+8. ✅ Power-ups Spot — vida (80🪙) no Survival, +60s (30🪙) no Rush em tempo crítico
+9. ✅ Seguro de Ofensiva (100🪙) — `applyStreakDecay` consome em vez de zerar
+10. ✅ Congelar Missão Diária (50🪙) — carrega para o dia seguinte com progresso intacto
+11. ✅ Apostas de Partida — 10/25/50 → 3× se bater recorde; modal antes dos modos principais
+12. ✅ Oferta da Semana — 3 cosméticos com 40% off, seed ISO week
+13. ✅ Temas de GamePage — categoria `gameTheme`, 3 itens (Neon/Aurora/Lava), aplicados ao card de pergunta
 
 ### FASE 4 — Novos Modos
 13. **Modo Contra o Relógio Pessoal**: bater seus próprios recordes por fato
@@ -143,24 +144,20 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 3 (Economia e Loja Reformulada)
+## 🎯 PRÓXIMA SESSÃO — FASE 4 (Novos Modos)
 
-**Ler antes de começar:** `sessions/sessao-027.md` (Fase 2 entregue) +
+**Ler antes de começar:** `sessions/sessao-028.md` (Fase 3 entregue) +
 `sessions/sessao-025.md` (visão completa do roadmap 3.0).
 
 **Executar nesta ordem:**
-1. **Power-ups Spot** — modal de last-chance ao perder (Survival e Rush);
-   alternativa de comprar agora vs usar estoque.
-2. **Seguro de Ofensiva (100🪙)** — `consumables.streakInsurance`: restaura
-   ofensiva quebrada em até 24h. UI: aviso quando ofensiva caiu.
-3. **Congelar Missão Diária (50🪙)** — pausa missão por 24h.
-4. **Apostas de Partida** — antes de iniciar, escolher aposta 10/25/50; 3×
-   se bater recorde, perde se não bater.
-5. **Oferta da Semana na Loja** — seed determinística por segunda-feira,
-   2–3 itens com 40% off.
-6. **Temas de GamePage** — gradiente do card de questão · cor da barra
-   de progresso · visual do combo. Preços 1.000/2.500/5.000 🪙.
-7. Build + commit + push + documento + registros.
+1. **Modo Contra o Relógio Pessoal** — `MODES.personal`. Cada questão mostra
+   o melhor tempo do jogador para aquele fato (via `factStats[fk].totalMs/count`).
+   Pontuação = % de questões onde bateu o tempo pessoal. xpMultiplier 0.18.
+2. **Modo Difícil** — `MODES.hard`. Pool exclusivo 7/8/9, timer 90s,
+   xpMultiplier 0.22, desbloqueado no Nível 8+.
+3. **Desafio Semanal Competitivo** — 10 questões iguais para todos, seed
+   por semana ISO. Leaderboard via Supabase (top 3 ganham itens exclusivos).
+4. Build + commit + push + documento + registros.
 
 ---
 

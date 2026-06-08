@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.4.0 (Fase 2 da Tabuada Rush 3.0 entregue · sessao-027 · SRS + Inverso + Certificados)  
+**Versão:** 3.5.0 (Fase 3 da Tabuada Rush 3.0 entregue · sessao-028 · Economia: Seguro + Congelar + Apostas + Oferta + Temas)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

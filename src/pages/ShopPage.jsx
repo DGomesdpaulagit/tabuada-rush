@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
-import { SHOP_ITEMS, SHOP_CATEGORIES, RARITIES } from '../constants/shop';
+import { ArrowLeft, Tag } from 'lucide-react';
+import { SHOP_ITEMS, SHOP_CATEGORIES, RARITIES, getWeeklyOffer } from '../constants/shop';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
 
@@ -59,6 +59,9 @@ export default function ShopPage({ onBack }) {
 
   const items = SHOP_ITEMS.filter((i) => i.category === activeTab);
 
+  // Oferta da Semana: 3 cosméticos com 40% off, rotativo por semana ISO
+  const weeklyOffer = useMemo(() => getWeeklyOffer(new Date()), []);
+
   return (
     <motion.div
       variants={pageVariants}
@@ -83,6 +86,56 @@ export default function ShopPage({ onBack }) {
         <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
           <span className="text-sm">🪙</span>
           <span className="text-sm font-black text-amber-700">{coins.toLocaleString('pt-BR')}</span>
+        </div>
+      </div>
+
+      {/* ── Oferta da Semana ─────────────────────────────────────────────── */}
+      <div>
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <Tag size={14} className="text-rose-500" />
+          <p className="text-xs font-black text-rose-600 uppercase tracking-wide">Oferta da Semana</p>
+          <span className="ml-auto text-[10px] font-bold text-gray-400">Renova toda segunda</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {weeklyOffer.map((item) => {
+            const rarity = RARITIES[item.rarity];
+            const owned = ownedItems.includes(item.id);
+            const canAfford = coins >= item.price;
+            return (
+              <motion.button
+                key={item.id}
+                whileTap={owned || !canAfford ? {} : { scale: 0.97 }}
+                disabled={owned || !canAfford}
+                onClick={() => buyCosmetic(item)}
+                className={`relative rounded-2xl p-3 border text-left transition-all
+                  ${owned
+                    ? 'bg-gray-50 border-gray-200 opacity-60 cursor-default'
+                    : canAfford
+                    ? `${rarity.bg} ${rarity.border} hover:shadow-md`
+                    : 'bg-gray-50 border-gray-200 opacity-70 cursor-not-allowed'}`}
+              >
+                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[9px] font-black rounded-full px-2 py-0.5 shadow">
+                  -40%
+                </span>
+                <div className="text-2xl mb-1">{item.emoji}</div>
+                <p className="text-[11px] font-black text-gray-900 leading-tight truncate">
+                  {item.name}
+                </p>
+                {owned ? (
+                  <p className="text-[10px] font-bold text-emerald-600 mt-1">✓ Você tem</p>
+                ) : (
+                  <div className="mt-1">
+                    <p className="text-[10px] line-through text-gray-400 leading-none">
+                      🪙 {item.originalPrice}
+                    </p>
+                    <p className="text-xs font-black text-rose-600 leading-none">
+                      🪙 {item.price}
+                    </p>
+                  </div>
+                )}
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 

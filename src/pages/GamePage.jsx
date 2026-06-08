@@ -2,9 +2,11 @@ import { useReducer, useEffect, useRef, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
+import { SHOP_ITEM_MAP } from '../constants/shop';
 import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
+import { useApp } from '../contexts/AppContext';
 
 // ── MASCOTE ────────────────────────────────────────────────────────────────
 const MASCOT = {
@@ -137,6 +139,14 @@ function reducer(state, action) {
 
 export default function GamePage({ mode, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
   const cfg = MODES[mode];
+  const { data, update } = useApp();
+
+  // Tema de GamePage equipado (sobrescreve o gradiente padrão do modo)
+  const equippedGameTheme = data.equippedItems?.gameTheme
+    ? SHOP_ITEM_MAP[data.equippedItems.gameTheme]
+    : null;
+  const questionGradient = equippedGameTheme?.questionGradient || cfg.gradientLight;
+  const questionBorder   = equippedGameTheme?.questionBorder   || cfg.border;
 
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
   const initArgRef = useRef({ mode, customQuestions });
@@ -219,8 +229,10 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
       });
 
       // Verifica se pode usar Vida Extra (Survival, perdeu todas as vidas)
+      // ou comprar uma agora (Power-up Spot).
       const diedInSurvival = mode === 'survival' && state.lives !== null && state.lives <= 0;
-      if (diedInSurvival && (powerups.life || 0) > 0) {
+      const canBuyLifeSpot = (data.coins || 0) >= 80;
+      if (diedInSurvival && ((powerups.life || 0) > 0 || canBuyLifeSpot)) {
         audio.gameOver();
         pendingEndRef.current = callEnd;
         setShowLifePrompt(true);
@@ -317,16 +329,28 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   );
 
   // ── Power-up handlers ──────────────────────────────────────────────────────
+  const restartTimer = () => {
+    timerRef.current = setInterval(() => {
+      if (phaseRef.current === 'playing' || phaseRef.current === 'feedback') {
+        dispatch({ type: cfg.timer === null ? 'TICK_UP' : 'TICK' });
+      }
+    }, 1000);
+  };
+
   const handleUseLive = () => {
     onUsePowerup?.('life');
     dispatch({ type: 'CONTINUE' });
     setShowLifePrompt(false);
-    // Reinicia o intervalo (foi limpo no ended effect)
-    timerRef.current = setInterval(() => {
-      if (phaseRef.current === 'playing' || phaseRef.current === 'feedback') {
-        dispatch({ type: 'TICK_UP' });
-      }
-    }, 1000);
+    restartTimer();
+  };
+
+  // SPOT-BUY: compra 1 vida por 80 moedas e usa na hora
+  const handleBuyLifeSpot = () => {
+    if ((data.coins || 0) < 80) return;
+    update((prev) => ({ ...prev, coins: (prev.coins || 0) - 80 }));
+    dispatch({ type: 'CONTINUE' });
+    setShowLifePrompt(false);
+    restartTimer();
   };
 
   const handleDeclineLive = () => {
@@ -381,16 +405,27 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
               <p className="text-5xl mb-3">❤️‍🔥</p>
               <p className="text-xl font-black text-gray-900 mb-1">Perdeu a última vida!</p>
               <p className="text-sm text-gray-500 font-semibold mb-4">
-                Você tem <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span> no estoque.
-                Quer usar 1 para continuar?
+                Estoque: <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span>
+                {' · '}
+                Moedas: <span className="font-black text-amber-600">🪙 {data.coins || 0}</span>
               </p>
               <div className="flex flex-col gap-2">
-                <button
-                  onClick={handleUseLive}
-                  className="w-full py-3 rounded-2xl bg-violet-600 text-white font-black text-sm hover:bg-violet-700 active:scale-[0.98] transition-all"
-                >
-                  ❤️ Usar Vida Extra e Continuar
-                </button>
+                {(powerups.life || 0) > 0 && (
+                  <button
+                    onClick={handleUseLive}
+                    className="w-full py-3 rounded-2xl bg-violet-600 text-white font-black text-sm hover:bg-violet-700 active:scale-[0.98] transition-all"
+                  >
+                    ❤️ Usar Vida do Estoque
+                  </button>
+                )}
+                {(data.coins || 0) >= 80 && (
+                  <button
+                    onClick={handleBuyLifeSpot}
+                    className="w-full py-3 rounded-2xl bg-amber-500 text-white font-black text-sm hover:bg-amber-600 active:scale-[0.98] transition-all"
+                  >
+                    🪙 Comprar Vida Agora (80)
+                  </button>
+                )}
                 <button
                   onClick={handleDeclineLive}
                   className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-600 font-bold text-sm hover:bg-gray-200 active:scale-[0.98] transition-all"
@@ -519,8 +554,8 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
           </span>
         </div>
 
-        {/* Question card */}
-        <div className={`bg-gradient-to-br ${cfg.gradientLight} rounded-3xl p-8 border ${cfg.border}`}>
+        {/* Question card — usa tema equipado se houver */}
+        <div className={`bg-gradient-to-br ${questionGradient} rounded-3xl p-8 border ${questionBorder}`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={`${state.question?.a}-${state.question?.b}-${state.answered}`}
@@ -673,7 +708,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
           </button>
         )}
 
-        {/* Botão +60s — apenas no Rush, quando há estoque */}
+        {/* Botão +60s — Rush, quando há estoque OU pode comprar agora */}
         <AnimatePresence>
           {mode === 'rush' && (powerups.time || 0) > 0 && (
             <motion.button
@@ -687,6 +722,21 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
               <span className="bg-violet-200 text-violet-800 text-xs font-black px-2 py-0.5 rounded-full">
                 ×{powerups.time}
               </span>
+            </motion.button>
+          )}
+          {/* SPOT-BUY: comprar +30s agora por 30 moedas (Rush em tempo crítico ≤ 20s) */}
+          {mode === 'rush' && (powerups.time || 0) === 0 && state.time > 0 && state.time <= 20 && (data.coins || 0) >= 30 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              onClick={() => {
+                update((prev) => ({ ...prev, coins: (prev.coins || 0) - 30 }));
+                dispatch({ type: 'ADD_TIME' });
+              }}
+              className="w-full py-2.5 rounded-2xl border border-amber-200 bg-amber-50 text-amber-700 text-sm font-black hover:bg-amber-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            >
+              🪙 Comprar +60s Agora (30)
             </motion.button>
           )}
         </AnimatePresence>

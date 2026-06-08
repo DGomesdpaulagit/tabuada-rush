@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, Snowflake } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { getActiveMissions, claimMission } from '../utils/missions';
+import { getActiveMissions, claimMission, freezeMission } from '../utils/missions';
 import { pageVariants, pageTransition, Progress } from '../components/ui';
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -62,6 +62,23 @@ export default function MissionsPage({ onBack }) {
       missionsData: claimMission(prev.missionsData, activeTab, mission.id),
       coins: (prev.coins || 0) + (mission.reward || 0),
     }));
+  };
+
+  // Congelar missão diária: consome 1 missionFreeze do estoque OU 50 moedas
+  const handleFreeze = (mission) => {
+    update((prev) => {
+      const stock = prev.powerups?.missionFreeze || 0;
+      const useStock = stock > 0;
+      if (!useStock && (prev.coins || 0) < 50) return prev;
+      return {
+        ...prev,
+        missionsData: freezeMission(prev.missionsData, mission.id),
+        coins: useStock ? prev.coins : (prev.coins || 0) - 50,
+        powerups: useStock
+          ? { ...(prev.powerups || {}), missionFreeze: stock - 1 }
+          : (prev.powerups || {}),
+      };
+    });
   };
 
   return (
@@ -175,6 +192,26 @@ export default function MissionsPage({ onBack }) {
                 <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-emerald-600">
                   <CheckCircle size={12} />
                   Recompensa resgatada
+                </div>
+              )}
+
+              {/* Congelar missão (apenas diárias incompletas, não congeladas) */}
+              {activeTab === 'daily' && !mission.completed && !mission.frozen && (
+                <button
+                  onClick={() => handleFreeze(mission)}
+                  disabled={(data.powerups?.missionFreeze || 0) === 0 && (data.coins || 0) < 50}
+                  className="mt-2 w-full py-2 rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700 text-xs font-black hover:bg-cyan-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Snowflake size={12} />
+                  {(data.powerups?.missionFreeze || 0) > 0
+                    ? `Congelar (estoque ×${data.powerups.missionFreeze})`
+                    : 'Congelar (🪙 50)'}
+                </button>
+              )}
+              {mission.frozen && (
+                <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-cyan-600">
+                  <Snowflake size={12} />
+                  Congelada — sobrevive até amanhã
                 </div>
               )}
             </motion.div>

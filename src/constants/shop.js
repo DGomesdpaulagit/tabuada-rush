@@ -43,6 +43,30 @@ export const RARITIES = {
 
 export const SHOP_ITEMS = [
 
+  // ── CONSUMÍVEIS DE PROGRESSÃO ────────────────────────────────────────────
+  // Diferente dos power-ups in-game, estes afetam progressão fora da partida:
+  // ofensiva, missões. Comprados antes de precisar — usados quando precisarem.
+  {
+    id: 'powerup_streak_insurance',
+    category: 'powerup',
+    powerupKey: 'streakInsurance',
+    name: 'Seguro de Ofensiva',
+    emoji: '🛡️',
+    desc: 'Salva sua ofensiva se você quebrá-la — restaura automaticamente em até 24h.',
+    price: 100,
+    rarity: 'rare',
+  },
+  {
+    id: 'powerup_mission_freeze',
+    category: 'powerup',
+    powerupKey: 'missionFreeze',
+    name: 'Congelar Missão',
+    emoji: '❄️',
+    desc: 'Pausa uma missão diária por 24h — útil quando você sabe que não vai conseguir hoje.',
+    price: 50,
+    rarity: 'common',
+  },
+
   // ── POWER-UPS (consumíveis) ───────────────────────────────────────────────
   {
     id: 'powerup_life',
@@ -168,6 +192,44 @@ export const SHOP_ITEMS = [
     rarity: 'epic',
     cardGradient: 'from-indigo-600 via-purple-600 to-pink-600',
   },
+
+  // ── TEMAS DE GAMEPAGE (gameTheme) ────────────────────────────────────────
+  // Cosméticos que mudam o visual do card de pergunta DURANTE a partida.
+  // questionGradient sobrescreve o gradiente padrão do modo.
+  // questionBorder sobrescreve a borda padrão.
+  {
+    id: 'gametheme_neon',
+    category: 'gameTheme',
+    name: 'Tema Neon',
+    emoji: '💠',
+    desc: 'Card de pergunta em cores neon vibrantes — destaque máximo durante a partida',
+    price: 1000,
+    rarity: 'rare',
+    questionGradient: 'from-cyan-100 to-fuchsia-100',
+    questionBorder: 'border-cyan-300',
+  },
+  {
+    id: 'gametheme_aurora',
+    category: 'gameTheme',
+    name: 'Tema Aurora',
+    emoji: '🌌',
+    desc: 'Card de pergunta com gradiente da aurora boreal — verde, roxo e rosa',
+    price: 2500,
+    rarity: 'epic',
+    questionGradient: 'from-emerald-100 via-violet-100 to-pink-100',
+    questionBorder: 'border-violet-300',
+  },
+  {
+    id: 'gametheme_lava',
+    category: 'gameTheme',
+    name: 'Tema Lava',
+    emoji: '🔥',
+    desc: 'Card de pergunta com gradiente de lava ardente — apenas para mestres',
+    price: 5000,
+    rarity: 'legendary',
+    questionGradient: 'from-amber-100 via-rose-100 to-red-200',
+    questionBorder: 'border-rose-400',
+  },
 ];
 
 // Lookup rápido por id
@@ -175,7 +237,40 @@ export const SHOP_ITEM_MAP = Object.fromEntries(SHOP_ITEMS.map((i) => [i.id, i])
 
 // Categorias para os tabs da loja
 export const SHOP_CATEGORIES = [
-  { id: 'powerup', label: 'Poder',    emoji: '⚡' },
-  { id: 'frame',   label: 'Molduras', emoji: '🖼️' },
-  { id: 'card',    label: 'Temas',    emoji: '🎨' },
+  { id: 'powerup',   label: 'Poder',    emoji: '⚡' },
+  { id: 'frame',     label: 'Molduras', emoji: '🖼️' },
+  { id: 'card',      label: 'Card',     emoji: '🎨' },
+  { id: 'gameTheme', label: 'Jogo',     emoji: '💠' },
 ];
+
+// ── OFERTA DA SEMANA ─────────────────────────────────────────────────────────
+// Seleciona 3 itens cosméticos com 40% off, determinístico por semana ISO.
+// Itens consumíveis (powerup) NÃO entram em oferta — eles já têm preço por uso.
+export const WEEKLY_OFFER_DISCOUNT = 0.40;
+
+function lcg(seed) {
+  let s = seed >>> 0;
+  return () => { s = (Math.imul(1664525, s) + 1013904223) >>> 0; return s / 0xffffffff; };
+}
+
+// Número ISO da semana (1-53) + ano, para determinismo cross-device
+export function getIsoWeekKey(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return d.getUTCFullYear() * 100 + weekNo;
+}
+
+export function getWeeklyOffer(date = new Date()) {
+  const eligible = SHOP_ITEMS.filter((i) => i.category !== 'powerup');
+  const rand = lcg(getIsoWeekKey(date));
+  const pool = [...eligible].sort(() => rand() - 0.5);
+  return pool.slice(0, 3).map((item) => ({
+    ...item,
+    originalPrice: item.price,
+    price: Math.round(item.price * (1 - WEEKLY_OFFER_DISCOUNT)),
+    onOffer: true,
+  }));
+}

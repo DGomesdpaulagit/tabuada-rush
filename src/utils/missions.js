@@ -55,8 +55,17 @@ function dateSeed(str) {
 
 // ── Inicializadores por período ───────────────────────────────────────────────
 
-function initDaily(date) {
-  return { date, missions: pickMissions(DAILY_MISSION_POOL, 3, dateSeed(date)) };
+function initDaily(date, frozenCarryOver = []) {
+  // Missões congeladas do dia anterior carregam progresso intacto. Limpa o
+  // flag `frozen` para que voltem ao ciclo normal a partir de agora.
+  const fresh = pickMissions(DAILY_MISSION_POOL, 3, dateSeed(date));
+  const carried = frozenCarryOver
+    .filter((m) => m.frozen && !m.rewardClaimed)
+    .map((m) => ({ ...m, frozen: false }));
+  // Evita duplicatas se o sorteio do dia repetir uma carregada
+  const carriedIds = new Set(carried.map((m) => m.id));
+  const filteredFresh = fresh.filter((m) => !carriedIds.has(m.id));
+  return { date, missions: [...carried, ...filteredFresh].slice(0, 3 + carried.length) };
 }
 
 function initWeekly(weekStart) {
@@ -77,7 +86,9 @@ export function getActiveMissions(missionsData) {
 
   const md = missionsData || {};
 
-  const daily   = (!md.daily   || md.daily.date      !== today)    ? initDaily(today)       : md.daily;
+  const daily   = (!md.daily   || md.daily.date      !== today)
+    ? initDaily(today, md.daily?.missions || [])
+    : md.daily;
   const weekly  = (!md.weekly  || md.weekly.weekStart !== weekStr)  ? initWeekly(weekStr)    : md.weekly;
   const monthly = (!md.monthly || md.monthly.month    !== monthStr) ? initMonthly(monthStr)  : md.monthly;
 
@@ -167,6 +178,17 @@ export function getNewlyCompleted(before, after) {
   };
   const beforeMap = Object.fromEntries(flat(before).map((m) => [m.id, m.completed]));
   return flat(after).filter((m) => m.completed && !beforeMap[m.id]);
+}
+
+// ── Congelar missão diária (carry-over para o próximo dia) ───────────────────
+// Marca `frozen: true` na missão. No próximo reset diário, a missão será
+// preservada (com progresso) e voltará ao ciclo normal — `frozen` é zerado.
+export function freezeMission(missionsData, missionId) {
+  const active = getActiveMissions(missionsData);
+  const missions = active.daily.missions.map((m) =>
+    m.id === missionId ? { ...m, frozen: true } : m
+  );
+  return { ...active, daily: { ...active.daily, missions } };
 }
 
 // ── Resgatar recompensa de missão ─────────────────────────────────────────────

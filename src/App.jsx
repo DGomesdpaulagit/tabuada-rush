@@ -197,6 +197,72 @@ function LevelUpBurst({ level, onDone }) {
   );
 }
 
+// ── MODAL DE APOSTA ───────────────────────────────────────────────────────
+// Antes de iniciar uma partida nos modos principais, jogador pode apostar
+// moedas: se bater seu recorde nesse modo, recebe 3× a aposta; senão perde.
+const BET_AMOUNTS = [10, 25, 50];
+
+function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
+      >
+        <div className="text-center text-4xl mb-1">🎲</div>
+        <h3 className="text-xl font-black text-gray-900 text-center">Quer apostar?</h3>
+        <p className="text-sm text-gray-400 font-semibold text-center mt-1 mb-4 leading-snug">
+          Aposte moedas no <strong className="text-gray-700">{modeLabel}</strong>.<br/>
+          {currentRecord > 0
+            ? <>Bata seu recorde de <strong className="text-violet-600">{currentRecord} pts</strong> e receba <strong className="text-amber-600">3× a aposta</strong>.</>
+            : <>Defina seu primeiro recorde e ganhe <strong className="text-amber-600">3× a aposta</strong>!</>
+          }
+        </p>
+        <p className="text-xs text-center font-bold text-gray-500 mb-3">
+          Você tem 🪙 {coins.toLocaleString('pt-BR')}
+        </p>
+
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          {BET_AMOUNTS.map((amt) => {
+            const can = coins >= amt;
+            return (
+              <button
+                key={amt}
+                onClick={() => can && onConfirm(amt)}
+                disabled={!can}
+                className={`py-3 rounded-2xl font-black text-sm transition-all
+                  ${can
+                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-200 hover:scale-[1.03] active:scale-95'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+              >
+                🪙 {amt}
+                <span className="block text-[10px] font-bold mt-0.5">
+                  ganha {amt * 3}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          onClick={onSkip}
+          className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-600 text-sm font-bold hover:bg-gray-200 active:scale-[0.98] transition-all"
+        >
+          Jogar sem apostar
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ── PWA INSTALL BANNER ────────────────────────────────────────────────────
 function InstallBanner({ onInstall, onDismiss }) {
   return (
@@ -243,6 +309,7 @@ export default function App() {
   const [showParticles, setShowParticles] = useState(false);
   const [particlesLevel, setParticlesLevel] = useState(null);
   const [showInstall, setShowInstall] = useState(false);
+  const [pendingBetMode, setPendingBetMode] = useState(null); // modo que está aguardando confirmação de aposta
   const deferredPrompt = useRef(null);
 
   const showAchievement = useCallback((a) => {
@@ -285,6 +352,22 @@ export default function App() {
   const handleGameEnd = useCallback(
     (result) => {
       const today = todayStr();
+
+      // Resolução da aposta ativa (calculada com base no estado ANTES do update):
+      //   - Se o jogador apostou nesse modo e bateu o recorde do modo → +3× moedas
+      //   - Senão → aposta consumida (perdida)
+      const activeBet = data.activeBet;
+      let betPayout = 0;
+      let betResult = null; // 'win' | 'lose' | null
+      if (activeBet && activeBet.mode === result.mode) {
+        const prevRecord = data.records?.[result.mode] || 0;
+        if (result.score > prevRecord) {
+          betPayout = activeBet.amount * 3;
+          betResult = 'win';
+        } else {
+          betResult = 'lose';
+        }
+      }
 
       const newData = update((prev) => {
         const isNewRecord =
@@ -459,7 +542,8 @@ export default function App() {
           },
           currentDailyDate: result.mode === 'daily' ? today : prev.currentDailyDate,
           currentDailyScore: result.mode === 'daily' ? result.score : prev.currentDailyScore,
-          coins: (prev.coins || 0) + coinsEarned,
+          coins: (prev.coins || 0) + coinsEarned + betPayout,
+          activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
           // Consome 1 unidade do XP Dobrado se estava ativo
@@ -543,9 +627,26 @@ export default function App() {
         });
       }
 
+      // Toast da aposta (win/lose)
+      if (betResult === 'win') {
+        showAchievement({
+          id: '_bet_win',
+          icon: '💰',
+          title: 'Aposta vencida!',
+          desc: `+${betPayout} 🪙 (apostou ${activeBet.amount})`,
+        });
+      } else if (betResult === 'lose') {
+        showAchievement({
+          id: '_bet_lose',
+          icon: '💸',
+          title: 'Aposta perdida',
+          desc: `-${activeBet.amount} 🪙 — tente de novo!`,
+        });
+      }
+
       // xp2Used: verifica ANTES do update (data ainda tem o valor antigo, xp2 > 0 = estava ativo)
       const xp2Used = (data.powerups?.xp2 || 0) > 0;
-      setLastResult({ ...result, xp2Used });
+      setLastResult({ ...result, xp2Used, betResult, betPayout, betAmount: activeBet?.amount });
       setScreen('results');
     },
     [data, update, showAchievement]
@@ -594,8 +695,9 @@ export default function App() {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  const handleStart = useCallback((mode) => {
-    // Modo Revisão: gera questões focadas nas tabuadas com mais erros do jogador
+  // Inicia partida pulando o fluxo de aposta (também usado quando o jogador
+  // recusa apostar). Define modo, prepara questões e abre o GamePage.
+  const startGame = useCallback((mode) => {
     if (mode === 'review') {
       setCustomQuestions(getRevisionQuestions(data.tableStats));
     } else {
@@ -604,6 +706,37 @@ export default function App() {
     setActiveMode(mode);
     setScreen('game');
   }, [data.tableStats]);
+
+  const handleStart = useCallback((mode) => {
+    // Apostas só para modos principais (rush/survival/speed/daily) — modos de
+    // treino, flashcard e inverso não permitem aposta.
+    const bettable = ['rush', 'survival', 'speed', 'daily'].includes(mode);
+    const hasMinCoins = (data.coins || 0) >= 10;
+    if (bettable && hasMinCoins && !data.activeBet) {
+      setPendingBetMode(mode);
+      return;
+    }
+    startGame(mode);
+  }, [data.activeBet, data.coins, startGame]);
+
+  // Confirma aposta: desconta moedas, grava data.activeBet e inicia partida.
+  const handleConfirmBet = useCallback((amount) => {
+    if ((data.coins || 0) < amount) return;
+    update((prev) => ({
+      ...prev,
+      coins: (prev.coins || 0) - amount,
+      activeBet: { mode: pendingBetMode, amount },
+    }));
+    const mode = pendingBetMode;
+    setPendingBetMode(null);
+    startGame(mode);
+  }, [data.coins, pendingBetMode, startGame, update]);
+
+  const handleSkipBet = useCallback(() => {
+    const mode = pendingBetMode;
+    setPendingBetMode(null);
+    startGame(mode);
+  }, [pendingBetMode, startGame]);
 
   const handleReplay = useCallback(() => {
     setScreen('game');
@@ -739,6 +872,28 @@ export default function App() {
               }
             }}
             onDismiss={() => setShowInstall(false)}
+          />
+        )}
+      </AP>
+
+      {/* ── Modal de aposta ──────────────────────────────────────────── */}
+      <AP>
+        {pendingBetMode && (
+          <BetModal
+            key="bet"
+            mode={pendingBetMode}
+            modeLabel={
+              {
+                rush: 'Rush',
+                survival: 'Sobrevivência',
+                speed: 'Velocidade',
+                daily: 'Desafio Diário',
+              }[pendingBetMode] || pendingBetMode
+            }
+            currentRecord={data.records?.[pendingBetMode] || 0}
+            coins={data.coins || 0}
+            onConfirm={handleConfirmBet}
+            onSkip={handleSkipBet}
           />
         )}
       </AP>

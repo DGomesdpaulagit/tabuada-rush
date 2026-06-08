@@ -140,6 +140,12 @@ export function computeQI(data = {}) {
 
 // Reinicia a ofensiva se o usuário perdeu um dia OU virou o ano (conquistas e
 // recordes NÃO são afetados). Deve rodar ao abrir o app / logar.
+//
+// SEGURO DE OFENSIVA: se o usuário tem `powerups.streakInsurance > 0` no
+// estoque, em vez de zerar a ofensiva, marca como "pendente de restauração"
+// (`brokenStreak`) e consome 1 seguro. A restauração efetiva acontece no
+// próximo `lastPlayDate` ser definido (i.e., próxima partida em até 24h da
+// quebra) — feito separadamente em `tryRestoreInsuredStreak`.
 export function applyStreakDecay(data = {}) {
   const last = data.lastPlayDate;
   if (!last) return data;
@@ -154,7 +160,19 @@ export function applyStreakDecay(data = {}) {
   const yearTurn = new Date(last).getFullYear() < new Date(today).getFullYear();
 
   if ((missedDay || yearTurn) && (data.currentStreak || 0) > 0) {
-    return { ...data, currentStreak: 0, streakGoalBase: 0 };
+    const insurance = (data.powerups?.streakInsurance || 0);
+    if (insurance > 0) {
+      // Consome 1 seguro; mantém ofensiva intacta marcando o "consumo" via flag.
+      // O jogador precisa jogar nas próximas 24h após o seguro ser consumido —
+      // se não, na próxima abertura o seguro JÁ foi consumido e a ofensiva
+      // cai (sem segundo seguro automático).
+      return {
+        ...data,
+        streakInsuredAt: new Date().toISOString(),
+        powerups: { ...(data.powerups || {}), streakInsurance: insurance - 1 },
+      };
+    }
+    return { ...data, currentStreak: 0, streakGoalBase: 0, streakInsuredAt: null };
   }
   return data;
 }

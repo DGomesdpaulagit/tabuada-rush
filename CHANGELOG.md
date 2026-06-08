@@ -4,6 +4,42 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.5.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 3
+
+**Economia e Loja Reformulada.** Detalhes em `sessions/sessao-028.md`.
+
+### Adicionado
+- **Power-ups Spot** no GamePage:
+  - Vida Extra spot-buy no Survival (🪙 80) ao perder última vida
+  - +60s Rush spot-buy (🪙 30) quando tempo ≤ 20s e sem estoque
+- **Seguro de Ofensiva (🪙 100)** — `powerups.streakInsurance`
+  - `applyStreakDecay` consome 1 seguro em vez de zerar a streak
+  - Grava `streakInsuredAt` (ISO) — comportamento "uso único por quebra"
+- **Congelar Missão Diária (🪙 50)** — `powerups.missionFreeze`
+  - Botão em cada missão diária incompleta
+  - Consome do estoque OU paga 50 🪙
+  - `freezeMission()` em `utils/missions.js`; `initDaily` carrega missões
+    com flag `frozen` do dia anterior preservando progresso
+- **Apostas de Partida** — modal antes de iniciar modos principais
+  - Valores: 10/25/50 🪙 → 30/75/150 🪙 se bater recorde
+  - Apenas para rush/survival/speed/daily; modos de treino excluídos
+  - `data.activeBet = { mode, amount }` persistido; resolvido no `handleGameEnd`
+  - Toast de win/lose mostra resultado
+- **Oferta da Semana** — `getWeeklyOffer(date)` em shop.js
+  - 3 cosméticos com 40% off rotativos por semana ISO (seed determinístico)
+  - Seção própria no topo do ShopPage, badge `-40%`, preço riscado
+- **Temas de GamePage** — nova categoria `gameTheme` (3 itens)
+  - 💠 Tema Neon (1.000 🪙), 🌌 Tema Aurora (2.500 🪙), 🔥 Tema Lava (5.000 🪙)
+  - Aplicados ao gradiente do card de pergunta no GamePage
+  - Tab "Jogo" adicionado às categorias da loja
+
+### Filosofia
+> Fase 2 deu ao jogador o método de memorização. Fase 3 dá a ele agência
+> econômica: decisões de risco (apostar) e proteção do progresso (seguro,
+> congelar). A loja agora tem ofertas que mudam — razão para visitar regularmente.
+
+---
+
 ## [3.4.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 2
 
 **Repetição espaçada + Modo Inverso + Certificados de Domínio.** Detalhes em `sessions/sessao-027.md`.

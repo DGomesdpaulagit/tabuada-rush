@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, Zap, Heart, Timer, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, BookOpen } from 'lucide-react';
-import { MODE_LIST, TRAINING_MODE_LIST, LEVELS } from '../constants';
+import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight } from 'lucide-react';
+import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getLevelIdx, getXpProgress, getQiInfo } from '../utils';
@@ -8,8 +8,6 @@ import { analyzeUser } from '../utils/analysis';
 import { SHOP_ITEM_MAP } from '../constants/shop';
 import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
-
-const modeIcons = { rush: Zap, survival: Heart, speed: Timer, daily: Star, zen: Leaf, review: BookOpen };
 
 export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const { data, cloudSyncing } = useApp();
@@ -40,15 +38,6 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const cardGradient   = equippedCard?.cardGradient  || 'from-violet-600 to-purple-600';
   const displayTitle   = equippedTitle?.displayTitle  || level.title;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
-
-  const container = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.07 } },
-  };
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
-  };
 
   return (
     <motion.div
@@ -215,6 +204,50 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         </div>
       </motion.div>
 
+      {/* ── BANNER DESAFIO DIÁRIO ───────────────────────────────────────────
+          Card de destaque para o modo mais importante do dia. Sempre visível,
+          mostra estado (feito hoje vs pendente). Leva direto ao modo daily. */}
+      <motion.button
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        whileHover={{ scale: 1.01, y: -1 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => onStart('daily')}
+        className={`relative overflow-hidden w-full text-left rounded-3xl p-5 shadow-lg border transition-all
+          ${dailyDone
+            ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 shadow-emerald-100'
+            : 'bg-gradient-to-br from-amber-400 via-orange-400 to-rose-500 border-amber-300 shadow-amber-200 text-white'}`}
+      >
+        {/* Brilho decorativo */}
+        {!dailyDone && (
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-300/30 rounded-full blur-2xl pointer-events-none" />
+        )}
+        <div className="relative flex items-center gap-3">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0
+            ${dailyDone ? 'bg-emerald-100' : 'bg-white/20'}`}>
+            {dailyDone ? '✓' : '🌟'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`text-[10px] font-black uppercase tracking-wider
+              ${dailyDone ? 'text-emerald-600' : 'text-white/90'}`}>
+              Desafio de Hoje
+            </p>
+            <p className={`text-lg font-black leading-tight
+              ${dailyDone ? 'text-emerald-700' : 'text-white'}`}>
+              {dailyDone ? 'Feito hoje! 🎉' : '20 perguntas únicas'}
+            </p>
+            <p className={`text-xs font-bold mt-0.5
+              ${dailyDone ? 'text-emerald-500' : 'text-white/80'}`}>
+              {dailyDone
+                ? `Pontuação: ${data.currentDailyScore || 0} pts`
+                : 'Mesmas questões para todos · +30 XP'}
+            </p>
+          </div>
+          <ChevronRight size={20} className={dailyDone ? 'text-emerald-500' : 'text-white/80'} />
+        </div>
+      </motion.button>
+
       {/* Insight da Análise Inteligente (toque para ver detalhes) */}
       <motion.button
         initial={{ opacity: 0, y: 8 }}
@@ -229,91 +262,32 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         <p className="text-sm font-bold text-gray-600 leading-snug">{analysisHeadline}</p>
       </motion.button>
 
-      {/* Mode grid */}
-      <div>
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 px-1">
-          Escolha o modo
-        </p>
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-2 gap-3"
-        >
-          {MODE_LIST.map((mode) => {
-            const Icon = modeIcons[mode.id];
-            // O Desafio Diário NÃO é mais bloqueado — fica sempre acessível.
-            const dailyDoneToday = mode.id === 'daily' && dailyDone;
-            const record = data.records?.[mode.id];
-            return (
-              <motion.button
-                key={mode.id}
-                variants={item}
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => onStart(mode.id)}
-                className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all
-                  bg-gradient-to-br ${mode.gradientLight} border
-                  hover:shadow-md ${mode.shadow} hover:shadow-lg
-                  ${mode.border}`}
-              >
-                {/* Indicador discreto (não-bloqueante) de que o diário já foi feito hoje */}
-                {dailyDoneToday && (
-                  <div className="absolute top-2 right-2 bg-white/80 rounded-full px-2 py-0.5 text-[10px] font-black text-emerald-600">
-                    ✓ hoje
-                  </div>
-                )}
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${mode.gradient} shadow-sm`}
-                >
-                  <Icon size={18} className="text-white" />
-                </div>
-                <p className={`font-black text-sm ${mode.text}`}>{mode.name}</p>
-                <p className="text-gray-400 text-xs mt-0.5 font-semibold">{mode.description}</p>
-                {record !== undefined && (
-                  <p className="text-gray-500 text-xs mt-2 font-bold">Recorde: {record} pts</p>
-                )}
-              </motion.button>
-            );
-          })}
-        </motion.div>
-      </div>
-
-      {/* ── Modos de Treino: Zen · Revisão ───────────────────────────────── */}
-      <div>
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 px-1">
-          Treino
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          {TRAINING_MODE_LIST.map((tmode) => {
-            const Icon = modeIcons[tmode.id];
-            return (
-              <motion.button
-                key={tmode.id}
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => onStart(tmode.id)}
-                className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all
-                  bg-gradient-to-br ${tmode.gradientLight} border hover:shadow-md
-                  ${tmode.shadow} hover:shadow-lg ${tmode.border}`}
-              >
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${tmode.gradient} shadow-sm`}
-                >
-                  <Icon size={18} className="text-white" />
-                </div>
-                <p className={`font-black text-sm ${tmode.text}`}>{tmode.name}</p>
-                <p className="text-gray-400 text-xs mt-0.5 font-semibold">{tmode.description}</p>
-                {tmode.id === 'zen' && (
-                  <span className="absolute top-2 right-2 text-[9px] font-black text-teal-500 bg-teal-50 px-1.5 py-0.5 rounded-full">
-                    Sem XP
-                  </span>
-                )}
-              </motion.button>
-            );
-          })}
+      {/* ── BOTÃO ESCOLHER MODO ─────────────────────────────────────────────
+          Substitui o grid antigo de modos. Leva para ModesPage com todos os
+          modos organizados (principais, treino e avançados). */}
+      <motion.button
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.18 }}
+        whileHover={{ scale: 1.01, y: -1 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => onNavigate('modes')}
+        className="w-full flex items-center gap-3 rounded-3xl p-5 bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl transition-shadow"
+      >
+        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0">
+          🎮
         </div>
-      </div>
+        <div className="flex-1 text-left min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-wider text-violet-200">
+            Modos de Jogo
+          </p>
+          <p className="text-lg font-black leading-tight">Escolher Modo</p>
+          <p className="text-xs font-bold text-violet-100 mt-0.5">
+            Rush · Sobrevivência · Velocidade · Treino · +
+          </p>
+        </div>
+        <ChevronRight size={22} className="text-white shrink-0" />
+      </motion.button>
 
       {/* ── Fase 7: Loja · Missões · Temporada ──────────────────────────── */}
       <div className="grid grid-cols-3 gap-2">

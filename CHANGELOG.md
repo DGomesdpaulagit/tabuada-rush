@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.3.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 1
+
+**Base pedagógica + correções críticas.** Detalhes em `sessions/sessao-026.md`.
+
+### Adicionado
+- **Página de Modos (`ModesPage.jsx`)** — todos os modos organizados em 3 seções:
+  - Modos Principais (Rush, Sobrevivência, Velocidade, Desafio Diário)
+  - Modos de Treino (Zen, Revisão)
+  - Modos Avançados (Flashcard, Inverso, Difícil, Recorde Pessoal — placeholders Fase 2+ bloqueados)
+  - Cards grandes com gradiente próprio, dificuldade textual, recorde pessoal e badges contextuais
+- **Banner Desafio Diário no MenuPage** — card de destaque logo abaixo do perfil.
+  - Estado pendente: gradiente âmbar/rosé chamativo, sugere "20 perguntas únicas · +30 XP"
+  - Estado feito hoje: gradiente esmeralda discreto + pontuação do dia
+  - Toque leva direto ao modo `daily`
+- **Botão "Escolher Modo"** no MenuPage — substitui os dois grids de modos antigos.
+  Leva para a nova `ModesPage`. Visual roxo destacado.
+- **Mapa de Domínio Visual** no Catálogo de Precisão (`AccuracyCatalogPage`):
+  - Grade 8×10 mostrando todos os 80 fatos fundamentais (2×1 até 9×10)
+  - 4 cores: 🟢 Dominado (<1.5s + ≥90% acerto + ≥3 amostras) · 🟡 Praticado · 🔴 Problemático (>20% erro) · ⬜ Sem dados
+  - Cabeçalho de progresso "X/80 fatos dominados (Y%)"
+  - Legenda com contagem por estado
+- **Persistência de `factStats`** no storage — agregação por par (a,b) normalizado.
+  Cada fato registra `{correct, wrong, totalMs, count}`.
+  Backward-compatible: bases antigas começam vazias e enchem conforme o jogador joga.
+
+### Corrigido
+- **Missão impossível eliminada:** `mm_score_1200` (target inatingível) → `mm_score_350` (atingível no Rush com boa performance)
+- **Missão semanal de score ajustada:** `wm_score_800` (limite ~600 no Speed) → `wm_score_500`
+
+### Filosofia
+> Tabuada Rush 2.x praticava tabuada. A partir da Fase 1 do 3.0,
+> o jogador vê pela primeira vez evidência VISUAL e REAL do que de fato domina.
+
+---
+
 ## [ROADMAP] — 2026-06-08 — TABUADA RUSH 3.0 PLANEJADO
 
 **Transformação pedagógica completa. Detalhes em `sessions/sessao-025.md`.**

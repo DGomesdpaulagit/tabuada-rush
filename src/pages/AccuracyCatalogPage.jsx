@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp,
-  Gauge, Calculator, Flame,
+  Gauge, Calculator, Flame, Grid3x3,
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -44,6 +44,160 @@ function Delta({ value, suffix = '', invert = false }) {
     <span className={`text-xs font-black ${good ? 'text-emerald-600' : 'text-rose-500'}`}>
       {value > 0 ? '▲' : '▼'} {Math.abs(value)}{suffix}
     </span>
+  );
+}
+
+// ── MAPA DE DOMÍNIO ─────────────────────────────────────────────────────────
+// Classifica um fato (par a×b) em 4 estados:
+//   dominated:  acerta consistente e rápido (<1.5s médio, >=90% acerto, >=3 amostras)
+//   practiced:  acerta mas devagar (>=70% acerto, mas tempo médio >=1.5s OU <3 amostras)
+//   problem:    taxa de erro >20% (e amostras suficientes)
+//   nodata:     menos de 1 amostra
+const MASTERY_FAST_MS = 1500;
+const MASTERY_MIN_ACC = 90;
+const MASTERY_PROBLEM_ERR = 20;
+const MASTERY_MIN_SAMPLES = 3;
+
+function classifyFact(stat) {
+  if (!stat || (stat.count || 0) < 1) return 'nodata';
+  const tot = (stat.correct || 0) + (stat.wrong || 0);
+  if (tot === 0) return 'nodata';
+  const acc = Math.round((stat.correct / tot) * 100);
+  const errRate = 100 - acc;
+  const avgMs = stat.count && stat.totalMs ? stat.totalMs / stat.count : 0;
+  if (errRate > MASTERY_PROBLEM_ERR && tot >= MASTERY_MIN_SAMPLES) return 'problem';
+  if (acc >= MASTERY_MIN_ACC && avgMs > 0 && avgMs < MASTERY_FAST_MS && tot >= MASTERY_MIN_SAMPLES)
+    return 'dominated';
+  return 'practiced';
+}
+
+const MASTERY_COLORS = {
+  dominated: { bg: 'bg-emerald-500', text: 'text-white', label: 'Dominado' },
+  practiced: { bg: 'bg-amber-400', text: 'text-white', label: 'Praticado' },
+  problem:   { bg: 'bg-rose-500', text: 'text-white', label: 'Problemático' },
+  nodata:    { bg: 'bg-gray-200', text: 'text-gray-400', label: 'Sem dados' },
+};
+
+function MasteryMap({ factStats }) {
+  // Grade 8×10: linhas = tabuadas 2..9, colunas = b = 1..10
+  const rows = [2, 3, 4, 5, 6, 7, 8, 9];
+  const cols = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const cells = [];
+  const counts = { dominated: 0, practiced: 0, problem: 0, nodata: 0 };
+
+  for (const a of rows) {
+    for (const b of cols) {
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      const fk = `${lo}x${hi}`;
+      const stat = factStats[fk];
+      const state = classifyFact(stat);
+      counts[state] += 1;
+      cells.push({ a, b, fk, stat, state });
+    }
+  }
+
+  const total = rows.length * cols.length;
+  const dominatedPct = Math.round((counts.dominated / total) * 100);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.18 }}
+      className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <Grid3x3 size={16} className="text-emerald-500" />
+        <p className="font-black text-gray-800">Mapa de Domínio</p>
+      </div>
+      <p className="text-xs text-gray-400 font-semibold mb-4">
+        80 fatos fundamentais (2×1 até 9×10) — sua memória real da tabuada
+      </p>
+
+      {/* Cabeçalho de progresso */}
+      <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 p-3 mb-4">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <p className="text-2xl font-black text-emerald-700 leading-none">
+              {counts.dominated}<span className="text-base text-emerald-400">/{total}</span>
+            </p>
+            <p className="text-[11px] font-bold text-emerald-500 mt-1">Fatos Dominados</p>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-black text-emerald-700 leading-none">{dominatedPct}%</p>
+            <p className="text-[11px] font-bold text-emerald-500 mt-1">do domínio total</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grade 8×10 */}
+      <div className="overflow-x-auto -mx-2 px-2">
+        <div className="inline-block min-w-full">
+          {/* Cabeçalho de colunas (b = 1..10) */}
+          <div className="flex gap-1 mb-1 pl-7">
+            {cols.map((b) => (
+              <div key={b} className="w-7 text-center text-[10px] font-black text-gray-400">
+                {b}
+              </div>
+            ))}
+          </div>
+          {/* Linhas (a = 2..9) */}
+          {rows.map((a) => (
+            <div key={a} className="flex gap-1 mb-1 items-center">
+              <div className="w-6 text-center text-[10px] font-black text-gray-500 shrink-0">
+                {a}×
+              </div>
+              {cols.map((b) => {
+                const lo = Math.min(a, b);
+                const hi = Math.max(a, b);
+                const cell = cells.find((c) => c.a === a && c.b === b);
+                const colors = MASTERY_COLORS[cell.state];
+                const stat = cell.stat;
+                const tot = stat ? (stat.correct || 0) + (stat.wrong || 0) : 0;
+                const acc = tot ? Math.round((stat.correct / tot) * 100) : 0;
+                const avgMs = stat?.count && stat.totalMs ? Math.round(stat.totalMs / stat.count) : 0;
+                const titleText =
+                  cell.state === 'nodata'
+                    ? `${a}×${b} — sem dados ainda`
+                    : `${a}×${b}=${a * b} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
+                return (
+                  <div
+                    key={`${a}-${b}`}
+                    title={titleText}
+                    className={`w-7 h-7 rounded-md flex items-center justify-center text-[9px] font-black ${colors.bg} ${colors.text}`}
+                  >
+                    {a * b}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Legenda */}
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {[
+          { key: 'dominated', emoji: '🟢', txt: 'Dominado (<1.5s)' },
+          { key: 'practiced', emoji: '🟡', txt: 'Praticado' },
+          { key: 'problem', emoji: '🔴', txt: 'Problemático (>20% erro)' },
+          { key: 'nodata', emoji: '⬜', txt: 'Sem dados' },
+        ].map((l) => (
+          <div key={l.key} className="flex items-center gap-2 text-[11px] font-bold text-gray-600">
+            <span className={`inline-block w-3 h-3 rounded ${MASTERY_COLORS[l.key].bg}`} />
+            <span>{l.txt}</span>
+            <span className="ml-auto text-gray-400">{counts[l.key]}</span>
+          </div>
+        ))}
+      </div>
+
+      {counts.dominated === 0 && counts.practiced === 0 && counts.problem === 0 && (
+        <div className="mt-4 rounded-2xl bg-violet-50 border border-violet-100 p-3 text-xs font-bold text-violet-600 text-center">
+          Jogue algumas partidas para o mapa começar a colorir.
+        </div>
+      )}
+    </motion.div>
   );
 }
 
@@ -321,6 +475,9 @@ export default function AccuracyCatalogPage({ onBack }) {
           </div>
         )}
       </motion.div>
+
+      {/* ── MAPA DE DOMÍNIO (80 fatos fundamentais) ──────────────────────── */}
+      <MasteryMap factStats={data.factStats || {}} />
 
       {/* ── PRECISÃO POR TABUADA (operação: multiplicação) ───────────────── */}
       <motion.div

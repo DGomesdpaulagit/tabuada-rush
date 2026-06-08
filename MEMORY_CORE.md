@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.2.1 (produção) → próximo: Tabuada Rush 3.0 (grande transformação pedagógica)
-**Status:** ✅ v3.2.1 estável. Análise estratégica completa (sessao-025.md). Pronto para iniciar Fase 1.
+**Versão:** 3.3.0 (Fase 1 da Tabuada Rush 3.0 implementada)
+**Status:** ✅ Fase 1 entregue (sessao-026.md). Próximo: Fase 2 (Repetição Espaçada + Certificados + Modo Inverso).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -32,15 +32,13 @@
 > Método: Repetição Espaçada (Spaced Repetition System — SRS).
 > O nível deve representar domínio real, não tempo jogado.
 
-### FASE 1 — COMEÇAR AQUI (próxima sessão)
-1. **Fix missão impossível:** `mm_score_1200` → ajustar target para 350 pts
-2. **Página de Modos** (`ModesPage.jsx`): todos os modos organizados com cards grandes
-3. **Banner Desafio Diário no Menu**: card de destaque no menu principal (modo mais importante)
-4. **Mapa de Domínio Visual**: grade 8×10 colorida por domínio no Catálogo de Precisão
-   - 🟢 Verde = dominado (<1.5s, >95% acerto)
-   - 🟡 Âmbar = praticado (acerta mas devagar >1.5s)
-   - 🔴 Vermelho = problemático (>20% erro)
-   - ⬜ Cinza = sem dados
+### FASE 1 — ✅ ENTREGUE (v3.3.0 · sessao-026.md)
+1. ✅ Missão `mm_score_1200` → `mm_score_350` (+ `wm_score_800` → `wm_score_500`)
+2. ✅ `ModesPage.jsx` com 3 seções (Principais, Treino, Avançados-bloqueados)
+3. ✅ Banner Desafio Diário no MenuPage (pendente âmbar / feito esmeralda) + botão "Escolher Modo"
+4. ✅ Mapa de Domínio Visual (grade 8×10) + persistência `factStats` por par (a,b) normalizado
+   - 🟢 Dominado: <1.5s · ≥90% acerto · ≥3 amostras
+   - 🟡 Praticado · 🔴 Problemático (>20% erro) · ⬜ Sem dados
 
 ### FASE 2 — Repetição Espaçada (coração do 3.0)
 5. **Modo Flashcard com SRS**: fácil/difícil/errei → intervalos crescentes por fato
@@ -145,16 +143,21 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — INICIAR FASE 1 DA TABUADA RUSH 3.0
+## 🎯 PRÓXIMA SESSÃO — FASE 2 (Repetição Espaçada — coração do 3.0)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-025.md`
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-025.md` (visão geral)
++ `sessions/sessao-026.md` (o que ficou pronto na Fase 1).
 
 **Executar nesta ordem:**
-1. Fix missão impossível (`mm_score_1200` target → 350)
-2. Criar `ModesPage.jsx` com todos os modos
-3. Adicionar banner do Desafio Diário no MenuPage
-4. Implementar Mapa de Domínio no `AccuracyCatalogPage.jsx`
-5. Build + commit + push + documento
+1. **Modo Flashcard com SRS** — `FlashcardPage.jsx`, algoritmo SM-2,
+   campo `srsData[fk] = { interval, nextReview, easeFactor }` no storage.
+   Badge "X fatos para revisar hoje" no menu.
+2. **Certificados de Domínio por tabuada** — 8 certificados (2 ao 9),
+   desbloqueados quando todos os fatos da tabuada estiverem `dominated` (já
+   classificados pelo `MasteryMap`). Não compráveis.
+3. **Modo Inverso** — apresenta "= 56", jogador digita dois fatores.
+   15 questões, xpMultiplier 0.20. Desbloquear card em `ModesPage`.
+4. Build + commit + push + documento + registros.
 
 ---
 

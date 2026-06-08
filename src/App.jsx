@@ -10,6 +10,7 @@ import { maybeStreakReminder, maybeMissionExpireReminder } from './lib/notify';
 import { subscribeToPush } from './lib/push';
 
 import MenuPage from './pages/MenuPage';
+import ModesPage from './pages/ModesPage';
 import GamePage from './pages/GamePage';
 import ResultsPage from './pages/ResultsPage';
 import RecordsPage from './pages/RecordsPage';
@@ -397,7 +398,9 @@ export default function App() {
         }
 
         // Desempenho por tabuada (fator a) — agrega o registro por questão da partida.
+        // Também registra factStats por par (a,b) normalizado para o Mapa de Domínio.
         const tableStats = { ...(prev.tableStats || {}) };
+        const factStats = { ...(prev.factStats || {}) };
         for (const q of result.questions || []) {
           if (q == null || q.a == null) continue;
           const k = String(q.a);
@@ -409,6 +412,21 @@ export default function App() {
           if (q.ms > 0) t.totalMs += q.ms;
           t.count += 1;
           tableStats[k] = t;
+
+          // factStats: chave normalizada "min×max" para que 3×7 e 7×3 sejam o mesmo fato.
+          if (q.b != null) {
+            const lo = Math.min(q.a, q.b);
+            const hi = Math.max(q.a, q.b);
+            const fk = `${lo}x${hi}`;
+            const f = factStats[fk]
+              ? { ...factStats[fk] }
+              : { correct: 0, wrong: 0, totalMs: 0, count: 0 };
+            if (q.correct) f.correct += 1;
+            else f.wrong += 1;
+            if (q.ms > 0) f.totalMs += q.ms;
+            f.count += 1;
+            factStats[fk] = f;
+          }
         }
 
         const nextState = {
@@ -426,6 +444,7 @@ export default function App() {
           modesPlayed: allModesPlayed,
           fastestAvgMs,
           tableStats,
+          factStats,
           currentStreak,
           bestDayStreak,
           streakGoalBase,
@@ -606,6 +625,13 @@ export default function App() {
               key="auth"
               onBack={() => setScreen('menu')}
               onSuccess={() => setScreen('menu')}
+            />
+          )}
+          {screen === 'modes' && (
+            <ModesPage
+              key="modes"
+              onStart={handleStart}
+              onBack={() => setScreen('menu')}
             />
           )}
           {screen === 'game' && activeMode && (

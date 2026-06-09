@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.6.0 (Fase 4 da Tabuada Rush 3.0 — Novos Modos)
-**Status:** ✅ Fase 4 entregue (sessao-029.md). Próximo: Fase 5 (Social e Retenção — leaderboards, heatmap, share card).
+**Versão:** 3.7.0 (Fase 5 da Tabuada Rush 3.0 — Social e Retenção)
+**Status:** ✅ Fase 5 entregue (sessao-030.md). Próximo: Fase 6 (Expansão de Conteúdo — Tabuada 11/12, Modo Combinado). **AÇÃO DO OPERADOR:** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1 para ativar os leaderboards.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -58,10 +58,10 @@
 14. ✅ Desafio Semanal Competitivo — 10 q por semana ISO, `weeklyChallenge` no storage (leaderboard UI fica para Fase 5)
 15. ✅ Modo Difícil — pool 7/8/9, timer 90s, xpMult 0.22, gen on-the-fly, desbloqueado Nível 8+
 
-### FASE 5 — Social e Retenção
-16. **Leaderboard Desafio Diário**: top 20 global (todas respostas iguais = comparação justa)
-17. **Calendário Heatmap de Ofensiva**: 365 dias, estilo GitHub
-18. **Compartilhar Resultado**: gerar imagem para redes sociais
+### FASE 5 — ✅ ENTREGUE (v3.7.0 · sessao-030.md)
+16. ✅ Leaderboards Diário + Semanal (Supabase, graceful degradation) — service + página + botão menu
+17. ✅ Heatmap de Ofensiva 365 dias — `StreakHeatmap.jsx`, 5 níveis de intensidade, tooltips
+18. ✅ Compartilhar Resultado — `shareCard.js` (Canvas → PNG 1080² + Web Share API + fallback download)
 
 ### FASE 6 — Expansão de Conteúdo
 19. **Tabuada do 11 e 12**: opcional, desbloqueável, pool separado
@@ -144,25 +144,22 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 5 (Social e Retenção)
+## 🎯 PRÓXIMA SESSÃO — FASE 6 (Expansão de Conteúdo — última fase do roadmap 3.0)
 
-**Ler antes de começar:** `sessions/sessao-029.md` (Fase 4 entregue) +
+**Ler antes de começar:** `sessions/sessao-030.md` (Fase 5 entregue) +
 `sessions/sessao-025.md` (visão completa do roadmap 3.0).
 
 **Executar nesta ordem:**
-1. **Leaderboard do Desafio Diário** — top 20 global por `currentDailyScore`
-   da data de hoje. Via Supabase (`src/services/sync.js`).
-2. **Leaderboard do Desafio Semanal** — top 20 por `weeklyChallenge.score`
-   da semana ISO atual (campo já persistido na Fase 4).
-3. **Heatmap de Ofensiva 365 dias** — visualização estilo GitHub na StatsPage,
-   usando `data.sessions` para detectar dias jogados.
-4. **Compartilhar Resultado** — gerar imagem do resumo da partida (html2canvas
-   ou Canvas API) para compartilhar em redes sociais.
-5. Build + commit + push + documento + registros.
+1. **Tabuada do 11 e 12** — pool separado, ativável nas configurações
+   (toggle `data.includeExtraTables`). Não contamina os modos padrão.
+   Marca como "além do currículo básico" na ModesPage.
+2. **Modo Combinado** — `MODES.combined`. "3 × 7 + 4 = ?" — cálculo
+   mental com duas operações. Para jogadores avançados — sugestão:
+   desbloqueado se tiver ≥3 certificados de domínio.
+3. Build + commit + push + documento + registros.
 
-**Importante:** Supabase está configurado mas a UI dos leaderboards precisa
-ser construída do zero. Graceful degradation: se Supabase não configurado,
-mostrar mensagem "Leaderboard requer login na nuvem" em vez de erro.
+**Após Fase 6:** roadmap 3.0 estará 100% entregue. O jogo terá saído
+de "prática" para "memorização real" com identidade competitiva e social.
 
 ---
 

@@ -45,6 +45,66 @@ create policy "Usuário acessa só seus dados" on public.profiles
   with check (auth.uid() = id);
 ```
 
+### 3.1. Tabelas de Leaderboard (Fase 5 do roadmap 3.0)
+
+Para ativar os leaderboards globais do Desafio Diário e do Desafio Semanal,
+rode o SQL abaixo numa nova query. Sem essas tabelas, a página de
+Leaderboard mostra "Leaderboard ainda não foi ativado" (sem quebrar nada).
+
+```sql
+-- ── LEADERBOARD DO DESAFIO DIÁRIO ──────────────────────────────────────────
+create table public.leaderboard_daily (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  date text not null,            -- 'YYYY-MM-DD'
+  display_name text,
+  score int not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, date)
+);
+
+alter table public.leaderboard_daily enable row level security;
+
+-- todos os usuários autenticados podem LER o ranking
+create policy "leem todos (daily)" on public.leaderboard_daily
+  for select to authenticated using (true);
+
+-- só o dono pode escrever/atualizar
+create policy "dono escreve (daily)" on public.leaderboard_daily
+  for all to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create index leaderboard_daily_date_score_idx
+  on public.leaderboard_daily (date, score desc);
+
+-- ── LEADERBOARD DO DESAFIO SEMANAL ─────────────────────────────────────────
+create table public.leaderboard_weekly (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  week text not null,            -- 'YYYY-Www' (ISO week)
+  display_name text,
+  score int not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, week)
+);
+
+alter table public.leaderboard_weekly enable row level security;
+
+create policy "leem todos (weekly)" on public.leaderboard_weekly
+  for select to authenticated using (true);
+
+create policy "dono escreve (weekly)" on public.leaderboard_weekly
+  for all to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create index leaderboard_weekly_week_score_idx
+  on public.leaderboard_weekly (week, score desc);
+```
+
+**Importante:** o `display_name` enviado pelo cliente é a parte antes do `@`
+do email. Se quiser proteger contra spoofing, ative trigger que sobrescreva
+com o email real do `auth.users` — para a maioria dos casos não é necessário.
+
 ---
 
 ## 4. Pegar as credenciais

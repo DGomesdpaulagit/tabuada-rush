@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight, Crown } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -302,6 +302,13 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         <Button variant="secondary" onClick={() => onNavigate('ranking')} className="w-full">
           <Medal size={16} />
           Ranking QI
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3">
+        <Button variant="secondary" onClick={() => onNavigate('leaderboard')} className="w-full">
+          <Crown size={16} />
+          Leaderboard Global
         </Button>
       </div>
 

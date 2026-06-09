@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.7.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 5
+
+**Social e Retenção.** Detalhes em `sessions/sessao-030.md`.
+
+### Adicionado
+- **Leaderboards globais** (Diário + Semanal) via Supabase
+  - Service `src/services/leaderboard.js` — upsert/fetch com graceful degradation
+    (detecta `no_table`, `unconfigured`, `error`)
+  - Página `LeaderboardPage.jsx` — tabs Diário/Semanal, top 20, medalhas 🥇🥈🥉,
+    linha do próprio usuário destacada, "Seu Score" em destaque com QI char
+  - Botão "Leaderboard Global" 👑 no MenuPage
+  - `handleGameEnd` faz upsert ao terminar daily/weekly se usuário logado
+  - **SQL no SUPABASE_SETUP.md:** `leaderboard_daily` + `leaderboard_weekly`
+    com RLS (todos leem, dono escreve), índices por (date/week, score desc)
+- **Heatmap de Ofensiva 365 dias** — `src/components/StreakHeatmap.jsx`
+  - Grade 53 semanas × 7 dias, estilo GitHub
+  - 5 níveis de intensidade (cinza → emerald-800)
+  - Tooltip por célula com data e nº de partidas
+  - Cabeçalho de meses + labels de dia da semana
+  - Inserido no topo da StatsPage
+- **Compartilhar Resultado** — `src/lib/shareCard.js`
+  - Geração de PNG 1080×1080 via Canvas API (sem dependência nova)
+  - Paleta dos 10 modos espelhada
+  - Card central com SCORE gigante, badge "🏆 NOVO RECORDE!" condicional,
+    3 stats (Precisão · Acertos · Sequência), rodapé com personagem QI
+  - `shareCard()` tenta Web Share API, faz fallback para download
+  - Botão "Compartilhar resultado" na ResultsPage
+
+### Filosofia
+> Fase 5 abre o jogo para o mundo. Comparação justa (todos jogam as mesmas
+> questões). Visualização do compromisso (heatmap). Identidade compartilhável
+> (share card). Retenção via prova social.
+
+---
+
 ## [3.6.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 4
 
 **Novos Modos.** Detalhes em `sessions/sessao-029.md`.

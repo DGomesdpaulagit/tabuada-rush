@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { Home, RotateCcw, Trophy, Target, X, Flame, Clock } from 'lucide-react';
+import { Home, RotateCcw, Trophy, Target, X, Flame, Clock, Share2 } from 'lucide-react';
 import { MODES, LEVELS } from '../constants';
-import { getLevelIdx, getAccuracy, getRank, formatTime } from '../utils';
+import { getLevelIdx, getAccuracy, getRank, formatTime, getQiInfo } from '../utils';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageVariants, pageTransition } from '../components/ui';
+import { shareCard } from '../lib/shareCard';
 
 export default function ResultsPage({ result, onReplay, onHome }) {
   const { data } = useApp();
@@ -198,6 +199,29 @@ export default function ResultsPage({ result, onReplay, onHome }) {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Share */}
+      <Button
+        variant="secondary"
+        onClick={() => {
+          const qi = getQiInfo(data);
+          shareCard({
+            mode: result.mode,
+            score: result.score,
+            correct: result.correct,
+            wrong: result.wrong,
+            accuracy,
+            bestStreak: result.bestStreak,
+            qiChar: qi?.char?.emoji,
+            qiName: qi?.char?.name,
+            isNewRecord,
+          });
+        }}
+        className="w-full"
+      >
+        <Share2 size={16} />
+        Compartilhar resultado
+      </Button>
 
       {/* Actions */}
       <div className="flex gap-3">

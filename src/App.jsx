@@ -12,6 +12,7 @@ import { subscribeToPush } from './lib/push';
 import MenuPage from './pages/MenuPage';
 import ModesPage from './pages/ModesPage';
 import FlashcardPage from './pages/FlashcardPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 import GamePage from './pages/GamePage';
 import ResultsPage from './pages/ResultsPage';
 import RecordsPage from './pages/RecordsPage';
@@ -27,6 +28,7 @@ import MissionsPage from './pages/MissionsPage';
 import SeasonsPage from './pages/SeasonsPage';
 import { calcSeasonXp } from './constants/seasons';
 import { updateMissions, getNewlyCompleted } from './utils/missions';
+import { upsertDailyScore, upsertWeeklyScore } from './services/leaderboard';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
 
@@ -658,6 +660,30 @@ export default function App() {
         });
       }
 
+      // ── Upsert no leaderboard global (Supabase) ────────────────────────
+      // Graceful: erros são swallow (logged inside service). Só dispara para
+      // os modos competitivos relevantes e quando o usuário está logado.
+      if (user) {
+        const displayName = (user.email || 'Anônimo').split('@')[0];
+        if (result.mode === 'daily' && result.dailyDate) {
+          upsertDailyScore({
+            userId: user.id,
+            date: result.dailyDate,
+            displayName,
+            score: result.score,
+          }).catch(() => {});
+        } else if (result.mode === 'weekly') {
+          // getCurrentWeekKey lazy: usa a data atual de jogo
+          const wk = getCurrentWeekKey(new Date());
+          upsertWeeklyScore({
+            userId: user.id,
+            week: wk,
+            displayName,
+            score: result.score,
+          }).catch(() => {});
+        }
+      }
+
       // xp2Used: verifica ANTES do update (data ainda tem o valor antigo, xp2 > 0 = estava ativo)
       const xp2Used = (data.powerups?.xp2 || 0) > 0;
       setLastResult({ ...result, xp2Used, betResult, betPayout, betAmount: activeBet?.amount });
@@ -789,6 +815,9 @@ export default function App() {
           )}
           {screen === 'flashcard' && (
             <FlashcardPage key="flashcard" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'leaderboard' && (
+            <LeaderboardPage key="leaderboard" onBack={() => setScreen('menu')} />
           )}
           {screen === 'game' && activeMode && (
             <GamePage

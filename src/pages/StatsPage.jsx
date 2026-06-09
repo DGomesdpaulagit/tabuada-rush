@@ -8,6 +8,7 @@ import { useApp } from '../contexts/AppContext';
 import { getAccuracy, formatDate } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
+import StreakHeatmap from '../components/StreakHeatmap';
 import HitsPage from './HitsPage';
 import ErrorsPage from './ErrorsPage';
 
@@ -188,6 +189,9 @@ export default function StatsPage({ onBack, onNavigate }) {
           delay={0.2}
         />
       </div>
+
+      {/* Heatmap de Ofensiva — 365 dias estilo GitHub */}
+      <StreakHeatmap sessions={data.sessions || []} />
 
       {/* Catálogo de Precisão — acesso destacado */}
       {onNavigate && (

@@ -173,6 +173,27 @@ export const MODES = {
     xpMultiplier: 0.30,   // alta recompensa — sai 1× por semana
     group: 'advanced',
   },
+  // ── MODO COMBINADO — duas operações: "3 × 7 + 4 = ?" ───────────────────────
+  combined: {
+    id: 'combined',
+    name: 'Combinado',
+    emoji: '➕',
+    description: 'Cálculo mental: a × b + c',
+    gradient: 'from-violet-600 to-fuchsia-600',
+    gradientLight: 'from-violet-50 to-fuchsia-50',
+    shadow: 'shadow-violet-200',
+    text: 'text-violet-700',
+    border: 'border-violet-200',
+    bg: 'bg-violet-600',
+    timer: null,
+    lives: null,
+    questions: 15,
+    bonusTime: 0,
+    xpMultiplier: 0.25,
+    minCertificates: 3,    // exige 3 certificados de domínio para desbloquear
+    combined: true,
+    group: 'advanced',
+  },
   // ── MODO INVERSO — "= 56" → digite os dois fatores ─────────────────────────
   inverse: {
     id: 'inverse',

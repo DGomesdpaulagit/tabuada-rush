@@ -22,16 +22,36 @@ export function getDailyQuestions(count = 20) {
   });
 }
 
-export function getRandomQuestion(diffLevel = 1) {
+// includeExtra=true adiciona 11 e 12 ao pool de fatores `a` (a partir do nível 3).
+export function getRandomQuestion(diffLevel = 1, includeExtra = false) {
   const pools = {
     1: [2, 3, 4, 5],
     2: [2, 3, 4, 5, 6, 7],
     3: [2, 3, 4, 5, 6, 7, 8, 9, 10],
   };
-  const pool = pools[diffLevel] || pools[1];
+  let pool = pools[diffLevel] || pools[1];
+  // Tabuada do 11 e 12: apenas no nível 3+ (jogador já aquecido)
+  if (includeExtra && diffLevel >= 3) {
+    pool = [...pool, 11, 12];
+  }
   const a = pool[Math.floor(Math.random() * pool.length)];
   const b = Math.floor(Math.random() * 10) + 1;
   return { a, b, ans: a * b };
+}
+
+// ── MODO COMBINADO — duas operações ───────────────────────────────────────────
+// "3 × 7 + 4 = ?" — multiplicação base + adição/subtração de uma constante.
+// `c` ∈ [1..9]; metade das vezes subtração (op '-'), metade adição (op '+').
+// Garante answer > 0 quando op='-'.
+export function getCombinedQuestion() {
+  const a = Math.floor(Math.random() * 8) + 2; // 2..9
+  const b = Math.floor(Math.random() * 9) + 2; // 2..10
+  const op = Math.random() < 0.5 ? '+' : '-';
+  let c = Math.floor(Math.random() * 9) + 1;   // 1..9
+  // Se subtração, garante c <= a*b para não ficar negativo
+  if (op === '-' && c > a * b) c = Math.floor(a * b / 2) || 1;
+  const ans = op === '+' ? a * b + c : a * b - c;
+  return { a, b, c, op, ans };
 }
 
 export function getDiffLevel(questionsAnswered) {

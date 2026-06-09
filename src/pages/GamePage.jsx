@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion } from '../utils';
+import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -38,7 +38,8 @@ function Mascot({ mood }) {
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
-function init({ mode, customQuestions }) {
+function init(args) {
+  const { mode, customQuestions } = args;
   const cfg = MODES[mode];
   // Modos com lista fixa de perguntas:
   //   - daily: usa seed do dia (mesmas para todos)
@@ -48,6 +49,8 @@ function init({ mode, customQuestions }) {
   if (!qs) {
     if (mode === 'inverse' && cfg.questions) {
       qs = Array.from({ length: cfg.questions }, () => getRandomQuestion(3));
+    } else if (mode === 'combined' && cfg.questions) {
+      qs = Array.from({ length: cfg.questions }, () => getCombinedQuestion());
     } else if (mode === 'hard') {
       // Modo Difícil: timer + pool 7/8/9; sem lista fixa, gera on-the-fly em NEXT.
       qs = null;
@@ -66,8 +69,9 @@ function init({ mode, customQuestions }) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion() : getRandomQuestion(1)),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion() : getRandomQuestion(1, args.includeExtraTables)),
     mode,
+    includeExtraTables: !!args.includeExtraTables,
     dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
@@ -126,7 +130,7 @@ function reducer(state, action) {
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
         ? getHardQuestion()
-        : getRandomQuestion(getDiffLevel(state.answered));
+        : getRandomQuestion(getDiffLevel(state.answered), state.includeExtraTables);
       return {
         ...state,
         phase: 'playing',
@@ -161,7 +165,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const questionBorder   = equippedGameTheme?.questionBorder   || cfg.border;
 
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
-  const initArgRef = useRef({ mode, customQuestions });
+  const initArgRef = useRef({ mode, customQuestions, includeExtraTables: !!data.includeExtraTables });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
 
   const [inputVal, setInputVal] = useState('');
@@ -405,6 +409,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const isReview = mode === 'review';
   const isInverse = !!cfg.inverse;
   const isPersonalMode = !!cfg.personal;
+  const isCombined = !!cfg.combined;
 
   return (
     <motion.div
@@ -604,6 +609,15 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
                   </p>
                   <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>
                     Quais os dois fatores?
+                  </p>
+                </>
+              ) : isCombined ? (
+                <>
+                  <p className="text-6xl font-black text-gray-900 tracking-tight">
+                    {state.question?.a} × {state.question?.b} {state.question?.op} {state.question?.c}
+                  </p>
+                  <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>
+                    Qual o resultado? (multiplicação primeiro)
                   </p>
                 </>
               ) : (

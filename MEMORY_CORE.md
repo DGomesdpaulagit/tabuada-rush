@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.7.0 (Fase 5 da Tabuada Rush 3.0 — Social e Retenção)
-**Status:** ✅ Fase 5 entregue (sessao-030.md). Próximo: Fase 6 (Expansão de Conteúdo — Tabuada 11/12, Modo Combinado). **AÇÃO DO OPERADOR:** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1 para ativar os leaderboards.
+**Versão:** 3.8.0 (Fase 6 — FINAL — Expansão de Conteúdo) · 🎉 **ROADMAP 3.0 100% ENTREGUE**
+**Status:** ✅ Roadmap 3.0 completo (6 fases · sessões 026-031). **Ação pendente do operador (opcional):** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1 para ativar os leaderboards globais.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -63,9 +63,9 @@
 17. ✅ Heatmap de Ofensiva 365 dias — `StreakHeatmap.jsx`, 5 níveis de intensidade, tooltips
 18. ✅ Compartilhar Resultado — `shareCard.js` (Canvas → PNG 1080² + Web Share API + fallback download)
 
-### FASE 6 — Expansão de Conteúdo
-19. **Tabuada do 11 e 12**: opcional, desbloqueável, pool separado
-20. **Modo Combinado**: "3 × 7 + 4 = ?" para jogadores com certificados de domínio
+### FASE 6 — ✅ ENTREGUE (v3.8.0 · sessao-031.md) · 🎉 ROADMAP COMPLETO
+19. ✅ Tabuada do 11 e 12 — toggle em `data.includeExtraTables`, ativa só no nível 3+ da partida, Daily/Weekly imunes
+20. ✅ Modo Combinado — `MODES.combined`, "3×7+4" ou "5×8-6", desbloqueado por ≥3 certificados de domínio
 
 ---
 
@@ -144,22 +144,23 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 6 (Expansão de Conteúdo — última fase do roadmap 3.0)
+## 🎯 PRÓXIMA SESSÃO — A DEFINIR (Roadmap 3.0 completo)
 
-**Ler antes de começar:** `sessions/sessao-030.md` (Fase 5 entregue) +
-`sessions/sessao-025.md` (visão completa do roadmap 3.0).
+O roadmap 3.0 está 100% entregue (sessões 026-031 · versões 3.3.0 → 3.8.0).
 
-**Executar nesta ordem:**
-1. **Tabuada do 11 e 12** — pool separado, ativável nas configurações
-   (toggle `data.includeExtraTables`). Não contamina os modos padrão.
-   Marca como "além do currículo básico" na ModesPage.
-2. **Modo Combinado** — `MODES.combined`. "3 × 7 + 4 = ?" — cálculo
-   mental com duas operações. Para jogadores avançados — sugestão:
-   desbloqueado se tiver ≥3 certificados de domínio.
-3. Build + commit + push + documento + registros.
+**Possíveis caminhos para a próxima sessão:**
+1. **Polimento e bug-fixing** — testar end-to-end, ajustar UX, observar
+   métricas de retenção e iterar.
+2. **Pequenas iterações da 3.x** — refinamentos pontuais baseados em
+   feedback de uso real (não há roadmap formal ainda).
+3. **Início do planejamento da 4.0** — se houver visão, fazer um documento
+   de visão como o `sessao-025.md` foi para o 3.0. Ideias soltas em
+   `sessoes/sessao-031.md` seção "Pós-3.0".
+4. **Ação opcional pendente:** rodar SQL de leaderboard (SUPABASE_SETUP.md
+   seção 3.1) para ativar os rankings globais — Fase 5 já tem toda a
+   infraestrutura, falta só o SQL no painel do Supabase.
 
-**Após Fase 6:** roadmap 3.0 estará 100% entregue. O jogo terá saído
-de "prática" para "memorização real" com identidade competitiva e social.
+**Não há urgência.** O produto 3.0 está completo e estável.
 
 ---
 

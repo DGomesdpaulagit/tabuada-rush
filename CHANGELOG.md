@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.8.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 6 · 🎉 ROADMAP COMPLETO
+
+**Expansão de Conteúdo + Fechamento do Roadmap 3.0.** Detalhes em `sessions/sessao-031.md`.
+
+### Adicionado
+- **Tabuada do 11 e 12** (opcional) — toggle persistido em `data.includeExtraTables`
+  - Seção "Conteúdo Avançado" no SettingsPage com explicação
+  - `getRandomQuestion(diff, includeExtra)` aceita o flag — só inclui 11/12 no nível 3+
+  - Aplica em modos com geração randômica (Rush, Survival, Speed, Review, Personal)
+  - **NÃO afeta** Daily/Weekly (justiça do leaderboard) nem modos com pool próprio
+- **Modo Combinado** — `MODES.combined`
+  - "3 × 7 + 4 = ?" ou "5 × 8 − 6 = ?" — cálculo mental com 2 operações
+  - 15 questões, xpMultiplier 0.25
+  - Op `+` ou `-` 50/50; quando `-`, garante `ans > 0`
+  - **Desbloqueado por ≥3 certificados de domínio** (não por nível)
+  - Card no ModesPage com badge "🔒 3 certificados" quando bloqueado
+  - Renderização adaptada no GamePage (`3 × 7 + 4` em fonte 60px)
+- **`getCombinedQuestion()`** novo em `utils/index.js`
+
+### 🎉 Roadmap 3.0 — 100% entregue
+
+| Fase | v | Sessão |
+|------|---|--------|
+| 1 — Base Pedagógica + Correções | 3.3.0 | 026 |
+| 2 — Repetição Espaçada | 3.4.0 | 027 |
+| 3 — Economia e Loja | 3.5.0 | 028 |
+| 4 — Novos Modos | 3.6.0 | 029 |
+| 5 — Social e Retenção | 3.7.0 | 030 |
+| 6 — Expansão de Conteúdo | 3.8.0 | 031 |
+
+> O Tabuada Rush 2.x praticava tabuada.
+> O Tabuada Rush 3.0 memoriza tabuada.
+
+---
+
 ## [3.7.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 5
 
 **Social e Retenção.** Detalhes em `sessions/sessao-030.md`.

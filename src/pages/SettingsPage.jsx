@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
-  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle,
+  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap,
 } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { getLevelIdx, getQiInfo } from '../utils';
@@ -112,8 +112,12 @@ function Section({ title, children }) {
 }
 
 export default function SettingsPage({ onBack, onNavigate }) {
-  const { data, cloudSyncing } = useApp();
+  const { data, cloudSyncing, update } = useApp();
   const { user, signOut } = useAuth();
+
+  // Toggle persistido em data (sincroniza via Supabase)
+  const includeExtraTables = !!data.includeExtraTables;
+  const toggleExtraTables = (v) => update((prev) => ({ ...prev, includeExtraTables: v }));
 
   // Reset completo: grava DEFAULTS na nuvem + no localStorage + recarrega.
   // Usar saveCloudData (upsert com DEFAULTS) em vez de setar null evita que o
@@ -273,6 +277,22 @@ export default function SettingsPage({ onBack, onNavigate }) {
         {notifMsg && (
           <p className="text-xs font-bold text-amber-600 mt-1">{notifMsg}</p>
         )}
+      </Section>
+
+      {/* CONTEÚDO AVANÇADO — Fase 6 do roadmap 3.0 */}
+      <Section title="Conteúdo Avançado">
+        <Row
+          icon={<GraduationCap size={15} />}
+          label="Tabuadas do 11 e 12"
+          desc="Inclui fatores 11 e 12 nos modos padrão (além do currículo básico)"
+        >
+          <Toggle on={includeExtraTables} onChange={toggleExtraTables} />
+        </Row>
+        <p className="text-[11px] font-bold text-gray-400 mt-2 leading-snug">
+          Ativa apenas a partir do Nível 3 dentro da partida — para iniciantes
+          não atrapalhar. Daily/Weekly não são afetados (mantêm pool padrão para
+          comparação justa).
+        </p>
       </Section>
 
       {/* CONTA */}

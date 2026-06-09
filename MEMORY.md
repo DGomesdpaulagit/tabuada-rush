@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.7.0 (Fase 5 da Tabuada Rush 3.0 entregue · sessao-030 · Leaderboards + Heatmap + Share Card)  
+**Versão:** 3.8.0 (Roadmap 3.0 **100% entregue** · sessao-031 · Tabuada 11/12 + Modo Combinado)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

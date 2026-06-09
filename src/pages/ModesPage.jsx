@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Zap, Heart, Timer, Star, Leaf, BookOpen, Lock,
-  Repeat, Flame, Trophy, Layers,
+  Repeat, Flame, Trophy, Layers, Plus,
 } from 'lucide-react';
 import { MODE_LIST, TRAINING_MODE_LIST, MODES } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx, getCurrentWeekKey } from '../utils';
+import { getLevelIdx, getCurrentWeekKey, computeCertificates } from '../utils';
 import { pageVariants, pageTransition } from '../components/ui';
 
 // Ícones para cada modo (id → componente)
@@ -18,6 +18,7 @@ const modeIcons = {
   review: BookOpen,
   flashcard: Repeat,
   inverse: Layers, // ícone neutro de "camadas/fatores" para o modo Inverso
+  combined: Plus,
   hard: Flame,
   personal: Trophy,
 };
@@ -34,10 +35,13 @@ const MODE_DIFFICULTY = {
   inverse: 'Difícil',
   hard: 'Muito difícil',
   personal: 'Personalizado',
+  combined: 'Cálculo mental',
+  weekly: 'Competitivo',
 };
 
 // Modos avançados — agora todos reais (definidos em MODES). Hard requer Nível 8+.
-function getAdvancedModes(levelIdx) {
+// Combined requer N certificados de domínio (cf. minCertificates).
+function getAdvancedModes(levelIdx, certsUnlocked) {
   return [
     {
       ...MODES.hard,
@@ -46,6 +50,11 @@ function getAdvancedModes(levelIdx) {
     },
     { ...MODES.personal, locked: false },
     { ...MODES.weekly, locked: false },
+    {
+      ...MODES.combined,
+      locked: certsUnlocked < (MODES.combined.minCertificates || 0),
+      unlockText: `${MODES.combined.minCertificates} certificados`,
+    },
   ];
 }
 
@@ -125,6 +134,7 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
   const level = levelIdx + 1;
   const currentWeek = getCurrentWeekKey(new Date());
   const weeklyDone = data.weeklyChallenge?.week === currentWeek;
+  const certsUnlocked = computeCertificates(data.factStats || {}).filter((c) => c.unlocked).length;
 
   return (
     <motion.div
@@ -264,7 +274,7 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           Mais desafiadores — pensados para domínio real
         </p>
         <div className="flex flex-col gap-3">
-          {getAdvancedModes(levelIdx).map((mode) => (
+          {getAdvancedModes(levelIdx, certsUnlocked).map((mode) => (
             <ModeCard
               key={mode.id}
               mode={mode}

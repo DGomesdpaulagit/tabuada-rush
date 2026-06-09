@@ -93,7 +93,7 @@ export const MODES = {
     lives: null,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0,      // treino puro — sem XP
+    xpMultiplier: 0.10,   // baixo, mas existe (discreto — o jogador descobre)
     group: 'training',
   },
   review: {

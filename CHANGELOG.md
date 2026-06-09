@@ -4,6 +4,38 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.9.0] — 2026-06-08 — Correções + Sistema de Desbloqueio Progressivo
+
+**Pós-3.0: bugs corrigidos e refinamento.** Detalhes em `sessions/sessao-032.md`.
+
+### Corrigido
+- **Bug crítico — Flashcard:** input não aceitava digitação. Causa: useEffect
+  dependia de `fact` (objeto novo a cada render), zerando o input em cada
+  keystroke. Trocado para `currentFk` (string estável).
+- **UX — Leaderboard:** quando tabelas não existem no Supabase, mostrava
+  "Tente novamente em alguns segundos" em vez da mensagem correta.
+  `parseError` agora detecta PGRST205, PGRST202 e mais padrões.
+
+### Adicionado
+- **Sistema de Desbloqueio Progressivo (`UNLOCK_RULES`)**: todos os modos
+  exceto Zen têm condição de desbloqueio.
+  - Rush → Nível 2, Sobrevivência → Nível 3, Velocidade → 10 partidas,
+    Diário → 100 acertos, Revisão → 20 erros, Flashcard → Nível 4,
+    Inverso → Nível 5, Difícil → Nível 8, Recorde Pessoal → Nível 9,
+    Semanal → 10 dias de ofensiva, Combinado → 3 certificados
+  - Nova função `getModeUnlock(modeId, data)` em utils
+  - Bloqueio defensivo em `App.jsx::handleStart` (não confia só na UI)
+  - Backward-compat: usuários existentes já satisfazem as condições, ficam
+    com tudo desbloqueado automaticamente
+- **Modo Zen agora dá XP** (discretamente): `xpMultiplier` 0 → 0.10
+  - Badge "Sem XP" → "Pratique 🌿" (não revela XP)
+  - Descrição e UI in-game não mencionam XP
+  - O jogador descobre ao ver a ResultsPage
+  - Permite que usuário novo comece só com Zen e suba de nível para
+    destravar Rush e os demais modos
+
+---
+
 ## [3.8.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 6 · 🎉 ROADMAP COMPLETO
 
 **Expansão de Conteúdo + Fechamento do Roadmap 3.0.** Detalhes em `sessions/sessao-031.md`.

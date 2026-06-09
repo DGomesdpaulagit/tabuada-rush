@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -447,7 +447,7 @@ export default function App() {
         //   Rush = multiplicador mais baixo (5 min → score alto, XP difícil de acumular).
         //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
         //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
-        const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0, review: 0.16 };
+        const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0.10, review: 0.16, hard: 0.22, personal: 0.18, weekly: 0.30, inverse: 0.20, combined: 0.25 };
         // Power-up XP Dobrado: dobra o XP desta partida e consome 1 unidade do estoque
         const xp2Active = (prev.powerups?.xp2 || 0) > 0;
         const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) * (xp2Active ? 2 : 1);
@@ -752,6 +752,11 @@ export default function App() {
   }, [data.tableStats, data.factStats]);
 
   const handleStart = useCallback((mode) => {
+    // Bloqueio defensivo: se o modo está locked, não inicia.
+    // (A UI já bloqueia o clique, mas isso protege contra navegação programática.)
+    const unlock = getModeUnlock(mode, data);
+    if (!unlock.unlocked) return;
+
     // Apostas só para modos principais (rush/survival/speed/daily) — modos de
     // treino, flashcard e inverso não permitem aposta.
     const bettable = ['rush', 'survival', 'speed', 'daily'].includes(mode);
@@ -761,7 +766,7 @@ export default function App() {
       return;
     }
     startGame(mode);
-  }, [data.activeBet, data.coins, startGame]);
+  }, [data, startGame]);
 
   // Confirma aposta: desconta moedas, grava data.activeBet e inicia partida.
   const handleConfirmBet = useCallback((amount) => {

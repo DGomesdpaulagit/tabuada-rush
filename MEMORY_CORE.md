@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.8.0 (Fase 6 — FINAL — Expansão de Conteúdo) · 🎉 **ROADMAP 3.0 100% ENTREGUE**
-**Status:** ✅ Roadmap 3.0 completo (6 fases · sessões 026-031). **Ação pendente do operador (opcional):** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1 para ativar os leaderboards globais.
+**Versão:** 3.9.0 (correções pós-3.0 + jornada de desbloqueio progressivo)
+**Status:** ✅ Roadmap 3.0 completo + refinamentos (sessao-032). Bugs do teste end-to-end corrigidos (Flashcard + Leaderboard). Sistema de desbloqueio progressivo implementado: todos os modos exceto Zen têm condição. **Ação pendente do operador (opcional):** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

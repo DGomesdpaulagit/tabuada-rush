@@ -35,13 +35,15 @@ export default function FlashcardPage({ onBack }) {
 
   useEffect(() => { audio.resume(); }, []);
 
+  // IMPORTANTE: depender de `currentFk` (string) e não de `fact` (objeto novo a cada render).
+  // Bug anterior: usar `fact` como dep limpava o input a cada keystroke.
   useEffect(() => {
-    if (fact && !revealed) {
+    if (currentFk && !revealed) {
       setInputVal('');
       setFeedback(null);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }, [fact, revealed]);
+  }, [currentFk, revealed]);
 
   const handleReveal = useCallback(() => {
     if (!fact) return;

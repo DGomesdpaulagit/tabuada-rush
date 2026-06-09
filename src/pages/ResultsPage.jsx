@@ -16,7 +16,7 @@ export default function ResultsPage({ result, onReplay, onHome }) {
   const isNewRecord = data.records?.[result.mode] === result.score;
 
   // XP ganho nesta partida (mesmo cálculo de App.jsx)
-  const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0, review: 0.16 };
+  const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0.10, review: 0.16, hard: 0.22, personal: 0.18, weekly: 0.30, inverse: 0.20, combined: 0.25 };
   const xpBase = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
   const xp2Used = result.xp2Used || false;
   const xpEarned = xp2Used ? xpBase * 2 : xpBase;

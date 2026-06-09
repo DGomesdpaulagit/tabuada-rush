@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { MODE_LIST, TRAINING_MODE_LIST, MODES } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx, getCurrentWeekKey, computeCertificates } from '../utils';
+import { getLevelIdx, getCurrentWeekKey, computeCertificates, getModeUnlock } from '../utils';
 import { pageVariants, pageTransition } from '../components/ui';
 
 // Ícones para cada modo (id → componente)
@@ -39,23 +39,15 @@ const MODE_DIFFICULTY = {
   weekly: 'Competitivo',
 };
 
-// Modos avançados — agora todos reais (definidos em MODES). Hard requer Nível 8+.
-// Combined requer N certificados de domínio (cf. minCertificates).
-function getAdvancedModes(levelIdx, certsUnlocked) {
-  return [
-    {
-      ...MODES.hard,
-      locked: levelIdx + 1 < (MODES.hard.minLevel || 0),
-      unlockText: `Nível ${MODES.hard.minLevel}`,
-    },
-    { ...MODES.personal, locked: false },
-    { ...MODES.weekly, locked: false },
-    {
-      ...MODES.combined,
-      locked: certsUnlocked < (MODES.combined.minCertificates || 0),
-      unlockText: `${MODES.combined.minCertificates} certificados`,
-    },
-  ];
+// Helpers de desbloqueio aplicados a todos os modos via UNLOCK_RULES.
+function applyUnlock(mode, data) {
+  const unlock = getModeUnlock(mode.id, data);
+  return {
+    ...mode,
+    locked: !unlock.unlocked,
+    unlockText: unlock.reason,
+    unlockProgress: unlock.target ? { current: unlock.current, target: unlock.target } : null,
+  };
 }
 
 function ModeCard({ mode, locked, unlockText, dailyDoneToday, record, onStart, badge }) {
@@ -117,15 +109,6 @@ function ModeCard({ mode, locked, unlockText, dailyDoneToday, record, onStart, b
   );
 }
 
-// Modos da Fase 2 desbloqueados (definidos em MODES, têm comportamento real).
-// Flashcard é um "modo" especial — abre página própria, não passa pelo GamePage.
-const PHASE_2_MODES = [
-  {
-    ...MODES.inverse,
-    description: '"= 56" → diga os dois fatores',
-  },
-];
-
 export default function ModesPage({ onStart, onBack, onNavigate }) {
   const { data } = useApp();
   const todayStr = new Date().toISOString().split('T')[0];
@@ -134,7 +117,14 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
   const level = levelIdx + 1;
   const currentWeek = getCurrentWeekKey(new Date());
   const weeklyDone = data.weeklyChallenge?.week === currentWeek;
-  const certsUnlocked = computeCertificates(data.factStats || {}).filter((c) => c.unlocked).length;
+
+  // Aplica regras de desbloqueio em todos os modos
+  const mainModes      = MODE_LIST.map((m)         => applyUnlock(m, data));
+  const trainingModes  = TRAINING_MODE_LIST.map((m) => applyUnlock(m, data));
+  const inverseMode    = applyUnlock({ ...MODES.inverse, description: '"= 56" → diga os dois fatores' }, data);
+  const flashcardUnlock = getModeUnlock('flashcard', data);
+  const advancedModes  = [MODES.hard, MODES.personal, MODES.weekly, MODES.combined]
+    .map((m) => applyUnlock(m, data));
 
   return (
     <motion.div
@@ -172,15 +162,16 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           </span>
         </div>
         <div className="flex flex-col gap-3">
-          {MODE_LIST.map((mode) => (
+          {mainModes.map((mode) => (
             <ModeCard
               key={mode.id}
               mode={mode}
-              locked={false}
-              dailyDoneToday={mode.id === 'daily' && dailyDone}
+              locked={mode.locked}
+              unlockText={mode.unlockText}
+              dailyDoneToday={mode.id === 'daily' && dailyDone && !mode.locked}
               record={data.records?.[mode.id]}
               onStart={onStart}
-              badge={mode.id === 'daily' ? '🌟 Hoje' : null}
+              badge={mode.id === 'daily' && !mode.locked ? '🌟 Hoje' : null}
             />
           ))}
         </div>
@@ -195,14 +186,15 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           Sem competição — feito para aprender no seu ritmo
         </p>
         <div className="flex flex-col gap-3">
-          {TRAINING_MODE_LIST.map((mode) => (
+          {trainingModes.map((mode) => (
             <ModeCard
               key={mode.id}
               mode={mode}
-              locked={false}
+              locked={mode.locked}
+              unlockText={mode.unlockText}
               record={data.records?.[mode.id]}
               onStart={onStart}
-              badge={mode.id === 'zen' ? 'Sem XP' : null}
+              badge={mode.id === 'zen' && !mode.locked ? 'Pratique 🌿' : null}
             />
           ))}
         </div>
@@ -214,16 +206,14 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           Recuperação Reversa · Fase 2
         </p>
         <div className="flex flex-col gap-3">
-          {PHASE_2_MODES.map((mode) => (
-            <ModeCard
-              key={mode.id}
-              mode={mode}
-              locked={false}
-              record={data.records?.[mode.id]}
-              onStart={onStart}
-              badge="NOVO"
-            />
-          ))}
+          <ModeCard
+            mode={inverseMode}
+            locked={inverseMode.locked}
+            unlockText={inverseMode.unlockText}
+            record={data.records?.[inverseMode.id]}
+            onStart={onStart}
+            badge={!inverseMode.locked ? 'NOVO' : null}
+          />
         </div>
       </div>
 
@@ -236,15 +226,24 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           Repetição espaçada — o método científico de memorização
         </p>
         <motion.button
-          whileHover={{ scale: 1.02, y: -2 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onNavigate?.('flashcard')}
-          className="relative overflow-hidden rounded-3xl p-5 text-left w-full transition-all
-            bg-gradient-to-br from-fuchsia-50 to-pink-50 border border-fuchsia-200 shadow-fuchsia-200 hover:shadow-lg"
+          whileHover={flashcardUnlock.unlocked ? { scale: 1.02, y: -2 } : {}}
+          whileTap={flashcardUnlock.unlocked ? { scale: 0.97 } : {}}
+          onClick={flashcardUnlock.unlocked ? () => onNavigate?.('flashcard') : undefined}
+          disabled={!flashcardUnlock.unlocked}
+          className={`relative overflow-hidden rounded-3xl p-5 text-left w-full transition-all
+            bg-gradient-to-br from-fuchsia-50 to-pink-50 border border-fuchsia-200 shadow-fuchsia-200
+            ${flashcardUnlock.unlocked ? 'hover:shadow-lg' : 'opacity-60 cursor-not-allowed'}`}
         >
-          <div className="absolute top-3 right-3 bg-fuchsia-500 text-white rounded-full px-2.5 py-1 text-[10px] font-black">
-            NOVO
-          </div>
+          {flashcardUnlock.unlocked ? (
+            <div className="absolute top-3 right-3 bg-fuchsia-500 text-white rounded-full px-2.5 py-1 text-[10px] font-black">
+              NOVO
+            </div>
+          ) : (
+            <div className="absolute top-3 right-3 bg-gray-100 rounded-full px-2.5 py-1 text-[10px] font-black text-gray-500 flex items-center gap-1">
+              <Lock size={10} />
+              {flashcardUnlock.reason}
+            </div>
+          )}
           <div className="flex items-start gap-3">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-fuchsia-500 to-pink-600 shadow-sm shrink-0">
               <Repeat size={22} className="text-white" />
@@ -274,7 +273,7 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
           Mais desafiadores — pensados para domínio real
         </p>
         <div className="flex flex-col gap-3">
-          {getAdvancedModes(levelIdx, certsUnlocked).map((mode) => (
+          {advancedModes.map((mode) => (
             <ModeCard
               key={mode.id}
               mode={mode}
@@ -283,9 +282,9 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
               record={data.records?.[mode.id]}
               onStart={onStart}
               badge={
-                mode.id === 'weekly' && weeklyDone
+                !mode.locked && mode.id === 'weekly' && weeklyDone
                   ? `✓ ${data.weeklyChallenge?.score || 0} pts`
-                  : mode.id === 'weekly'
+                  : !mode.locked && mode.id === 'weekly'
                   ? 'NOVO 🏆'
                   : null
               }

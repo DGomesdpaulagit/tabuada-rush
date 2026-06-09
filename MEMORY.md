@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.8.0 (Roadmap 3.0 **100% entregue** · sessao-031 · Tabuada 11/12 + Modo Combinado)  
+**Versão:** 3.9.0 (correções pós-3.0 + sistema de desbloqueio progressivo · sessao-032)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

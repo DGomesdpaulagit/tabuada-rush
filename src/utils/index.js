@@ -486,6 +486,84 @@ export function computeCertificates(factStats = {}) {
   return result;
 }
 
+// ── DESBLOQUEIO PROGRESSIVO DE MODOS ─────────────────────────────────────────
+// Cada modo (exceto Zen) tem uma condição para ser desbloqueado. A intenção é
+// criar uma jornada natural: novo usuário começa só com Zen, e descobre que
+// ele dá XP (sem ser dito) — o que destrava Rush, depois os outros modos.
+//
+// Tipos de condição:
+//   'level'         → levelIdx >= value (level zero-indexed; 0 = Iniciante)
+//   'totalGames'    → data.totalGames >= value
+//   'totalCorrect'  → data.totalCorrect >= value
+//   'totalWrong'    → data.totalWrong >= value
+//   'bestDayStreak' → data.bestDayStreak >= value
+//   'certificates'  → certificados de domínio desbloqueados >= value
+
+export const UNLOCK_RULES = {
+  zen:       null,                                          // sempre disponível
+  rush:      { type: 'level',         value: 1 },           // Nível 2 (Aprendiz)
+  survival:  { type: 'level',         value: 2 },           // Nível 3 (Estudante)
+  speed:     { type: 'totalGames',    value: 10 },          // 10 partidas no total
+  daily:     { type: 'totalCorrect',  value: 100 },         // 100 acertos no total
+  review:    { type: 'totalWrong',    value: 20 },          // 20 erros (precisa ter o que revisar)
+  flashcard: { type: 'level',         value: 3 },           // Nível 4 (Calculador)
+  inverse:   { type: 'level',         value: 4 },           // Nível 5 (Praticante)
+  hard:      { type: 'level',         value: 7 },           // Nível 8 (Hábil)
+  personal:  { type: 'level',         value: 8 },           // Nível 9 (Competente)
+  weekly:    { type: 'bestDayStreak', value: 10 },          // 10 dias de ofensiva (recorde)
+  combined:  { type: 'certificates',  value: 3 },           // 3 certificados de domínio
+};
+
+// Avalia o estado de desbloqueio de um modo. Retorna { unlocked, reason, current, target }.
+//   - reason: descrição curta para mostrar no card ('Nível 5', '20 acertos', etc)
+//   - current/target: progresso atual / meta (para barra de progresso opcional)
+export function getModeUnlock(modeId, data = {}) {
+  const rule = UNLOCK_RULES[modeId];
+  if (!rule) return { unlocked: true, reason: null };
+
+  let current = 0;
+  let target = rule.value;
+  let reason = '';
+
+  switch (rule.type) {
+    case 'level': {
+      current = getLevelIdx(data.xp || 0);
+      const lvl = LEVELS[rule.value];
+      reason = lvl ? `Nível ${rule.value + 1}: ${lvl.name}` : `Nível ${rule.value + 1}`;
+      break;
+    }
+    case 'totalGames':
+      current = data.totalGames || 0;
+      reason = `${target} partidas jogadas`;
+      break;
+    case 'totalCorrect':
+      current = data.totalCorrect || 0;
+      reason = `${target} acertos no total`;
+      break;
+    case 'totalWrong':
+      current = data.totalWrong || 0;
+      reason = `${target} erros (precisa do que revisar)`;
+      break;
+    case 'bestDayStreak':
+      current = data.bestDayStreak || 0;
+      reason = `${target} dias de ofensiva (recorde)`;
+      break;
+    case 'certificates':
+      current = computeCertificates(data.factStats || {}).filter((c) => c.unlocked).length;
+      reason = `${target} certificados de domínio`;
+      break;
+    default:
+      return { unlocked: true, reason: null };
+  }
+
+  return {
+    unlocked: current >= target,
+    reason,
+    current,
+    target,
+  };
+}
+
 // ── ACHIEVEMENTS ──────────────────────────────────────────────────────────
 
 export function checkNewAchievements(savedData) {

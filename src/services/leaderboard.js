@@ -18,12 +18,24 @@ const TOP_N = 20;
 
 function parseError(error) {
   if (!error) return null;
-  // 42P01 = undefined_table (Postgres). Indica que o usuário ainda não rodou
-  // o SQL de leaderboard. Tratamos como caso esperado, não como erro fatal.
-  if (error.code === '42P01' || /relation .* does not exist/i.test(error.message || '')) {
+  const msg = error.message || '';
+  // Detecta "tabela não existe" em vários formatos que Supabase/PostgREST podem retornar:
+  //   - 42P01 (código Postgres direto)
+  //   - PGRST205 (PostgREST: "Could not find the table 'X' in the schema cache")
+  //   - PGRST202 / 404 às vezes também
+  //   - Mensagens em texto puro
+  if (
+    error.code === '42P01' ||
+    error.code === 'PGRST205' ||
+    error.code === 'PGRST202' ||
+    /relation .* does not exist/i.test(msg) ||
+    /could not find the table/i.test(msg) ||
+    /schema cache/i.test(msg) ||
+    /table .* (not found|does not exist)/i.test(msg)
+  ) {
     return { ok: false, reason: 'no_table' };
   }
-  return { ok: false, reason: 'error', message: error.message };
+  return { ok: false, reason: 'error', message: msg };
 }
 
 // ── DAILY ──────────────────────────────────────────────────────────────────

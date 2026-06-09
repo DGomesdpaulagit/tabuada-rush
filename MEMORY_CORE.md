@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.5.0 (Fase 3 da Tabuada Rush 3.0 — Economia e Loja Reformulada)
-**Status:** ✅ Fase 3 entregue (sessao-028.md). Próximo: Fase 4 (Novos Modos — Difícil, Recorde Pessoal, Desafio Semanal).
+**Versão:** 3.6.0 (Fase 4 da Tabuada Rush 3.0 — Novos Modos)
+**Status:** ✅ Fase 4 entregue (sessao-029.md). Próximo: Fase 5 (Social e Retenção — leaderboards, heatmap, share card).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -53,10 +53,10 @@
 12. ✅ Oferta da Semana — 3 cosméticos com 40% off, seed ISO week
 13. ✅ Temas de GamePage — categoria `gameTheme`, 3 itens (Neon/Aurora/Lava), aplicados ao card de pergunta
 
-### FASE 4 — Novos Modos
-13. **Modo Contra o Relógio Pessoal**: bater seus próprios recordes por fato
-14. **Desafio Semanal Competitivo**: 10 questões iguais para todos, leaderboard semanal
-15. **Modo Difícil**: pool só com tabuadas 7, 8 e 9 — desbloqueado no Nível 8+
+### FASE 4 — ✅ ENTREGUE (v3.6.0 · sessao-029.md)
+13. ✅ Modo Recorde Pessoal — benchmark por fato via factStats, "bateu/devagar"
+14. ✅ Desafio Semanal Competitivo — 10 q por semana ISO, `weeklyChallenge` no storage (leaderboard UI fica para Fase 5)
+15. ✅ Modo Difícil — pool 7/8/9, timer 90s, xpMult 0.22, gen on-the-fly, desbloqueado Nível 8+
 
 ### FASE 5 — Social e Retenção
 16. **Leaderboard Desafio Diário**: top 20 global (todas respostas iguais = comparação justa)
@@ -144,20 +144,25 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 4 (Novos Modos)
+## 🎯 PRÓXIMA SESSÃO — FASE 5 (Social e Retenção)
 
-**Ler antes de começar:** `sessions/sessao-028.md` (Fase 3 entregue) +
+**Ler antes de começar:** `sessions/sessao-029.md` (Fase 4 entregue) +
 `sessions/sessao-025.md` (visão completa do roadmap 3.0).
 
 **Executar nesta ordem:**
-1. **Modo Contra o Relógio Pessoal** — `MODES.personal`. Cada questão mostra
-   o melhor tempo do jogador para aquele fato (via `factStats[fk].totalMs/count`).
-   Pontuação = % de questões onde bateu o tempo pessoal. xpMultiplier 0.18.
-2. **Modo Difícil** — `MODES.hard`. Pool exclusivo 7/8/9, timer 90s,
-   xpMultiplier 0.22, desbloqueado no Nível 8+.
-3. **Desafio Semanal Competitivo** — 10 questões iguais para todos, seed
-   por semana ISO. Leaderboard via Supabase (top 3 ganham itens exclusivos).
-4. Build + commit + push + documento + registros.
+1. **Leaderboard do Desafio Diário** — top 20 global por `currentDailyScore`
+   da data de hoje. Via Supabase (`src/services/sync.js`).
+2. **Leaderboard do Desafio Semanal** — top 20 por `weeklyChallenge.score`
+   da semana ISO atual (campo já persistido na Fase 4).
+3. **Heatmap de Ofensiva 365 dias** — visualização estilo GitHub na StatsPage,
+   usando `data.sessions` para detectar dias jogados.
+4. **Compartilhar Resultado** — gerar imagem do resumo da partida (html2canvas
+   ou Canvas API) para compartilhar em redes sociais.
+5. Build + commit + push + documento + registros.
+
+**Importante:** Supabase está configurado mas a UI dos leaderboards precisa
+ser construída do zero. Graceful degradation: se Supabase não configurado,
+mostrar mensagem "Leaderboard requer login na nuvem" em vez de erro.
 
 ---
 

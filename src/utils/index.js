@@ -40,6 +40,60 @@ export function getDiffLevel(questionsAnswered) {
   return 1;
 }
 
+// Gera questões para o Modo Difícil: pool exclusivo de 7, 8 e 9 como fator `a`.
+export function getHardQuestion() {
+  const pool = [7, 8, 9];
+  const a = pool[Math.floor(Math.random() * pool.length)];
+  const b = Math.floor(Math.random() * 10) + 1;
+  return { a, b, ans: a * b };
+}
+
+// Gera 15 questões para o Modo Recorde Pessoal. Cada questão anexa `personalBenchmarkMs`
+// (tempo médio do jogador para aquele fato) — se sem dados, usa 2500ms como referência.
+export function getPersonalRecordQuestions(factStats = {}, count = 15) {
+  const PERSONAL_FALLBACK_MS = 2500;
+  return Array.from({ length: count }, () => {
+    const a = Math.floor(Math.random() * 8) + 2; // 2..9
+    const b = Math.floor(Math.random() * 10) + 1;
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    const fk = `${lo}x${hi}`;
+    const stat = factStats[fk];
+    const benchmark = stat?.count && stat?.totalMs
+      ? Math.round(stat.totalMs / stat.count)
+      : PERSONAL_FALLBACK_MS;
+    return { a, b, ans: a * b, personalBenchmarkMs: benchmark };
+  });
+}
+
+// Gera 10 questões para o Desafio Semanal: seed = ano + semana ISO.
+// Todos os jogadores recebem as mesmas questões na mesma semana.
+export function getWeeklyChallengeQuestions(date = new Date(), count = 10) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  const seed = d.getUTCFullYear() * 100 + weekNo;
+  const rand = seededRng(seed);
+  return Array.from({ length: count }, () => {
+    const a = Math.floor(rand() * 8) + 2; // 2..9 (pool padrão)
+    const b = Math.floor(rand() * 10) + 1;
+    return { a, b, ans: a * b };
+  });
+}
+
+// Chave da semana ISO atual (para detectar quando o jogador já completou o
+// desafio desta semana). Idêntica à `getIsoWeekKey` em shop.js mas autônoma aqui.
+export function getCurrentWeekKey(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
 // Gera questões para o Modo Revisão com score de dificuldade composto:
 //   50% taxa de erro  |  30% tempo médio de resposta  |  20% volume absoluto de erros
 // Se houver poucos dados (< 2 tentativas por tabuada), usa pool padrão.

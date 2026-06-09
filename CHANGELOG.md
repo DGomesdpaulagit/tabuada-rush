@@ -4,6 +4,40 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.6.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 4
+
+**Novos Modos.** Detalhes em `sessions/sessao-029.md`.
+
+### Adicionado
+- **Modo Difícil** — `MODES.hard`
+  - Pool exclusivo de fatores 7, 8 e 9 · timer 90s · xpMultiplier 0.22
+  - Desbloqueado no Nível 8+ (`minLevel: 8`)
+  - Geração on-the-fly via `getHardQuestion()`
+- **Modo Recorde Pessoal** — `MODES.personal`
+  - 15 questões com benchmark por fato (`personalBenchmarkMs` via factStats)
+  - "Bateu seu tempo!" → pontos completos · "Correto, mas devagar..." → +1 pt
+  - Badge `🎯 Seu tempo: 2.1s` visível no card de pergunta
+  - `state.beats` rastreia total batido na partida
+  - xpMultiplier 0.18
+- **Desafio Semanal Competitivo** — `MODES.weekly`
+  - 10 questões idênticas para todos por semana ISO (seed determinístico)
+  - Persiste melhor score em `data.weeklyChallenge = { week, score, completedAt }`
+  - Badge dinâmico na ModesPage (`NOVO 🏆` ou `✓ {score} pts`)
+  - xpMultiplier 0.30 (mais alto — sai 1× por semana)
+  - Leaderboard global previsto para Fase 5 (Supabase já configurado)
+- **Utilitários novos em `utils/index.js`:**
+  - `getHardQuestion()`
+  - `getPersonalRecordQuestions(factStats, count)`
+  - `getWeeklyChallengeQuestions(date, count)`
+  - `getCurrentWeekKey(date)` — "YYYY-Www"
+- **ModesPage atualizada** — placeholders bloqueados substituídos por modos reais
+
+### Filosofia
+> Fase 4 traz competição honesta. Modo Difícil testa o pior caso. Recorde
+> Pessoal compete contra si mesmo. Semanal compete contra todos.
+
+---
+
 ## [3.5.0] — 2026-06-08 — TABUADA RUSH 3.0 · FASE 3
 
 **Economia e Loja Reformulada.** Detalhes em `sessions/sessao-028.md`.

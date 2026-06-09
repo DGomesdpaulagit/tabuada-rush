@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -542,6 +542,20 @@ export default function App() {
           },
           currentDailyDate: result.mode === 'daily' ? today : prev.currentDailyDate,
           currentDailyScore: result.mode === 'daily' ? result.score : prev.currentDailyScore,
+          // Desafio Semanal: persiste melhor score da semana ISO atual
+          weeklyChallenge:
+            result.mode === 'weekly'
+              ? {
+                  week: getCurrentWeekKey(new Date()),
+                  score: Math.max(
+                    prev.weeklyChallenge?.week === getCurrentWeekKey(new Date())
+                      ? (prev.weeklyChallenge.score || 0)
+                      : 0,
+                    result.score || 0
+                  ),
+                  completedAt: new Date().toISOString(),
+                }
+              : prev.weeklyChallenge,
           coins: (prev.coins || 0) + coinsEarned + betPayout,
           activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
@@ -700,12 +714,16 @@ export default function App() {
   const startGame = useCallback((mode) => {
     if (mode === 'review') {
       setCustomQuestions(getRevisionQuestions(data.tableStats));
+    } else if (mode === 'personal') {
+      setCustomQuestions(getPersonalRecordQuestions(data.factStats));
+    } else if (mode === 'weekly') {
+      setCustomQuestions(getWeeklyChallengeQuestions(new Date()));
     } else {
       setCustomQuestions(null);
     }
     setActiveMode(mode);
     setScreen('game');
-  }, [data.tableStats]);
+  }, [data.tableStats, data.factStats]);
 
   const handleStart = useCallback((mode) => {
     // Apostas só para modos principais (rush/survival/speed/daily) — modos de

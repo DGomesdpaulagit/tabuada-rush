@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime } from '../utils';
+import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -48,6 +48,9 @@ function init({ mode, customQuestions }) {
   if (!qs) {
     if (mode === 'inverse' && cfg.questions) {
       qs = Array.from({ length: cfg.questions }, () => getRandomQuestion(3));
+    } else if (mode === 'hard') {
+      // Modo Difícil: timer + pool 7/8/9; sem lista fixa, gera on-the-fly em NEXT.
+      qs = null;
     } else if (mode === 'daily' || (cfg.questions && mode !== 'zen')) {
       qs = getDailyQuestions(cfg.questions || 20);
     } else {
@@ -63,7 +66,8 @@ function init({ mode, customQuestions }) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : getRandomQuestion(1),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion() : getRandomQuestion(1)),
+    mode,
     dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
@@ -81,17 +85,23 @@ function reducer(state, action) {
       return { ...state, time: state.time + 1 };
     case 'CORRECT': {
       const streak = state.streak + 1;
-      const pts = calcPoints(getDiffLevel(state.answered), streak, action.scoreScale || 1);
+      // Modo Recorde Pessoal: só pontua de verdade se BATEU o próprio tempo.
+      // Acertou mas devagar → +1 ponto simbólico (registrou que acertou).
+      const basePts = calcPoints(getDiffLevel(state.answered), streak, action.scoreScale || 1);
+      const pts = action.isPersonal && !action.beatPersonal ? 1 : basePts;
       const addTime = action.modeId === 'rush' ? MODES.rush.bonusTime : 0;
       return {
         ...state,
         phase: 'feedback',
         score: state.score + pts,
         correct: state.correct + 1,
+        beats: (state.beats || 0) + (action.beatPersonal ? 1 : 0),
         streak,
         bestStreak: Math.max(state.bestStreak, streak),
         answered: state.answered + 1,
         lastCorrect: true,
+        lastPts: pts,
+        lastBeatPersonal: !!action.beatPersonal,
         time: state.time + addTime,
       };
     }
@@ -114,6 +124,8 @@ function reducer(state, action) {
       if (isDailyDone) return { ...state, phase: 'ended' };
       const nextQ = state.dailyQs
         ? state.dailyQs[nextDailyIdx]
+        : state.mode === 'hard'
+        ? getHardQuestion()
         : getRandomQuestion(getDiffLevel(state.answered));
       return {
         ...state,
@@ -274,16 +286,29 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
       ? valA >= 1 && valA <= 10 && valB >= 1 && valB <= 10 && valA * valB === state.question.ans
       : valA === state.question.ans;
 
+    // Modo Recorde Pessoal: marca `beatPersonal` se acertou E foi mais rápido
+    // que o tempo médio do jogador para aquele fato (benchmark anexado em init).
+    const isPersonal = !!cfg.personal;
+    const benchmark = state.question?.personalBenchmarkMs || 0;
+    const beatPersonal = isPersonal && isCorrect && dt > 0 && benchmark > 0 && dt < benchmark;
+
     questionLog.current.push({
       a: state.question.a,
       b: state.question.b,
       correct: isCorrect,
       ms: dt > 0 && dt < 60000 ? dt : 0,
+      ...(isPersonal ? { beatPersonal, benchmarkMs: benchmark } : {}),
     });
 
     if (isCorrect) {
       setInputState('correct');
-      dispatch({ type: 'CORRECT', modeId: mode, scoreScale: cfg.scoreScale || 1 });
+      dispatch({
+        type: 'CORRECT',
+        modeId: mode,
+        scoreScale: cfg.scoreScale || 1,
+        isPersonal,
+        beatPersonal,
+      });
 
       const newStreak = state.streak + 1;
 
@@ -379,6 +404,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const isZen = mode === 'zen';
   const isReview = mode === 'review';
   const isInverse = !!cfg.inverse;
+  const isPersonalMode = !!cfg.personal;
 
   return (
     <motion.div
@@ -586,6 +612,11 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
                     {state.question?.a} × {state.question?.b}
                   </p>
                   <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
+                  {isPersonalMode && state.question?.personalBenchmarkMs > 0 && (
+                    <p className="text-xs font-bold mt-2 text-yellow-600 bg-yellow-100 inline-block px-2.5 py-1 rounded-full">
+                      🎯 Seu tempo: {(state.question.personalBenchmarkMs / 1000).toFixed(1)}s
+                    </p>
+                  )}
                 </>
               )}
             </motion.div>
@@ -601,9 +632,20 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
                 className="mt-4 text-center"
               >
                 {state.lastCorrect ? (
-                  <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-emerald-200">
-                    <span>✓</span>
-                    <span>{isZen ? 'Correto!' : `Correto! +${calcPoints(diffLevel, state.streak)}`}</span>
+                  <div className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-2xl font-bold shadow-lg
+                    ${isPersonalMode && state.lastBeatPersonal
+                      ? 'bg-yellow-500 shadow-yellow-200'
+                      : 'bg-emerald-500 shadow-emerald-200'}`}>
+                    <span>{isPersonalMode && state.lastBeatPersonal ? '⚡' : '✓'}</span>
+                    <span>
+                      {isZen
+                        ? 'Correto!'
+                        : isPersonalMode
+                        ? state.lastBeatPersonal
+                          ? `Bateu seu tempo! +${state.lastPts}`
+                          : 'Correto, mas devagar...'
+                        : `Correto! +${calcPoints(diffLevel, state.streak)}`}
+                    </span>
                   </div>
                 ) : (
                   <div className="inline-flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg shadow-rose-200">

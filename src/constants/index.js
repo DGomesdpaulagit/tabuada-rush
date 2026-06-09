@@ -114,6 +114,65 @@ export const MODES = {
     xpMultiplier: 0.16,   // estudo focado — XP médio
     group: 'training',
   },
+  // ── MODO DIFÍCIL — pool exclusivo de 7, 8 e 9 ──────────────────────────────
+  hard: {
+    id: 'hard',
+    name: 'Difícil',
+    emoji: '🔥',
+    description: 'Só tabuadas 7, 8 e 9 · 90 segundos',
+    gradient: 'from-orange-500 to-red-600',
+    gradientLight: 'from-orange-50 to-red-50',
+    shadow: 'shadow-orange-200',
+    text: 'text-orange-600',
+    border: 'border-orange-200',
+    bg: 'bg-orange-500',
+    timer: 90,
+    lives: null,
+    questions: null,
+    bonusTime: 0,
+    xpMultiplier: 0.22,   // maior que os modos padrão — recompensa pela dificuldade
+    minLevel: 8,           // desbloqueado no Nível 8+
+    group: 'advanced',
+  },
+  // ── MODO RECORDE PESSOAL — bater os próprios tempos por fato ──────────────
+  personal: {
+    id: 'personal',
+    name: 'Recorde Pessoal',
+    emoji: '⏱️',
+    description: 'Bata seu próprio tempo em cada fato',
+    gradient: 'from-yellow-500 to-amber-600',
+    gradientLight: 'from-yellow-50 to-amber-50',
+    shadow: 'shadow-yellow-200',
+    text: 'text-yellow-600',
+    border: 'border-yellow-200',
+    bg: 'bg-yellow-500',
+    timer: null,
+    lives: null,
+    questions: 15,
+    bonusTime: 0,
+    xpMultiplier: 0.18,
+    personal: true,        // flag para o GamePage marcar "bateu tempo"
+    group: 'advanced',
+  },
+  // ── DESAFIO SEMANAL — 10 questões iguais para todos por semana ────────────
+  weekly: {
+    id: 'weekly',
+    name: 'Desafio Semanal',
+    emoji: '🏆',
+    description: 'Mesmas 10 questões — leaderboard global',
+    gradient: 'from-pink-500 to-rose-600',
+    gradientLight: 'from-pink-50 to-rose-50',
+    shadow: 'shadow-pink-200',
+    text: 'text-pink-600',
+    border: 'border-pink-200',
+    bg: 'bg-pink-500',
+    timer: null,
+    lives: null,
+    questions: 10,
+    bonusTime: 0,
+    xpMultiplier: 0.30,   // alta recompensa — sai 1× por semana
+    group: 'advanced',
+  },
   // ── MODO INVERSO — "= 56" → digite os dois fatores ─────────────────────────
   inverse: {
     id: 'inverse',

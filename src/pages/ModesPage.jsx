@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { MODE_LIST, TRAINING_MODE_LIST, MODES } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx } from '../utils';
+import { getLevelIdx, getCurrentWeekKey } from '../utils';
 import { pageVariants, pageTransition } from '../components/ui';
 
 // Ícones para cada modo (id → componente)
@@ -36,46 +36,18 @@ const MODE_DIFFICULTY = {
   personal: 'Personalizado',
 };
 
-// Modos avançados (placeholders para Fase 2+). Ficam bloqueados por enquanto.
-const ADVANCED_MODES = [
-  {
-    id: 'flashcard',
-    name: 'Flashcard',
-    description: 'Repetição espaçada — memorização real',
-    gradient: 'from-fuchsia-500 to-pink-600',
-    gradientLight: 'from-fuchsia-50 to-pink-50',
-    shadow: 'shadow-fuchsia-200',
-    text: 'text-fuchsia-600',
-    border: 'border-fuchsia-200',
-    locked: true,
-    unlockText: 'Em breve · Fase 2',
-  },
-  // Inverso liberado na Fase 2 — definido em MODES.inverse e tratado no GamePage
-  {
-    id: 'hard',
-    name: 'Difícil',
-    description: 'Só tabuadas 7, 8 e 9',
-    gradient: 'from-orange-500 to-red-600',
-    gradientLight: 'from-orange-50 to-red-50',
-    shadow: 'shadow-orange-200',
-    text: 'text-orange-600',
-    border: 'border-orange-200',
-    locked: true,
-    unlockText: 'Em breve · Fase 4',
-  },
-  {
-    id: 'personal',
-    name: 'Recorde Pessoal',
-    description: 'Bata seus próprios tempos por fato',
-    gradient: 'from-yellow-500 to-amber-600',
-    gradientLight: 'from-yellow-50 to-amber-50',
-    shadow: 'shadow-yellow-200',
-    text: 'text-yellow-600',
-    border: 'border-yellow-200',
-    locked: true,
-    unlockText: 'Em breve · Fase 4',
-  },
-];
+// Modos avançados — agora todos reais (definidos em MODES). Hard requer Nível 8+.
+function getAdvancedModes(levelIdx) {
+  return [
+    {
+      ...MODES.hard,
+      locked: levelIdx + 1 < (MODES.hard.minLevel || 0),
+      unlockText: `Nível ${MODES.hard.minLevel}`,
+    },
+    { ...MODES.personal, locked: false },
+    { ...MODES.weekly, locked: false },
+  ];
+}
 
 function ModeCard({ mode, locked, unlockText, dailyDoneToday, record, onStart, badge }) {
   const Icon = modeIcons[mode.id] || Star;
@@ -151,6 +123,8 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
   const dailyDone = data.currentDailyDate === todayStr;
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = levelIdx + 1;
+  const currentWeek = getCurrentWeekKey(new Date());
+  const weeklyDone = data.weeklyChallenge?.week === currentWeek;
 
   return (
     <motion.div
@@ -281,22 +255,30 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
         </motion.button>
       </div>
 
-      {/* Modos Avançados (placeholders Fase 4) */}
+      {/* Modos Avançados — agora todos reais (Fase 4) */}
       <div>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 px-1">
-          Modos Avançados
+          Modos Avançados · Fase 4
         </p>
         <p className="text-[11px] text-gray-400 font-semibold mb-3 px-1">
-          Novos modos da Tabuada Rush 3.0 — chegam nas próximas fases
+          Mais desafiadores — pensados para domínio real
         </p>
         <div className="flex flex-col gap-3">
-          {ADVANCED_MODES.map((mode) => (
+          {getAdvancedModes(levelIdx).map((mode) => (
             <ModeCard
               key={mode.id}
               mode={mode}
               locked={mode.locked}
               unlockText={mode.unlockText}
+              record={data.records?.[mode.id]}
               onStart={onStart}
+              badge={
+                mode.id === 'weekly' && weeklyDone
+                  ? `✓ ${data.weeklyChallenge?.score || 0} pts`
+                  : mode.id === 'weekly'
+                  ? 'NOVO 🏆'
+                  : null
+              }
             />
           ))}
         </div>

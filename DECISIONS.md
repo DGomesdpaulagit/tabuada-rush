@@ -134,3 +134,38 @@
 **Decisão:** Estado apenas em memória React, sem salvar no localStorage  
 **Motivo:** Sessão informal, não faz sentido registrar como "partida" normal  
 **Revisitar quando:** Quisermos histórico de batalhas ou ELO rating
+
+---
+
+## D008 — Desbloqueio progressivo de modos (UNLOCK_RULES)
+
+**Data:** 2026-06-08 · sessao-032
+**Contexto:** Até a v3.8.0 todos os modos eram acessíveis desde a primeira partida.
+Davi pediu uma jornada de descoberta: começar só com Zen e ir destravando os demais conforme progresso real.
+**Decisão:** Mapa central `UNLOCK_RULES` em `utils/index.js` com regras por modo.
+Tipos suportados: `level`, `totalGames`, `totalCorrect`, `totalWrong`, `bestDayStreak`, `certificates`.
+Função `getModeUnlock(modeId, data) → { unlocked, reason, current, target }`.
+Aplicada na `ModesPage.jsx` (UI) e em `App.jsx::handleStart` (bloqueio defensivo).
+**Motivo:**
+- Cria sensação de progresso e descoberta (cada modo virando "recompensa")
+- Evita sobrecarregar usuário novo com muitas opções de uma vez
+- Vai ao encontro da filosofia da 3.0 ("domínio real" > "tempo jogado")
+**Trade-off:** Usuários novos veem só Zen no início — risco de pensar que o app é raso. Mitigado pelo texto claro de unlock ("Nível 2: Aprendiz") que mostra o caminho.
+**Compatibilidade:** Regras consultam apenas campos já existentes em `data` — usuários antigos automaticamente têm tudo desbloqueado.
+**Revisitar quando:** Métricas mostrarem alta taxa de abandono no início (Zen-only).
+Aí relaxar regras ou aumentar o XP do Zen.
+
+---
+
+## D009 — Zen quietamente dá XP
+
+**Data:** 2026-06-08 · sessao-032
+**Contexto:** Com o desbloqueio progressivo, Rush exige Nível 2. Para chegar lá, o usuário precisa de uma fonte de XP — só Zen está disponível no início.
+Antes: `MODES.zen.xpMultiplier = 0` (Zen não dava XP). Conflito.
+**Decisão:**
+- Zen passa a dar XP discretamente: `xpMultiplier: 0` → `0.10` (mais baixo que qualquer outro modo)
+- A UI continua **sem mencionar XP** no Zen: badge mudou de "Sem XP" para "Pratique 🌿"; descrição "Treino livre, sem pressão"; in-game "Sem pressão 🌿"
+- O usuário descobre o XP **somente** ao terminar e ver a stat "XP Ganho" na ResultsPage
+**Motivo:** Davi pediu explicitamente para o usuário não saber upfront que Zen dá XP ("não fala 'pratique 10 partidas Zen pra ganhar XP', só fala 'pratique'"). Cria momento de surpresa positiva.
+**Trade-off:** Quebra a promessa anterior do "Sem XP" (mas isso era uma decisão antiga que não fazia mais sentido com o desbloqueio progressivo).
+**Revisitar quando:** Sentirmos que o ritmo de XP em Zen está rápido ou lento demais para a primeira hora de jogo.

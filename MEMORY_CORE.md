@@ -20,7 +20,7 @@
 
 **Data:** 2026-06-08
 **Versão:** 3.10.0 (Modo Difícil adaptativo + Leaderboards ATIVOS)
-**Status:** ✅ Roadmap 3.0 completo + refinamentos + leaderboards ativados (sessao-033). Modo Difícil agora usa tableStats do jogador (3 tabuadas mais difíceis PESSOAIS). SQL de leaderboard rodado via MCP no Supabase — tabelas leaderboard_daily e leaderboard_weekly criadas.
+**Status:** ✅ Roadmap 3.0 completo (v3.3-3.8) + refinamentos (v3.9) + leaderboards ativados (v3.10, sessao-033). **🚨 Próxima sessão: Davi vai iniciar planejamento da VERSÃO 4.0.**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -144,7 +144,36 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — A DEFINIR (Roadmap 3.0 completo)
+## 🎯 PRÓXIMA SESSÃO — INICIAR VERSÃO 4.0 (Davi vai puxar em nova conversa)
+
+**Contexto:** roadmap 3.0 100% entregue + leaderboards ativos + Modo Difícil
+adaptativo. Davi decidiu começar a 4.0.
+
+**Antes de tudo:** ler nesta ordem
+1. Este arquivo (MEMORY_CORE.md)
+2. `sessions/sessao-033.md` (última sessão · v3.10)
+3. `sessions/sessao-031.md` seção "Pós-3.0" (ideias soltas para 4.0)
+4. `sessions/sessao-025.md` (como foi feito o planejamento da 3.0 — modelo)
+
+**Recomendação de método (aprendido na 3.0):**
+- Fazer uma **sessão inteira só de planejamento** (como foi a 025) antes de
+  qualquer código
+- Definir a **filosofia central** da 4.0 (a 3.0 foi "prática → memorização")
+- Dividir em **fases numeradas** com entregas claras
+- Cada fase vira 1 sessão de implementação + 1 push/versão
+
+**Direções candidatas da 4.0** (ver sessao-031 e resposta do assistant na sessao-033):
+- **Alto impacto pedagógico:** Divisão/Subtração + Modo Combinado v2
+- **Social/Retenção:** Multiplayer 1v1 real-time (Supabase Realtime) · Grupos/Turmas · Feed de amigos
+- **Personalização:** Avatares reais evoluindo com certificados · Sons personalizados
+- **Analytics avançado:** Curva de aprendizado por fato · Preditor de esquecimento
+- **B2B educacional:** Dashboard professor · Google Classroom · assinatura escolar
+- **Técnica:** Offline first-class · outras bases numéricas
+
+**Ação pendente pós-3.0 (não bloqueia 4.0):**
+- Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade
+  (assets: ícone 512², screenshots, política de privacidade, US$25 dev account,
+  método sugerido: PWABuilder)
 
 O roadmap 3.0 está 100% entregue (sessões 026-031 · versões 3.3.0 → 3.8.0).
 

@@ -119,7 +119,7 @@ export const MODES = {
     id: 'hard',
     name: 'Difícil',
     emoji: '🔥',
-    description: 'Só tabuadas 7, 8 e 9 · 90 segundos',
+    description: 'Suas 3 tabuadas mais difíceis · 90 segundos',
     gradient: 'from-orange-500 to-red-600',
     gradientLight: 'from-orange-50 to-red-50',
     shadow: 'shadow-orange-200',

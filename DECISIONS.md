@@ -169,3 +169,23 @@ Antes: `MODES.zen.xpMultiplier = 0` (Zen não dava XP). Conflito.
 **Motivo:** Davi pediu explicitamente para o usuário não saber upfront que Zen dá XP ("não fala 'pratique 10 partidas Zen pra ganhar XP', só fala 'pratique'"). Cria momento de surpresa positiva.
 **Trade-off:** Quebra a promessa anterior do "Sem XP" (mas isso era uma decisão antiga que não fazia mais sentido com o desbloqueio progressivo).
 **Revisitar quando:** Sentirmos que o ritmo de XP em Zen está rápido ou lento demais para a primeira hora de jogo.
+
+---
+
+## D010 — Modo Difícil adaptativo (pool derivado de tableStats)
+
+**Data:** 2026-07-02 · sessao-033
+**Contexto:** Até a v3.9 o Modo Difícil tinha pool fixo 7/8/9 (as "mais difíceis" na média histórica). Davi pediu para trocar por adaptativo — que treine as tabuadas que ELE erra mais.
+**Decisão:** `getHardTabuadaPool(tableStats)` calcula score de dificuldade individual:
+- 60% peso na taxa de erro do jogador naquela tabuada
+- 40% peso no tempo médio de resposta
+- Requer >=3 amostras por tabuada; fallback para 7/8/9 quando dados insuficientes
+Retorna as 3 tabuadas com maior score. `getHardQuestion(tableStats)` amostra desse pool.
+**Motivo:**
+- Cada jogador treina o que precisa (personalização real)
+- Coerente com filosofia da 3.0 (domínio real, dados-first)
+- Fallback preserva experiência de usuário novo
+**Trade-off:**
+- Recorde do Difícil perde valor comparativo entre jogadores (pools diferentes)
+- Aceito: Difícil não tem leaderboard; valor é individual
+**Revisitar quando:** Quisermos comparação de Difícil entre jogadores — aí volta a ser fixo ou tem 2 sub-modos (fixo/adaptativo).

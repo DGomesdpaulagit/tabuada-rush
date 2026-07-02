@@ -69,9 +69,10 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion() : getRandomQuestion(1, args.includeExtraTables)),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : getRandomQuestion(1, args.includeExtraTables)),
     mode,
     includeExtraTables: !!args.includeExtraTables,
+    tableStats: args.tableStats || {},
     dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
@@ -129,7 +130,7 @@ function reducer(state, action) {
       const nextQ = state.dailyQs
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
-        ? getHardQuestion()
+        ? getHardQuestion(state.tableStats)
         : getRandomQuestion(getDiffLevel(state.answered), state.includeExtraTables);
       return {
         ...state,
@@ -165,7 +166,12 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   const questionBorder   = equippedGameTheme?.questionBorder   || cfg.border;
 
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
-  const initArgRef = useRef({ mode, customQuestions, includeExtraTables: !!data.includeExtraTables });
+  const initArgRef = useRef({
+    mode,
+    customQuestions,
+    includeExtraTables: !!data.includeExtraTables,
+    tableStats: data.tableStats || {},
+  });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
 
   const [inputVal, setInputVal] = useState('');

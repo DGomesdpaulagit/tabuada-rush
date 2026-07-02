@@ -60,9 +60,30 @@ export function getDiffLevel(questionsAnswered) {
   return 1;
 }
 
-// Gera questões para o Modo Difícil: pool exclusivo de 7, 8 e 9 como fator `a`.
-export function getHardQuestion() {
-  const pool = [7, 8, 9];
+// Modo Difícil ADAPTATIVO: seleciona as 3 tabuadas com maior dificuldade
+// individual do jogador (mistura erro + tempo médio). Requer >= 3 amostras
+// por tabuada. Se não tiver dados suficientes, cai para o pool clássico 7/8/9.
+export function getHardTabuadaPool(tableStats = {}) {
+  const entries = Object.entries(tableStats)
+    .map(([a, s]) => {
+      const total = (s.correct || 0) + (s.wrong || 0);
+      if (total < 3) return null; // amostras insuficientes
+      const errRate = s.wrong / total;
+      const avgMs = s.count > 0 ? s.totalMs / s.count : 3000;
+      const msScore = Math.min(avgMs / 5000, 1);   // cap 5000ms
+      // difficulty: 60% erro + 40% tempo (erro pesa mais)
+      const difficulty = errRate * 0.6 + msScore * 0.4;
+      return { a: Number(a), difficulty };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.difficulty - a.difficulty);
+
+  if (entries.length < 3) return [7, 8, 9]; // fallback
+  return entries.slice(0, 3).map((e) => e.a);
+}
+
+export function getHardQuestion(tableStats = {}) {
+  const pool = getHardTabuadaPool(tableStats);
   const a = pool[Math.floor(Math.random() * pool.length)];
   const b = Math.floor(Math.random() * 10) + 1;
   return { a, b, ans: a * b };

@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-06-08
-**Versão:** 3.9.0 (correções pós-3.0 + jornada de desbloqueio progressivo)
-**Status:** ✅ Roadmap 3.0 completo + refinamentos (sessao-032). Bugs do teste end-to-end corrigidos (Flashcard + Leaderboard). Sistema de desbloqueio progressivo implementado: todos os modos exceto Zen têm condição. **Ação pendente do operador (opcional):** rodar SQL de leaderboard em SUPABASE_SETUP.md seção 3.1.
+**Versão:** 3.10.0 (Modo Difícil adaptativo + Leaderboards ATIVOS)
+**Status:** ✅ Roadmap 3.0 completo + refinamentos + leaderboards ativados (sessao-033). Modo Difícil agora usa tableStats do jogador (3 tabuadas mais difíceis PESSOAIS). SQL de leaderboard rodado via MCP no Supabase — tabelas leaderboard_daily e leaderboard_weekly criadas.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

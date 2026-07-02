@@ -4,6 +4,30 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.10.0] — 2026-07-02 — Modo Difícil Adaptativo + Leaderboards Ativos
+
+Detalhes em `sessions/sessao-033.md`.
+
+### Adicionado / Alterado
+- **Modo Difícil agora é ADAPTATIVO**: em vez do pool fixo 7/8/9, seleciona
+  as 3 tabuadas com maior dificuldade PESSOAL do jogador (`tableStats`).
+  - Score de dificuldade: 60% taxa de erro + 40% tempo médio
+  - Requer ≥3 amostras por tabuada; fallback: 7/8/9 clássico
+  - Nova função `getHardTabuadaPool(tableStats)` em utils
+  - `getHardQuestion(tableStats)` — assinatura mudou (breaking em teoria, mas só
+    o GamePage chama, e foi atualizado)
+  - `MODES.hard.description`: "Só tabuadas 7, 8 e 9" → "Suas 3 tabuadas mais difíceis"
+
+### Infraestrutura
+- **Leaderboards ATIVOS no Supabase** — migração `create_leaderboard_tables`
+  aplicada via MCP no projeto `oevpmbdcvzplbbedrvyt`.
+  - Tabelas `leaderboard_daily` e `leaderboard_weekly` criadas com RLS,
+    políticas SELECT (todos autenticados) + ALL (dono), índices por
+    `(date/week, score desc)`.
+  - Página de Leaderboard agora funcional em produção para usuários logados.
+
+---
+
 ## [3.9.0] — 2026-06-08 — Correções + Sistema de Desbloqueio Progressivo
 
 **Pós-3.0: bugs corrigidos e refinamento.** Detalhes em `sessions/sessao-032.md`.

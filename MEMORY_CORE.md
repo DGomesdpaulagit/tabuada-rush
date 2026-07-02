@@ -18,54 +18,66 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-06-08
-**Versão:** 3.10.0 (Modo Difícil adaptativo + Leaderboards ATIVOS)
-**Status:** ✅ Roadmap 3.0 completo (v3.3-3.8) + refinamentos (v3.9) + leaderboards ativados (v3.10, sessao-033). **🚨 Próxima sessão: Davi vai iniciar planejamento da VERSÃO 4.0.**
+**Data:** 2026-07-02
+**Versão:** 3.10.0 (produção) → próximo: Tabuada Rush 4.0 (Matemática Completa + Inteligência Adaptativa)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 **planejado** (sessao-034.md, 6 fases). **🚨 Próxima sessão: iniciar Fase 1 da 4.0 (fundação multi-operação).**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
 
-## 🚀 TABUADA RUSH 3.0 — PRÓXIMAS FASES (ler sessao-025.md para detalhes completos)
+## ✅ TABUADA RUSH 3.0 — ROADMAP 100% ENTREGUE (v3.3.0 → v3.8.0 · sessões 026-031)
+
+> Filosofia: "praticar → memorizar" via Repetição Espaçada. 6 fases, 20+ features:
+> Mapa de Domínio, SRS/Flashcard, Certificados, Modo Inverso, economia reformulada,
+> Modo Difícil, Recorde Pessoal, Desafio Semanal, Leaderboards, Heatmap, Share Card,
+> Tabuada 11/12, Modo Combinado. Detalhes completos em `sessions/sessao-025.md`
+> (planejamento) e `sessions/sessao-031.md` (fechamento).
+
+---
+
+## 🚀 TABUADA RUSH 4.0 — PRÓXIMAS FASES (ler sessao-034.md para detalhes completos)
 
 ### FILOSOFIA
-> O Tabuada Rush 2.x praticava tabuada. O 3.0 vai MEMORIZAR tabuada.
-> Método: Repetição Espaçada (Spaced Repetition System — SRS).
-> O nível deve representar domínio real, não tempo jogado.
+> O Tabuada Rush 3.0 ensinou a dominar a tabuada de multiplicação. O 4.0 expande
+> esse domínio para a matemática básica completa (soma, subtração, divisão) e usa
+> os dados reais de cada sessão para PREVER o esquecimento e adaptar a dificuldade
+> antes que o jogador erre — não depois. Uso pessoal, sem meta de negócio: fora de
+> escopo social/multiplayer e B2B (ver sessao-031.md "Pós-3.0" se isso mudar).
 
-### FASE 1 — ✅ ENTREGUE (v3.3.0 · sessao-026.md)
-1. ✅ Missão `mm_score_1200` → `mm_score_350` (+ `wm_score_800` → `wm_score_500`)
-2. ✅ `ModesPage.jsx` com 3 seções (Principais, Treino, Avançados-bloqueados)
-3. ✅ Banner Desafio Diário no MenuPage (pendente âmbar / feito esmeralda) + botão "Escolher Modo"
-4. ✅ Mapa de Domínio Visual (grade 8×10) + persistência `factStats` por par (a,b) normalizado
-   - 🟢 Dominado: <1.5s · ≥90% acerto · ≥3 amostras
-   - 🟡 Praticado · 🔴 Problemático (>20% erro) · ⬜ Sem dados
+### FASE 1 — COMEÇAR AQUI (próxima sessão) — Fundação Multi-Operação
+1. Schema com chave de operação: `factStats`/`tableStats`/`srsData` (`"mult:6x7"`,
+   `"add:8+5"` etc.), migração retrocompatível (dados existentes = `mult`)
+2. Gerador de perguntas unificado `generateQuestion(operation, diffLevel, ...)`
+3. Mapa de Domínio genérico (aceita `operation`, geometria própria por operação)
+4. SRS genérico (chave composta)
 
-### FASE 2 — ✅ ENTREGUE (v3.4.0 · sessao-027.md)
-5. ✅ Modo Flashcard com SRS (SM-2 simplificado) — `FlashcardPage.jsx` · srsData por fato
-6. ✅ Certificados de Domínio (8, tabuadas 2-9) — derivados de factStats, não compráveis
-7. ✅ Modo Inverso — `MODES.inverse`, 15 q, 2 inputs lado-a-lado, aceita qualquer par
+### FASE 2 — Soma e Subtração
+5. Pool de soma/subtração via gerador unificado, reaproveitando modos existentes
+6. Mapa de Domínio + Catálogo de Precisão com abas por operação
+7. Certificados de Domínio adaptados (faixas, não "tabuadas")
 
-### FASE 3 — ✅ ENTREGUE (v3.5.0 · sessao-028.md)
-8. ✅ Power-ups Spot — vida (80🪙) no Survival, +60s (30🪙) no Rush em tempo crítico
-9. ✅ Seguro de Ofensiva (100🪙) — `applyStreakDecay` consome em vez de zerar
-10. ✅ Congelar Missão Diária (50🪙) — carrega para o dia seguinte com progresso intacto
-11. ✅ Apostas de Partida — 10/25/50 → 3× se bater recorde; modal antes dos modos principais
-12. ✅ Oferta da Semana — 3 cosméticos com 40% off, seed ISO week
-13. ✅ Temas de GamePage — categoria `gameTheme`, 3 itens (Neon/Aurora/Lava), aplicados ao card de pergunta
+### FASE 3 — Divisão
+8. Geração derivada da multiplicação (`a×b=c` → `c÷a=b`), sempre exata (sem resto)
+9. Bootstrap do domínio inicial a partir do `tableStats` de multiplicação existente
+10. Avaliar se reaproveita o Modo Inverso (3.0) como base
 
-### FASE 4 — ✅ ENTREGUE (v3.6.0 · sessao-029.md)
-13. ✅ Modo Recorde Pessoal — benchmark por fato via factStats, "bateu/devagar"
-14. ✅ Desafio Semanal Competitivo — 10 q por semana ISO, `weeklyChallenge` no storage (leaderboard UI fica para Fase 5)
-15. ✅ Modo Difícil — pool 7/8/9, timer 90s, xpMult 0.22, gen on-the-fly, desbloqueado Nível 8+
+### FASE 4 — Inteligência Preditiva (Curva de Esquecimento)
+11. Modelo de decaimento de memória por fato (acerto histórico + tempo de resposta
+    + tempo desde última revisão) → prevê QUANDO o fato será esquecido
+12. Painel "Fatos a Vencer" no menu (substitui/complementa banner do Diário)
+13. Notificações via `lib/push.js` (infra já existente) para fatos críticos
+14. Motor preditivo aplicado às 4 operações
 
-### FASE 5 — ✅ ENTREGUE (v3.7.0 · sessao-030.md)
-16. ✅ Leaderboards Diário + Semanal (Supabase, graceful degradation) — service + página + botão menu
-17. ✅ Heatmap de Ofensiva 365 dias — `StreakHeatmap.jsx`, 5 níveis de intensidade, tooltips
-18. ✅ Compartilhar Resultado — `shareCard.js` (Canvas → PNG 1080² + Web Share API + fallback download)
+### FASE 5 — Adaptação Universal
+15. Generalizar o Modo Difícil adaptativo (v3.10) para Rush/Survival/Speed —
+    viés (não exclusividade) pelos fatos mais fracos, em qualquer operação
+16. Balanceamento ~60/40 fatos fracos/aleatório para não virar punitivo
+17. Toggle em Settings para ligar/desligar o viés adaptativo
 
-### FASE 6 — ✅ ENTREGUE (v3.8.0 · sessao-031.md) · 🎉 ROADMAP COMPLETO
-19. ✅ Tabuada do 11 e 12 — toggle em `data.includeExtraTables`, ativa só no nível 3+ da partida, Daily/Weekly imunes
-20. ✅ Modo Combinado — `MODES.combined`, "3×7+4" ou "5×8-6", desbloqueado por ≥3 certificados de domínio
+### FASE 6 — Perfil de Domínio Unificado
+18. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
+19. Certificado "Matemática Fundamental Completa"
+20. `computeQI` pesa múltiplas operações · visualização radar por operação
 
 ---
 
@@ -144,52 +156,30 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — INICIAR VERSÃO 4.0 (Davi vai puxar em nova conversa)
+## 🎯 PRÓXIMA SESSÃO — INICIAR FASE 1 DA TABUADA RUSH 4.0
 
-**Contexto:** roadmap 3.0 100% entregue + leaderboards ativos + Modo Difícil
-adaptativo. Davi decidiu começar a 4.0.
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-034.md`
 
-**Antes de tudo:** ler nesta ordem
-1. Este arquivo (MEMORY_CORE.md)
-2. `sessions/sessao-033.md` (última sessão · v3.10)
-3. `sessions/sessao-031.md` seção "Pós-3.0" (ideias soltas para 4.0)
-4. `sessions/sessao-025.md` (como foi feito o planejamento da 3.0 — modelo)
+**Contexto:** planejamento da 4.0 concluído em 2026-07-02 (sessao-034). Filosofia
+escolhida por Davi: **Matemática Completa** (soma/subtração/divisão) +
+**Inteligência Adaptativa** (previsão de esquecimento, dificuldade adaptativa
+universal). Uso pessoal — sem meta de negócio, social/multiplayer e B2B ficaram
+fora de escopo (ideias arquivadas em `sessao-031.md` "Pós-3.0").
 
-**Recomendação de método (aprendido na 3.0):**
-- Fazer uma **sessão inteira só de planejamento** (como foi a 025) antes de
-  qualquer código
-- Definir a **filosofia central** da 4.0 (a 3.0 foi "prática → memorização")
-- Dividir em **fases numeradas** com entregas claras
-- Cada fase vira 1 sessão de implementação + 1 push/versão
+**Executar nesta ordem (Fase 1 — fundação, sem isso o resto vira gambiarra):**
+1. Schema multi-operação (`factStats`/`tableStats`/`srsData` com chave de
+   operação, migração retrocompatível)
+2. Gerador de perguntas unificado (`generateQuestion(operation, ...)`)
+3. Mapa de Domínio genérico (aceita `operation`)
+4. SRS genérico (chave composta)
+5. Build + commit + push + documento
 
-**Direções candidatas da 4.0** (ver sessao-031 e resposta do assistant na sessao-033):
-- **Alto impacto pedagógico:** Divisão/Subtração + Modo Combinado v2
-- **Social/Retenção:** Multiplayer 1v1 real-time (Supabase Realtime) · Grupos/Turmas · Feed de amigos
-- **Personalização:** Avatares reais evoluindo com certificados · Sons personalizados
-- **Analytics avançado:** Curva de aprendizado por fato · Preditor de esquecimento
-- **B2B educacional:** Dashboard professor · Google Classroom · assinatura escolar
-- **Técnica:** Offline first-class · outras bases numéricas
+**NÃO pular para Fase 2 sem ter Fase 1 completa.**
 
-**Ação pendente pós-3.0 (não bloqueia 4.0):**
+**Ação opcional pendente (não bloqueia a 4.0):**
 - Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade
   (assets: ícone 512², screenshots, política de privacidade, US$25 dev account,
   método sugerido: PWABuilder)
-
-O roadmap 3.0 está 100% entregue (sessões 026-031 · versões 3.3.0 → 3.8.0).
-
-**Possíveis caminhos para a próxima sessão:**
-1. **Polimento e bug-fixing** — testar end-to-end, ajustar UX, observar
-   métricas de retenção e iterar.
-2. **Pequenas iterações da 3.x** — refinamentos pontuais baseados em
-   feedback de uso real (não há roadmap formal ainda).
-3. **Início do planejamento da 4.0** — se houver visão, fazer um documento
-   de visão como o `sessao-025.md` foi para o 3.0. Ideias soltas em
-   `sessoes/sessao-031.md` seção "Pós-3.0".
-4. **Ação opcional pendente:** rodar SQL de leaderboard (SUPABASE_SETUP.md
-   seção 3.1) para ativar os rankings globais — Fase 5 já tem toda a
-   infraestrutura, falta só o SQL no painel do Supabase.
-
-**Não há urgência.** O produto 3.0 está completo e estável.
 
 ---
 

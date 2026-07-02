@@ -4,6 +4,25 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [ROADMAP] — 2026-07-02 — TABUADA RUSH 4.0 PLANEJADO
+
+**Amplitude (4 operações) + Inteligência Adaptativa (previsão de esquecimento).
+Detalhes em `sessions/sessao-034.md`.**
+
+### Fase 1 (próxima sessão) — Fundação Multi-Operação
+- Schema com chave de operação (`factStats`/`tableStats`/`srsData`)
+- Gerador de perguntas unificado, Mapa de Domínio genérico, SRS genérico
+
+### Fase 2 — Soma e Subtração
+### Fase 3 — Divisão (bootstrap a partir dos dados de multiplicação)
+### Fase 4 — Inteligência Preditiva (curva de esquecimento, painel "Fatos a Vencer")
+### Fase 5 — Adaptação Universal (viés de fatos fracos em todos os modos)
+### Fase 6 — Perfil de Domínio Unificado (certificado completo, QI multi-operação)
+
+Fora de escopo (uso pessoal, sem meta de negócio): social/multiplayer, B2B.
+
+---
+
 ## [3.10.0] — 2026-07-02 — Modo Difícil Adaptativo + Leaderboards Ativos
 
 Detalhes em `sessions/sessao-033.md`.

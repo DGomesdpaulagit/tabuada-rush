@@ -35,14 +35,35 @@ export const DEFAULTS = {
   qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
-  tableStats: {},            // desempenho por tabuada (fator a): { [a]: { correct, wrong, totalMs, count } }
+  // [v4.0] tableStats/factStats/srsData agora namespaced por operação: { mult: {...}, add: {...}, ... }.
+  // Só `mult` tem conteúdo até a Fase 1 da 4.0 estar concluída (Fases 2/3 trazem add/sub/div).
+  tableStats: { mult: {} },  // desempenho por tabuada (fator a): { [op]: { [a]: { correct, wrong, totalMs, count } } }
+  factStats: { mult: {} },   // desempenho por fato (par a,b): { [op]: { [factKey]: { correct, wrong, totalMs, count } } }
+  srsData: { mult: {} },     // repetição espaçada por fato: { [op]: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
 };
+
+// Dados de v3.x salvos ANTES da 4.0 guardavam tableStats/factStats/srsData "achatados"
+// (sem namespace de operação — só existia multiplicação). Migração automática e
+// retrocompatível: se o campo não tem nenhuma chave de operação conhecida, o conteúdo
+// inteiro É a multiplicação e vira `{ mult: <conteúdo antigo> }`. Idempotente.
+const KNOWN_OPERATIONS = ['mult', 'add', 'sub', 'div'];
+function migrateOperationKeyedField(field) {
+  if (!field || typeof field !== 'object') return { mult: {} };
+  const alreadyNamespaced = KNOWN_OPERATIONS.some((op) =>
+    Object.prototype.hasOwnProperty.call(field, op)
+  );
+  return alreadyNamespaced ? field : { mult: field };
+}
 
 export const storage = {
   get() {
     try {
       const raw = localStorage.getItem(KEY);
-      return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
+      const parsed = raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
+      parsed.tableStats = migrateOperationKeyedField(parsed.tableStats);
+      parsed.factStats = migrateOperationKeyedField(parsed.factStats);
+      parsed.srsData = migrateOperationKeyedField(parsed.srsData);
+      return parsed;
     } catch {
       return { ...DEFAULTS };
     }

@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock, getFactKey } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -485,33 +485,38 @@ export default function App() {
 
         // Desempenho por tabuada (fator a) — agrega o registro por questão da partida.
         // Também registra factStats por par (a,b) normalizado para o Mapa de Domínio.
+        // [v4.0 · Fase 1] Namespaced por operação (`q.op`, default 'mult' — nenhum modo
+        // gera outra operação ainda). Fases 2/3 só precisam passar `op` nas questões.
         const tableStats = { ...(prev.tableStats || {}) };
         const factStats = { ...(prev.factStats || {}) };
         for (const q of result.questions || []) {
           if (q == null || q.a == null) continue;
+          const op = q.op || 'mult';
+          const opTableStats = { ...(tableStats[op] || {}) };
           const k = String(q.a);
-          const t = tableStats[k]
-            ? { ...tableStats[k] }
+          const t = opTableStats[k]
+            ? { ...opTableStats[k] }
             : { correct: 0, wrong: 0, totalMs: 0, count: 0 };
           if (q.correct) t.correct += 1;
           else t.wrong += 1;
           if (q.ms > 0) t.totalMs += q.ms;
           t.count += 1;
-          tableStats[k] = t;
+          opTableStats[k] = t;
+          tableStats[op] = opTableStats;
 
-          // factStats: chave normalizada "min×max" para que 3×7 e 7×3 sejam o mesmo fato.
+          // factStats: chave normalizada (getFactKey) para que 3×7 e 7×3 sejam o mesmo fato.
           if (q.b != null) {
-            const lo = Math.min(q.a, q.b);
-            const hi = Math.max(q.a, q.b);
-            const fk = `${lo}x${hi}`;
-            const f = factStats[fk]
-              ? { ...factStats[fk] }
+            const opFactStats = { ...(factStats[op] || {}) };
+            const fk = getFactKey(op, q.a, q.b);
+            const f = opFactStats[fk]
+              ? { ...opFactStats[fk] }
               : { correct: 0, wrong: 0, totalMs: 0, count: 0 };
             if (q.correct) f.correct += 1;
             else f.wrong += 1;
             if (q.ms > 0) f.totalMs += q.ms;
             f.count += 1;
-            factStats[fk] = f;
+            opFactStats[fk] = f;
+            factStats[op] = opFactStats;
           }
         }
 
@@ -739,9 +744,9 @@ export default function App() {
   // recusa apostar). Define modo, prepara questões e abre o GamePage.
   const startGame = useCallback((mode) => {
     if (mode === 'review') {
-      setCustomQuestions(getRevisionQuestions(data.tableStats));
+      setCustomQuestions(getRevisionQuestions(data.tableStats?.mult || {}));
     } else if (mode === 'personal') {
-      setCustomQuestions(getPersonalRecordQuestions(data.factStats));
+      setCustomQuestions(getPersonalRecordQuestions(data.factStats?.mult || {}));
     } else if (mode === 'weekly') {
       setCustomQuestions(getWeeklyChallengeQuestions(new Date()));
     } else {

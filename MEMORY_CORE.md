@@ -18,9 +18,9 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-07-02
-**Versão:** 3.10.0 (produção) → próximo: Tabuada Rush 4.0 (Matemática Completa + Inteligência Adaptativa)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 **planejado** (sessao-034.md, 6 fases). **🚨 Próxima sessão: iniciar Fase 1 da 4.0 (fundação multi-operação).**
+**Data:** 2026-07-06
+**Versão:** 3.11.0 (Tabuada Rush 4.0 · Fase 1 — Fundação Multi-Operação entregue)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ **Fase 1 entregue** (sessao-035.md — schema multi-operação, sem feature visível). **🚨 Próxima sessão: Fase 2 da 4.0 (Soma e Subtração).**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -44,14 +44,16 @@
 > antes que o jogador erre — não depois. Uso pessoal, sem meta de negócio: fora de
 > escopo social/multiplayer e B2B (ver sessao-031.md "Pós-3.0" se isso mudar).
 
-### FASE 1 — COMEÇAR AQUI (próxima sessão) — Fundação Multi-Operação
-1. Schema com chave de operação: `factStats`/`tableStats`/`srsData` (`"mult:6x7"`,
-   `"add:8+5"` etc.), migração retrocompatível (dados existentes = `mult`)
-2. Gerador de perguntas unificado `generateQuestion(operation, diffLevel, ...)`
-3. Mapa de Domínio genérico (aceita `operation`, geometria própria por operação)
-4. SRS genérico (chave composta)
+### FASE 1 — ✅ ENTREGUE (v3.11.0 · sessao-035.md)
+1. ✅ Schema namespaced por operação: `tableStats`/`factStats`/`srsData` →
+   `{ mult: {...} }`, migração automática e retrocompatível
+2. ✅ Registro `OPERATIONS` + `getFactKey`/`getFactSpace` genéricos
+3. ✅ Gerador de perguntas unificado `generateQuestion(operation, diffLevel, ...)`
+   plugado no GamePage (Inverso, questão inicial, `NEXT` do reducer)
+4. ✅ Mapa de Domínio genérico (`MasteryMap` aceita `operation`, lê geometria
+   do registro `OPERATIONS` em vez de arrays hardcoded)
 
-### FASE 2 — Soma e Subtração
+### FASE 2 — COMEÇAR AQUI (próxima sessão) — Soma e Subtração
 5. Pool de soma/subtração via gerador unificado, reaproveitando modos existentes
 6. Mapa de Domínio + Catálogo de Precisão com abas por operação
 7. Certificados de Domínio adaptados (faixas, não "tabuadas")
@@ -156,25 +158,28 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — INICIAR FASE 1 DA TABUADA RUSH 4.0
+## 🎯 PRÓXIMA SESSÃO — FASE 2 DA TABUADA RUSH 4.0 (Soma e Subtração)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-034.md`
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-035.md` (Fase 1,
+recém-entregue) + `sessions/sessao-034.md` (roadmap completo)
 
-**Contexto:** planejamento da 4.0 concluído em 2026-07-02 (sessao-034). Filosofia
-escolhida por Davi: **Matemática Completa** (soma/subtração/divisão) +
-**Inteligência Adaptativa** (previsão de esquecimento, dificuldade adaptativa
-universal). Uso pessoal — sem meta de negócio, social/multiplayer e B2B ficaram
-fora de escopo (ideias arquivadas em `sessao-031.md` "Pós-3.0").
+**Contexto:** Fase 1 (fundação multi-operação) entregue em 2026-07-06 (v3.11.0).
+`OPERATIONS`/`getFactKey`/`getFactSpace`/`generateQuestion` já existem em
+`utils/index.js`, e `tableStats`/`factStats`/`srsData` já são namespaced por
+operação (`{ mult: {...} }`). A Fase 2 é a primeira a usar essa fundação de
+verdade: adicionar `add`/`sub` ao registro `OPERATIONS` e ao `generateQuestion`.
 
-**Executar nesta ordem (Fase 1 — fundação, sem isso o resto vira gambiarra):**
-1. Schema multi-operação (`factStats`/`tableStats`/`srsData` com chave de
-   operação, migração retrocompatível)
-2. Gerador de perguntas unificado (`generateQuestion(operation, ...)`)
-3. Mapa de Domínio genérico (aceita `operation`)
-4. SRS genérico (chave composta)
-5. Build + commit + push + documento
+**Executar nesta ordem:**
+1. Preencher `OPERATIONS.add`/`OPERATIONS.sub` (domainRows/Cols, answer,
+   commutative: true para soma, false para subtração)
+2. Implementar geração de soma/subtração em `generateQuestion`
+3. Reaproveitar modos existentes (Rush/Survival/Speed/Zen/Review) com seletor
+   de operação, em vez de duplicar cada modo por operação
+4. Abas por operação no Mapa de Domínio / Catálogo de Precisão
+5. Certificados de Domínio adaptados (faixas, não "tabuadas")
+6. Build + commit + push + documento
 
-**NÃO pular para Fase 2 sem ter Fase 1 completa.**
+**NÃO pular para Fase 3 (Divisão) sem ter Fase 2 completa.**
 
 **Ação opcional pendente (não bloqueia a 4.0):**
 - Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade

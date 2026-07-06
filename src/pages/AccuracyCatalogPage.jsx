@@ -7,7 +7,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { getAccuracy, formatDate } from '../utils';
+import { getAccuracy, formatDate, OPERATIONS, getFactKey } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
 
@@ -78,18 +78,19 @@ const MASTERY_COLORS = {
   nodata:    { bg: 'bg-gray-200', text: 'text-gray-400', label: 'Sem dados' },
 };
 
-function MasteryMap({ factStats }) {
-  // Grade 8×10: linhas = tabuadas 2..9, colunas = b = 1..10
-  const rows = [2, 3, 4, 5, 6, 7, 8, 9];
-  const cols = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+// [v4.0 · Fase 1] `operation` seleciona a grade via OPERATIONS registry em vez de
+// hardcoded — hoje só `mult` (8×10). Fases 2/3 reaproveitam este componente para
+// soma/subtração/divisão só registrando a operação lá.
+function MasteryMap({ factStats, operation = 'mult' }) {
+  const cfg = OPERATIONS[operation] || OPERATIONS.mult;
+  const rows = cfg.domainRows;
+  const cols = cfg.domainCols;
   const cells = [];
   const counts = { dominated: 0, practiced: 0, problem: 0, nodata: 0 };
 
   for (const a of rows) {
     for (const b of cols) {
-      const lo = Math.min(a, b);
-      const hi = Math.max(a, b);
-      const fk = `${lo}x${hi}`;
+      const fk = getFactKey(cfg.id, a, b);
       const stat = factStats[fk];
       const state = classifyFact(stat);
       counts[state] += 1;
@@ -112,7 +113,7 @@ function MasteryMap({ factStats }) {
         <p className="font-black text-gray-800">Mapa de Domínio</p>
       </div>
       <p className="text-xs text-gray-400 font-semibold mb-4">
-        80 fatos fundamentais (2×1 até 9×10) — sua memória real da tabuada
+        {total} fatos fundamentais ({rows[0]}{cfg.symbol}{cols[0]} até {rows[rows.length - 1]}{cfg.symbol}{cols[cols.length - 1]}) — sua memória real da tabuada
       </p>
 
       {/* Cabeçalho de progresso */}
@@ -146,28 +147,27 @@ function MasteryMap({ factStats }) {
           {rows.map((a) => (
             <div key={a} className="flex gap-1 mb-1 items-center">
               <div className="w-6 text-center text-[10px] font-black text-gray-500 shrink-0">
-                {a}×
+                {a}{cfg.symbol}
               </div>
               {cols.map((b) => {
-                const lo = Math.min(a, b);
-                const hi = Math.max(a, b);
                 const cell = cells.find((c) => c.a === a && c.b === b);
                 const colors = MASTERY_COLORS[cell.state];
                 const stat = cell.stat;
                 const tot = stat ? (stat.correct || 0) + (stat.wrong || 0) : 0;
                 const acc = tot ? Math.round((stat.correct / tot) * 100) : 0;
                 const avgMs = stat?.count && stat.totalMs ? Math.round(stat.totalMs / stat.count) : 0;
+                const ans = cfg.answer(a, b);
                 const titleText =
                   cell.state === 'nodata'
-                    ? `${a}×${b} — sem dados ainda`
-                    : `${a}×${b}=${a * b} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
+                    ? `${a}${cfg.symbol}${b} — sem dados ainda`
+                    : `${a}${cfg.symbol}${b}=${ans} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
                 return (
                   <div
                     key={`${a}-${b}`}
                     title={titleText}
                     className={`w-7 h-7 rounded-md flex items-center justify-center text-[9px] font-black ${colors.bg} ${colors.text}`}
                   >
-                    {a * b}
+                    {ans}
                   </div>
                 );
               })}
@@ -253,9 +253,10 @@ export default function AccuracyCatalogPage({ onBack }) {
   }).filter((m) => m.games > 0);
 
   // Desempenho por tabuada (fator a)
-  const tables = Object.keys(data.tableStats || {})
+  const multTableStats = data.tableStats?.mult || {};
+  const tables = Object.keys(multTableStats)
     .map((k) => {
-      const t = data.tableStats[k];
+      const t = multTableStats[k];
       const tot = (t.correct || 0) + (t.wrong || 0);
       return {
         a: Number(k),
@@ -477,7 +478,7 @@ export default function AccuracyCatalogPage({ onBack }) {
       </motion.div>
 
       {/* ── MAPA DE DOMÍNIO (80 fatos fundamentais) ──────────────────────── */}
-      <MasteryMap factStats={data.factStats || {}} />
+      <MasteryMap factStats={data.factStats?.mult || {}} operation="mult" />
 
       {/* ── PRECISÃO POR TABUADA (operação: multiplicação) ───────────────── */}
       <motion.div

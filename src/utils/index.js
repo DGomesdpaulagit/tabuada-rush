@@ -1,6 +1,39 @@
 import { LEVELS, ACHIEVEMENTS } from '../constants';
 import { CHARACTERS, TIERS, QI_MIN, QI_MAX } from '../constants/characters';
 
+// ── OPERAÇÕES [v4.0 · Fase 1] ────────────────────────────────────────────────
+// Registro central das operações matemáticas suportadas. Hoje só `mult` tem
+// conteúdo real (a 3.0 inteira é multiplicação) — `add`/`sub`/`div` entram nas
+// Fases 2 e 3 do roadmap 4.0. Isso é a fundação: factStats/tableStats/srsData,
+// geração de perguntas, Mapa de Domínio e certificados passam a ler daqui em
+// vez de terem os números (2-9, 1-10, a×b) espalhados e hardcoded pelo código.
+export const DEFAULT_OPERATION = 'mult';
+
+export const OPERATIONS = {
+  mult: {
+    id: 'mult',
+    label: 'Multiplicação',
+    symbol: '×',
+    commutative: true, // 3×7 e 7×3 são o mesmo fato → chave normalizada min×max
+    domainRows: [2, 3, 4, 5, 6, 7, 8, 9],       // fator `a` do Mapa de Domínio / certificados
+    domainCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // fator `b`
+    answer: (a, b) => a * b,
+  },
+  // add/sub/div: reservados para as Fases 2 e 3 da Tabuada Rush 4.0 (sessao-034.md).
+};
+
+// Chave canônica de um fato para uma operação. Para operações comutativas
+// (hoje só `mult`) normaliza min×max — 3×7 e 7×3 caem na mesma chave.
+export function getFactKey(operation, a, b) {
+  const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
+  if (cfg.commutative) {
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    return `${lo}x${hi}`;
+  }
+  return `${cfg.id}:${a}-${b}`; // formato reservado p/ operações não-comutativas futuras
+}
+
 // ── QUESTION GENERATION ────────────────────────────────────────────────────
 
 function seededRng(seed) {
@@ -54,6 +87,18 @@ export function getCombinedQuestion() {
   return { a, b, c, op, ans };
 }
 
+// Gerador unificado [v4.0 · Fase 1]: ponto de entrada único para gerar uma questão
+// de qualquer operação. Hoje só `mult` está implementado (delega para
+// `getRandomQuestion`, comportamento idêntico ao pré-4.0) — Fases 2/3 adicionam
+// os casos `add`/`sub`/`div` aqui, sem precisar tocar em quem já chama esta função.
+export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
+  switch (operation) {
+    case 'mult':
+    default:
+      return getRandomQuestion(diffLevel, opts.includeExtra);
+  }
+}
+
 export function getDiffLevel(questionsAnswered) {
   if (questionsAnswered >= 30) return 3;
   if (questionsAnswered >= 15) return 2;
@@ -96,9 +141,7 @@ export function getPersonalRecordQuestions(factStats = {}, count = 15) {
   return Array.from({ length: count }, () => {
     const a = Math.floor(Math.random() * 8) + 2; // 2..9
     const b = Math.floor(Math.random() * 10) + 1;
-    const lo = Math.min(a, b);
-    const hi = Math.max(a, b);
-    const fk = `${lo}x${hi}`;
+    const fk = getFactKey('mult', a, b);
     const stat = factStats[fk];
     const benchmark = stat?.count && stat?.totalMs
       ? Math.round(stat.totalMs / stat.count)
@@ -383,23 +426,35 @@ export function detectProgressEvents(prev = {}, next = {}) {
 const SRS_INITIAL_INTERVALS_MIN = { wrong: 10, hard: 60 * 24, easy: 3 * 60 * 24 }; // minutos
 const SRS_DEFAULT_EASE = 2.5;
 
-// Lista canônica dos 80 fatos fundamentais (chave normalizada min×max).
-export function getAllFactKeys() {
+// Espaço canônico de fatos de uma operação (chaves via getFactKey — deduplicadas
+// para operações comutativas). `mult` = 80 fatos fundamentais (2×1 até 9×10).
+export function getFactSpace(operation = DEFAULT_OPERATION) {
+  const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const keys = new Set();
-  for (let a = 2; a <= 9; a++) {
-    for (let b = 1; b <= 10; b++) {
-      const lo = Math.min(a, b);
-      const hi = Math.max(a, b);
-      keys.add(`${lo}x${hi}`);
+  for (const a of cfg.domainRows) {
+    for (const b of cfg.domainCols) {
+      keys.add(getFactKey(cfg.id, a, b));
     }
   }
   return Array.from(keys);
 }
 
-// Decompõe uma chave "loxhi" → { a, b, ans }
-export function parseFactKey(fk) {
-  const [a, b] = fk.split('x').map(Number);
-  return { a, b, ans: a * b };
+// Alias retrocompatível — sempre foi (e continua sendo) o espaço de multiplicação.
+export function getAllFactKeys() {
+  return getFactSpace(DEFAULT_OPERATION);
+}
+
+// Decompõe uma chave de fato → { a, b, ans }. `operation` default = mult
+// (formato "loxhi", como sempre foi antes da 4.0).
+export function parseFactKey(fk, operation = DEFAULT_OPERATION) {
+  const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
+  if (cfg.commutative) {
+    const [a, b] = fk.split('x').map(Number);
+    return { a, b, ans: cfg.answer(a, b) };
+  }
+  const [, rest] = fk.split(':'); // formato reservado "op:a-b" (operações futuras)
+  const [a, b] = (rest || fk).split('-').map(Number);
+  return { a, b, ans: cfg.answer ? cfg.answer(a, b) : null };
 }
 
 // Atualiza o registro SRS de um fato dada a avaliação do usuário.
@@ -485,23 +540,23 @@ function isFactDominated(stat) {
   return acc >= CERT_MIN_ACC && avgMs > 0 && avgMs < CERT_FAST_MS;
 }
 
-// Lista de certificados desbloqueados (tabuadas 2..9).
+// Lista de certificados desbloqueados (tabuadas 2..9 — hoje só `mult`; Fases 2/3
+// da 4.0 reutilizam a mesma função para as demais operações via `operation`).
 // Retorna [{ table: 2..9, dominated, total: 10 }] com flag se já está completo.
-export function computeCertificates(factStats = {}) {
+export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATION) {
+  const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const result = [];
-  for (let a = 2; a <= 9; a++) {
+  for (const a of cfg.domainRows) {
     let dominated = 0;
-    for (let b = 1; b <= 10; b++) {
-      const lo = Math.min(a, b);
-      const hi = Math.max(a, b);
-      const fk = `${lo}x${hi}`;
+    for (const b of cfg.domainCols) {
+      const fk = getFactKey(cfg.id, a, b);
       if (isFactDominated(factStats[fk])) dominated += 1;
     }
     result.push({
       table: a,
       dominated,
-      total: 10,
-      unlocked: dominated === 10,
+      total: cfg.domainCols.length,
+      unlocked: dominated === cfg.domainCols.length,
     });
   }
   return result;
@@ -570,7 +625,7 @@ export function getModeUnlock(modeId, data = {}) {
       reason = `${target} dias de ofensiva (recorde)`;
       break;
     case 'certificates':
-      current = computeCertificates(data.factStats || {}).filter((c) => c.unlocked).length;
+      current = computeCertificates(data.factStats?.mult || {}).filter((c) => c.unlocked).length;
       reason = `${target} certificados de domínio`;
       break;
     default:

@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.10.0 (Modo Difícil adaptativo + Leaderboards ATIVOS · sessao-033)  
+**Versão:** 3.11.0 (Tabuada Rush 4.0 · Fase 1 — Fundação Multi-Operação · sessao-035)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -55,6 +55,8 @@ src/
 public/sw.js             — [v2.9.1] Service Worker: notificationclick + [v2.10] push exibe notificação
 supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de ofensiva (cron diário)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
+                            [v4.0] OPERATIONS (registro de operações), getFactKey/getFactSpace,
+                            generateQuestion(operation,...) — fundação multi-operação (Fase 1)
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
@@ -173,7 +175,12 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   qiBonus: 0,               // [v2.6] Bônus de QI via recompensas de ofensiva
   lastPlayDate: null,       // Última data que jogou (YYYY-MM-DD)
   progressLog: [],          // [v2.11] Marcos da jornada (nível/XP/ofensiva/recorde) — últimos 50
-  tableStats: {},           // [v2.12] Desempenho por tabuada: { [a]: { correct, wrong, totalMs, count } }
+  // [v4.0 · Fase 1] Namespaced por operação — { mult: {...}, add: {...}, ... }.
+  // Só `mult` tem conteúdo até a Fase 2/3 trazerem soma/subtração/divisão.
+  // Migração automática de dados pré-4.0 (achatados) em storage.js.
+  tableStats: { mult: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count } } }
+  factStats: { mult: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: {...} } }
+  srsData: { mult: {} },     // [v3.4] Repetição espaçada (Flashcard): { [op]: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
 }
 ```
 

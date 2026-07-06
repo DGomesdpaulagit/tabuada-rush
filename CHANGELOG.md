@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.11.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 1 (Fundação Multi-Operação)
+
+**Arquitetura, sem feature visível. Detalhes em `sessions/sessao-035.md`.**
+
+### Adicionado / Alterado
+- **Schema multi-operação**: `tableStats`/`factStats`/`srsData` namespaced
+  por operação (`{ mult: {...} }`). Migração automática e retrocompatível de
+  dados salvos em versões anteriores.
+- **`OPERATIONS`** (utils): registro central de operações matemáticas — só
+  `mult` tem conteúdo hoje; `add`/`sub`/`div` reservados para Fases 2/3.
+- **`getFactKey`/`getFactSpace`/`generateQuestion`**: novas funções genéricas
+  que substituem lógica hardcoded de multiplicação. `getAllFactKeys`/
+  `parseFactKey`/`computeCertificates` generalizados, 100% retrocompatíveis.
+- **`MasteryMap` (Mapa de Domínio)** ganhou prop `operation`, lê geometria da
+  grade do registro `OPERATIONS` em vez de arrays hardcoded.
+- **Comportamento observável: idêntico ao pré-4.0** — validado por build
+  limpo, teste de migração com dado legado real, e execução ao vivo das
+  novas funções no bundle via console do navegador.
+
+---
+
 ## [ROADMAP] — 2026-07-02 — TABUADA RUSH 4.0 PLANEJADO
 
 **Amplitude (4 operações) + Inteligência Adaptativa (previsão de esquecimento).

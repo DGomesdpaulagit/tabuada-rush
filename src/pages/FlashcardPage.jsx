@@ -21,7 +21,7 @@ const COLOR_CLASSES = {
 export default function FlashcardPage({ onBack }) {
   const { data, update } = useApp();
 
-  const [queue] = useState(() => getReviewQueue(data.srsData || {}, 20));
+  const [queue] = useState(() => getReviewQueue(data.srsData?.mult || {}, 20));
   const [idx, setIdx] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [inputVal, setInputVal] = useState('');
@@ -62,9 +62,9 @@ export default function FlashcardPage({ onBack }) {
       const finalQuality = feedback === 'wrong' ? 'wrong' : qualityId;
 
       update((prev) => {
-        const srs = { ...(prev.srsData || {}) };
-        srs[currentFk] = updateSrsFact(srs[currentFk] || {}, finalQuality);
-        return { ...prev, srsData: srs };
+        const srsMult = { ...(prev.srsData?.mult || {}) };
+        srsMult[currentFk] = updateSrsFact(srsMult[currentFk] || {}, finalQuality);
+        return { ...prev, srsData: { ...(prev.srsData || {}), mult: srsMult } };
       });
 
       setSessionStats((s) => ({ ...s, [finalQuality]: s[finalQuality] + 1 }));
@@ -123,7 +123,7 @@ export default function FlashcardPage({ onBack }) {
         </div>
 
         <p className="text-center text-xs text-gray-400 font-semibold">
-          Próxima revisão pendente: {countDueFlashcards(data.srsData || {}) - total} fatos
+          Próxima revisão pendente: {countDueFlashcards(data.srsData?.mult || {}) - total} fatos
         </p>
 
         <Button variant="primary" onClick={onBack} className="w-full">
@@ -133,7 +133,7 @@ export default function FlashcardPage({ onBack }) {
     );
   }
 
-  const due = countDueFlashcards(data.srsData || {});
+  const due = countDueFlashcards(data.srsData?.mult || {});
 
   return (
     <motion.div

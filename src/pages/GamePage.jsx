@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getRandomQuestion, getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion } from '../utils';
+import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -48,7 +48,7 @@ function init(args) {
   let qs = customQuestions;
   if (!qs) {
     if (mode === 'inverse' && cfg.questions) {
-      qs = Array.from({ length: cfg.questions }, () => getRandomQuestion(3));
+      qs = Array.from({ length: cfg.questions }, () => generateQuestion('mult', 3));
     } else if (mode === 'combined' && cfg.questions) {
       qs = Array.from({ length: cfg.questions }, () => getCombinedQuestion());
     } else if (mode === 'hard') {
@@ -69,7 +69,7 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : getRandomQuestion(1, args.includeExtraTables)),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : generateQuestion('mult', 1, { includeExtra: args.includeExtraTables })),
     mode,
     includeExtraTables: !!args.includeExtraTables,
     tableStats: args.tableStats || {},
@@ -131,7 +131,7 @@ function reducer(state, action) {
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
         ? getHardQuestion(state.tableStats)
-        : getRandomQuestion(getDiffLevel(state.answered), state.includeExtraTables);
+        : generateQuestion('mult', getDiffLevel(state.answered), { includeExtra: state.includeExtraTables });
       return {
         ...state,
         phase: 'playing',
@@ -170,7 +170,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
     mode,
     customQuestions,
     includeExtraTables: !!data.includeExtraTables,
-    tableStats: data.tableStats || {},
+    tableStats: data.tableStats?.mult || {},
   });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
 

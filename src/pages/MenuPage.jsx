@@ -38,7 +38,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const cardGradient   = equippedCard?.cardGradient  || 'from-violet-600 to-purple-600';
   const displayTitle   = equippedTitle?.displayTitle  || level.title;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
-  const dueFlashcards = countDueFlashcards(data.srsData || {});
+  const dueFlashcards = countDueFlashcards(data.srsData?.mult || {});
 
   return (
     <motion.div

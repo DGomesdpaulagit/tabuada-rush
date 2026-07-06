@@ -9,7 +9,7 @@ export default function AchievementsPage({ onBack }) {
   const { data } = useApp();
   const unlocked = data.achievements || [];
   const categories = [...new Set(ACHIEVEMENTS.map((a) => a.category))];
-  const certificates = computeCertificates(data.factStats || {});
+  const certificates = computeCertificates(data.factStats?.mult || {});
   const certsUnlocked = certificates.filter((c) => c.unlocked).length;
 
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };

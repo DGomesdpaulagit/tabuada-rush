@@ -114,7 +114,7 @@ function ErrTooltip({ active, payload, label }) {
 export default function ErrorsPage({ onBack }) {
   const { data } = useApp();
   const sessions   = useMemo(() => (data.sessions || []).filter(s => s && s.date), [data.sessions]);
-  const tableStats = data.tableStats || {};
+  const tableStats = data.tableStats?.mult || {};
 
   const now = new Date();
   const [timeFilter,  setTimeFilter]  = useState('todos');

@@ -5,8 +5,8 @@ import {
 } from 'lucide-react';
 import { MODE_LIST, TRAINING_MODE_LIST, MODES } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx, getCurrentWeekKey, computeCertificates, getModeUnlock } from '../utils';
-import { pageVariants, pageTransition } from '../components/ui';
+import { getLevelIdx, getCurrentWeekKey, computeCertificates, getModeUnlock, OPERATIONS, OPERATION_ORDER } from '../utils';
+import { pageVariants, pageTransition, OperationTabs } from '../components/ui';
 
 // Ícones para cada modo (id → componente)
 const modeIcons = {
@@ -110,7 +110,9 @@ function ModeCard({ mode, locked, unlockText, dailyDoneToday, record, onStart, b
 }
 
 export default function ModesPage({ onStart, onBack, onNavigate }) {
-  const { data } = useApp();
+  const { data, update } = useApp();
+  const selectedOperation = data.selectedOperation || 'mult';
+  const setOperation = (op) => update((prev) => ({ ...prev, selectedOperation: op }));
   const todayStr = new Date().toISOString().split('T')[0];
   const dailyDone = data.currentDailyDate === todayStr;
   const levelIdx = getLevelIdx(data.xp || 0);
@@ -149,6 +151,24 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
             Cada modo treina algo diferente — escolha sua jornada
           </p>
         </div>
+      </div>
+
+      {/* ── Seletor de Operação [v4.0 · Fase 2] ─────────────────────────────
+          Afeta Rush, Sobrevivência, Velocidade, Zen e Revisão. Desafio Diário/
+          Semanal e os modos Avançados continuam sempre em multiplicação. */}
+      <div>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 px-1">
+          Operação
+        </p>
+        <OperationTabs
+          operations={OPERATION_ORDER.map((id) => OPERATIONS[id])}
+          value={selectedOperation}
+          onChange={setOperation}
+        />
+        <p className="text-[11px] text-gray-400 font-semibold mt-2 px-1">
+          Vale para Rush, Sobrevivência, Velocidade, Zen e Revisão — Desafio
+          Diário/Semanal e Modos Avançados continuam sempre de multiplicação.
+        </p>
       </div>
 
       {/* Modos Principais */}

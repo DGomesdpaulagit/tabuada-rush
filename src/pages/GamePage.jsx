@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion } from '../utils';
+import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion, OPERATIONS } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -38,9 +38,17 @@ function Mascot({ mood }) {
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
+// Modos com geração/benchmark hardcoded para multiplicação — ignoram o
+// seletor de operação (Desafio Diário/Semanal precisam de conteúdo idêntico
+// entre jogadores; Difícil/Recorde Pessoal/Combinado/Inverso são conceitos
+// específicos de multiplicação). Só Rush/Sobrevivência/Velocidade/Zen/Revisão
+// respeitam `operation`.
+const MULT_ONLY_MODES = ['inverse', 'combined', 'hard', 'daily', 'personal', 'weekly'];
+
 function init(args) {
   const { mode, customQuestions } = args;
   const cfg = MODES[mode];
+  const operation = MULT_ONLY_MODES.includes(mode) ? 'mult' : (args.operation || 'mult');
   // Modos com lista fixa de perguntas:
   //   - daily: usa seed do dia (mesmas para todos)
   //   - inverse: gera 15 perguntas aleatórias frescas a cada partida
@@ -69,8 +77,9 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : generateQuestion('mult', 1, { includeExtra: args.includeExtraTables })),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : generateQuestion(operation, 1, { includeExtra: args.includeExtraTables })),
     mode,
+    operation,
     includeExtraTables: !!args.includeExtraTables,
     tableStats: args.tableStats || {},
     dailyQs: qs,
@@ -131,7 +140,7 @@ function reducer(state, action) {
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
         ? getHardQuestion(state.tableStats)
-        : generateQuestion('mult', getDiffLevel(state.answered), { includeExtra: state.includeExtraTables });
+        : generateQuestion(state.operation || 'mult', getDiffLevel(state.answered), { includeExtra: state.includeExtraTables });
       return {
         ...state,
         phase: 'playing',
@@ -154,7 +163,7 @@ function reducer(state, action) {
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────
 
-export default function GamePage({ mode, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
+export default function GamePage({ mode, operation = 'mult', onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
   const cfg = MODES[mode];
   const { data, update } = useApp();
 
@@ -168,11 +177,15 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
   const initArgRef = useRef({
     mode,
+    operation,
     customQuestions,
     includeExtraTables: !!data.includeExtraTables,
     tableStats: data.tableStats?.mult || {},
   });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
+  // Símbolo da operação EFETIVA da partida (state.operation já normaliza para
+  // 'mult' nos modos que ignoram o seletor — ver MULT_ONLY_MODES).
+  const opSymbol = OPERATIONS[state.operation]?.symbol || '×';
 
   const [inputVal, setInputVal] = useState('');
   // Modo Inverso: dois inputs (fatores a e b). inputVal segue como "a" para reaproveitar lógica.
@@ -307,6 +320,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
       b: state.question.b,
       correct: isCorrect,
       ms: dt > 0 && dt < 60000 ? dt : 0,
+      operation: state.operation || 'mult',
       ...(isPersonal ? { beatPersonal, benchmarkMs: benchmark } : {}),
     });
 
@@ -629,7 +643,7 @@ export default function GamePage({ mode, onEnd, onBack, customQuestions, powerup
               ) : (
                 <>
                   <p className="text-7xl font-black text-gray-900 tracking-tight">
-                    {state.question?.a} × {state.question?.b}
+                    {state.question?.a} {opSymbol} {state.question?.b}
                   </p>
                   <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
                   {isPersonalMode && state.question?.personalBenchmarkMs > 0 && (

@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Award } from 'lucide-react';
 import { ACHIEVEMENTS } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { computeCertificates } from '../utils';
-import { Button, pageVariants, pageTransition } from '../components/ui';
+import { computeCertificates, OPERATIONS, OPERATION_ORDER } from '../utils';
+import { Button, OperationTabs, pageVariants, pageTransition } from '../components/ui';
 
 export default function AchievementsPage({ onBack }) {
   const { data } = useApp();
+  const [certOperation, setCertOperation] = useState('mult'); // aba de certificados (v4.0 · Fase 2)
   const unlocked = data.achievements || [];
   const categories = [...new Set(ACHIEVEMENTS.map((a) => a.category))];
-  const certificates = computeCertificates(data.factStats?.mult || {});
+  const certificates = computeCertificates(data.factStats?.[certOperation] || {}, certOperation);
   const certsUnlocked = certificates.filter((c) => c.unlocked).length;
+  const certLabel = (table) =>
+    certOperation === 'mult' ? `Tab. ${table}` : `${OPERATIONS[certOperation].symbol}${table}`;
 
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
   const item = { hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } };
@@ -74,6 +78,12 @@ export default function AchievementsPage({ onBack }) {
         <p className="text-[11px] text-gray-400 font-semibold mb-3 px-1">
           Conquistados por domínio real — não podem ser comprados
         </p>
+        <OperationTabs
+          operations={OPERATION_ORDER.map((id) => OPERATIONS[id])}
+          value={certOperation}
+          onChange={setCertOperation}
+          className="mb-3"
+        />
         <div className="grid grid-cols-4 gap-2">
           {certificates.map((c) => (
             <motion.div
@@ -89,7 +99,7 @@ export default function AchievementsPage({ onBack }) {
                 {c.unlocked ? '🏅' : '🔒'}
               </div>
               <p className={`text-sm font-black ${c.unlocked ? 'text-amber-700' : 'text-gray-400'}`}>
-                Tab. {c.table}
+                {certLabel(c.table)}
               </p>
               <p className="text-[10px] font-bold text-gray-400">
                 {c.dominated}/{c.total}

@@ -4,6 +4,28 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.12.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 2 (Soma e Subtração)
+
+**Primeiro conteúdo novo da 4.0. Detalhes em `sessions/sessao-036.md`.**
+
+### Adicionado
+- **Soma e Subtração** como operações reais, selecionáveis pelo jogador —
+  `OPERATIONS.add`/`OPERATIONS.sub` no registro (utils).
+- **Seletor de Operação** no `ModesPage` (× Multiplicação / + Adição /
+  − Subtração) — afeta Rush, Sobrevivência, Velocidade, Zen e Revisão.
+  Desafio Diário/Semanal e Modos Avançados continuam sempre multiplicação.
+- **Mapa de Domínio e Certificados por operação** — abas em
+  `AccuracyCatalogPage`/`AchievementsPage`. Subtração desenha uma grade
+  **triangular** (resultado nunca negativo — mecanismo `isValid` novo,
+  propagado em `getFactSpace`/`computeCertificates`/`MasteryMap`).
+- Novo componente `OperationTabs` reaproveitado nos 3 lugares acima.
+
+### Corrigido / Renomeado
+- Campo que marca a operação de uma questão registrada: `op` → `operation`
+  (evita colisão com o operador +/− interno do Modo Combinado).
+
+---
+
 ## [3.11.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 1 (Fundação Multi-Operação)
 
 **Arquitetura, sem feature visível. Detalhes em `sessions/sessao-035.md`.**

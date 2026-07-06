@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp,
@@ -7,9 +8,9 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { getAccuracy, formatDate, OPERATIONS, getFactKey } from '../utils';
+import { getAccuracy, formatDate, OPERATIONS, OPERATION_ORDER, getFactKey } from '../utils';
 import { analyzeUser } from '../utils/analysis';
-import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
+import { Progress, StatCard, EmptyState, Button, OperationTabs, pageVariants, pageTransition } from '../components/ui';
 
 const DAY = 86400000;
 
@@ -90,6 +91,12 @@ function MasteryMap({ factStats, operation = 'mult' }) {
 
   for (const a of rows) {
     for (const b of cols) {
+      // [v4.0 · Fase 2] Operações com `isValid` (ex.: subtração não pode dar
+      // negativo) têm combinações impossíveis — não contam pro total nem viram fato.
+      if (cfg.isValid && !cfg.isValid(a, b)) {
+        cells.push({ a, b, invalid: true });
+        continue;
+      }
       const fk = getFactKey(cfg.id, a, b);
       const stat = factStats[fk];
       const state = classifyFact(stat);
@@ -98,8 +105,8 @@ function MasteryMap({ factStats, operation = 'mult' }) {
     }
   }
 
-  const total = rows.length * cols.length;
-  const dominatedPct = Math.round((counts.dominated / total) * 100);
+  const total = cells.filter((c) => !c.invalid).length;
+  const dominatedPct = total ? Math.round((counts.dominated / total) * 100) : 0;
 
   return (
     <motion.div
@@ -113,7 +120,7 @@ function MasteryMap({ factStats, operation = 'mult' }) {
         <p className="font-black text-gray-800">Mapa de Domínio</p>
       </div>
       <p className="text-xs text-gray-400 font-semibold mb-4">
-        {total} fatos fundamentais ({rows[0]}{cfg.symbol}{cols[0]} até {rows[rows.length - 1]}{cfg.symbol}{cols[cols.length - 1]}) — sua memória real da tabuada
+        {total} fatos fundamentais de {cfg.label.toLowerCase()} — sua memória real
       </p>
 
       {/* Cabeçalho de progresso */}
@@ -151,6 +158,16 @@ function MasteryMap({ factStats, operation = 'mult' }) {
               </div>
               {cols.map((b) => {
                 const cell = cells.find((c) => c.a === a && c.b === b);
+                if (cell.invalid) {
+                  return (
+                    <div
+                      key={`${a}-${b}`}
+                      className="w-7 h-7 rounded-md flex items-center justify-center text-[9px] text-gray-200"
+                    >
+                      ·
+                    </div>
+                  );
+                }
                 const colors = MASTERY_COLORS[cell.state];
                 const stat = cell.stat;
                 const tot = stat ? (stat.correct || 0) + (stat.wrong || 0) : 0;
@@ -213,6 +230,7 @@ function AccTooltip({ active, payload, label }) {
 
 export default function AccuracyCatalogPage({ onBack }) {
   const { data } = useApp();
+  const [mapOperation, setMapOperation] = useState('mult'); // aba do Mapa de Domínio (v4.0 · Fase 2)
   const sessions = (data.sessions || []).filter((s) => s && s.date);
 
   // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
@@ -478,7 +496,12 @@ export default function AccuracyCatalogPage({ onBack }) {
       </motion.div>
 
       {/* ── MAPA DE DOMÍNIO (80 fatos fundamentais) ──────────────────────── */}
-      <MasteryMap factStats={data.factStats?.mult || {}} operation="mult" />
+      <OperationTabs
+        operations={OPERATION_ORDER.map((id) => OPERATIONS[id])}
+        value={mapOperation}
+        onChange={setMapOperation}
+      />
+      <MasteryMap factStats={data.factStats?.[mapOperation] || {}} operation={mapOperation} />
 
       {/* ── PRECISÃO POR TABUADA (operação: multiplicação) ───────────────── */}
       <motion.div

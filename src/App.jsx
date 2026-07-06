@@ -485,13 +485,14 @@ export default function App() {
 
         // Desempenho por tabuada (fator a) — agrega o registro por questão da partida.
         // Também registra factStats por par (a,b) normalizado para o Mapa de Domínio.
-        // [v4.0 · Fase 1] Namespaced por operação (`q.op`, default 'mult' — nenhum modo
-        // gera outra operação ainda). Fases 2/3 só precisam passar `op` nas questões.
+        // [v4.0 · Fase 1/2] Namespaced por operação (`q.operation`, default 'mult').
+        // Nome `operation` (não `op`) para não colidir com `state.question.op` do
+        // Modo Combinado, que já usa `op` para o operador interno ('+'/'-').
         const tableStats = { ...(prev.tableStats || {}) };
         const factStats = { ...(prev.factStats || {}) };
         for (const q of result.questions || []) {
           if (q == null || q.a == null) continue;
-          const op = q.op || 'mult';
+          const op = q.operation || 'mult';
           const opTableStats = { ...(tableStats[op] || {}) };
           const k = String(q.a);
           const t = opTableStats[k]
@@ -743,8 +744,11 @@ export default function App() {
   // Inicia partida pulando o fluxo de aposta (também usado quando o jogador
   // recusa apostar). Define modo, prepara questões e abre o GamePage.
   const startGame = useCallback((mode) => {
+    // Revisão respeita a operação selecionada (Rush/Sobrevivência/Velocidade/Zen
+    // também) — os demais modos com lista fixa são sempre multiplicação.
+    const selectedOp = data.selectedOperation || 'mult';
     if (mode === 'review') {
-      setCustomQuestions(getRevisionQuestions(data.tableStats?.mult || {}));
+      setCustomQuestions(getRevisionQuestions(data.tableStats?.[selectedOp] || {}, 15, selectedOp));
     } else if (mode === 'personal') {
       setCustomQuestions(getPersonalRecordQuestions(data.factStats?.mult || {}));
     } else if (mode === 'weekly') {
@@ -754,7 +758,7 @@ export default function App() {
     }
     setActiveMode(mode);
     setScreen('game');
-  }, [data.tableStats, data.factStats]);
+  }, [data.tableStats, data.factStats, data.selectedOperation]);
 
   const handleStart = useCallback((mode) => {
     // Bloqueio defensivo: se o modo está locked, não inicia.
@@ -833,6 +837,7 @@ export default function App() {
             <GamePage
               key={`game-${activeMode}`}
               mode={activeMode}
+              operation={data.selectedOperation || 'mult'}
               customQuestions={customQuestions}
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}

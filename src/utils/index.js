@@ -19,8 +19,32 @@ export const OPERATIONS = {
     domainCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // fator `b`
     answer: (a, b) => a * b,
   },
-  // add/sub/div: reservados para as Fases 2 e 3 da Tabuada Rush 4.0 (sessao-034.md).
+  // [v4.0 · Fase 2] Soma e subtração — mesma faixa de operandos (0-10) dos dois lados,
+  // para os fatos ficarem "espelhados" (soma vai de 0 a 20; subtração nunca é negativa).
+  add: {
+    id: 'add',
+    label: 'Adição',
+    symbol: '+',
+    commutative: true, // 3+7 e 7+3 são o mesmo fato
+    domainRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    domainCols: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    answer: (a, b) => a + b,
+  },
+  sub: {
+    id: 'sub',
+    label: 'Subtração',
+    symbol: '−',
+    commutative: false, // 7-3 ≠ 3-7 → chave "sub:a-b" preserva a ordem
+    domainRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // minuendo (a)
+    domainCols: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // subtraendo (b)
+    isValid: (a, b) => a >= b, // resultado nunca negativo
+    answer: (a, b) => a - b,
+  },
+  // div: reservado para a Fase 3 da Tabuada Rush 4.0 (sessao-034.md).
 };
+
+// Ordem de exibição das operações nas abas (Mapa de Domínio, Certificados, etc).
+export const OPERATION_ORDER = ['mult', 'add', 'sub'];
 
 // Chave canônica de um fato para uma operação. Para operações comutativas
 // (hoje só `mult`) normaliza min×max — 3×7 e 7×3 caem na mesma chave.
@@ -87,12 +111,33 @@ export function getCombinedQuestion() {
   return { a, b, c, op, ans };
 }
 
-// Gerador unificado [v4.0 · Fase 1]: ponto de entrada único para gerar uma questão
-// de qualquer operação. Hoje só `mult` está implementado (delega para
-// `getRandomQuestion`, comportamento idêntico ao pré-4.0) — Fases 2/3 adicionam
-// os casos `add`/`sub`/`div` aqui, sem precisar tocar em quem já chama esta função.
+// [v4.0 · Fase 2] Gera uma questão para operações "de grade" (add/sub — duas faixas
+// fixas de operandos, como um mapa de domínio). diffLevel limita o teto dos
+// operandos (progressivo, igual ao `mult`). Respeita `isValid` (ex.: subtração
+// nunca sorteia um par que dê resultado negativo).
+function getGridQuestion(operation, diffLevel = 1) {
+  const cfg = OPERATIONS[operation];
+  const capByLevel = { 1: 5, 2: 8, 3: 10 };
+  const cap = capByLevel[diffLevel] || capByLevel[1];
+  const rows = cfg.domainRows.filter((n) => n <= cap);
+  const cols = cfg.domainCols.filter((n) => n <= cap);
+  let a, b;
+  do {
+    a = rows[Math.floor(Math.random() * rows.length)];
+    b = cols[Math.floor(Math.random() * cols.length)];
+  } while (cfg.isValid && !cfg.isValid(a, b));
+  return { a, b, ans: cfg.answer(a, b) };
+}
+
+// Gerador unificado [v4.0 · Fase 1/2]: ponto de entrada único para gerar uma
+// questão de qualquer operação. `mult` delega para `getRandomQuestion`
+// (comportamento idêntico ao pré-4.0); `add`/`sub` usam `getGridQuestion`.
+// Fase 3 adiciona o caso `div` aqui, sem precisar tocar em quem já chama isto.
 export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
   switch (operation) {
+    case 'add':
+    case 'sub':
+      return getGridQuestion(operation, diffLevel);
     case 'mult':
     default:
       return getRandomQuestion(diffLevel, opts.includeExtra);
@@ -181,7 +226,10 @@ export function getCurrentWeekKey(date = new Date()) {
 // Gera questões para o Modo Revisão com score de dificuldade composto:
 //   50% taxa de erro  |  30% tempo médio de resposta  |  20% volume absoluto de erros
 // Se houver poucos dados (< 2 tentativas por tabuada), usa pool padrão.
-export function getRevisionQuestions(tableStats, count = 15) {
+// [v4.0 · Fase 2] `operation` generaliza para add/sub — `tableStats` já deve vir
+// fatiado pela operação certa (`data.tableStats?.[operation]`) por quem chama.
+export function getRevisionQuestions(tableStats, count = 15, operation = DEFAULT_OPERATION) {
+  const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const entries = Object.entries(tableStats || {})
     .map(([a, s]) => {
       const total = (s.correct || 0) + (s.wrong || 0);
@@ -200,12 +248,13 @@ export function getRevisionQuestions(tableStats, count = 15) {
   const pool =
     entries.length >= 2
       ? entries.slice(0, Math.min(5, entries.length)).map((t) => t.a)
-      : [2, 3, 4, 5, 6, 7, 8, 9];
+      : cfg.domainRows;
 
   return Array.from({ length: count }, () => {
     const a = pool[Math.floor(Math.random() * pool.length)];
-    const b = Math.floor(Math.random() * 10) + 1;
-    return { a, b, ans: a * b };
+    const cols = cfg.isValid ? cfg.domainCols.filter((n) => cfg.isValid(a, n)) : cfg.domainCols;
+    const b = cols.length ? cols[Math.floor(Math.random() * cols.length)] : cfg.domainCols[0];
+    return { a, b, ans: cfg.answer(a, b) };
   });
 }
 
@@ -427,12 +476,14 @@ const SRS_INITIAL_INTERVALS_MIN = { wrong: 10, hard: 60 * 24, easy: 3 * 60 * 24 
 const SRS_DEFAULT_EASE = 2.5;
 
 // Espaço canônico de fatos de uma operação (chaves via getFactKey — deduplicadas
-// para operações comutativas). `mult` = 80 fatos fundamentais (2×1 até 9×10).
+// para operações comutativas, filtradas por `isValid` quando a operação tiver
+// combinações impossíveis — ex.: subtração nunca pode dar negativo).
 export function getFactSpace(operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const keys = new Set();
   for (const a of cfg.domainRows) {
     for (const b of cfg.domainCols) {
+      if (cfg.isValid && !cfg.isValid(a, b)) continue;
       keys.add(getFactKey(cfg.id, a, b));
     }
   }
@@ -547,16 +598,19 @@ export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATIO
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const result = [];
   for (const a of cfg.domainRows) {
+    // Para operações com `isValid` (ex.: subtração não pode dar negativo), o total
+    // de fatos VÁLIDOS varia por linha — nem toda combinação (a,b) existe de verdade.
+    const validCols = cfg.isValid ? cfg.domainCols.filter((b) => cfg.isValid(a, b)) : cfg.domainCols;
     let dominated = 0;
-    for (const b of cfg.domainCols) {
+    for (const b of validCols) {
       const fk = getFactKey(cfg.id, a, b);
       if (isFactDominated(factStats[fk])) dominated += 1;
     }
     result.push({
       table: a,
       dominated,
-      total: cfg.domainCols.length,
-      unlocked: dominated === cfg.domainCols.length,
+      total: validCols.length,
+      unlocked: validCols.length > 0 && dominated === validCols.length,
     });
   }
   return result;

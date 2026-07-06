@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.11.0 (Tabuada Rush 4.0 · Fase 1 — Fundação Multi-Operação · sessao-035)  
+**Versão:** 3.12.0 (Tabuada Rush 4.0 · Fase 2 — Soma e Subtração · sessao-036)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -55,8 +55,8 @@ src/
 public/sw.js             — [v2.9.1] Service Worker: notificationclick + [v2.10] push exibe notificação
 supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de ofensiva (cron diário)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
-                            [v4.0] OPERATIONS (registro de operações), getFactKey/getFactSpace,
-                            generateQuestion(operation,...) — fundação multi-operação (Fase 1)
+                            [v4.0] OPERATIONS (mult/add/sub), getFactKey/getFactSpace/isValid,
+                            generateQuestion(operation,...) — mult+add+sub prontos (Fases 1-2), div na Fase 3
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
@@ -178,9 +178,10 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   // [v4.0 · Fase 1] Namespaced por operação — { mult: {...}, add: {...}, ... }.
   // Só `mult` tem conteúdo até a Fase 2/3 trazerem soma/subtração/divisão.
   // Migração automática de dados pré-4.0 (achatados) em storage.js.
-  tableStats: { mult: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count } } }
-  factStats: { mult: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: {...} } }
-  srsData: { mult: {} },     // [v3.4] Repetição espaçada (Flashcard): { [op]: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
+  tableStats: { mult: {}, add: {}, sub: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count } } }
+  factStats: { mult: {}, add: {}, sub: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: {...} } }
+  srsData: { mult: {} },     // [v3.4] Repetição espaçada (Flashcard) — só mult por enquanto
+  selectedOperation: 'mult', // [v4.0 · Fase 2] operação ativa em Rush/Sobrevivência/Velocidade/Zen/Revisão
 }
 ```
 

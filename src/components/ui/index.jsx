@@ -129,6 +129,30 @@ export function StatCard({ icon, label, value, colorClass = 'bg-violet-100 text-
   );
 }
 
+// ── OPERATION TABS [v4.0 · Fase 2] ──────────────────────────────────────────
+// Segmented control para escolher operação (Multiplicação/Soma/Subtração) —
+// reaproveitado no seletor de modos, no Mapa de Domínio e nos Certificados.
+export function OperationTabs({ operations, value, onChange, className = '' }) {
+  return (
+    <div className={`flex gap-1.5 p-1 bg-gray-100 rounded-2xl ${className}`}>
+      {operations.map((op) => {
+        const active = op.id === value;
+        return (
+          <button
+            key={op.id}
+            onClick={() => onChange(op.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl text-sm font-black transition-all
+              ${active ? 'bg-white text-violet-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <span className="text-base leading-none">{op.symbol}</span>
+            {op.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── PAGE WRAPPER ───────────────────────────────────────────────────────────
 export const pageVariants = {
   initial: { opacity: 0, y: 20 },

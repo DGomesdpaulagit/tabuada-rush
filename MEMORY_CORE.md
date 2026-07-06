@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.11.0 (Tabuada Rush 4.0 · Fase 1 — Fundação Multi-Operação entregue)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ **Fase 1 entregue** (sessao-035.md — schema multi-operação, sem feature visível). **🚨 Próxima sessão: Fase 2 da 4.0 (Soma e Subtração).**
+**Versão:** 3.12.0 (Tabuada Rush 4.0 · Fase 2 — Soma e Subtração entregues)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fase 1 (sessao-035.md — fundação multi-operação). ✅ **Fase 2 entregue** (sessao-036.md — Soma/Subtração jogáveis, seletor de operação, Mapa de Domínio + Certificados por operação). **🚨 Próxima sessão: Fase 3 da 4.0 (Divisão).**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -55,33 +55,36 @@
 5. ✅ **B007** (fix) — contador de certificados na AchievementsPage (`/8`)
    também generalizado para `certificates.length` — ver `BUGS.md`
 
-### FASE 2 — COMEÇAR AQUI (próxima sessão) — Soma e Subtração
-5. Pool de soma/subtração via gerador unificado, reaproveitando modos existentes
-6. Mapa de Domínio + Catálogo de Precisão com abas por operação
-7. Certificados de Domínio adaptados (faixas, não "tabuadas")
+### FASE 2 — ✅ ENTREGUE (v3.12.0 · sessao-036.md)
+6. ✅ `OPERATIONS.add`/`.sub` + `getGridQuestion` + `generateQuestion` com add/sub
+7. ✅ Seletor de Operação no ModesPage (Rush/Sobrevivência/Velocidade/Zen/Revisão)
+8. ✅ Mapa de Domínio + Certificados com abas por operação (`OperationTabs`)
+9. ✅ Mecanismo `isValid` (subtração nunca negativa) propagado em
+   `getFactSpace`/`computeCertificates`/`MasteryMap` — grade triangular
 
-### FASE 3 — Divisão
-8. Geração derivada da multiplicação (`a×b=c` → `c÷a=b`), sempre exata (sem resto)
-9. Bootstrap do domínio inicial a partir do `tableStats` de multiplicação existente
-10. Avaliar se reaproveita o Modo Inverso (3.0) como base
+### FASE 3 — COMEÇAR AQUI (próxima sessão) — Divisão
+10. Geração derivada da multiplicação (`a×b=c` → `c÷a=b`), sempre exata (sem resto)
+    — vai precisar de `isValid` também (só divisões exatas contam)
+11. Bootstrap do domínio inicial a partir do `tableStats` de multiplicação existente
+12. Avaliar se reaproveita o Modo Inverso (3.0) como base
 
 ### FASE 4 — Inteligência Preditiva (Curva de Esquecimento)
-11. Modelo de decaimento de memória por fato (acerto histórico + tempo de resposta
+13. Modelo de decaimento de memória por fato (acerto histórico + tempo de resposta
     + tempo desde última revisão) → prevê QUANDO o fato será esquecido
-12. Painel "Fatos a Vencer" no menu (substitui/complementa banner do Diário)
-13. Notificações via `lib/push.js` (infra já existente) para fatos críticos
-14. Motor preditivo aplicado às 4 operações
+14. Painel "Fatos a Vencer" no menu (substitui/complementa banner do Diário)
+15. Notificações via `lib/push.js` (infra já existente) para fatos críticos
+16. Motor preditivo aplicado às 4 operações
 
 ### FASE 5 — Adaptação Universal
-15. Generalizar o Modo Difícil adaptativo (v3.10) para Rush/Survival/Speed —
+17. Generalizar o Modo Difícil adaptativo (v3.10) para Rush/Survival/Speed —
     viés (não exclusividade) pelos fatos mais fracos, em qualquer operação
-16. Balanceamento ~60/40 fatos fracos/aleatório para não virar punitivo
-17. Toggle em Settings para ligar/desligar o viés adaptativo
+18. Balanceamento ~60/40 fatos fracos/aleatório para não virar punitivo
+19. Toggle em Settings para ligar/desligar o viés adaptativo
 
 ### FASE 6 — Perfil de Domínio Unificado
-18. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
-19. Certificado "Matemática Fundamental Completa"
-20. `computeQI` pesa múltiplas operações · visualização radar por operação
+20. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
+21. Certificado "Matemática Fundamental Completa"
+22. `computeQI` pesa múltiplas operações · visualização radar por operação
 
 ---
 
@@ -160,28 +163,31 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 2 DA TABUADA RUSH 4.0 (Soma e Subtração)
+## 🎯 PRÓXIMA SESSÃO — FASE 3 DA TABUADA RUSH 4.0 (Divisão)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-035.md` (Fase 1,
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-036.md` (Fase 2,
 recém-entregue) + `sessions/sessao-034.md` (roadmap completo)
 
-**Contexto:** Fase 1 (fundação multi-operação) entregue em 2026-07-06 (v3.11.0).
-`OPERATIONS`/`getFactKey`/`getFactSpace`/`generateQuestion` já existem em
-`utils/index.js`, e `tableStats`/`factStats`/`srsData` já são namespaced por
-operação (`{ mult: {...} }`). A Fase 2 é a primeira a usar essa fundação de
-verdade: adicionar `add`/`sub` ao registro `OPERATIONS` e ao `generateQuestion`.
+**Contexto:** Fase 2 (Soma e Subtração) entregue em 2026-07-06 (v3.12.0).
+`OPERATIONS.add`/`.sub`, seletor de operação (`data.selectedOperation`),
+Mapa de Domínio e Certificados por operação já funcionam de ponta a ponta
+(testado no navegador). O mecanismo `isValid` (para combinações impossíveis)
+já existe e foi usado pela subtração — a Fase 3 só precisa reaproveitá-lo.
 
 **Executar nesta ordem:**
-1. Preencher `OPERATIONS.add`/`OPERATIONS.sub` (domainRows/Cols, answer,
-   commutative: true para soma, false para subtração)
-2. Implementar geração de soma/subtração em `generateQuestion`
-3. Reaproveitar modos existentes (Rush/Survival/Speed/Zen/Review) com seletor
-   de operação, em vez de duplicar cada modo por operação
-4. Abas por operação no Mapa de Domínio / Catálogo de Precisão
-5. Certificados de Domínio adaptados (faixas, não "tabuadas")
+1. `OPERATIONS.div` com `isValid: (a,b) => b !== 0 && a % b === 0` (só divisões
+   exatas) — decidir domainRows/domainCols (provavelmente espelhar `mult`)
+2. Implementar geração de divisão em `generateQuestion` (`getGridQuestion`
+   pode não servir — divisão não é "grade de operandos livres", é derivada
+   de multiplicação: sortear `a,b` de mult e gerar `a×b ÷ a = b`)
+3. Bootstrap do domínio inicial de divisão a partir do `tableStats.mult`
+   existente (quem já sabe `7×8=56` provavelmente entende `56÷7`)
+4. Avaliar se reaproveita o Modo Inverso (3.0) como base da Divisão
+5. Divisão entra no seletor de operação (ModesPage) e nas abas (Mapa de
+   Domínio / Certificados) — reaproveitar `OperationTabs`/`OPERATION_ORDER`
 6. Build + commit + push + documento
 
-**NÃO pular para Fase 3 (Divisão) sem ter Fase 2 completa.**
+**NÃO pular para Fase 4 sem ter Fase 3 completa.**
 
 **Ação opcional pendente (não bloqueia a 4.0):**
 - Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade

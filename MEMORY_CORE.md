@@ -52,6 +52,8 @@
    plugado no GamePage (Inverso, questão inicial, `NEXT` do reducer)
 4. ✅ Mapa de Domínio genérico (`MasteryMap` aceita `operation`, lê geometria
    do registro `OPERATIONS` em vez de arrays hardcoded)
+5. ✅ **B007** (fix) — contador de certificados na AchievementsPage (`/8`)
+   também generalizado para `certificates.length` — ver `BUGS.md`
 
 ### FASE 2 — COMEÇAR AQUI (próxima sessão) — Soma e Subtração
 5. Pool de soma/subtração via gerador unificado, reaproveitando modos existentes

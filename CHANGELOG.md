@@ -23,6 +23,11 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   limpo, teste de migração com dado legado real, e execução ao vivo das
   novas funções no bundle via console do navegador.
 
+### Corrigido
+- **B007** — contagem de certificados hardcoded (`{certsUnlocked}/8`) na
+  AchievementsPage não acompanhou a generalização do `MasteryMap`. Trocado
+  para `{certificates.length}` (já derivado de `OPERATIONS`). Ver `BUGS.md`.
+
 ---
 
 ## [ROADMAP] — 2026-07-02 — TABUADA RUSH 4.0 PLANEJADO

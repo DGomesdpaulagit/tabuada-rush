@@ -168,6 +168,7 @@ export default function ModesPage({ onStart, onBack, onNavigate }) {
         <p className="text-[11px] text-gray-400 font-semibold mt-2 px-1">
           Vale para Rush, Sobrevivência, Velocidade, Zen e Revisão — Desafio
           Diário/Semanal e Modos Avançados continuam sempre de multiplicação.
+          {selectedOperation === 'div' && ' Revisão em Divisão ainda usa multiplicação (chega em breve).'}
         </p>
       </div>
 

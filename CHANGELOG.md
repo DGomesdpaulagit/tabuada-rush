@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.13.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 3 (Divisão) · 🎉 MATEMÁTICA COMPLETA
+
+**Última operação nova da 4.0. Detalhes em `sessions/sessao-037.md`.**
+
+### Adicionado
+- **Divisão** como operação real e selecionável — `OPERATIONS.div`, sempre
+  exata (nunca sorteia com resto).
+- Novo mecanismo **`cellFact`**: divisão é derivada da multiplicação, então
+  a grade do Mapa de Domínio/Certificados organiza por (divisor, quociente)
+  e resolve o fato real (dividendo÷divisor=quociente) via `cellFact` —
+  generalizado em `getFactSpace`/`computeCertificates`/`MasteryMap`.
+- Rush, Sobrevivência, Velocidade e Zen respeitam Divisão no seletor de
+  operação. Revisão em Divisão cai para multiplicação por ora (aviso
+  explícito no `ModesPage`) — `tableStats.div` é por dividendo, não por
+  divisor, então a lógica de "tabuada mais fraca" não se aplica ainda.
+
+### 🎉 Marco
+Com Soma, Subtração e Divisão entregues (Fases 2-3), a Tabuada Rush cobre
+as **4 operações fundamentais** — pilar "Matemática Completa" da filosofia
+da 4.0 (sessao-034) fechado. Próximas fases: Inteligência Adaptativa.
+
+---
+
 ## [3.12.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 2 (Soma e Subtração)
 
 **Primeiro conteúdo novo da 4.0. Detalhes em `sessions/sessao-036.md`.**

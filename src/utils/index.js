@@ -40,11 +40,34 @@ export const OPERATIONS = {
     isValid: (a, b) => a >= b, // resultado nunca negativo
     answer: (a, b) => a - b,
   },
-  // div: reservado para a Fase 3 da Tabuada Rush 4.0 (sessao-034.md).
+  // [v4.0 · Fase 3] Divisão é DERIVADA da multiplicação — a grade organiza por
+  // (divisor, quociente), a mesma geometria de `mult` só invertida (8×10, sem
+  // combinação inválida nenhuma: divisor×quociente sempre existe e é exato).
+  // `cellFact(divisor, quociente)` resolve pro fato REAL (dividendo, divisor,
+  // quociente) — é o que vira chave/estatística. Ex.: linha 7 (÷7), coluna 8
+  // (quociente 8) → dividendo 56 → fato real "56÷7=8".
+  div: {
+    id: 'div',
+    label: 'Divisão',
+    symbol: '÷',
+    commutative: false, // 56÷7 ≠ 7÷56 → chave "div:a-b" preserva a ordem
+    domainRows: [2, 3, 4, 5, 6, 7, 8, 9],        // divisor
+    domainCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // quociente
+    cellFact: (divisor, quociente) => ({ a: divisor * quociente, b: divisor, ans: quociente }),
+    answer: (a, b) => a / b, // usado na geração real de perguntas: a=dividendo, b=divisor
+  },
 };
 
 // Ordem de exibição das operações nas abas (Mapa de Domínio, Certificados, etc).
-export const OPERATION_ORDER = ['mult', 'add', 'sub'];
+export const OPERATION_ORDER = ['mult', 'add', 'sub', 'div'];
+
+// Resolve o par (a,b) REAL de um fato a partir das coordenadas da grade (row,col).
+// Para a maioria das operações, row/col JÁ SÃO (a,b) — só a Divisão precisa de
+// indireção via `cellFact` (a grade organiza por divisor/quociente, não por
+// dividendo/divisor). Ver comentário em `OPERATIONS.div`.
+function resolveCellFact(cfg, row, col) {
+  return cfg.cellFact ? cfg.cellFact(row, col) : { a: row, b: col };
+}
 
 // Chave canônica de um fato para uma operação. Para operações comutativas
 // (hoje só `mult`) normaliza min×max — 3×7 e 7×3 caem na mesma chave.
@@ -129,15 +152,32 @@ function getGridQuestion(operation, diffLevel = 1) {
   return { a, b, ans: cfg.answer(a, b) };
 }
 
-// Gerador unificado [v4.0 · Fase 1/2]: ponto de entrada único para gerar uma
+// [v4.0 · Fase 3] Divisão é DERIVADA da multiplicação: sorteia divisor e
+// quociente (mesma progressão por diffLevel do `getGridQuestion`) e calcula
+// o dividendo — assim a divisão é SEMPRE exata (sem resto), nunca precisa de
+// `isValid`. Pergunta exibida: "{dividendo} ÷ {divisor} = ?", resposta = quociente.
+function getDivQuestion(diffLevel = 1) {
+  const cfg = OPERATIONS.div;
+  const capByLevel = { 1: 5, 2: 8, 3: 10 };
+  const cap = capByLevel[diffLevel] || capByLevel[1];
+  const divisores = cfg.domainRows.filter((n) => n <= cap);
+  const quocientes = cfg.domainCols.filter((n) => n <= cap);
+  const divisor = divisores[Math.floor(Math.random() * divisores.length)];
+  const quociente = quocientes[Math.floor(Math.random() * quocientes.length)];
+  return { a: divisor * quociente, b: divisor, ans: quociente };
+}
+
+// Gerador unificado [v4.0 · Fase 1/2/3]: ponto de entrada único para gerar uma
 // questão de qualquer operação. `mult` delega para `getRandomQuestion`
-// (comportamento idêntico ao pré-4.0); `add`/`sub` usam `getGridQuestion`.
-// Fase 3 adiciona o caso `div` aqui, sem precisar tocar em quem já chama isto.
+// (comportamento idêntico ao pré-4.0); `add`/`sub` usam `getGridQuestion`;
+// `div` usa `getDivQuestion` (derivada da multiplicação, sempre exata).
 export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
   switch (operation) {
     case 'add':
     case 'sub':
       return getGridQuestion(operation, diffLevel);
+    case 'div':
+      return getDivQuestion(diffLevel);
     case 'mult':
     default:
       return getRandomQuestion(diffLevel, opts.includeExtra);
@@ -477,12 +517,15 @@ const SRS_DEFAULT_EASE = 2.5;
 
 // Espaço canônico de fatos de uma operação (chaves via getFactKey — deduplicadas
 // para operações comutativas, filtradas por `isValid` quando a operação tiver
-// combinações impossíveis — ex.: subtração nunca pode dar negativo).
+// combinações impossíveis — ex.: subtração nunca pode dar negativo). Operações
+// com `cellFact` (ex.: divisão) resolvem o fato real a partir das coordenadas
+// da grade antes de gerar a chave — ver `OPERATIONS.div`.
 export function getFactSpace(operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const keys = new Set();
-  for (const a of cfg.domainRows) {
-    for (const b of cfg.domainCols) {
+  for (const row of cfg.domainRows) {
+    for (const col of cfg.domainCols) {
+      const { a, b } = resolveCellFact(cfg, row, col);
       if (cfg.isValid && !cfg.isValid(a, b)) continue;
       keys.add(getFactKey(cfg.id, a, b));
     }
@@ -597,17 +640,22 @@ function isFactDominated(stat) {
 export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const result = [];
-  for (const a of cfg.domainRows) {
+  for (const row of cfg.domainRows) {
     // Para operações com `isValid` (ex.: subtração não pode dar negativo), o total
     // de fatos VÁLIDOS varia por linha — nem toda combinação (a,b) existe de verdade.
-    const validCols = cfg.isValid ? cfg.domainCols.filter((b) => cfg.isValid(a, b)) : cfg.domainCols;
+    // Divisão (via `cellFact`) nunca tem combinação inválida — toda coluna conta.
+    const validCols = cfg.domainCols.filter((col) => {
+      const { a, b } = resolveCellFact(cfg, row, col);
+      return !cfg.isValid || cfg.isValid(a, b);
+    });
     let dominated = 0;
-    for (const b of validCols) {
+    for (const col of validCols) {
+      const { a, b } = resolveCellFact(cfg, row, col);
       const fk = getFactKey(cfg.id, a, b);
       if (isFactDominated(factStats[fk])) dominated += 1;
     }
     result.push({
-      table: a,
+      table: row,
       dominated,
       total: validCols.length,
       unlocked: validCols.length > 0 && dominated === validCols.length,

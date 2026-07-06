@@ -80,8 +80,9 @@ const MASTERY_COLORS = {
 };
 
 // [v4.0 · Fase 1] `operation` seleciona a grade via OPERATIONS registry em vez de
-// hardcoded — hoje só `mult` (8×10). Fases 2/3 reaproveitam este componente para
-// soma/subtração/divisão só registrando a operação lá.
+// hardcoded — hoje `mult`/`add`/`sub`/`div` (8×10 ou 11×11). Divisão usa `cellFact`
+// para resolver o fato real (dividendo/divisor) a partir das coordenadas da grade
+// (divisor/quociente) — ver comentário em `OPERATIONS.div`.
 function MasteryMap({ factStats, operation = 'mult' }) {
   const cfg = OPERATIONS[operation] || OPERATIONS.mult;
   const rows = cfg.domainRows;
@@ -89,19 +90,20 @@ function MasteryMap({ factStats, operation = 'mult' }) {
   const cells = [];
   const counts = { dominated: 0, practiced: 0, problem: 0, nodata: 0 };
 
-  for (const a of rows) {
-    for (const b of cols) {
+  for (const row of rows) {
+    for (const col of cols) {
+      const { a, b } = cfg.cellFact ? cfg.cellFact(row, col) : { a: row, b: col };
       // [v4.0 · Fase 2] Operações com `isValid` (ex.: subtração não pode dar
       // negativo) têm combinações impossíveis — não contam pro total nem viram fato.
       if (cfg.isValid && !cfg.isValid(a, b)) {
-        cells.push({ a, b, invalid: true });
+        cells.push({ row, col, invalid: true });
         continue;
       }
       const fk = getFactKey(cfg.id, a, b);
       const stat = factStats[fk];
       const state = classifyFact(stat);
       counts[state] += 1;
-      cells.push({ a, b, fk, stat, state });
+      cells.push({ row, col, a, b, fk, stat, state });
     }
   }
 
@@ -150,18 +152,18 @@ function MasteryMap({ factStats, operation = 'mult' }) {
               </div>
             ))}
           </div>
-          {/* Linhas (a = 2..9) */}
-          {rows.map((a) => (
-            <div key={a} className="flex gap-1 mb-1 items-center">
+          {/* Linhas */}
+          {rows.map((row) => (
+            <div key={row} className="flex gap-1 mb-1 items-center">
               <div className="w-6 text-center text-[10px] font-black text-gray-500 shrink-0">
-                {a}{cfg.symbol}
+                {row}{cfg.symbol}
               </div>
-              {cols.map((b) => {
-                const cell = cells.find((c) => c.a === a && c.b === b);
+              {cols.map((col) => {
+                const cell = cells.find((c) => c.row === row && c.col === col);
                 if (cell.invalid) {
                   return (
                     <div
-                      key={`${a}-${b}`}
+                      key={`${row}-${col}`}
                       className="w-7 h-7 rounded-md flex items-center justify-center text-[9px] text-gray-200"
                     >
                       ·
@@ -173,18 +175,22 @@ function MasteryMap({ factStats, operation = 'mult' }) {
                 const tot = stat ? (stat.correct || 0) + (stat.wrong || 0) : 0;
                 const acc = tot ? Math.round((stat.correct / tot) * 100) : 0;
                 const avgMs = stat?.count && stat.totalMs ? Math.round(stat.totalMs / stat.count) : 0;
-                const ans = cfg.answer(a, b);
+                // Sem `cellFact`: a célula mostra a resposta real (ex.: produto). Com
+                // `cellFact` (divisão): a grade é por (divisor,quociente) — a célula
+                // mostra o dividendo (número "grande") e a resposta real é o quociente (col).
+                const cellNumber = cfg.cellFact ? cell.a : cfg.answer(cell.a, cell.b);
+                const factAns = cfg.cellFact ? col : cfg.answer(cell.a, cell.b);
                 const titleText =
                   cell.state === 'nodata'
-                    ? `${a}${cfg.symbol}${b} — sem dados ainda`
-                    : `${a}${cfg.symbol}${b}=${ans} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
+                    ? `${cell.a}${cfg.symbol}${cell.b} — sem dados ainda`
+                    : `${cell.a}${cfg.symbol}${cell.b}=${factAns} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
                 return (
                   <div
-                    key={`${a}-${b}`}
+                    key={`${row}-${col}`}
                     title={titleText}
                     className={`w-7 h-7 rounded-md flex items-center justify-center text-[9px] font-black ${colors.bg} ${colors.text}`}
                   >
-                    {ans}
+                    {cellNumber}
                   </div>
                 );
               })}

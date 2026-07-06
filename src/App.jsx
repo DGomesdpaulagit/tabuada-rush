@@ -304,6 +304,9 @@ export default function App() {
   const { user } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [activeMode, setActiveMode] = useState(null);
+  // Operação EFETIVA da partida atual (pode divergir de data.selectedOperation —
+  // ex.: Revisão em Divisão ainda cai pra multiplicação, ver startGame).
+  const [activeOperation, setActiveOperation] = useState('mult');
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);
   const [goalModalManual, setGoalModalManual] = useState(false);
@@ -747,8 +750,13 @@ export default function App() {
     // Revisão respeita a operação selecionada (Rush/Sobrevivência/Velocidade/Zen
     // também) — os demais modos com lista fixa são sempre multiplicação.
     const selectedOp = data.selectedOperation || 'mult';
+    // Revisão ainda não tem pool de fatos fracos próprio pra Divisão — tableStats.div
+    // é agrupado por DIVIDENDO (não por divisor), então a lógica de "tabuada mais
+    // fraca" não bate. Cai pra multiplicação nesse caso específico (Fase 4 resolve).
+    const reviewOp = selectedOp === 'div' ? 'mult' : selectedOp;
+    const effectiveOp = mode === 'review' ? reviewOp : selectedOp;
     if (mode === 'review') {
-      setCustomQuestions(getRevisionQuestions(data.tableStats?.[selectedOp] || {}, 15, selectedOp));
+      setCustomQuestions(getRevisionQuestions(data.tableStats?.[reviewOp] || {}, 15, reviewOp));
     } else if (mode === 'personal') {
       setCustomQuestions(getPersonalRecordQuestions(data.factStats?.mult || {}));
     } else if (mode === 'weekly') {
@@ -756,6 +764,7 @@ export default function App() {
     } else {
       setCustomQuestions(null);
     }
+    setActiveOperation(effectiveOp);
     setActiveMode(mode);
     setScreen('game');
   }, [data.tableStats, data.factStats, data.selectedOperation]);
@@ -837,7 +846,7 @@ export default function App() {
             <GamePage
               key={`game-${activeMode}`}
               mode={activeMode}
-              operation={data.selectedOperation || 'mult'}
+              operation={activeOperation}
               customQuestions={customQuestions}
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}

@@ -2,11 +2,11 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock, getFactKey } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock, getFactKey, countFactsAtRiskAllOps } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
-import { maybeStreakReminder, maybeMissionExpireReminder } from './lib/notify';
+import { maybeStreakReminder, maybeMissionExpireReminder, maybeForgettingReminder } from './lib/notify';
 import { subscribeToPush } from './lib/push';
 
 import MenuPage from './pages/MenuPage';
@@ -493,6 +493,9 @@ export default function App() {
         // Modo Combinado, que já usa `op` para o operador interno ('+'/'-').
         const tableStats = { ...(prev.tableStats || {}) };
         const factStats = { ...(prev.factStats || {}) };
+        // [v4.0 · Fase 4] `lastPracticed` alimenta o modelo de curva de esquecimento
+        // (predictRecallProbability) — precisa saber HÁ QUANTO TEMPO o fato foi praticado.
+        const nowIso = new Date().toISOString();
         for (const q of result.questions || []) {
           if (q == null || q.a == null) continue;
           const op = q.operation || 'mult';
@@ -505,6 +508,7 @@ export default function App() {
           else t.wrong += 1;
           if (q.ms > 0) t.totalMs += q.ms;
           t.count += 1;
+          t.lastPracticed = nowIso;
           opTableStats[k] = t;
           tableStats[op] = opTableStats;
 
@@ -519,6 +523,7 @@ export default function App() {
             else f.wrong += 1;
             if (q.ms > 0) f.totalMs += q.ms;
             f.count += 1;
+            f.lastPracticed = nowIso;
             opFactStats[fk] = f;
             factStats[op] = opFactStats;
           }
@@ -717,6 +722,7 @@ export default function App() {
     if (p.notifications) {
       maybeStreakReminder(data);
       maybeMissionExpireReminder(data.missionsData);
+      maybeForgettingReminder(countFactsAtRiskAllOps(data));
     }
     return () => {
       if (startMusic) {

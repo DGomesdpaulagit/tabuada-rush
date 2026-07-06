@@ -264,9 +264,10 @@ export function getCurrentWeekKey(date = new Date()) {
 }
 
 // Gera questões para o Modo Revisão com score de dificuldade composto:
-//   50% taxa de erro  |  30% tempo médio de resposta  |  20% volume absoluto de erros
+//   40% taxa de erro | 25% tempo médio de resposta | 15% volume absoluto de erros
+//   | 20% "staleness" (dias desde a última prática — motor preditivo, Fase 4)
 // Se houver poucos dados (< 2 tentativas por tabuada), usa pool padrão.
-// [v4.0 · Fase 2] `operation` generaliza para add/sub — `tableStats` já deve vir
+// [v4.0 · Fase 2/4] `operation` generaliza para add/sub/div — `tableStats` já deve vir
 // fatiado pela operação certa (`data.tableStats?.[operation]`) por quem chama.
 export function getRevisionQuestions(tableStats, count = 15, operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
@@ -279,7 +280,11 @@ export function getRevisionQuestions(tableStats, count = 15, operation = DEFAULT
       const msScore = Math.min(avgMs / 6000, 1);
       // volume absoluto de erros normalizado (cap 80 erros)
       const wrongVol = Math.min((s.wrong || 0) / 80, 1);
-      const difficulty = errRate * 0.5 + msScore * 0.3 + wrongVol * 0.2;
+      // staleness: dias desde a última prática, normalizado (satura em 14 dias) —
+      // fatos "esquecendo" (curva de esquecimento) entram na revisão mesmo sem erro recente
+      const daysSince = s.lastPracticed ? (Date.now() - new Date(s.lastPracticed).getTime()) / 86400000 : 14;
+      const staleness = Math.min(Math.max(daysSince, 0) / 14, 1);
+      const difficulty = errRate * 0.4 + msScore * 0.25 + wrongVol * 0.15 + staleness * 0.2;
       return { a: Number(a), difficulty, total };
     })
     .filter((t) => t.total >= 2)
@@ -614,6 +619,74 @@ export function getReviewQueue(srsData = {}, limit = 20) {
   due.sort((a, b) => a.ts - b.ts); // mais atrasado primeiro
   const queue = [...due.map((d) => d.fk), ...fresh];
   return queue.slice(0, limit);
+}
+
+// ── CURVA DE ESQUECIMENTO [v4.0 · Fase 4] ───────────────────────────────────
+// Modelo de decaimento de memória inspirado na curva de Ebbinghaus:
+//   R(t) = e^(-t / S)
+// R = probabilidade estimada de o jogador ainda lembrar o fato (0-1)
+// t = dias desde a última prática (`stat.lastPracticed`)
+// S = "força de memória" em dias — quanto maior, mais devagar o fato decai
+//
+// S é estimada a partir de 3 sinais que JÁ existem em `factStats`/`tableStats`:
+//   precisão histórica (correct/total), velocidade média (totalMs/count) e
+//   volume de repetição (count) — os mesmos sinais do Mapa de Domínio, só que
+//   aqui alimentam uma PREVISÃO (quando vai esquecer) em vez de uma
+//   classificação estática (dominado/praticado/problemático).
+//
+// Diferença para o SRS do Flashcard (updateSrsFact): aquele reage à avaliação
+// SUBJETIVA do jogador ("Fácil/Difícil/Errei") só dentro do modo Flashcard.
+// Este modelo é PASSIVO — roda sobre os dados de QUALQUER partida, em
+// qualquer uma das 4 operações, sem exigir que o jogador entre num modo específico.
+
+const FORGETTING_MIN_SAMPLES = 2;   // menos que isso: força de memória mínima (esquece rápido)
+const FORGETTING_MIN_STRENGTH_DAYS = 1;
+const FORGETTING_RECALL_THRESHOLD = 0.5; // abaixo disso, o fato entra em "Fatos a Vencer"
+
+function estimateMemoryStrengthDays(stat) {
+  const total = (stat?.correct || 0) + (stat?.wrong || 0);
+  if (total < FORGETTING_MIN_SAMPLES) return FORGETTING_MIN_STRENGTH_DAYS;
+
+  const acc = stat.correct / total; // 0-1
+  const avgMs = stat.count && stat.totalMs ? stat.totalMs / stat.count : 4000;
+  // Rápido (<=1.5s) → speedFactor ~1. Lento (>=4.5s) → speedFactor ~0.
+  const speedFactor = Math.max(0, Math.min(1, (4500 - avgMs) / 3000));
+  const repFactor = Math.min(total / 10, 1); // satura em 10 repetições
+
+  // Base de 1 dia, multiplicada por precisão/velocidade/repetição — um fato
+  // dominado (>=90% acerto, rápido, praticado várias vezes) pode levar ~10 dias
+  // pra cair abaixo do limiar de retenção; um fato mal-sabido decai em ~1-2 dias.
+  return FORGETTING_MIN_STRENGTH_DAYS + acc * 10 * (0.5 + 0.5 * speedFactor) * (0.3 + 0.7 * repFactor);
+}
+
+// Probabilidade estimada (0-1) de o jogador ainda lembrar um fato agora.
+// Sem `lastPracticed` (nunca praticado): retorna 0 — não é "esquecido", é "não aprendido"
+// (categoria diferente, já coberta pelo estado "sem dados" do Mapa de Domínio).
+export function predictRecallProbability(stat, now = Date.now()) {
+  if (!stat?.lastPracticed) return 0;
+  const daysSince = (now - new Date(stat.lastPracticed).getTime()) / 86400000;
+  if (daysSince <= 0) return 1;
+  const strength = estimateMemoryStrengthDays(stat);
+  return Math.exp(-daysSince / strength);
+}
+
+// Fatos de uma operação com recall previsto abaixo do limiar — "a vencer".
+// Só conta fatos JÁ praticados (senão seria só "não aprendido ainda").
+export function getFactsAtRisk(factStats = {}, now = Date.now()) {
+  return Object.entries(factStats || {})
+    .filter(([, stat]) => stat?.lastPracticed)
+    .map(([fk, stat]) => ({ fk, recall: predictRecallProbability(stat, now) }))
+    .filter((e) => e.recall < FORGETTING_RECALL_THRESHOLD)
+    .sort((a, b) => a.recall - b.recall); // mais esquecido primeiro
+}
+
+// Conta fatos "a vencer" somando as 4 operações — usado no banner do menu.
+export function countFactsAtRiskAllOps(data = {}) {
+  const now = Date.now();
+  return OPERATION_ORDER.reduce(
+    (sum, op) => sum + getFactsAtRisk(data.factStats?.[op] || {}, now).length,
+    0
+  );
 }
 
 // ── CERTIFICADOS DE DOMÍNIO POR TABUADA ─────────────────────────────────────

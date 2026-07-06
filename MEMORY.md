@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.13.0 (Tabuada Rush 4.0 · Fase 3 — Divisão · 🎉 Matemática Completa · sessao-037)  
+**Versão:** 3.14.0 (Tabuada Rush 4.0 · Fase 4 — Inteligência Preditiva · sessao-038)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -178,8 +178,10 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   // [v4.0 · Fase 1] Namespaced por operação — { mult: {...}, add: {...}, ... }.
   // Só `mult` tem conteúdo até a Fase 2/3 trazerem soma/subtração/divisão.
   // Migração automática de dados pré-4.0 (achatados) em storage.js.
-  tableStats: { mult: {}, add: {}, sub: {}, div: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count } } } — div é por DIVIDENDO
-  factStats: { mult: {}, add: {}, sub: {}, div: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: {...} } }
+  // [v4.0 · Fase 4] cada entrada de tableStats/factStats ganhou `lastPracticed`
+  // (ISO string) — alimenta o modelo de curva de esquecimento (predictRecallProbability)
+  tableStats: { mult: {}, add: {}, sub: {}, div: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count, lastPracticed } } } — div é por DIVIDENDO
+  factStats: { mult: {}, add: {}, sub: {}, div: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: { ..., lastPracticed } } }
   srsData: { mult: {} },     // [v3.4] Repetição espaçada (Flashcard) — só mult por enquanto
   selectedOperation: 'mult', // [v4.0 · Fase 2] operação ativa em Rush/Sobrevivência/Velocidade/Zen/Revisão
 }

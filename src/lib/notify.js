@@ -140,3 +140,21 @@ export function maybeStreakReminder(data = {}) {
   localStorage.setItem('tr_last_reminder', today);
   showNotif('Tabuada Rush 🔥', reminderMessage(data.currentStreak || 0));
 }
+
+// ── LEMBRETE DE CURVA DE ESQUECIMENTO [v4.0 · Fase 4] ───────────────────
+// Aviso local (1×/dia) quando o modelo de decaimento de memória prevê que o
+// jogador está prestes a esquecer fatos já praticados. MESMO LIMITE HONESTO
+// do topo do arquivo: dispara com o app aberto, não é push de app fechado
+// (isso exigiria Edge Function/VAPID — fora de escopo por ora, ver sessao-034).
+export function maybeForgettingReminder(count) {
+  if (!notificationsSupported() || Notification.permission !== 'granted') return;
+  if (!count || count <= 0) return;
+  const today = new Date().toISOString().split('T')[0];
+  const remKey = `tr_forgetting_remind_${today}`;
+  if (localStorage.getItem(remKey)) return; // já lembrou hoje
+  localStorage.setItem(remKey, '1');
+  const msg = count === 1
+    ? 'Você tem 1 fato prestes a ser esquecido. Uma revisão rápida resolve! 🧠'
+    : `Você tem ${count} fatos prestes a serem esquecidos. Uma revisão rápida resolve! 🧠`;
+  showNotif('Hora de revisar 🧠', msg);
+}

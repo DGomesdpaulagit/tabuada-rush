@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.13.0 (Tabuada Rush 4.0 · Fase 3 — Divisão entregue · 🎉 Matemática Completa fechada)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fase 1 (fundação) + ✅ Fase 2 (Soma/Subtração) + ✅ **Fase 3 entregue** (sessao-037.md — Divisão, mecanismo `cellFact`). **Pilar "Matemática Completa" 100% fechado.** **🚨 Próxima sessão: Fase 4 da 4.0 (Inteligência Preditiva).**
+**Versão:** 3.14.0 (Tabuada Rush 4.0 · Fase 4 — Inteligência Preditiva)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fases 1-3 (Matemática Completa: fundação + Soma/Subtração + Divisão). ✅ **Fase 4 entregue** (sessao-038.md — modelo de curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer"). **🚨 Próxima sessão: Fase 5 da 4.0 (Adaptação Universal).**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -71,14 +71,16 @@
     — decisão explícita, aviso no ModesPage
 13. Avaliado reaproveitar o Modo Inverso — decidido manter separado (conceitos diferentes)
 
-### FASE 4 — COMEÇAR AQUI (próxima sessão) — Inteligência Preditiva (Curva de Esquecimento)
-14. Modelo de decaimento de memória por fato (acerto histórico + tempo de resposta
-    + tempo desde última revisão) → prevê QUANDO o fato será esquecido
-15. Painel "Fatos a Vencer" no menu (substitui/complementa banner do Diário)
-16. Notificações via `lib/push.js` (infra já existente) para fatos críticos
-17. Motor preditivo aplicado às 4 operações
+### FASE 4 — ✅ ENTREGUE (v3.14.0 · sessao-038.md)
+14. ✅ Modelo de decaimento de memória (`predictRecallProbability`/`getFactsAtRisk`,
+    curva de Ebbinghaus) — usa `lastPracticed` (novo campo) + precisão + velocidade
+15. ✅ Painel "Fatos a Vencer" no menu (com fallback quando Revisão está bloqueada)
+16. ✅ Lembrete local (`maybeForgettingReminder`, mesmo padrão dos outros —
+    NÃO é push de app fechado, decisão explícita de escopo)
+17. ✅ Motor preditivo aplicado às 4 operações via `getRevisionQuestions`
+    (4º componente "staleness" na fórmula de dificuldade)
 
-### FASE 5 — Adaptação Universal
+### FASE 5 — COMEÇAR AQUI (próxima sessão) — Adaptação Universal
 18. Generalizar o Modo Difícil adaptativo (v3.10) para Rush/Survival/Speed —
     viés (não exclusividade) pelos fatos mais fracos, em qualquer operação
 19. Balanceamento ~60/40 fatos fracos/aleatório para não virar punitivo
@@ -166,30 +168,32 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 4 DA TABUADA RUSH 4.0 (Inteligência Preditiva)
+## 🎯 PRÓXIMA SESSÃO — FASE 5 DA TABUADA RUSH 4.0 (Adaptação Universal)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-037.md` (Fase 3,
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-038.md` (Fase 4,
 recém-entregue) + `sessions/sessao-034.md` (roadmap completo)
 
-**Contexto:** Fase 3 (Divisão) entregue em 2026-07-06 (v3.13.0). Com isso, o
-pilar **"Matemática Completa"** da 4.0 está 100% fechado — as 4 operações
-fundamentais (mult/add/sub/div) têm Mapa de Domínio e Certificados próprios,
-selecionáveis via `OperationTabs`. A partir daqui o roadmap muda de eixo:
-pilar **"Inteligência Adaptativa"** (previsão, não amplitude de conteúdo).
+**Contexto:** Fase 4 (Inteligência Preditiva) entregue em 2026-07-06 (v3.14.0).
+Modelo de curva de esquecimento (`predictRecallProbability`/`getFactsAtRisk`)
+já roda passivamente sobre `factStats`/`tableStats` (que agora têm
+`lastPracticed`), e o Modo Revisão já usa esse sinal. A Fase 5 generaliza a
+mesma ideia de "usar dados reais do jogador pra decidir o que mostrar" —
+hoje só o Modo Difícil (v3.10) faz isso, e só para multiplicação.
 
 **Executar nesta ordem:**
-1. Modelo de decaimento de memória por fato: combinar taxa de acerto
-   histórica + tempo de resposta + tempo desde a última revisão → prever
-   QUANDO o fato será esquecido (evolução do SRS do Flashcard, hoje baseado
-   só em avaliação subjetiva "Fácil/Difícil/Errei")
-2. Painel "Fatos a Vencer" no menu — substitui ou complementa o banner do
-   Desafio Diário
-3. Notificações via `lib/push.js` (infra já existente desde v2.10) para
-   fatos críticos prestes a expirar
-4. Aplicar o motor preditivo às 4 operações (não só multiplicação)
+1. Generalizar o Modo Difícil adaptativo (`getHardTabuadaPool`) para
+   Rush/Sobrevivência/Velocidade em QUALQUER operação selecionada — hoje é
+   hardcoded pra `tableStats.mult`
+2. Viés, não exclusividade: ~60% fatos fracos / 40% aleatório (diferente do
+   Modo Difícil, que É exclusivo às 3 tabuadas mais fracas) — pool normal
+   continua existindo, só com probabilidade maior de puxar fatos fracos
+3. Toggle em Settings para ligar/desligar esse viés (alguns podem preferir
+   aleatoriedade pura)
+4. Considerar reaproveitar `predictRecallProbability` (Fase 4) como sinal
+   extra de "fraqueza" além de erro/velocidade
 5. Build + commit + push + documento
 
-**NÃO pular para Fase 5 sem ter Fase 4 completa.**
+**NÃO pular para Fase 6 sem ter Fase 5 completa.**
 
 **Ação opcional pendente (não bloqueia a 4.0):**
 - Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade

@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight, Crown } from 'lucide-react';
+import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight, Crown, Brain } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { getLevelIdx, getXpProgress, getQiInfo, countDueFlashcards } from '../utils';
+import { getLevelIdx, getXpProgress, getQiInfo, countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { SHOP_ITEM_MAP } from '../constants/shop';
 import { countUnclaimedMissions } from '../utils/missions';
@@ -39,6 +39,8 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const displayTitle   = equippedTitle?.displayTitle  || level.title;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
   const dueFlashcards = countDueFlashcards(data.srsData?.mult || {});
+  const factsAtRisk = countFactsAtRiskAllOps(data); // [v4.0 · Fase 4] curva de esquecimento
+  const reviewUnlocked = getModeUnlock('review', data).unlocked;
 
   return (
     <motion.div
@@ -218,6 +220,34 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         </span>
         <p className="text-sm font-bold text-gray-600 leading-snug">{analysisHeadline}</p>
       </motion.button>
+
+      {/* ── FATOS A VENCER [v4.0 · Fase 4] ──────────────────────────────────
+          Curva de esquecimento: fatos já praticados que o modelo prevê que o
+          jogador está prestes a esquecer (combina precisão, velocidade e tempo
+          desde a última prática — não é a mesma coisa que o SRS do Flashcard,
+          que só olha pra multiplicação e exige avaliação subjetiva). */}
+      {factsAtRisk > 0 && (
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.16 }}
+          onClick={() => (reviewUnlocked ? onStart('review') : onNavigate('modes'))}
+          className="flex items-center gap-3 w-full text-left bg-gradient-to-r from-rose-50 to-orange-50 rounded-2xl px-4 py-3 border border-rose-200 hover:border-rose-300 transition-colors"
+        >
+          <span className="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+            <Brain size={15} />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-gray-700 leading-snug">
+              {factsAtRisk} {factsAtRisk === 1 ? 'fato prestes a ser esquecido' : 'fatos prestes a serem esquecidos'}
+            </p>
+            <p className="text-xs text-gray-400 font-semibold">
+              {reviewUnlocked ? 'Toque para revisar agora' : 'Toque para ver como desbloquear a Revisão'}
+            </p>
+          </div>
+          <ChevronRight size={18} className="text-rose-400 shrink-0" />
+        </motion.button>
+      )}
 
       {/* ── BOTÃO ESCOLHER MODO ─────────────────────────────────────────────
           Substitui o grid antigo de modos. Leva para ModesPage com todos os

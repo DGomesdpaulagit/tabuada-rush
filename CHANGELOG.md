@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.14.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 4 (Inteligência Preditiva)
+
+**Primeiro passo do pilar "Inteligência Adaptativa". Detalhes em `sessions/sessao-038.md`.**
+
+### Adicionado
+- **Modelo de decaimento de memória** (curva de esquecimento, inspirado em
+  Ebbinghaus): `predictRecallProbability`/`getFactsAtRisk` estimam quando um
+  fato será esquecido a partir de precisão, velocidade e tempo desde a
+  última prática (`lastPracticed`, novo campo em `tableStats`/`factStats`).
+  Roda passivamente em QUALQUER partida, nas 4 operações.
+- **Motor preditivo aplicado ao Modo Revisão**: fórmula de dificuldade ganhou
+  um 4º componente de "staleness" (40% erro / 25% velocidade / 15% volume
+  de erros / 20% tempo desde a última prática) — Revisão passa a puxar fatos
+  esquecendo, não só fatos com erro recente.
+- **Painel "Fatos a Vencer"** no Menu — contagem agregada das 4 operações,
+  toque inicia Revisão (ou mostra como desbloqueá-la).
+- **Lembrete local** (`maybeForgettingReminder`, mesmo padrão dos lembretes
+  de ofensiva/missões) quando há fatos prestes a serem esquecidos.
+
+---
+
 ## [3.13.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 3 (Divisão) · 🎉 MATEMÁTICA COMPLETA
 
 **Última operação nova da 4.0. Detalhes em `sessions/sessao-037.md`.**

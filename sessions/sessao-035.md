@@ -70,6 +70,15 @@ no navegador.
   em vez de montar a chave na mão. Nenhum modo gera outra operação ainda —
   isso é só para a Fase 2 não precisar tocar nesta função de novo.
 
+### Correção — total de certificados ainda hardcoded (`AchievementsPage.jsx`)
+Davi pegou: a contagem de certificados desbloqueados (`{certsUnlocked}/8`)
+ficou com o "8" hardcoded, quebrando a mesma generalização feita no
+`MasteryMap`. Corrigido para `{certsUnlocked}/{certificates.length}` —
+`certificates.length` já deriva de `OPERATIONS.mult.domainRows.length` via
+`computeCertificates`. Sem mudança visível hoje (mult tem 8 tabuadas, mesmo
+resultado de sempre), mas evita um número preso quando a Fase 2/3 reaproveitar
+esta página para outras operações.
+
 ### Call sites atualizados para ler o slice `.mult`
 `FlashcardPage.jsx`, `MenuPage.jsx`, `AchievementsPage.jsx`,
 `ErrorsPage.jsx`, `AccuracyCatalogPage.jsx`, `GamePage.jsx` (init/reducer) e

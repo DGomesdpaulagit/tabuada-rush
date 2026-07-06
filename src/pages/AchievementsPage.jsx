@@ -68,7 +68,7 @@ export default function AchievementsPage({ onBack }) {
             Certificados de Domínio
           </p>
           <span className="text-[11px] font-black text-amber-600">
-            {certsUnlocked}/8
+            {certsUnlocked}/{certificates.length}
           </span>
         </div>
         <p className="text-[11px] text-gray-400 font-semibold mb-3 px-1">

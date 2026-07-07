@@ -188,12 +188,11 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
               Meta de Ofensiva
             </p>
             {streakGoal ? (
-              <button
-                onClick={onEditGoal}
-                className="text-xs font-bold text-white/90 hover:text-white transition-colors"
-              >
-                {Math.min(metaProgress, streakGoal)}/{streakGoal} dias · alterar
-              </button>
+              // Meta travada — não pode ser alterada depois de definida (só muda
+              // automaticamente quando é batida, via RewardModal + nova escolha).
+              <span className="text-xs font-bold text-white/90">
+                {Math.min(metaProgress, streakGoal)}/{streakGoal} dias
+              </span>
             ) : (
               <button
                 onClick={onEditGoal}

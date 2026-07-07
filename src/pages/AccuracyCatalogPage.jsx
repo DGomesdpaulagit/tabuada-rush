@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp,
@@ -6,12 +5,11 @@ import {
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { getAccuracy, formatDate, OPERATIONS, OPERATION_ORDER, getFactKey, computeOperationMastery } from '../utils';
+import { getAccuracy, formatDate, OPERATIONS, getFactKey } from '../utils';
 import { analyzeUser } from '../utils/analysis';
-import { Progress, StatCard, EmptyState, Button, OperationTabs, pageVariants, pageTransition } from '../components/ui';
+import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
 
 const DAY = 86400000;
 
@@ -80,12 +78,8 @@ const MASTERY_COLORS = {
   nodata:    { bg: 'bg-gray-200', text: 'text-gray-400', label: 'Sem dados' },
 };
 
-// [v4.0 · Fase 1] `operation` seleciona a grade via OPERATIONS registry em vez de
-// hardcoded — hoje `mult`/`add`/`sub`/`div` (8×10 ou 11×11). Divisão usa `cellFact`
-// para resolver o fato real (dividendo/divisor) a partir das coordenadas da grade
-// (divisor/quociente) — ver comentário em `OPERATIONS.div`.
-function MasteryMap({ factStats, operation = 'mult' }) {
-  const cfg = OPERATIONS[operation] || OPERATIONS.mult;
+function MasteryMap({ factStats }) {
+  const cfg = OPERATIONS.mult;
   const rows = cfg.domainRows;
   const cols = cfg.domainCols;
   const cells = [];
@@ -93,22 +87,15 @@ function MasteryMap({ factStats, operation = 'mult' }) {
 
   for (const row of rows) {
     for (const col of cols) {
-      const { a, b } = cfg.cellFact ? cfg.cellFact(row, col) : { a: row, b: col };
-      // [v4.0 · Fase 2] Operações com `isValid` (ex.: subtração não pode dar
-      // negativo) têm combinações impossíveis — não contam pro total nem viram fato.
-      if (cfg.isValid && !cfg.isValid(a, b)) {
-        cells.push({ row, col, invalid: true });
-        continue;
-      }
-      const fk = getFactKey(cfg.id, a, b);
+      const fk = getFactKey(cfg.id, row, col);
       const stat = factStats[fk];
       const state = classifyFact(stat);
       counts[state] += 1;
-      cells.push({ row, col, a, b, fk, stat, state });
+      cells.push({ row, col, a: row, b: col, fk, stat, state });
     }
   }
 
-  const total = cells.filter((c) => !c.invalid).length;
+  const total = cells.length;
   const dominatedPct = total ? Math.round((counts.dominated / total) * 100) : 0;
 
   return (
@@ -123,7 +110,7 @@ function MasteryMap({ factStats, operation = 'mult' }) {
         <p className="font-black text-gray-800">Mapa de Domínio</p>
       </div>
       <p className="text-xs text-gray-400 font-semibold mb-4">
-        {total} fatos fundamentais de {cfg.label.toLowerCase()} — sua memória real
+        {total} fatos fundamentais (2×1 até 9×10) — sua memória real da tabuada
       </p>
 
       {/* Cabeçalho de progresso */}
@@ -161,30 +148,16 @@ function MasteryMap({ factStats, operation = 'mult' }) {
               </div>
               {cols.map((col) => {
                 const cell = cells.find((c) => c.row === row && c.col === col);
-                if (cell.invalid) {
-                  return (
-                    <div
-                      key={`${row}-${col}`}
-                      className="w-7 h-7 rounded-md flex items-center justify-center text-[9px] text-gray-200"
-                    >
-                      ·
-                    </div>
-                  );
-                }
                 const colors = MASTERY_COLORS[cell.state];
                 const stat = cell.stat;
                 const tot = stat ? (stat.correct || 0) + (stat.wrong || 0) : 0;
                 const acc = tot ? Math.round((stat.correct / tot) * 100) : 0;
                 const avgMs = stat?.count && stat.totalMs ? Math.round(stat.totalMs / stat.count) : 0;
-                // Sem `cellFact`: a célula mostra a resposta real (ex.: produto). Com
-                // `cellFact` (divisão): a grade é por (divisor,quociente) — a célula
-                // mostra o dividendo (número "grande") e a resposta real é o quociente (col).
-                const cellNumber = cfg.cellFact ? cell.a : cfg.answer(cell.a, cell.b);
-                const factAns = cfg.cellFact ? col : cfg.answer(cell.a, cell.b);
+                const cellNumber = cfg.answer(cell.a, cell.b);
                 const titleText =
                   cell.state === 'nodata'
                     ? `${cell.a}${cfg.symbol}${cell.b} — sem dados ainda`
-                    : `${cell.a}${cfg.symbol}${cell.b}=${factAns} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
+                    : `${cell.a}${cfg.symbol}${cell.b}=${cellNumber} · ${acc}% · ${(avgMs / 1000).toFixed(1)}s · ${colors.label}`;
                 return (
                   <div
                     key={`${row}-${col}`}
@@ -237,8 +210,6 @@ function AccTooltip({ active, payload, label }) {
 
 export default function AccuracyCatalogPage({ onBack }) {
   const { data } = useApp();
-  const [mapOperation, setMapOperation] = useState('mult'); // aba do Mapa de Domínio (v4.0 · Fase 2)
-  const operationMastery = computeOperationMastery(data); // [v4.0 · Fase 6] visão unificada — radar abaixo
   const sessions = (data.sessions || []).filter((s) => s && s.date);
 
   // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
@@ -503,52 +474,8 @@ export default function AccuracyCatalogPage({ onBack }) {
         )}
       </motion.div>
 
-      {/* ── DOMÍNIO POR OPERAÇÃO [v4.0 · Fase 6] — visão unificada ─────────
-          Radar com o % de domínio nas 4 operações de uma vez, antes de
-          entrar no detalhe por aba (Mapa de Domínio abaixo). */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
-      >
-        <p className="font-black text-gray-800 mb-1">Domínio por Operação</p>
-        <p className="text-xs text-gray-400 font-semibold mb-2">
-          % de fatos dominados em cada uma das 4 operações fundamentais
-        </p>
-        <div className="h-56 -mx-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={operationMastery.map((m) => ({ label: m.label, pct: m.pct }))}>
-              <PolarGrid stroke="#e5e7eb" />
-              <PolarAngleAxis dataKey="label" tick={{ fontSize: 11, fill: '#6b7280', fontWeight: 700 }} />
-              <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-              <Radar
-                dataKey="pct"
-                stroke="#7c3aed"
-                fill="#7c3aed"
-                fillOpacity={0.35}
-                strokeWidth={2}
-              />
-              <Tooltip formatter={(v) => [`${v}%`, 'Domínio']} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="grid grid-cols-4 gap-2 mt-1">
-          {operationMastery.map((m) => (
-            <div key={m.operation} className="text-center">
-              <p className="text-sm font-black text-violet-600">{m.pct}%</p>
-              <p className="text-[10px] font-bold text-gray-400 truncate">{m.label}</p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
       {/* ── MAPA DE DOMÍNIO (80 fatos fundamentais) ──────────────────────── */}
-      <OperationTabs
-        operations={OPERATION_ORDER.map((id) => OPERATIONS[id])}
-        value={mapOperation}
-        onChange={setMapOperation}
-      />
-      <MasteryMap factStats={data.factStats?.[mapOperation] || {}} operation={mapOperation} />
+      <MasteryMap factStats={data.factStats?.mult || {}} />
 
       {/* ── PRECISÃO POR TABUADA (operação: multiplicação) ───────────────── */}
       <motion.div

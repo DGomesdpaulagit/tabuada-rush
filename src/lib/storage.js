@@ -35,18 +35,14 @@ export const DEFAULTS = {
   qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
-  // [v4.0 · Fase 2] Operação selecionada para Rush/Sobrevivência/Velocidade/Zen/Revisão
-  // ('mult' | 'add' | 'sub'). Desafio Diário/Semanal e modos avançados ignoram isto —
-  // sempre multiplicação (comparação justa entre jogadores / benchmarks específicos).
-  selectedOperation: 'mult',
-  // [v4.0 · Fase 5] Viés (não exclusividade) pelos fatos mais fracos do jogador em
+  // Viés (não exclusividade) pelos fatos mais fracos do jogador em
   // Rush/Sobrevivência/Velocidade/Zen — ligado por padrão, com toggle em Configurações.
   adaptiveDifficulty: true,
-  // [v4.0] tableStats/factStats/srsData agora namespaced por operação: { mult: {...}, add: {...}, ... }.
-  // Só `mult` tem conteúdo até a Fase 1 da 4.0 estar concluída (Fases 2/3 trazem add/sub/div).
-  tableStats: { mult: {} },  // desempenho por tabuada (fator a): { [op]: { [a]: { correct, wrong, totalMs, count } } }
-  factStats: { mult: {} },   // desempenho por fato (par a,b): { [op]: { [factKey]: { correct, wrong, totalMs, count } } }
-  srsData: { mult: {} },     // repetição espaçada por fato: { [op]: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
+  // tableStats/factStats/srsData ficam sob `.mult` (namespace interno — só existe
+  // multiplicação no jogo, ver CHANGELOG v3.11-3.16 pro histórico da 4.0).
+  tableStats: { mult: {} },  // desempenho por tabuada (fator a): { mult: { [a]: { correct, wrong, totalMs, count, lastPracticed } } }
+  factStats: { mult: {} },   // desempenho por fato (par a,b): { mult: { [factKey]: { correct, wrong, totalMs, count, lastPracticed } } }
+  srsData: { mult: {} },     // repetição espaçada por fato: { mult: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
 };
 
 // Dados de v3.x salvos ANTES da 4.0 guardavam tableStats/factStats/srsData "achatados"

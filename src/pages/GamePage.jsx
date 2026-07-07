@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion, OPERATIONS } from '../utils';
+import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -38,25 +38,15 @@ function Mascot({ mood }) {
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
-// Modos com geração/benchmark hardcoded para multiplicação — ignoram o
-// seletor de operação (Desafio Diário/Semanal precisam de conteúdo idêntico
-// entre jogadores; Difícil/Recorde Pessoal/Combinado/Inverso são conceitos
-// específicos de multiplicação). Só Rush/Sobrevivência/Velocidade/Zen/Revisão
-// respeitam `operation`.
-const MULT_ONLY_MODES = ['inverse', 'combined', 'hard', 'daily', 'personal', 'weekly'];
-
-// [v4.0 · Fase 5] Modos elegíveis pro viés de fatos fracos (mesmo grupo que
-// respeita `operation` via geração on-the-fly — Revisão fica de fora porque
-// já tem seu próprio mecanismo de priorização, ver getRevisionQuestions).
+// [v4.0 · Fase 5] Modos elegíveis pro viés de fatos fracos (Rush/Sobrevivência/
+// Velocidade/Zen — Revisão fica de fora porque já tem seu próprio mecanismo de
+// priorização, ver getRevisionQuestions).
 const ADAPTIVE_BIAS_MODES = ['rush', 'survival', 'speed', 'zen'];
 
 function init(args) {
   const { mode, customQuestions } = args;
   const cfg = MODES[mode];
-  const operation = MULT_ONLY_MODES.includes(mode) ? 'mult' : (args.operation || 'mult');
-  // tableStats já vem com TODAS as operações (App.jsx) — fatia pela operação
-  // efetiva desta partida (Difícil sempre quer `.mult`, que `operation` já resolve).
-  const tableStats = args.tableStatsAll?.[operation] || {};
+  const tableStats = args.tableStats || {};
   const adaptiveDifficulty = args.adaptiveDifficulty !== false;
   const genOpts = {
     includeExtra: args.includeExtraTables,
@@ -91,9 +81,8 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(tableStats) : generateQuestion(operation, 1, genOpts)),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(tableStats) : generateQuestion('mult', 1, genOpts)),
     mode,
-    operation,
     includeExtraTables: !!args.includeExtraTables,
     adaptiveDifficulty,
     tableStats,
@@ -155,7 +144,7 @@ function reducer(state, action) {
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
         ? getHardQuestion(state.tableStats)
-        : generateQuestion(state.operation || 'mult', getDiffLevel(state.answered), {
+        : generateQuestion('mult', getDiffLevel(state.answered), {
             includeExtra: state.includeExtraTables,
             weakBias: state.adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(state.mode),
             tableStats: state.tableStats,
@@ -182,7 +171,7 @@ function reducer(state, action) {
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────
 
-export default function GamePage({ mode, operation = 'mult', adaptiveDifficulty = true, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
+export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
   const cfg = MODES[mode];
   const { data, update } = useApp();
 
@@ -196,16 +185,12 @@ export default function GamePage({ mode, operation = 'mult', adaptiveDifficulty 
   // customQuestions precisa ser passado para init — usamos ref para evitar stale closure
   const initArgRef = useRef({
     mode,
-    operation,
     adaptiveDifficulty,
     customQuestions,
     includeExtraTables: !!data.includeExtraTables,
-    tableStatsAll: data.tableStats || {},
+    tableStats: data.tableStats?.mult || {},
   });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
-  // Símbolo da operação EFETIVA da partida (state.operation já normaliza para
-  // 'mult' nos modos que ignoram o seletor — ver MULT_ONLY_MODES).
-  const opSymbol = OPERATIONS[state.operation]?.symbol || '×';
 
   const [inputVal, setInputVal] = useState('');
   // Modo Inverso: dois inputs (fatores a e b). inputVal segue como "a" para reaproveitar lógica.
@@ -340,7 +325,6 @@ export default function GamePage({ mode, operation = 'mult', adaptiveDifficulty 
       b: state.question.b,
       correct: isCorrect,
       ms: dt > 0 && dt < 60000 ? dt : 0,
-      operation: state.operation || 'mult',
       ...(isPersonal ? { beatPersonal, benchmarkMs: benchmark } : {}),
     });
 
@@ -663,7 +647,7 @@ export default function GamePage({ mode, operation = 'mult', adaptiveDifficulty 
               ) : (
                 <>
                   <p className="text-7xl font-black text-gray-900 tracking-tight">
-                    {state.question?.a} {opSymbol} {state.question?.b}
+                    {state.question?.a} × {state.question?.b}
                   </p>
                   <p className={`text-sm font-bold mt-2 ${cfg.text} opacity-70`}>Qual o resultado?</p>
                   {isPersonalMode && state.question?.personalBenchmarkMs > 0 && (

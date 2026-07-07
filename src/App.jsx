@@ -302,9 +302,6 @@ export default function App() {
   const { user } = useAuth();
   const [screen, setScreen] = useState('menu');
   const [activeMode, setActiveMode] = useState(null);
-  // Operação EFETIVA da partida atual (pode divergir de data.selectedOperation —
-  // ex.: Revisão em Divisão ainda cai pra multiplicação, ver startGame).
-  const [activeOperation, setActiveOperation] = useState('mult');
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);
   const [goalModalManual, setGoalModalManual] = useState(false);
@@ -486,9 +483,7 @@ export default function App() {
 
         // Desempenho por tabuada (fator a) — agrega o registro por questão da partida.
         // Também registra factStats por par (a,b) normalizado para o Mapa de Domínio.
-        // [v4.0 · Fase 1/2] Namespaced por operação (`q.operation`, default 'mult').
-        // Nome `operation` (não `op`) para não colidir com `state.question.op` do
-        // Modo Combinado, que já usa `op` para o operador interno ('+'/'-').
+        // tableStats/factStats ficam sob `.mult` (só multiplicação existe no jogo).
         const tableStats = { ...(prev.tableStats || {}) };
         const factStats = { ...(prev.factStats || {}) };
         // [v4.0 · Fase 4] `lastPracticed` alimenta o modelo de curva de esquecimento
@@ -727,16 +722,8 @@ export default function App() {
   // Inicia partida pulando o fluxo de aposta (também usado quando o jogador
   // recusa apostar). Define modo, prepara questões e abre o GamePage.
   const startGame = useCallback((mode) => {
-    // Revisão respeita a operação selecionada (Rush/Sobrevivência/Velocidade/Zen
-    // também) — os demais modos com lista fixa são sempre multiplicação.
-    const selectedOp = data.selectedOperation || 'mult';
-    // Revisão ainda não tem pool de fatos fracos próprio pra Divisão — tableStats.div
-    // é agrupado por DIVIDENDO (não por divisor), então a lógica de "tabuada mais
-    // fraca" não bate. Cai pra multiplicação nesse caso específico (Fase 4 resolve).
-    const reviewOp = selectedOp === 'div' ? 'mult' : selectedOp;
-    const effectiveOp = mode === 'review' ? reviewOp : selectedOp;
     if (mode === 'review') {
-      setCustomQuestions(getRevisionQuestions(data.tableStats?.[reviewOp] || {}, 15, reviewOp));
+      setCustomQuestions(getRevisionQuestions(data.tableStats?.mult || {}, 15));
     } else if (mode === 'personal') {
       setCustomQuestions(getPersonalRecordQuestions(data.factStats?.mult || {}));
     } else if (mode === 'weekly') {
@@ -744,10 +731,9 @@ export default function App() {
     } else {
       setCustomQuestions(null);
     }
-    setActiveOperation(effectiveOp);
     setActiveMode(mode);
     setScreen('game');
-  }, [data.tableStats, data.factStats, data.selectedOperation]);
+  }, [data.tableStats, data.factStats]);
 
   const handleStart = useCallback((mode) => {
     // Bloqueio defensivo: se o modo está locked, não inicia.
@@ -823,7 +809,6 @@ export default function App() {
             <GamePage
               key={`game-${activeMode}`}
               mode={activeMode}
-              operation={activeOperation}
               adaptiveDifficulty={data.adaptiveDifficulty !== false}
               customQuestions={customQuestions}
               onEnd={handleGameEnd}

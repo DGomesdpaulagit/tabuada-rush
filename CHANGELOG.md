@@ -4,6 +4,32 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.17.0] — 2026-07-06 — Reversão da 4.0: de volta ao foco (só multiplicação)
+
+**Decisão estratégica do Davi. Detalhes em `sessions/sessao-042.md` e `DECISIONS.md` (D014).**
+
+### Removido
+- **Soma, Subtração e Divisão** — o Tabuada Rush voltou a ser exclusivamente
+  sobre multiplicação (o propósito original do projeto). Removidos: registro
+  `OPERATIONS.add/.sub/.div`, seletor de operação, abas de operação no Mapa
+  de Domínio/Certificados, radar "Domínio por Operação", certificado
+  "Matemática Fundamental Completa", bônus de amplitude no QI.
+
+### Mantido (intacto — não foi uma reversão total da 4.0)
+- Curva de esquecimento (`predictRecallProbability`/`getFactsAtRisk`)
+- Motor preditivo no Modo Revisão (componente de "staleness")
+- Banner "Fatos a Vencer" + lembrete local
+- Viés adaptativo por fatos fracos em Rush/Sobrevivência/Velocidade/Zen +
+  toggle "Foco em Fraquezas"
+
+### Por quê
+O objetivo original — decorar a tabuada — é específico e mensurável.
+"Ser bom em matemática" (4 operações) não era. A amplitude de operações
+foi descartada; a inteligência adaptativa (que serve a multiplicação)
+ficou.
+
+---
+
 ## [3.16.1] — 2026-07-06 — Remoção do Leaderboard Global
 
 **Pequena iteração, fora de roadmap. Detalhes em `sessions/sessao-041.md`.**

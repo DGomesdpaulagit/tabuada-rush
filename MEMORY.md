@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.16.1 (Leaderboard Global removido · sessao-041)  
+**Versão:** 3.17.0 (Reversão da 4.0 — só multiplicação, de volta ao foco · sessao-042)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -55,10 +55,9 @@ src/
 public/sw.js             — [v2.9.1] Service Worker: notificationclick + [v2.10] push exibe notificação
 supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de ofensiva (cron diário)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
-                            [v4.0] OPERATIONS (mult/add/sub/div), getFactKey/getFactSpace/isValid/cellFact,
-                            generateQuestion(operation,...), predictRecallProbability/getFactsAtRisk,
-                            getWeakPool (viés adaptativo), computeOperationMastery/hasFullMasteryCertificate
-                            — roadmap 4.0 completo (Fases 1-6)
+                            [v4.0, revertido em parte na v3.17 — ver D014] OPERATIONS só tem `mult`
+                            hoje; predictRecallProbability/getFactsAtRisk (curva de esquecimento) e
+                            getWeakPool (viés adaptativo) sobrevivem, escopados só pra multiplicação
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
@@ -177,15 +176,15 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   qiBonus: 0,               // [v2.6] Bônus de QI via recompensas de ofensiva
   lastPlayDate: null,       // Última data que jogou (YYYY-MM-DD)
   progressLog: [],          // [v2.11] Marcos da jornada (nível/XP/ofensiva/recorde) — últimos 50
-  // [v4.0 · Fase 1] Namespaced por operação — { mult: {...}, add: {...}, ... }.
-  // Só `mult` tem conteúdo até a Fase 2/3 trazerem soma/subtração/divisão.
+  // tableStats/factStats/srsData ficam sob `.mult` (namespace interno que
+  // sobrou da 4.0 — só existe multiplicação no jogo, ver D014 em DECISIONS.md).
   // Migração automática de dados pré-4.0 (achatados) em storage.js.
-  // [v4.0 · Fase 4] cada entrada de tableStats/factStats ganhou `lastPracticed`
-  // (ISO string) — alimenta o modelo de curva de esquecimento (predictRecallProbability)
-  tableStats: { mult: {}, add: {}, sub: {}, div: {} },  // [v2.12] Desempenho por tabuada: { [op]: { [a]: { correct, wrong, totalMs, count, lastPracticed } } } — div é por DIVIDENDO
-  factStats: { mult: {}, add: {}, sub: {}, div: {} },   // [v3.3] Desempenho por fato (Mapa de Domínio): { [op]: { [factKey]: { ..., lastPracticed } } }
-  srsData: { mult: {} },     // [v3.4] Repetição espaçada (Flashcard) — só mult por enquanto
-  selectedOperation: 'mult', // [v4.0 · Fase 2] operação ativa em Rush/Sobrevivência/Velocidade/Zen/Revisão
+  // `lastPracticed` (ISO string) alimenta o modelo de curva de esquecimento
+  // (predictRecallProbability) — sobrevivente da 4.0, ver D014.
+  tableStats: { mult: {} },  // Desempenho por tabuada: { mult: { [a]: { correct, wrong, totalMs, count, lastPracticed } } }
+  factStats: { mult: {} },   // Desempenho por fato (Mapa de Domínio): { mult: { [factKey]: { ..., lastPracticed } } }
+  srsData: { mult: {} },     // Repetição espaçada (Flashcard)
+  adaptiveDifficulty: true,  // Viés por fatos fracos em Rush/Sobrevivência/Velocidade/Zen (toggle em Configurações)
 }
 ```
 

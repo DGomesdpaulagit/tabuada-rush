@@ -19,8 +19,9 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.16.1 (Leaderboard Global removido — sessao-041.md)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ **Roadmap 4.0 100% ENTREGUE** (Fases 1-6, v3.11.0→v3.16.0, sessões 035-040 — ver sessao-040.md pro resumo executivo completo). Sem roadmap formal em aberto no momento.
+**Versão:** 3.17.0 (Reversão da 4.0 — só multiplicação, de volta ao foco — sessao-042.md)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ⚠️ Roadmap 4.0 foi entregue (Fases 1-6) e depois **parcialmente revertido** por decisão do Davi (D014 em `DECISIONS.md`) — só o pilar "Inteligência Adaptativa" sobreviveu; "Matemática Completa" (soma/subtração/divisão) foi removida. Sem roadmap formal em aberto no momento.
+**[v3.17.0]** Tabuada Rush voltou a ser exclusivamente sobre MULTIPLICAÇÃO — esse é o propósito original do projeto (decorar a tabuada) e a 4.0 tinha diluído isso pra "ser bom em matemática" (4 operações). Removido: `OPERATIONS.add/.sub/.div`, seletor de operação, abas de operação, radar cross-operação, certificado "Matemática Fundamental Completa", bônus de amplitude no QI. Mantido: curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer", viés adaptativo por fatos fracos (toggle "Foco em Fraquezas"). Ver `sessao-042.md`.
 **[v3.16.1]** Leaderboard Global removido por completo (página, botão, upload de score) — pedido direto do Davi. Desafio Diário/Semanal continuam existindo, só sem comparação global. Tabelas `leaderboard_daily`/`leaderboard_weekly` no Supabase ficaram órfãs (não apagadas — ver `SUPABASE_SETUP.md`).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
@@ -36,19 +37,28 @@
 
 ---
 
-## ✅ TABUADA RUSH 4.0 — ROADMAP 100% ENTREGUE (v3.11.0 → v3.16.0 · sessões 035-040)
+## ⚠️ TABUADA RUSH 4.0 — ENTREGUE E DEPOIS PARCIALMENTE REVERTIDO (v3.11.0 → v3.17.0)
 
-> Filosofia: "praticar/memorizar mult (3.0) → dominar as 4 operações + prever o
-> esquecimento (4.0)". Dois pilares, 6 fases, 24 itens: fundação multi-operação
-> (`OPERATIONS`/`getFactKey`/`cellFact`/`isValid`), Soma/Subtração/Divisão
-> (Matemática Completa), curva de esquecimento + motor preditivo no Modo Revisão,
-> viés adaptativo em Rush/Sobrevivência/Velocidade/Zen, certificado "Matemática
-> Fundamental Completa" + QI com amplitude + radar cross-operação (Perfil
-> Unificado). Detalhes completos em `sessions/sessao-034.md` (planejamento) e
-> `sessions/sessao-040.md` (fechamento, com tabela resumo das 6 fases).
+> A 4.0 foi entregue completa (Fases 1-6, sessões 035-040, v3.11.0→v3.16.0)
+> com dois pilares: "Matemática Completa" (soma/subtração/divisão) e
+> "Inteligência Adaptativa" (curva de esquecimento, viés por fraqueza). Na
+> sessão 042, Davi refletiu que o pilar "Matemática Completa" tinha diluído o
+> propósito ORIGINAL do projeto (decorar a TABUADA, não "ser bom em
+> matemática") — e reverteu essa parte. **Só "Inteligência Adaptativa"
+> sobreviveu**, agora escopada só pra multiplicação. Ver `DECISIONS.md` D014
+> e `sessions/sessao-042.md` pro registro completo da decisão e da reversão.
 >
-> **Bugs corrigidos ao longo do caminho:** B007 (contador de certificados
-> hardcoded) e B008 (`tableStats` sempre `.mult` no GamePage) — ver `BUGS.md`.
+> **O que existe hoje (pós-reversão):** curva de esquecimento
+> (`predictRecallProbability`/`getFactsAtRisk`), motor preditivo no Modo
+> Revisão, banner "Fatos a Vencer", viés adaptativo por fatos fracos em
+> Rush/Sobrevivência/Velocidade/Zen (toggle "Foco em Fraquezas"). **O que foi
+> removido:** `OPERATIONS.add/.sub/.div`, seletor de operação, abas de
+> operação, radar cross-operação, certificado "Matemática Fundamental
+> Completa", bônus de amplitude no QI.
+>
+> **Bugs corrigidos ao longo do caminho (histórico):** B007 (contador de
+> certificados hardcoded) e B008 (`tableStats` sempre `.mult` no GamePage)
+> — ver `BUGS.md`.
 
 **Sem roadmap formal em aberto.** Próxima sessão: ver seção abaixo.
 
@@ -129,26 +139,33 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — SEM ROADMAP FORMAL (roadmap 4.0 100% entregue em 2026-07-06)
+## 🎯 PRÓXIMA SESSÃO — SEM ROADMAP FORMAL (foco = usar de verdade)
 
-O roadmap 4.0 (sessao-034) está completo — 6 fases, v3.11.0 → v3.16.0,
-sessões 035-040. Resumo executivo completo em `sessions/sessao-040.md`.
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-042.md` (reversão
+da 4.0) + `DECISIONS.md` D014 (o porquê).
+
+O Tabuada Rush voltou a ser especificamente sobre decorar a tabuada de
+multiplicação — esse é o norte pra qualquer decisão de produto daqui pra
+frente. A 4.0's "Inteligência Adaptativa" (curva de esquecimento, viés por
+fraqueza) continua ativa, escopada só pra mult.
 
 **Possíveis caminhos para a próxima sessão:**
-1. **Polimento e bug-fixing** — testar end-to-end, ajustar UX, iterar sobre
-   uso real (o roadmap trouxe bastante superfície nova: seletor de
-   operação, viés adaptativo, banner de esquecimento, radar, certificado
-   supremo — vale um passe de observação de uso real antes de mais features).
-2. **Pequenas iterações** — refinamentos pontuais sem roadmap formal.
-3. **Início de uma futura 5.0** — se surgir uma nova visão/filosofia,
-   repetir o método da sessao-025/034: sessão de planejamento antes de
-   qualquer código.
-4. **Ação opcional pendente (não bloqueia nada):** Publicação Play Store —
+1. **Uso real** — o caminho que Davi indicou: jogar de verdade pra decorar
+   a tabuada, e trazer feedback concreto do que sentir no caminho (isso vira
+   "pequenas iterações" pontuais, não um roadmap abstrato).
+2. **Polimento e bug-fixing** — observar o app em uso e corrigir atrito
+   específico (texto confuso, número que não bate, fluxo com cliques demais).
+3. **Ação opcional pendente (não bloqueia nada):** Publicação Play Store —
    Davi tem intenção; aguardando decisão de prioridade (assets: ícone 512²,
    screenshots, política de privacidade, US$25 dev account, método sugerido:
    PWABuilder).
 
-**Não há urgência.** O produto 4.0 está completo e estável.
+**IMPORTANTE — antes de propor qualquer feature nova:** checar se ela serve
+diretamente o objetivo "decorar a tabuada de multiplicação". Se a resposta
+for vaga ("melhora a experiência geral", "deixa mais completo"), é sinal de
+alerta — foi exatamente esse tipo de raciocínio que levou à 4.0 original.
+
+**Não há urgência.**
 
 ---
 

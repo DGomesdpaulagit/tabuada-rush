@@ -189,3 +189,19 @@ Retorna as 3 tabuadas com maior score. `getHardQuestion(tableStats)` amostra des
 - Recorde do Difícil perde valor comparativo entre jogadores (pools diferentes)
 - Aceito: Difícil não tem leaderboard; valor é individual
 **Revisitar quando:** Quisermos comparação de Difícil entre jogadores — aí volta a ser fixo ou tem 2 sub-modos (fixo/adaptativo).
+
+---
+
+## D014 — Reversão da 4.0: remoção de Soma/Subtração/Divisão
+
+**Data:** 2026-07-06 · sessao-042
+**Contexto:** A 4.0 (Fases 1-6, sessões 035-040) expandiu o jogo de "só multiplicação" pra 4 operações fundamentais, com seletor de operação, Mapa de Domínio/Certificados/QI cobrindo as 4. Davi trouxe uma reflexão: o propósito ORIGINAL do Tabuada Rush é decorar a TABUADA — ele criou o jogo porque escrever a tabuada toda à mão pra treinar era cansativo, e ele mesmo ainda não decorou. A 4.0 trocou esse objetivo específico e mensurável por algo vago ("ser bom em matemática"), e o próprio código já estava forçando abstrações (`cellFact`, `isValid`) pra encaixar divisão/subtração numa estrutura pensada pra multiplicação — sinal de que a direção não era essa.
+**Decisão:** Remover por completo `add`/`sub`/`div` do registro `OPERATIONS`, o seletor de operação, as abas de operação (Mapa de Domínio/Certificados), o radar cross-operação e o certificado "Matemática Fundamental Completa" (só faziam sentido com 4 operações). O Tabuada Rush volta a ser exclusivamente sobre multiplicação.
+**O que foi MANTIDO** (não é reversão total da 4.0 — só da amplitude de operações):
+- Curva de esquecimento (`predictRecallProbability`/`getFactsAtRisk`, Fase 4) — roda em cima de `factStats.mult`
+- Motor preditivo no Modo Revisão (componente de "staleness" na fórmula de dificuldade, Fase 4)
+- Banner "Fatos a Vencer" + lembrete local (Fase 4)
+- Viés adaptativo por fatos fracos em Rush/Sobrevivência/Velocidade/Zen + toggle "Foco em Fraquezas" (Fase 5)
+**Motivo:** Alinhar o produto de volta ao propósito original e pessoal do criador — decorar a tabuada — em vez de virar um "jogo de matemática genérico". A amplitude de conteúdo (4 operações) e a profundidade de inteligência adaptativa eram os dois pilares da 4.0; só o segundo sobreviveu.
+**Trade-off:** Todo o trabalho de Fases 1, 2, 3 e partes da 6 (código de `add`/`sub`/`div`, `cellFact`, seletor de operação, radar, certificado supremo) foi descartado — ainda existe no histórico do Git caso um dia vire um projeto separado ("jogo de matemática completo"), mas não faz mais parte do Tabuada Rush.
+**Revisitar quando:** Davi quiser construir esse "jogo de matemática completo" — deve nascer como projeto NOVO, não como expansão do Tabuada Rush (decisão explícita de Davi, pra não repetir a diluição de foco).

@@ -1,12 +1,13 @@
 import { LEVELS, ACHIEVEMENTS } from '../constants';
 import { CHARACTERS, TIERS, QI_MIN, QI_MAX } from '../constants/characters';
 
-// ── OPERAÇÕES [v4.0 · Fase 1] ────────────────────────────────────────────────
-// Registro central das operações matemáticas suportadas. Hoje só `mult` tem
-// conteúdo real (a 3.0 inteira é multiplicação) — `add`/`sub`/`div` entram nas
-// Fases 2 e 3 do roadmap 4.0. Isso é a fundação: factStats/tableStats/srsData,
-// geração de perguntas, Mapa de Domínio e certificados passam a ler daqui em
-// vez de terem os números (2-9, 1-10, a×b) espalhados e hardcoded pelo código.
+// ── OPERAÇÃO ──────────────────────────────────────────────────────────────
+// O Tabuada Rush é (e continua sendo) um jogo de MULTIPLICAÇÃO — decorar a
+// tabuada. Essa constante existe porque `getFactKey`/`getFactSpace`/
+// `computeCertificates` recebem uma "operação" por assinatura (ver histórico
+// em CHANGELOG.md v3.11-3.16 — a 4.0 chegou a suportar soma/subtração/divisão
+// e foi revertida por decisão consciente: o jogo estava perdendo o propósito
+// original. Ver sessao-042.md).
 export const DEFAULT_OPERATION = 'mult';
 
 export const OPERATIONS = {
@@ -19,55 +20,7 @@ export const OPERATIONS = {
     domainCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // fator `b`
     answer: (a, b) => a * b,
   },
-  // [v4.0 · Fase 2] Soma e subtração — mesma faixa de operandos (0-10) dos dois lados,
-  // para os fatos ficarem "espelhados" (soma vai de 0 a 20; subtração nunca é negativa).
-  add: {
-    id: 'add',
-    label: 'Adição',
-    symbol: '+',
-    commutative: true, // 3+7 e 7+3 são o mesmo fato
-    domainRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    domainCols: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    answer: (a, b) => a + b,
-  },
-  sub: {
-    id: 'sub',
-    label: 'Subtração',
-    symbol: '−',
-    commutative: false, // 7-3 ≠ 3-7 → chave "sub:a-b" preserva a ordem
-    domainRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // minuendo (a)
-    domainCols: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // subtraendo (b)
-    isValid: (a, b) => a >= b, // resultado nunca negativo
-    answer: (a, b) => a - b,
-  },
-  // [v4.0 · Fase 3] Divisão é DERIVADA da multiplicação — a grade organiza por
-  // (divisor, quociente), a mesma geometria de `mult` só invertida (8×10, sem
-  // combinação inválida nenhuma: divisor×quociente sempre existe e é exato).
-  // `cellFact(divisor, quociente)` resolve pro fato REAL (dividendo, divisor,
-  // quociente) — é o que vira chave/estatística. Ex.: linha 7 (÷7), coluna 8
-  // (quociente 8) → dividendo 56 → fato real "56÷7=8".
-  div: {
-    id: 'div',
-    label: 'Divisão',
-    symbol: '÷',
-    commutative: false, // 56÷7 ≠ 7÷56 → chave "div:a-b" preserva a ordem
-    domainRows: [2, 3, 4, 5, 6, 7, 8, 9],        // divisor
-    domainCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // quociente
-    cellFact: (divisor, quociente) => ({ a: divisor * quociente, b: divisor, ans: quociente }),
-    answer: (a, b) => a / b, // usado na geração real de perguntas: a=dividendo, b=divisor
-  },
 };
-
-// Ordem de exibição das operações nas abas (Mapa de Domínio, Certificados, etc).
-export const OPERATION_ORDER = ['mult', 'add', 'sub', 'div'];
-
-// Resolve o par (a,b) REAL de um fato a partir das coordenadas da grade (row,col).
-// Para a maioria das operações, row/col JÁ SÃO (a,b) — só a Divisão precisa de
-// indireção via `cellFact` (a grade organiza por divisor/quociente, não por
-// dividendo/divisor). Ver comentário em `OPERATIONS.div`.
-function resolveCellFact(cfg, row, col) {
-  return cfg.cellFact ? cfg.cellFact(row, col) : { a: row, b: col };
-}
 
 // Chave canônica de um fato para uma operação. Para operações comutativas
 // (hoje só `mult`) normaliza min×max — 3×7 e 7×3 caem na mesma chave.
@@ -78,7 +31,7 @@ export function getFactKey(operation, a, b) {
     const hi = Math.max(a, b);
     return `${lo}x${hi}`;
   }
-  return `${cfg.id}:${a}-${b}`; // formato reservado p/ operações não-comutativas futuras
+  return `${cfg.id}:${a}-${b}`;
 }
 
 // ── QUESTION GENERATION ────────────────────────────────────────────────────
@@ -136,40 +89,6 @@ export function getCombinedQuestion() {
   return { a, b, c, op, ans };
 }
 
-// [v4.0 · Fase 2] Gera uma questão para operações "de grade" (add/sub — duas faixas
-// fixas de operandos, como um mapa de domínio). diffLevel limita o teto dos
-// operandos (progressivo, igual ao `mult`). Respeita `isValid` (ex.: subtração
-// nunca sorteia um par que dê resultado negativo).
-// forcedRow [v4.0 · Fase 5]: ver `getRandomQuestion`.
-function getGridQuestion(operation, diffLevel = 1, forcedRow = null) {
-  const cfg = OPERATIONS[operation];
-  const capByLevel = { 1: 5, 2: 8, 3: 10 };
-  const cap = capByLevel[diffLevel] || capByLevel[1];
-  const rows = cfg.domainRows.filter((n) => n <= cap);
-  const cols = cfg.domainCols.filter((n) => n <= cap);
-  let a, b;
-  do {
-    a = forcedRow != null && rows.includes(forcedRow) ? forcedRow : rows[Math.floor(Math.random() * rows.length)];
-    b = cols[Math.floor(Math.random() * cols.length)];
-  } while (cfg.isValid && !cfg.isValid(a, b));
-  return { a, b, ans: cfg.answer(a, b) };
-}
-
-// [v4.0 · Fase 3] Divisão é DERIVADA da multiplicação: sorteia divisor e
-// quociente (mesma progressão por diffLevel do `getGridQuestion`) e calcula
-// o dividendo — assim a divisão é SEMPRE exata (sem resto), nunca precisa de
-// `isValid`. Pergunta exibida: "{dividendo} ÷ {divisor} = ?", resposta = quociente.
-function getDivQuestion(diffLevel = 1) {
-  const cfg = OPERATIONS.div;
-  const capByLevel = { 1: 5, 2: 8, 3: 10 };
-  const cap = capByLevel[diffLevel] || capByLevel[1];
-  const divisores = cfg.domainRows.filter((n) => n <= cap);
-  const quocientes = cfg.domainCols.filter((n) => n <= cap);
-  const divisor = divisores[Math.floor(Math.random() * divisores.length)];
-  const quociente = quocientes[Math.floor(Math.random() * quocientes.length)];
-  return { a: divisor * quociente, b: divisor, ans: quociente };
-}
-
 // [v4.0 · Fase 5] Generaliza a lógica de "fatos mais fracos" do Modo Difícil
 // (getHardTabuadaPool, mult-only) para qualquer operação — usado como VIÉS
 // (não exclusividade, diferente do Modo Difícil) no Rush/Sobrevivência/
@@ -194,34 +113,22 @@ export function getWeakPool(tableStats = {}) {
   return entries.slice(0, WEAK_BIAS_POOL_SIZE).map((e) => e.a);
 }
 
-// Gerador unificado [v4.0 · Fase 1/2/3/5]: ponto de entrada único para gerar uma
-// questão de qualquer operação. `mult` delega para `getRandomQuestion`
-// (comportamento idêntico ao pré-4.0); `add`/`sub` usam `getGridQuestion`;
-// `div` usa `getDivQuestion` (derivada da multiplicação, sempre exata).
+// Ponto de entrada único pra gerar uma questão de multiplicação — delega pra
+// `getRandomQuestion` (comportamento idêntico ao pré-4.0). O `operation` na
+// assinatura é vestigial (sempre 'mult' hoje); mantido só porque outras
+// funções (`getFactKey`, `computeCertificates`) ainda recebem esse parâmetro.
 //
 // `opts.weakBias` + `opts.tableStats` [Fase 5]: com ~60% de chance, força a
-// "linha" (fator/minuendo/divisor) a vir do pool de fatos mais fracos do
-// jogador em vez do sorteio normal — um viés suave, não uma exclusividade.
-// Divisão fica de fora: `tableStats.div` é agrupado por DIVIDENDO, não por
-// divisor, então não dá pra usar como "linha" do gerador (mesma limitação
-// identificada na Fase 3 pro Modo Revisão).
+// "tabuada" a vir do pool de fatos mais fracos do jogador em vez do sorteio
+// normal — um viés suave, não uma exclusividade (diferente do Modo Difícil).
 export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
   const { includeExtra, weakBias, tableStats } = opts;
   let forcedRow = null;
-  if (weakBias && tableStats && operation !== 'div' && Math.random() < WEAK_BIAS_PROBABILITY) {
+  if (weakBias && tableStats && Math.random() < WEAK_BIAS_PROBABILITY) {
     const weakPool = getWeakPool(tableStats);
     if (weakPool.length) forcedRow = weakPool[Math.floor(Math.random() * weakPool.length)];
   }
-  switch (operation) {
-    case 'add':
-    case 'sub':
-      return getGridQuestion(operation, diffLevel, forcedRow);
-    case 'div':
-      return getDivQuestion(diffLevel);
-    case 'mult':
-    default:
-      return getRandomQuestion(diffLevel, includeExtra, forcedRow);
-  }
+  return getRandomQuestion(diffLevel, includeExtra, forcedRow);
 }
 
 export function getDiffLevel(questionsAnswered) {
@@ -307,8 +214,6 @@ export function getCurrentWeekKey(date = new Date()) {
 //   40% taxa de erro | 25% tempo médio de resposta | 15% volume absoluto de erros
 //   | 20% "staleness" (dias desde a última prática — motor preditivo, Fase 4)
 // Se houver poucos dados (< 2 tentativas por tabuada), usa pool padrão.
-// [v4.0 · Fase 2/4] `operation` generaliza para add/sub/div — `tableStats` já deve vir
-// fatiado pela operação certa (`data.tableStats?.[operation]`) por quem chama.
 export function getRevisionQuestions(tableStats, count = 15, operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const entries = Object.entries(tableStats || {})
@@ -337,8 +242,7 @@ export function getRevisionQuestions(tableStats, count = 15, operation = DEFAULT
 
   return Array.from({ length: count }, () => {
     const a = pool[Math.floor(Math.random() * pool.length)];
-    const cols = cfg.isValid ? cfg.domainCols.filter((n) => cfg.isValid(a, n)) : cfg.domainCols;
-    const b = cols.length ? cols[Math.floor(Math.random() * cols.length)] : cfg.domainCols[0];
+    const b = cfg.domainCols[Math.floor(Math.random() * cfg.domainCols.length)];
     return { a, b, ans: cfg.answer(a, b) };
   });
 }
@@ -405,15 +309,8 @@ export function computeQI(data = {}) {
   const levelIdx = getLevelIdx(data.xp || 0);
   const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;           // progresso de nível (0–30)
 
-  // [v4.0 · Fase 6] Amplitude: recompensa dominar as 4 operações, não só multiplicação.
-  // Média do % de domínio nas 4 operações — quem só joga mult fica travado perto de
-  // 25% disso (1 de 4 operações cheia), quem é bem distribuído chega perto do máximo.
-  const avgMasteryPct =
-    computeOperationMastery(data).reduce((s, m) => s + m.pct, 0) / OPERATION_ORDER.length;
-  const breadthPts = (avgMasteryPct / 100) * 10;                       // amplitude (0–10)
-
   const bonus = data.qiBonus || 0; // bônus de QI ganho em recompensas de ofensiva
-  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + breadthPts + bonus;
+  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + bonus;
   return Math.max(QI_MIN, Math.min(QI_MAX, Math.round(raw)));
 }
 
@@ -567,18 +464,13 @@ export function detectProgressEvents(prev = {}, next = {}) {
 const SRS_INITIAL_INTERVALS_MIN = { wrong: 10, hard: 60 * 24, easy: 3 * 60 * 24 }; // minutos
 const SRS_DEFAULT_EASE = 2.5;
 
-// Espaço canônico de fatos de uma operação (chaves via getFactKey — deduplicadas
-// para operações comutativas, filtradas por `isValid` quando a operação tiver
-// combinações impossíveis — ex.: subtração nunca pode dar negativo). Operações
-// com `cellFact` (ex.: divisão) resolvem o fato real a partir das coordenadas
-// da grade antes de gerar a chave — ver `OPERATIONS.div`.
+// Espaço canônico dos 52 fatos fundamentais da tabuada (chaves via getFactKey,
+// deduplicadas por comutatividade — 3×7 e 7×3 caem na mesma chave).
 export function getFactSpace(operation = DEFAULT_OPERATION) {
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const keys = new Set();
-  for (const row of cfg.domainRows) {
-    for (const col of cfg.domainCols) {
-      const { a, b } = resolveCellFact(cfg, row, col);
-      if (cfg.isValid && !cfg.isValid(a, b)) continue;
+  for (const a of cfg.domainRows) {
+    for (const b of cfg.domainCols) {
       keys.add(getFactKey(cfg.id, a, b));
     }
   }
@@ -683,8 +575,8 @@ export function getReviewQueue(srsData = {}, limit = 20) {
 //
 // Diferença para o SRS do Flashcard (updateSrsFact): aquele reage à avaliação
 // SUBJETIVA do jogador ("Fácil/Difícil/Errei") só dentro do modo Flashcard.
-// Este modelo é PASSIVO — roda sobre os dados de QUALQUER partida, em
-// qualquer uma das 4 operações, sem exigir que o jogador entre num modo específico.
+// Este modelo é PASSIVO — roda sobre os dados de QUALQUER partida, sem exigir
+// que o jogador entre num modo específico.
 
 const FORGETTING_MIN_SAMPLES = 2;   // menos que isso: força de memória mínima (esquece rápido)
 const FORGETTING_MIN_STRENGTH_DAYS = 1;
@@ -727,13 +619,9 @@ export function getFactsAtRisk(factStats = {}, now = Date.now()) {
     .sort((a, b) => a.recall - b.recall); // mais esquecido primeiro
 }
 
-// Conta fatos "a vencer" somando as 4 operações — usado no banner do menu.
+// Conta fatos "a vencer" — usado no banner do menu.
 export function countFactsAtRiskAllOps(data = {}) {
-  const now = Date.now();
-  return OPERATION_ORDER.reduce(
-    (sum, op) => sum + getFactsAtRisk(data.factStats?.[op] || {}, now).length,
-    0
-  );
+  return getFactsAtRisk(data.factStats?.mult || {}).length;
 }
 
 // ── CERTIFICADOS DE DOMÍNIO POR TABUADA ─────────────────────────────────────
@@ -761,53 +649,19 @@ export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATIO
   const cfg = OPERATIONS[operation] || OPERATIONS[DEFAULT_OPERATION];
   const result = [];
   for (const row of cfg.domainRows) {
-    // Para operações com `isValid` (ex.: subtração não pode dar negativo), o total
-    // de fatos VÁLIDOS varia por linha — nem toda combinação (a,b) existe de verdade.
-    // Divisão (via `cellFact`) nunca tem combinação inválida — toda coluna conta.
-    const validCols = cfg.domainCols.filter((col) => {
-      const { a, b } = resolveCellFact(cfg, row, col);
-      return !cfg.isValid || cfg.isValid(a, b);
-    });
     let dominated = 0;
-    for (const col of validCols) {
-      const { a, b } = resolveCellFact(cfg, row, col);
-      const fk = getFactKey(cfg.id, a, b);
+    for (const col of cfg.domainCols) {
+      const fk = getFactKey(cfg.id, row, col);
       if (isFactDominated(factStats[fk])) dominated += 1;
     }
     result.push({
       table: row,
       dominated,
-      total: validCols.length,
-      unlocked: validCols.length > 0 && dominated === validCols.length,
+      total: cfg.domainCols.length,
+      unlocked: dominated === cfg.domainCols.length,
     });
   }
   return result;
-}
-
-// ── PERFIL DE DOMÍNIO UNIFICADO [v4.0 · Fase 6] ─────────────────────────────
-// Consolida o domínio do jogador nas 4 operações num só lugar — usado no
-// Certificado "Matemática Fundamental Completa", no radar do Catálogo de
-// Precisão e no bônus de amplitude do `computeQI`.
-export function computeOperationMastery(data = {}) {
-  return OPERATION_ORDER.map((op) => {
-    const certs = computeCertificates(data.factStats?.[op] || {}, op);
-    const dominated = certs.reduce((s, c) => s + c.dominated, 0);
-    const total = certs.reduce((s, c) => s + c.total, 0);
-    return {
-      operation: op,
-      label: OPERATIONS[op].label,
-      dominated,
-      total,
-      pct: total ? Math.round((dominated / total) * 100) : 0,
-      allCertsUnlocked: certs.length > 0 && certs.every((c) => c.unlocked),
-    };
-  });
-}
-
-// "Matemática Fundamental Completa" — só desbloqueia quando as 4 operações
-// têm TODOS os certificados de domínio (todas as tabuadas/faixas dominadas).
-export function hasFullMasteryCertificate(data = {}) {
-  return computeOperationMastery(data).every((m) => m.allCertsUnlocked);
 }
 
 // ── DESBLOQUEIO PROGRESSIVO DE MODOS ─────────────────────────────────────────

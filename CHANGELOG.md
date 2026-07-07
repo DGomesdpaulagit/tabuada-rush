@@ -4,6 +4,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.16.1] — 2026-07-06 — Remoção do Leaderboard Global
+
+**Pequena iteração, fora de roadmap. Detalhes em `sessions/sessao-041.md`.**
+
+### Removido
+- **Leaderboard Global** — página, botão no menu, e upload de score
+  (Supabase) para Desafio Diário/Semanal, removidos por completo (pedido
+  direto do Davi). Desafio Diário e Semanal continuam existindo como
+  modos, só sem comparação global entre jogadores.
+
+---
+
 ## [3.16.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 6 · 🎉 ROADMAP 4.0 COMPLETO
 
 **Perfil de Domínio Unificado — última fase da 4.0. Detalhes em `sessions/sessao-040.md`.**

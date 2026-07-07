@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.16.0 (Tabuada Rush 4.0 · Fase 6 — Perfil de Domínio Unificado · 🎉 ROADMAP 4.0 COMPLETO · sessao-040)  
+**Versão:** 3.16.1 (Leaderboard Global removido · sessao-041)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

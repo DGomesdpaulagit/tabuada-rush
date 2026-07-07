@@ -159,7 +159,7 @@ export const MODES = {
     id: 'weekly',
     name: 'Desafio Semanal',
     emoji: '🏆',
-    description: 'Mesmas 10 questões — leaderboard global',
+    description: 'Mesmas 10 questões pra todo mundo, toda semana',
     gradient: 'from-pink-500 to-rose-600',
     gradientLight: 'from-pink-50 to-rose-50',
     shadow: 'shadow-pink-200',

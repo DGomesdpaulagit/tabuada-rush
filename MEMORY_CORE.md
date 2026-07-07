@@ -19,8 +19,9 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.16.0 (Tabuada Rush 4.0 · Fase 6 — Perfil de Domínio Unificado · 🎉 ROADMAP 4.0 COMPLETO)
+**Versão:** 3.16.1 (Leaderboard Global removido — sessao-041.md)
 **Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ **Roadmap 4.0 100% ENTREGUE** (Fases 1-6, v3.11.0→v3.16.0, sessões 035-040 — ver sessao-040.md pro resumo executivo completo). Sem roadmap formal em aberto no momento.
+**[v3.16.1]** Leaderboard Global removido por completo (página, botão, upload de score) — pedido direto do Davi. Desafio Diário/Semanal continuam existindo, só sem comparação global. Tabelas `leaderboard_daily`/`leaderboard_weekly` no Supabase ficaram órfãs (não apagadas — ver `SUPABASE_SETUP.md`).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---

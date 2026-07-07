@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, Award } from 'lucide-react';
+import { ArrowLeft, Lock, Award, Crown } from 'lucide-react';
 import { ACHIEVEMENTS } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { computeCertificates, OPERATIONS, OPERATION_ORDER } from '../utils';
+import { computeCertificates, computeOperationMastery, OPERATIONS, OPERATION_ORDER } from '../utils';
 import { Button, OperationTabs, pageVariants, pageTransition } from '../components/ui';
 
 export default function AchievementsPage({ onBack }) {
@@ -15,6 +15,11 @@ export default function AchievementsPage({ onBack }) {
   const certsUnlocked = certificates.filter((c) => c.unlocked).length;
   const certLabel = (table) =>
     certOperation === 'mult' ? `Tab. ${table}` : `${OPERATIONS[certOperation].symbol}${table}`;
+
+  // [v4.0 · Fase 6] Certificado "Matemática Fundamental Completa" — cruza as 4 operações
+  const operationMastery = computeOperationMastery(data);
+  const fullMastery = operationMastery.every((m) => m.allCertsUnlocked);
+  const completedOpsCount = operationMastery.filter((m) => m.allCertsUnlocked).length;
 
   const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
   const item = { hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } };
@@ -61,6 +66,50 @@ export default function AchievementsPage({ onBack }) {
           />
         </div>
       </div>
+
+      {/* ── MATEMÁTICA FUNDAMENTAL COMPLETA [v4.0 · Fase 6] ───────────────
+          Certificado supremo: cruza as 4 operações — só desbloqueia quando
+          TODOS os certificados de domínio (mult/add/sub/div) estão completos. */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`rounded-3xl p-5 border-2 transition-all ${
+          fullMastery
+            ? 'bg-gradient-to-br from-amber-100 via-yellow-50 to-amber-100 border-amber-400 shadow-lg shadow-amber-200'
+            : 'bg-gray-50 border-gray-100'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 ${
+            fullMastery ? 'bg-gradient-to-br from-amber-400 to-yellow-500 text-white' : 'bg-gray-200 text-gray-400'
+          }`}>
+            <Crown size={22} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`font-black text-sm ${fullMastery ? 'text-amber-800' : 'text-gray-600'}`}>
+              Matemática Fundamental Completa
+            </p>
+            <p className="text-xs text-gray-500 font-semibold mt-0.5">
+              Domínio total nas 4 operações — {completedOpsCount}/4 completas
+            </p>
+          </div>
+          {!fullMastery && <Lock size={16} className="text-gray-300 shrink-0" />}
+        </div>
+        {!fullMastery && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {operationMastery.map((m) => (
+              <span
+                key={m.operation}
+                className={`text-[10px] font-black px-2 py-1 rounded-full ${
+                  m.allCertsUnlocked ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-gray-400 border border-gray-200'
+                }`}
+              >
+                {m.label}: {m.dominated}/{m.total}
+              </span>
+            ))}
+          </div>
+        )}
+      </motion.div>
 
       {/* ── CERTIFICADOS DE DOMÍNIO ──────────────────────────────────────
           Únicas conquistas que NÃO podem ser compradas — apenas conquistadas

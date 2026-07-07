@@ -6,9 +6,10 @@ import {
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { getAccuracy, formatDate, OPERATIONS, OPERATION_ORDER, getFactKey } from '../utils';
+import { getAccuracy, formatDate, OPERATIONS, OPERATION_ORDER, getFactKey, computeOperationMastery } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, OperationTabs, pageVariants, pageTransition } from '../components/ui';
 
@@ -237,6 +238,7 @@ function AccTooltip({ active, payload, label }) {
 export default function AccuracyCatalogPage({ onBack }) {
   const { data } = useApp();
   const [mapOperation, setMapOperation] = useState('mult'); // aba do Mapa de Domínio (v4.0 · Fase 2)
+  const operationMastery = computeOperationMastery(data); // [v4.0 · Fase 6] visão unificada — radar abaixo
   const sessions = (data.sessions || []).filter((s) => s && s.date);
 
   // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
@@ -499,6 +501,45 @@ export default function AccuracyCatalogPage({ onBack }) {
             </div>
           </div>
         )}
+      </motion.div>
+
+      {/* ── DOMÍNIO POR OPERAÇÃO [v4.0 · Fase 6] — visão unificada ─────────
+          Radar com o % de domínio nas 4 operações de uma vez, antes de
+          entrar no detalhe por aba (Mapa de Domínio abaixo). */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+      >
+        <p className="font-black text-gray-800 mb-1">Domínio por Operação</p>
+        <p className="text-xs text-gray-400 font-semibold mb-2">
+          % de fatos dominados em cada uma das 4 operações fundamentais
+        </p>
+        <div className="h-56 -mx-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={operationMastery.map((m) => ({ label: m.label, pct: m.pct }))}>
+              <PolarGrid stroke="#e5e7eb" />
+              <PolarAngleAxis dataKey="label" tick={{ fontSize: 11, fill: '#6b7280', fontWeight: 700 }} />
+              <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+              <Radar
+                dataKey="pct"
+                stroke="#7c3aed"
+                fill="#7c3aed"
+                fillOpacity={0.35}
+                strokeWidth={2}
+              />
+              <Tooltip formatter={(v) => [`${v}%`, 'Domínio']} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="grid grid-cols-4 gap-2 mt-1">
+          {operationMastery.map((m) => (
+            <div key={m.operation} className="text-center">
+              <p className="text-sm font-black text-violet-600">{m.pct}%</p>
+              <p className="text-[10px] font-bold text-gray-400 truncate">{m.label}</p>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
       {/* ── MAPA DE DOMÍNIO (80 fatos fundamentais) ──────────────────────── */}

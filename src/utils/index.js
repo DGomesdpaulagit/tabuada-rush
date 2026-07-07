@@ -405,8 +405,15 @@ export function computeQI(data = {}) {
   const levelIdx = getLevelIdx(data.xp || 0);
   const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;           // progresso de nível (0–30)
 
+  // [v4.0 · Fase 6] Amplitude: recompensa dominar as 4 operações, não só multiplicação.
+  // Média do % de domínio nas 4 operações — quem só joga mult fica travado perto de
+  // 25% disso (1 de 4 operações cheia), quem é bem distribuído chega perto do máximo.
+  const avgMasteryPct =
+    computeOperationMastery(data).reduce((s, m) => s + m.pct, 0) / OPERATION_ORDER.length;
+  const breadthPts = (avgMasteryPct / 100) * 10;                       // amplitude (0–10)
+
   const bonus = data.qiBonus || 0; // bônus de QI ganho em recompensas de ofensiva
-  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + bonus;
+  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + breadthPts + bonus;
   return Math.max(QI_MIN, Math.min(QI_MAX, Math.round(raw)));
 }
 
@@ -775,6 +782,32 @@ export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATIO
     });
   }
   return result;
+}
+
+// ── PERFIL DE DOMÍNIO UNIFICADO [v4.0 · Fase 6] ─────────────────────────────
+// Consolida o domínio do jogador nas 4 operações num só lugar — usado no
+// Certificado "Matemática Fundamental Completa", no radar do Catálogo de
+// Precisão e no bônus de amplitude do `computeQI`.
+export function computeOperationMastery(data = {}) {
+  return OPERATION_ORDER.map((op) => {
+    const certs = computeCertificates(data.factStats?.[op] || {}, op);
+    const dominated = certs.reduce((s, c) => s + c.dominated, 0);
+    const total = certs.reduce((s, c) => s + c.total, 0);
+    return {
+      operation: op,
+      label: OPERATIONS[op].label,
+      dominated,
+      total,
+      pct: total ? Math.round((dominated / total) * 100) : 0,
+      allCertsUnlocked: certs.length > 0 && certs.every((c) => c.unlocked),
+    };
+  });
+}
+
+// "Matemática Fundamental Completa" — só desbloqueia quando as 4 operações
+// têm TODOS os certificados de domínio (todas as tabuadas/faixas dominadas).
+export function hasFullMasteryCertificate(data = {}) {
+  return computeOperationMastery(data).every((m) => m.allCertsUnlocked);
 }
 
 // ── DESBLOQUEIO PROGRESSIVO DE MODOS ─────────────────────────────────────────

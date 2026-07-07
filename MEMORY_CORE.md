@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.15.0 (Tabuada Rush 4.0 · Fase 5 — Adaptação Universal)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fases 1-3 (Matemática Completa) + ✅ Fase 4 (Inteligência Preditiva) + ✅ **Fase 5 entregue** (sessao-039.md — viés adaptativo em Rush/Sobrevivência/Velocidade/Zen, toggle em Configurações). **🚨 Próxima sessão: Fase 6 da 4.0 (Perfil de Domínio Unificado) — ÚLTIMA fase do roadmap 4.0.**
+**Versão:** 3.16.0 (Tabuada Rush 4.0 · Fase 6 — Perfil de Domínio Unificado · 🎉 ROADMAP 4.0 COMPLETO)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ **Roadmap 4.0 100% ENTREGUE** (Fases 1-6, v3.11.0→v3.16.0, sessões 035-040 — ver sessao-040.md pro resumo executivo completo). Sem roadmap formal em aberto no momento.
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -35,64 +35,21 @@
 
 ---
 
-## 🚀 TABUADA RUSH 4.0 — PRÓXIMAS FASES (ler sessao-034.md para detalhes completos)
+## ✅ TABUADA RUSH 4.0 — ROADMAP 100% ENTREGUE (v3.11.0 → v3.16.0 · sessões 035-040)
 
-### FILOSOFIA
-> O Tabuada Rush 3.0 ensinou a dominar a tabuada de multiplicação. O 4.0 expande
-> esse domínio para a matemática básica completa (soma, subtração, divisão) e usa
-> os dados reais de cada sessão para PREVER o esquecimento e adaptar a dificuldade
-> antes que o jogador erre — não depois. Uso pessoal, sem meta de negócio: fora de
-> escopo social/multiplayer e B2B (ver sessao-031.md "Pós-3.0" se isso mudar).
+> Filosofia: "praticar/memorizar mult (3.0) → dominar as 4 operações + prever o
+> esquecimento (4.0)". Dois pilares, 6 fases, 24 itens: fundação multi-operação
+> (`OPERATIONS`/`getFactKey`/`cellFact`/`isValid`), Soma/Subtração/Divisão
+> (Matemática Completa), curva de esquecimento + motor preditivo no Modo Revisão,
+> viés adaptativo em Rush/Sobrevivência/Velocidade/Zen, certificado "Matemática
+> Fundamental Completa" + QI com amplitude + radar cross-operação (Perfil
+> Unificado). Detalhes completos em `sessions/sessao-034.md` (planejamento) e
+> `sessions/sessao-040.md` (fechamento, com tabela resumo das 6 fases).
+>
+> **Bugs corrigidos ao longo do caminho:** B007 (contador de certificados
+> hardcoded) e B008 (`tableStats` sempre `.mult` no GamePage) — ver `BUGS.md`.
 
-### FASE 1 — ✅ ENTREGUE (v3.11.0 · sessao-035.md)
-1. ✅ Schema namespaced por operação: `tableStats`/`factStats`/`srsData` →
-   `{ mult: {...} }`, migração automática e retrocompatível
-2. ✅ Registro `OPERATIONS` + `getFactKey`/`getFactSpace` genéricos
-3. ✅ Gerador de perguntas unificado `generateQuestion(operation, diffLevel, ...)`
-   plugado no GamePage (Inverso, questão inicial, `NEXT` do reducer)
-4. ✅ Mapa de Domínio genérico (`MasteryMap` aceita `operation`, lê geometria
-   do registro `OPERATIONS` em vez de arrays hardcoded)
-5. ✅ **B007** (fix) — contador de certificados na AchievementsPage (`/8`)
-   também generalizado para `certificates.length` — ver `BUGS.md`
-
-### FASE 2 — ✅ ENTREGUE (v3.12.0 · sessao-036.md)
-6. ✅ `OPERATIONS.add`/`.sub` + `getGridQuestion` + `generateQuestion` com add/sub
-7. ✅ Seletor de Operação no ModesPage (Rush/Sobrevivência/Velocidade/Zen/Revisão)
-8. ✅ Mapa de Domínio + Certificados com abas por operação (`OperationTabs`)
-9. ✅ Mecanismo `isValid` (subtração nunca negativa) propagado em
-   `getFactSpace`/`computeCertificates`/`MasteryMap` — grade triangular
-
-### FASE 3 — ✅ ENTREGUE (v3.13.0 · sessao-037.md) · 🎉 MATEMÁTICA COMPLETA
-10. ✅ `OPERATIONS.div` com `cellFact` (divisor,quociente) → (dividendo,divisor,quociente)
-    — sem `isValid` (toda combinação é válida por construção)
-11. ✅ `getFactSpace`/`computeCertificates`/`MasteryMap` generalizados via `cellFact`
-12. ✅ Rush/Sobrevivência/Velocidade/Zen respeitam Divisão. Revisão cai pra
-    multiplicação (tableStats.div é por dividendo, não dá pra achar "tabuada fraca")
-    — decisão explícita, aviso no ModesPage
-13. Avaliado reaproveitar o Modo Inverso — decidido manter separado (conceitos diferentes)
-
-### FASE 4 — ✅ ENTREGUE (v3.14.0 · sessao-038.md)
-14. ✅ Modelo de decaimento de memória (`predictRecallProbability`/`getFactsAtRisk`,
-    curva de Ebbinghaus) — usa `lastPracticed` (novo campo) + precisão + velocidade
-15. ✅ Painel "Fatos a Vencer" no menu (com fallback quando Revisão está bloqueada)
-16. ✅ Lembrete local (`maybeForgettingReminder`, mesmo padrão dos outros —
-    NÃO é push de app fechado, decisão explícita de escopo)
-17. ✅ Motor preditivo aplicado às 4 operações via `getRevisionQuestions`
-    (4º componente "staleness" na fórmula de dificuldade)
-
-### FASE 5 — ✅ ENTREGUE (v3.15.0 · sessao-039.md)
-18. ✅ Generalizado o viés adaptativo (`getWeakPool` + `forcedRow`) pra
-    Rush/Sobrevivência/Velocidade/Zen, em mult/add/sub (div fica de fora —
-    mesma limitação da Fase 3 pro Modo Revisão: `tableStats.div` é por dividendo)
-19. ✅ ~60% viés / 40% aleatório (`WEAK_BIAS_PROBABILITY`) — nunca exclusivo
-20. ✅ Toggle "Foco em Fraquezas" em Configurações (`data.adaptiveDifficulty`, default true)
-21. ✅ **B008** (fix) — `GamePage` fatiava `tableStats` sempre em `.mult`,
-    mesmo em soma/subtração — ver `BUGS.md`
-
-### FASE 6 — COMEÇAR AQUI (próxima sessão) — Perfil de Domínio Unificado · ÚLTIMA FASE DA 4.0
-22. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
-23. Certificado "Matemática Fundamental Completa"
-24. `computeQI` pesa múltiplas operações · visualização radar por operação
+**Sem roadmap formal em aberto.** Próxima sessão: ver seção abaixo.
 
 ---
 
@@ -171,34 +128,26 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 6 DA TABUADA RUSH 4.0 (Perfil de Domínio Unificado) · ÚLTIMA FASE
+## 🎯 PRÓXIMA SESSÃO — SEM ROADMAP FORMAL (roadmap 4.0 100% entregue em 2026-07-06)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-039.md` (Fase 5,
-recém-entregue) + `sessions/sessao-034.md` (roadmap completo)
+O roadmap 4.0 (sessao-034) está completo — 6 fases, v3.11.0 → v3.16.0,
+sessões 035-040. Resumo executivo completo em `sessions/sessao-040.md`.
 
-**Contexto:** Fase 5 (Adaptação Universal) entregue em 2026-07-06 (v3.15.0).
-Rush/Sobrevivência/Velocidade/Zen já puxam com viés (~60%) os fatos mais
-fracos do jogador, em mult/add/sub, com toggle em Configurações. Com isso,
-faltam SÓ os itens da Fase 6 para o roadmap 4.0 inteiro (sessao-034) estar
-100% entregue.
+**Possíveis caminhos para a próxima sessão:**
+1. **Polimento e bug-fixing** — testar end-to-end, ajustar UX, iterar sobre
+   uso real (o roadmap trouxe bastante superfície nova: seletor de
+   operação, viés adaptativo, banner de esquecimento, radar, certificado
+   supremo — vale um passe de observação de uso real antes de mais features).
+2. **Pequenas iterações** — refinamentos pontuais sem roadmap formal.
+3. **Início de uma futura 5.0** — se surgir uma nova visão/filosofia,
+   repetir o método da sessao-025/034: sessão de planejamento antes de
+   qualquer código.
+4. **Ação opcional pendente (não bloqueia nada):** Publicação Play Store —
+   Davi tem intenção; aguardando decisão de prioridade (assets: ícone 512²,
+   screenshots, política de privacidade, US$25 dev account, método sugerido:
+   PWABuilder).
 
-**Executar nesta ordem:**
-1. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações de
-   forma UNIFICADA (hoje cada Mapa de Domínio/certificado é visto por aba
-   separada — considerar uma visão consolidada/resumo cross-operação)
-2. Certificado "Matemática Fundamental Completa" — domínio nas 4 operações
-3. `computeQI` passa a pesar múltiplas operações (hoje só multiplicação)
-4. Visualização tipo radar/gráfico por operação no Catálogo de Progresso
-5. Build + commit + push + documento
-
-**Ao terminar, o roadmap 4.0 completo (sessao-034, 6 fases) estará 100%
-entregue** — vale fazer um fechamento tipo o da sessao-031 (fechamento do
-roadmap 3.0), com resumo executivo de todas as 6 fases.
-
-**Ação opcional pendente (não bloqueia a 4.0):**
-- Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade
-  (assets: ícone 512², screenshots, política de privacidade, US$25 dev account,
-  método sugerido: PWABuilder)
+**Não há urgência.** O produto 4.0 está completo e estável.
 
 ---
 

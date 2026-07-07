@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.15.0 (Tabuada Rush 4.0 · Fase 5 — Adaptação Universal · sessao-039)  
+**Versão:** 3.16.0 (Tabuada Rush 4.0 · Fase 6 — Perfil de Domínio Unificado · 🎉 ROADMAP 4.0 COMPLETO · sessao-040)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -56,7 +56,9 @@ public/sw.js             — [v2.9.1] Service Worker: notificationclick + [v2.10
 supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de ofensiva (cron diário)
   utils/index.js         — questionGenerator, scoring, dates, computeQI/getQiInfo, applyStreakDecay
                             [v4.0] OPERATIONS (mult/add/sub/div), getFactKey/getFactSpace/isValid/cellFact,
-                            generateQuestion(operation,...) — 4 operações fundamentais completas (Fases 1-3)
+                            generateQuestion(operation,...), predictRecallProbability/getFactsAtRisk,
+                            getWeakPool (viés adaptativo), computeOperationMastery/hasFullMasteryCertificate
+                            — roadmap 4.0 completo (Fases 1-6)
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState

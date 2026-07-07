@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.16.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 6 · 🎉 ROADMAP 4.0 COMPLETO
+
+**Perfil de Domínio Unificado — última fase da 4.0. Detalhes em `sessions/sessao-040.md`.**
+
+### Adicionado
+- **`computeOperationMastery`**: resume o domínio do jogador nas 4 operações
+  (dominado/total/% cada) — base dos itens abaixo.
+- **Certificado "Matemática Fundamental Completa"** — só desbloqueia com
+  TODOS os certificados de domínio completos nas 4 operações. Card
+  dedicado no topo da tela de Conquistas.
+- **`computeQI` pesa amplitude**: novo componente (0-10 pontos) pela média
+  de domínio nas 4 operações — só ADITIVO, não reduz nenhum peso existente.
+- **Radar "Domínio por Operação"** no Catálogo de Precisão — visão
+  consolidada das 4 operações antes do detalhe por aba.
+
+### 🎉 Roadmap 4.0 completo
+Com as 6 fases entregues (v3.11.0 → v3.16.0), o roadmap 4.0 (sessao-034) —
+"Matemática Completa" (mult/add/sub/div) + "Inteligência Adaptativa"
+(curva de esquecimento, viés adaptativo, perfil unificado) — está 100%
+entregue.
+
+---
+
 ## [3.15.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 5 (Adaptação Universal)
 
 **Detalhes em `sessions/sessao-039.md`.**

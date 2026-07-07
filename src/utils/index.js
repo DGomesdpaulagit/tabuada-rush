@@ -103,7 +103,9 @@ export function getDailyQuestions(count = 20) {
 }
 
 // includeExtra=true adiciona 11 e 12 ao pool de fatores `a` (a partir do nível 3).
-export function getRandomQuestion(diffLevel = 1, includeExtra = false) {
+// forcedRow [v4.0 · Fase 5]: usado pelo viés de fatos fracos — quando presente,
+// ignora o sorteio e a progressão por diffLevel (mesmo princípio do Modo Difícil).
+export function getRandomQuestion(diffLevel = 1, includeExtra = false, forcedRow = null) {
   const pools = {
     1: [2, 3, 4, 5],
     2: [2, 3, 4, 5, 6, 7],
@@ -114,7 +116,7 @@ export function getRandomQuestion(diffLevel = 1, includeExtra = false) {
   if (includeExtra && diffLevel >= 3) {
     pool = [...pool, 11, 12];
   }
-  const a = pool[Math.floor(Math.random() * pool.length)];
+  const a = forcedRow != null ? forcedRow : pool[Math.floor(Math.random() * pool.length)];
   const b = Math.floor(Math.random() * 10) + 1;
   return { a, b, ans: a * b };
 }
@@ -138,7 +140,8 @@ export function getCombinedQuestion() {
 // fixas de operandos, como um mapa de domínio). diffLevel limita o teto dos
 // operandos (progressivo, igual ao `mult`). Respeita `isValid` (ex.: subtração
 // nunca sorteia um par que dê resultado negativo).
-function getGridQuestion(operation, diffLevel = 1) {
+// forcedRow [v4.0 · Fase 5]: ver `getRandomQuestion`.
+function getGridQuestion(operation, diffLevel = 1, forcedRow = null) {
   const cfg = OPERATIONS[operation];
   const capByLevel = { 1: 5, 2: 8, 3: 10 };
   const cap = capByLevel[diffLevel] || capByLevel[1];
@@ -146,7 +149,7 @@ function getGridQuestion(operation, diffLevel = 1) {
   const cols = cfg.domainCols.filter((n) => n <= cap);
   let a, b;
   do {
-    a = rows[Math.floor(Math.random() * rows.length)];
+    a = forcedRow != null && rows.includes(forcedRow) ? forcedRow : rows[Math.floor(Math.random() * rows.length)];
     b = cols[Math.floor(Math.random() * cols.length)];
   } while (cfg.isValid && !cfg.isValid(a, b));
   return { a, b, ans: cfg.answer(a, b) };
@@ -167,20 +170,57 @@ function getDivQuestion(diffLevel = 1) {
   return { a: divisor * quociente, b: divisor, ans: quociente };
 }
 
-// Gerador unificado [v4.0 · Fase 1/2/3]: ponto de entrada único para gerar uma
+// [v4.0 · Fase 5] Generaliza a lógica de "fatos mais fracos" do Modo Difícil
+// (getHardTabuadaPool, mult-only) para qualquer operação — usado como VIÉS
+// (não exclusividade, diferente do Modo Difícil) no Rush/Sobrevivência/
+// Velocidade/Zen quando o toggle "Foco em Fraquezas" está ativo nas Configurações.
+const WEAK_BIAS_MIN_SAMPLES = 3;
+const WEAK_BIAS_POOL_SIZE = 3;
+const WEAK_BIAS_PROBABILITY = 0.6; // ~60% viés / 40% aleatório — nunca 100% exclusivo
+
+export function getWeakPool(tableStats = {}) {
+  const entries = Object.entries(tableStats)
+    .map(([a, s]) => {
+      const total = (s.correct || 0) + (s.wrong || 0);
+      if (total < WEAK_BIAS_MIN_SAMPLES) return null;
+      const errRate = s.wrong / total;
+      const avgMs = s.count > 0 ? s.totalMs / s.count : 3000;
+      const msScore = Math.min(avgMs / 5000, 1);
+      const difficulty = errRate * 0.6 + msScore * 0.4;
+      return { a: Number(a), difficulty };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.difficulty - a.difficulty);
+  return entries.slice(0, WEAK_BIAS_POOL_SIZE).map((e) => e.a);
+}
+
+// Gerador unificado [v4.0 · Fase 1/2/3/5]: ponto de entrada único para gerar uma
 // questão de qualquer operação. `mult` delega para `getRandomQuestion`
 // (comportamento idêntico ao pré-4.0); `add`/`sub` usam `getGridQuestion`;
 // `div` usa `getDivQuestion` (derivada da multiplicação, sempre exata).
+//
+// `opts.weakBias` + `opts.tableStats` [Fase 5]: com ~60% de chance, força a
+// "linha" (fator/minuendo/divisor) a vir do pool de fatos mais fracos do
+// jogador em vez do sorteio normal — um viés suave, não uma exclusividade.
+// Divisão fica de fora: `tableStats.div` é agrupado por DIVIDENDO, não por
+// divisor, então não dá pra usar como "linha" do gerador (mesma limitação
+// identificada na Fase 3 pro Modo Revisão).
 export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
+  const { includeExtra, weakBias, tableStats } = opts;
+  let forcedRow = null;
+  if (weakBias && tableStats && operation !== 'div' && Math.random() < WEAK_BIAS_PROBABILITY) {
+    const weakPool = getWeakPool(tableStats);
+    if (weakPool.length) forcedRow = weakPool[Math.floor(Math.random() * weakPool.length)];
+  }
   switch (operation) {
     case 'add':
     case 'sub':
-      return getGridQuestion(operation, diffLevel);
+      return getGridQuestion(operation, diffLevel, forcedRow);
     case 'div':
       return getDivQuestion(diffLevel);
     case 'mult':
     default:
-      return getRandomQuestion(diffLevel, opts.includeExtra);
+      return getRandomQuestion(diffLevel, includeExtra, forcedRow);
   }
 }
 

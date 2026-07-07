@@ -39,6 +39,9 @@ export const DEFAULTS = {
   // ('mult' | 'add' | 'sub'). Desafio Diário/Semanal e modos avançados ignoram isto —
   // sempre multiplicação (comparação justa entre jogadores / benchmarks específicos).
   selectedOperation: 'mult',
+  // [v4.0 · Fase 5] Viés (não exclusividade) pelos fatos mais fracos do jogador em
+  // Rush/Sobrevivência/Velocidade/Zen — ligado por padrão, com toggle em Configurações.
+  adaptiveDifficulty: true,
   // [v4.0] tableStats/factStats/srsData agora namespaced por operação: { mult: {...}, add: {...}, ... }.
   // Só `mult` tem conteúdo até a Fase 1 da 4.0 estar concluída (Fases 2/3 trazem add/sub/div).
   tableStats: { mult: {} },  // desempenho por tabuada (fator a): { [op]: { [a]: { correct, wrong, totalMs, count } } }

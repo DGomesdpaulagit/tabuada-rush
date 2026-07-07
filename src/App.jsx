@@ -853,6 +853,7 @@ export default function App() {
               key={`game-${activeMode}`}
               mode={activeMode}
               operation={activeOperation}
+              adaptiveDifficulty={data.adaptiveDifficulty !== false}
               customQuestions={customQuestions}
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}

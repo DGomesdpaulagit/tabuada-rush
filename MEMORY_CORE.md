@@ -19,8 +19,8 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-07-06
-**Versão:** 3.14.0 (Tabuada Rush 4.0 · Fase 4 — Inteligência Preditiva)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fases 1-3 (Matemática Completa: fundação + Soma/Subtração + Divisão). ✅ **Fase 4 entregue** (sessao-038.md — modelo de curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer"). **🚨 Próxima sessão: Fase 5 da 4.0 (Adaptação Universal).**
+**Versão:** 3.15.0 (Tabuada Rush 4.0 · Fase 5 — Adaptação Universal)
+**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ✅ Roadmap 4.0 planejado (sessao-034.md, 6 fases). ✅ Fases 1-3 (Matemática Completa) + ✅ Fase 4 (Inteligência Preditiva) + ✅ **Fase 5 entregue** (sessao-039.md — viés adaptativo em Rush/Sobrevivência/Velocidade/Zen, toggle em Configurações). **🚨 Próxima sessão: Fase 6 da 4.0 (Perfil de Domínio Unificado) — ÚLTIMA fase do roadmap 4.0.**
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
 
 ---
@@ -80,16 +80,19 @@
 17. ✅ Motor preditivo aplicado às 4 operações via `getRevisionQuestions`
     (4º componente "staleness" na fórmula de dificuldade)
 
-### FASE 5 — COMEÇAR AQUI (próxima sessão) — Adaptação Universal
-18. Generalizar o Modo Difícil adaptativo (v3.10) para Rush/Survival/Speed —
-    viés (não exclusividade) pelos fatos mais fracos, em qualquer operação
-19. Balanceamento ~60/40 fatos fracos/aleatório para não virar punitivo
-20. Toggle em Settings para ligar/desligar o viés adaptativo
+### FASE 5 — ✅ ENTREGUE (v3.15.0 · sessao-039.md)
+18. ✅ Generalizado o viés adaptativo (`getWeakPool` + `forcedRow`) pra
+    Rush/Sobrevivência/Velocidade/Zen, em mult/add/sub (div fica de fora —
+    mesma limitação da Fase 3 pro Modo Revisão: `tableStats.div` é por dividendo)
+19. ✅ ~60% viés / 40% aleatório (`WEAK_BIAS_PROBABILITY`) — nunca exclusivo
+20. ✅ Toggle "Foco em Fraquezas" em Configurações (`data.adaptiveDifficulty`, default true)
+21. ✅ **B008** (fix) — `GamePage` fatiava `tableStats` sempre em `.mult`,
+    mesmo em soma/subtração — ver `BUGS.md`
 
-### FASE 6 — Perfil de Domínio Unificado
-21. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
-22. Certificado "Matemática Fundamental Completa"
-23. `computeQI` pesa múltiplas operações · visualização radar por operação
+### FASE 6 — COMEÇAR AQUI (próxima sessão) — Perfil de Domínio Unificado · ÚLTIMA FASE DA 4.0
+22. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações
+23. Certificado "Matemática Fundamental Completa"
+24. `computeQI` pesa múltiplas operações · visualização radar por operação
 
 ---
 
@@ -168,32 +171,29 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 5 DA TABUADA RUSH 4.0 (Adaptação Universal)
+## 🎯 PRÓXIMA SESSÃO — FASE 6 DA TABUADA RUSH 4.0 (Perfil de Domínio Unificado) · ÚLTIMA FASE
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-038.md` (Fase 4,
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-039.md` (Fase 5,
 recém-entregue) + `sessions/sessao-034.md` (roadmap completo)
 
-**Contexto:** Fase 4 (Inteligência Preditiva) entregue em 2026-07-06 (v3.14.0).
-Modelo de curva de esquecimento (`predictRecallProbability`/`getFactsAtRisk`)
-já roda passivamente sobre `factStats`/`tableStats` (que agora têm
-`lastPracticed`), e o Modo Revisão já usa esse sinal. A Fase 5 generaliza a
-mesma ideia de "usar dados reais do jogador pra decidir o que mostrar" —
-hoje só o Modo Difícil (v3.10) faz isso, e só para multiplicação.
+**Contexto:** Fase 5 (Adaptação Universal) entregue em 2026-07-06 (v3.15.0).
+Rush/Sobrevivência/Velocidade/Zen já puxam com viés (~60%) os fatos mais
+fracos do jogador, em mult/add/sub, com toggle em Configurações. Com isso,
+faltam SÓ os itens da Fase 6 para o roadmap 4.0 inteiro (sessao-034) estar
+100% entregue.
 
 **Executar nesta ordem:**
-1. Generalizar o Modo Difícil adaptativo (`getHardTabuadaPool`) para
-   Rush/Sobrevivência/Velocidade em QUALQUER operação selecionada — hoje é
-   hardcoded pra `tableStats.mult`
-2. Viés, não exclusividade: ~60% fatos fracos / 40% aleatório (diferente do
-   Modo Difícil, que É exclusivo às 3 tabuadas mais fracas) — pool normal
-   continua existindo, só com probabilidade maior de puxar fatos fracos
-3. Toggle em Settings para ligar/desligar esse viés (alguns podem preferir
-   aleatoriedade pura)
-4. Considerar reaproveitar `predictRecallProbability` (Fase 4) como sinal
-   extra de "fraqueza" além de erro/velocidade
+1. Mapa de Domínio, certificados e QI Ranking cobrindo as 4 operações de
+   forma UNIFICADA (hoje cada Mapa de Domínio/certificado é visto por aba
+   separada — considerar uma visão consolidada/resumo cross-operação)
+2. Certificado "Matemática Fundamental Completa" — domínio nas 4 operações
+3. `computeQI` passa a pesar múltiplas operações (hoje só multiplicação)
+4. Visualização tipo radar/gráfico por operação no Catálogo de Progresso
 5. Build + commit + push + documento
 
-**NÃO pular para Fase 6 sem ter Fase 5 completa.**
+**Ao terminar, o roadmap 4.0 completo (sessao-034, 6 fases) estará 100%
+entregue** — vale fazer um fechamento tipo o da sessao-031 (fechamento do
+roadmap 3.0), com resumo executivo de todas as 6 fases.
 
 **Ação opcional pendente (não bloqueia a 4.0):**
 - Publicação Play Store — Davi tem intenção; aguardando decisão de prioridade

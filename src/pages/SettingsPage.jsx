@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
-  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap,
+  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap, Target,
 } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { getLevelIdx, getQiInfo } from '../utils';
@@ -118,6 +118,10 @@ export default function SettingsPage({ onBack, onNavigate }) {
   // Toggle persistido em data (sincroniza via Supabase)
   const includeExtraTables = !!data.includeExtraTables;
   const toggleExtraTables = (v) => update((prev) => ({ ...prev, includeExtraTables: v }));
+
+  // [v4.0 · Fase 5] Viés pelos fatos mais fracos (Rush/Sobrevivência/Velocidade/Zen) — ligado por padrão
+  const adaptiveDifficulty = data.adaptiveDifficulty !== false;
+  const toggleAdaptiveDifficulty = (v) => update((prev) => ({ ...prev, adaptiveDifficulty: v }));
 
   // Reset completo: grava DEFAULTS na nuvem + no localStorage + recarrega.
   // Usar saveCloudData (upsert com DEFAULTS) em vez de setar null evita que o
@@ -292,6 +296,22 @@ export default function SettingsPage({ onBack, onNavigate }) {
           Ativa apenas a partir do Nível 3 dentro da partida — para iniciantes
           não atrapalhar. Daily/Weekly não são afetados (mantêm pool padrão para
           comparação justa).
+        </p>
+      </Section>
+
+      {/* DIFICULDADE ADAPTATIVA — Fase 5 do roadmap 4.0 */}
+      <Section title="Dificuldade Adaptativa">
+        <Row
+          icon={<Target size={15} />}
+          label="Foco em Fraquezas"
+          desc="Rush, Sobrevivência, Velocidade e Zen puxam mais (não só) os fatos que você mais erra ou demora"
+        >
+          <Toggle on={adaptiveDifficulty} onChange={toggleAdaptiveDifficulty} />
+        </Row>
+        <p className="text-[11px] font-bold text-gray-400 mt-2 leading-snug">
+          É um viés, não exclusividade — diferente do Modo Difícil, você continua
+          vendo fatos variados, só que com mais chance de cair nos seus pontos fracos.
+          Desligue se preferir sorteio 100% aleatório.
         </p>
       </Section>
 

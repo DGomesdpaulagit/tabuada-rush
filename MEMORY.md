@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.14.0 (Tabuada Rush 4.0 · Fase 4 — Inteligência Preditiva · sessao-038)  
+**Versão:** 3.15.0 (Tabuada Rush 4.0 · Fase 5 — Adaptação Universal · sessao-039)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

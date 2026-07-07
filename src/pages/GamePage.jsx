@@ -45,10 +45,24 @@ function Mascot({ mood }) {
 // respeitam `operation`.
 const MULT_ONLY_MODES = ['inverse', 'combined', 'hard', 'daily', 'personal', 'weekly'];
 
+// [v4.0 · Fase 5] Modos elegíveis pro viés de fatos fracos (mesmo grupo que
+// respeita `operation` via geração on-the-fly — Revisão fica de fora porque
+// já tem seu próprio mecanismo de priorização, ver getRevisionQuestions).
+const ADAPTIVE_BIAS_MODES = ['rush', 'survival', 'speed', 'zen'];
+
 function init(args) {
   const { mode, customQuestions } = args;
   const cfg = MODES[mode];
   const operation = MULT_ONLY_MODES.includes(mode) ? 'mult' : (args.operation || 'mult');
+  // tableStats já vem com TODAS as operações (App.jsx) — fatia pela operação
+  // efetiva desta partida (Difícil sempre quer `.mult`, que `operation` já resolve).
+  const tableStats = args.tableStatsAll?.[operation] || {};
+  const adaptiveDifficulty = args.adaptiveDifficulty !== false;
+  const genOpts = {
+    includeExtra: args.includeExtraTables,
+    weakBias: adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(mode),
+    tableStats,
+  };
   // Modos com lista fixa de perguntas:
   //   - daily: usa seed do dia (mesmas para todos)
   //   - inverse: gera 15 perguntas aleatórias frescas a cada partida
@@ -77,11 +91,12 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(args.tableStats) : generateQuestion(operation, 1, { includeExtra: args.includeExtraTables })),
+    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(tableStats) : generateQuestion(operation, 1, genOpts)),
     mode,
     operation,
     includeExtraTables: !!args.includeExtraTables,
-    tableStats: args.tableStats || {},
+    adaptiveDifficulty,
+    tableStats,
     dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
@@ -140,7 +155,11 @@ function reducer(state, action) {
         ? state.dailyQs[nextDailyIdx]
         : state.mode === 'hard'
         ? getHardQuestion(state.tableStats)
-        : generateQuestion(state.operation || 'mult', getDiffLevel(state.answered), { includeExtra: state.includeExtraTables });
+        : generateQuestion(state.operation || 'mult', getDiffLevel(state.answered), {
+            includeExtra: state.includeExtraTables,
+            weakBias: state.adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(state.mode),
+            tableStats: state.tableStats,
+          });
       return {
         ...state,
         phase: 'playing',
@@ -163,7 +182,7 @@ function reducer(state, action) {
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────
 
-export default function GamePage({ mode, operation = 'mult', onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
+export default function GamePage({ mode, operation = 'mult', adaptiveDifficulty = true, onEnd, onBack, customQuestions, powerups = {}, onUsePowerup }) {
   const cfg = MODES[mode];
   const { data, update } = useApp();
 
@@ -178,9 +197,10 @@ export default function GamePage({ mode, operation = 'mult', onEnd, onBack, cust
   const initArgRef = useRef({
     mode,
     operation,
+    adaptiveDifficulty,
     customQuestions,
     includeExtraTables: !!data.includeExtraTables,
-    tableStats: data.tableStats?.mult || {},
+    tableStatsAll: data.tableStats || {},
   });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
   // Símbolo da operação EFETIVA da partida (state.operation já normaliza para

@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [3.15.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 5 (Adaptação Universal)
+
+**Detalhes em `sessions/sessao-039.md`.**
+
+### Adicionado
+- **Viés adaptativo** (não exclusivo, diferente do Modo Difícil) em Rush,
+  Sobrevivência, Velocidade e Zen: ~60% de chance de puxar fatos dos pontos
+  mais fracos do jogador (erro + velocidade), em multiplicação/soma/subtração.
+  Divisão fica de fora (`tableStats.div` é por dividendo, mesma limitação
+  identificada na Fase 3 pro Modo Revisão).
+- **Toggle "Foco em Fraquezas"** em Configurações (`data.adaptiveDifficulty`,
+  ligado por padrão) — desligar volta ao sorteio 100% aleatório.
+
+### Corrigido
+- `GamePage` fatiava `tableStats` sempre em `.mult`, mesmo jogando em soma/
+  subtração — resquício da Fase 1 nunca corrigido (só o Modo Difícil, sempre
+  mult, usava esse campo até agora). Corrigido: fatia pela operação efetiva
+  da partida.
+
+---
+
 ## [3.14.0] — 2026-07-06 — TABUADA RUSH 4.0 · FASE 4 (Inteligência Preditiva)
 
 **Primeiro passo do pilar "Inteligência Adaptativa". Detalhes em `sessions/sessao-038.md`.**

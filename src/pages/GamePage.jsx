@@ -3,45 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getDailyQuestions, getDiffLevel, calcPoints, formatTime, getHardQuestion, getCombinedQuestion, generateQuestion } from '../utils';
+import { getDiffLevel, calcPoints, formatTime, generateQuestion } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
-
-// ── MASCOTE ────────────────────────────────────────────────────────────────
-const MASCOT = {
-  idle:    { emoji: '🤓', bg: 'bg-violet-100', text: 'Prontos!' },
-  correct: { emoji: '🤩', bg: 'bg-emerald-100', text: 'Isso aí!' },
-  wrong:   { emoji: '😬', bg: 'bg-rose-100',    text: 'Ops...' },
-  combo:   { emoji: '🔥', bg: 'bg-amber-100',   text: 'Combo!' },
-  insane:  { emoji: '🤯', bg: 'bg-purple-100',  text: 'INSANE!' },
-};
-
-function Mascot({ mood }) {
-  const m = MASCOT[mood] || MASCOT.idle;
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={mood}
-        initial={{ scale: 0.6, opacity: 0, y: 6 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.6, opacity: 0, y: -6 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${m.bg} w-fit mx-auto`}
-      >
-        <span className="text-xl leading-none">{m.emoji}</span>
-        <span className="text-xs font-black text-gray-700">{m.text}</span>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
+import Mascot from '../components/Mascot';
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
-// [v4.0 · Fase 5] Modos elegíveis pro viés de fatos fracos (Rush/Sobrevivência/
-// Velocidade/Zen — Revisão fica de fora porque já tem seu próprio mecanismo de
-// priorização, ver getRevisionQuestions).
-const ADAPTIVE_BIAS_MODES = ['rush', 'survival', 'speed', 'zen'];
+// [v4.0 · Fase 5] Modos elegíveis pro viés de fatos fracos (Rush/Zen — Revisão
+// fica de fora porque já tem seu próprio mecanismo de priorização, ver
+// getRevisionQuestions).
+const ADAPTIVE_BIAS_MODES = ['rush', 'zen'];
 
 function init(args) {
   const { mode, customQuestions } = args;
@@ -53,25 +26,9 @@ function init(args) {
     weakBias: adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(mode),
     tableStats,
   };
-  // Modos com lista fixa de perguntas:
-  //   - daily: usa seed do dia (mesmas para todos)
-  //   - inverse: gera 15 perguntas aleatórias frescas a cada partida
-  //   - outros com cfg.questions e não-zen: usam seed do dia (review usa customQuestions)
-  let qs = customQuestions;
-  if (!qs) {
-    if (mode === 'inverse' && cfg.questions) {
-      qs = Array.from({ length: cfg.questions }, () => generateQuestion('mult', 3));
-    } else if (mode === 'combined' && cfg.questions) {
-      qs = Array.from({ length: cfg.questions }, () => getCombinedQuestion());
-    } else if (mode === 'hard') {
-      // Modo Difícil: timer + pool 7/8/9; sem lista fixa, gera on-the-fly em NEXT.
-      qs = null;
-    } else if (mode === 'daily' || (cfg.questions && mode !== 'zen')) {
-      qs = getDailyQuestions(cfg.questions || 20);
-    } else {
-      qs = null;
-    }
-  }
+  // Revisão usa customQuestions (getRevisionQuestions, focado nos fatos mais
+  // errados). Rush e Zen geram perguntas sob demanda (sem lista fixa).
+  const qs = customQuestions || null;
   return {
     phase: 'playing',
     score: 0,
@@ -81,7 +38,7 @@ function init(args) {
     bestStreak: 0,
     lives: cfg.lives ?? null,
     time: cfg.timer ?? 0,
-    question: qs ? qs[0] : (mode === 'hard' ? getHardQuestion(tableStats) : generateQuestion('mult', 1, genOpts)),
+    question: qs ? qs[0] : generateQuestion('mult', 1, genOpts),
     mode,
     includeExtraTables: !!args.includeExtraTables,
     adaptiveDifficulty,
@@ -136,14 +93,24 @@ function reducer(state, action) {
         lives: newLives,
       };
     }
+    // Power-up Escudo: mesma penalidade de WRONG, mas a vida não é descontada.
+    case 'WRONG_SHIELDED': {
+      return {
+        ...state,
+        phase: 'feedback',
+        wrong: state.wrong + 1,
+        streak: 0,
+        answered: state.answered + 1,
+        lastCorrect: false,
+        shielded: true,
+      };
+    }
     case 'NEXT': {
       const nextDailyIdx = state.dailyIdx + 1;
       const isDailyDone = state.dailyQs && nextDailyIdx >= state.dailyQs.length;
       if (isDailyDone) return { ...state, phase: 'ended' };
       const nextQ = state.dailyQs
         ? state.dailyQs[nextDailyIdx]
-        : state.mode === 'hard'
-        ? getHardQuestion(state.tableStats)
         : generateQuestion('mult', getDiffLevel(state.answered), {
             includeExtra: state.includeExtraTables,
             weakBias: state.adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(state.mode),
@@ -158,9 +125,9 @@ function reducer(state, action) {
       };
     }
     case 'ADD_TIME':
-      return { ...state, time: state.time + 60 };
+      return { ...state, time: state.time + (action.amount ?? 60) };
     case 'CONTINUE':
-      // Retoma o Modo Sobrevivência com 1 vida restaurada
+      // Retoma a partida (modo com vidas) com 1 vida restaurada
       return { ...state, phase: 'playing', lives: 1 };
     case 'END':
       return { ...state, phase: 'ended' };
@@ -204,6 +171,20 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   const [showLifePrompt, setShowLifePrompt] = useState(false);
   const pendingEndRef = useRef(null); // callback de onEnd adiado
 
+  // Frequência do mascote: não pode aparecer toda pergunta — em modos com
+  // tempo (ex. Rush) no máximo 2x por partida; em modos sem tempo (Zen/
+  // Revisão) pode aparecer mais. A cada oportunidade, só mostra se ainda não
+  // bateu o teto E passar num sorteio — assim não é sempre nas primeiras
+  // oportunidades, fica espalhado pela partida.
+  const mascotShowCountRef = useRef(0);
+  const mascotCap = cfg.timer !== null ? 2 : 6;
+  const maybeMascot = useCallback((moodName, chance = 0.4) => {
+    if (mascotShowCountRef.current >= mascotCap) return;
+    if (Math.random() > chance) return;
+    mascotShowCountRef.current += 1;
+    setMascotMood(moodName);
+  }, [mascotCap]);
+
   const inputRef = useRef(null);
   const inputRefB = useRef(null);
   const timerRef = useRef(null);
@@ -218,6 +199,15 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
 
   // Resume audio context on first interaction
   useEffect(() => { audio.resume(); }, []);
+
+  // Power-up Largada Turbo: consome 1 unidade e soma +10s já no início do Rush.
+  useEffect(() => {
+    if (mode === 'rush' && (data.powerups?.headstart || 0) > 0) {
+      onUsePowerup?.('headstart');
+      dispatch({ type: 'ADD_TIME', amount: 10 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Timer
   useEffect(() => {
@@ -244,6 +234,16 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
     }
   }, [state.time, cfg.timer, state.phase]);
 
+  // Cutuca do mascote: se demorar mais de 3s na mesma pergunta, dá um empurrão.
+  // Some sozinho assim que a próxima pergunta aparece.
+  useEffect(() => {
+    if (state.phase !== 'playing') return;
+    const t = setTimeout(() => {
+      if (phaseRef.current === 'playing') maybeMascot('slow');
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [state.question, state.phase, maybeMascot]);
+
   // Handle game end
   useEffect(() => {
     if (state.phase === 'ended') {
@@ -264,15 +264,14 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         timePlayed,
         avgMs,
         totalQuestions: cfg.questions || state.answered,
-        dailyDate: mode === 'daily' ? new Date().toISOString().split('T')[0] : null,
         questions: questionLog.current,
       });
 
-      // Verifica se pode usar Vida Extra (Survival, perdeu todas as vidas)
-      // ou comprar uma agora (Power-up Spot).
-      const diedInSurvival = mode === 'survival' && state.lives !== null && state.lives <= 0;
+      // Verifica se pode usar Vida Extra (perdeu todas as vidas num modo com
+      // vidas — hoje só o Rush) ou comprar uma agora (Power-up Spot).
+      const diedFromLives = cfg.lives !== null && state.lives !== null && state.lives <= 0;
       const canBuyLifeSpot = (data.coins || 0) >= 80;
-      if (diedInSurvival && ((powerups.life || 0) > 0 || canBuyLifeSpot)) {
+      if (diedFromLives && ((powerups.life || 0) > 0 || canBuyLifeSpot)) {
         audio.gameOver();
         pendingEndRef.current = callEnd;
         setShowLifePrompt(true);
@@ -345,7 +344,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         audio.combo();
         setIsInsane(true);
         setShowCombo(true);
-        setMascotMood('insane');
+        maybeMascot('insane');
         // Screen shake
         setShake(true);
         setTimeout(() => setShake(false), 500);
@@ -354,11 +353,11 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         audio.combo();
         setIsInsane(false);
         setShowCombo(true);
-        setMascotMood('combo');
+        maybeMascot('combo');
         setTimeout(() => setShowCombo(false), 900);
       } else {
         audio.correct();
-        setMascotMood('correct');
+        maybeMascot('correct');
       }
       setTimeout(() => {
         dispatch({ type: 'NEXT' });
@@ -366,15 +365,25 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
       }, 420);
     } else {
       setInputState('wrong');
-      audio.wrong();
-      dispatch({ type: 'WRONG' });
-      setMascotMood('wrong');
+      // Power-up Escudo: se tiver em estoque, se ativa sozinho e protege a
+      // vida dessa vez (só funciona em modos com vidas, ex. Rush).
+      const hasShield = cfg.lives !== null && (data.powerups?.shield || 0) > 0;
+      if (hasShield) {
+        audio.wrong();
+        onUsePowerup?.('shield');
+        dispatch({ type: 'WRONG_SHIELDED' });
+        setMascotMood('shielded');
+      } else {
+        audio.wrong();
+        dispatch({ type: 'WRONG' });
+        setMascotMood('wrong');
+      }
       setTimeout(() => {
         dispatch({ type: 'NEXT' });
         setMascotMood('idle');
       }, 950);
     }
-  }, [state.phase, state.question, state.streak, inputVal, inputValB, mode, cfg.inverse]);
+  }, [state.phase, state.question, state.streak, inputVal, inputValB, mode, cfg.inverse, cfg.lives, data.powerups, onUsePowerup, maybeMascot]);
 
   const handleKey = useCallback(
     (e) => { if (e.key === 'Enter') handleSubmit(); },
@@ -609,8 +618,9 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
           </span>
         </div>
 
-        {/* Question card — usa tema equipado se houver */}
-        <div className={`bg-gradient-to-br ${questionGradient} rounded-3xl p-8 border ${questionBorder}`}>
+        {/* Question card — usa tema equipado se houver. relative pro mascote
+            aparecer ancorado no canto, interagindo com o card. */}
+        <div className={`relative bg-gradient-to-br ${questionGradient} rounded-3xl p-8 border ${questionBorder}`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={`${state.question?.a}-${state.question?.b}-${state.answered}`}
@@ -699,10 +709,12 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        {/* Mascote */}
-        <Mascot mood={mascotMood} />
+          {/* Mascote — Vupt (lebre) no Rush, Tuca (tartaruga) em Zen/Revisão.
+              Ancorado no canto do card, brota da lateral quando tem algo a
+              dizer (cutuca por demora, comemora combo, etc). */}
+          <Mascot mode={mode} mood={mascotMood} />
+        </div>
 
         {/* Answer input(s) */}
         {isInverse ? (

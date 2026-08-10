@@ -10,8 +10,11 @@ export function Button({
   onClick,
   ...props
 }) {
+  // Efeito "chunky" estilo Duolingo: sombra sólida embaixo simula profundidade;
+  // no press, o botão desce até encostar na sombra (translate-y) em vez de só
+  // encolher — sensação de botão físico, não só feedback de toque.
   const base =
-    'inline-flex items-center justify-center font-bold rounded-2xl transition-all select-none disabled:opacity-40 disabled:pointer-events-none';
+    'inline-flex items-center justify-center font-black rounded-2xl transition-all select-none disabled:opacity-40 disabled:pointer-events-none active:translate-y-1 active:shadow-none';
 
   const sizes = {
     sm: 'h-10 px-4 text-sm gap-1.5',
@@ -20,22 +23,20 @@ export function Button({
     icon: 'h-12 w-12',
   };
 
+  // Paleta "Caderno Quadriculado" — ink (azul-índigo) é a cor primária,
+  // pen (vermelho) marca erro/perigo, check (verde) confirmação.
   const variants = {
-    primary:
-      'bg-violet-600 text-white shadow-lg shadow-violet-200 hover:bg-violet-700 active:scale-95',
+    primary: 'bg-ink text-white shadow-chunky hover:bg-ink/90',
     secondary:
-      'bg-white text-gray-800 border border-gray-200 shadow-sm hover:border-gray-300 hover:bg-gray-50 active:scale-95',
+      'bg-white text-graphite border-2 border-[#E0DACB] shadow-chunky-white hover:bg-paper',
     ghost:
-      'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-700 active:scale-95',
-    danger:
-      'bg-rose-500 text-white shadow-lg shadow-rose-200 hover:bg-rose-600 active:scale-95',
-    success:
-      'bg-emerald-500 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-600 active:scale-95',
+      'bg-transparent text-graphite-soft hover:bg-paper hover:text-graphite active:translate-y-0 active:scale-95',
+    danger: 'bg-pen text-white shadow-chunky-danger hover:bg-pen/90',
+    info: 'bg-check text-white shadow-chunky-check hover:bg-check/90',
   };
 
   return (
     <motion.button
-      whileTap={{ scale: disabled ? 1 : 0.96 }}
       className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
       disabled={disabled}
       onClick={onClick}
@@ -52,7 +53,7 @@ export function Card({ children, className = '', onClick, ...props }) {
   const motionProps = onClick ? { whileHover: { scale: 1.01 }, whileTap: { scale: 0.98 } } : {};
   return (
     <Comp
-      className={`bg-white rounded-3xl shadow-sm border border-gray-100 ${className}`}
+      className={`bg-white rounded-3xl shadow-sm border-2 border-gray-100 ${className}`}
       onClick={onClick}
       {...motionProps}
       {...props}
@@ -66,10 +67,10 @@ export function Card({ children, className = '', onClick, ...props }) {
 export function Badge({ children, variant = 'default', className = '' }) {
   const variants = {
     default: 'bg-gray-100 text-gray-600',
-    primary: 'bg-violet-100 text-violet-700',
-    success: 'bg-emerald-100 text-emerald-700',
-    danger: 'bg-rose-100 text-rose-700',
-    amber: 'bg-amber-100 text-amber-700',
+    primary: 'bg-ink/10 text-ink-dark',
+    success: 'bg-check/10 text-check-dark',
+    danger: 'bg-pen/10 text-pen-dark',
+    amber: 'bg-bee/20 text-bee-dark',
   };
   return (
     <span

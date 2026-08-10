@@ -1,37 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Tag } from 'lucide-react';
-import { SHOP_ITEMS, SHOP_CATEGORIES, RARITIES, getWeeklyOffer } from '../constants/shop';
+import { ArrowLeft, Coins } from 'lucide-react';
+import { SHOP_ITEMS, RARITIES } from '../constants/shop';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
 
-export default function ShopPage({ onBack }) {
+// v5.0 · Bloco 1: loja só vende power-ups agora — cosméticos (moldura/card/
+// tema de jogo) foram removidos. A economia de moedas vai ser repensada num
+// bloco à parte antes de qualquer coisa nova entrar aqui.
+export default function ShopPage({ onBack, embedded = false }) {
   const { data, update } = useApp();
-  const [activeTab, setActiveTab] = useState('powerup');
   const [toastMsg, setToastMsg] = useState(null);
 
-  const coins         = data.coins         || 0;
-  const ownedItems    = data.ownedItems    || [];
-  const equippedItems = data.equippedItems || {};
-  const powerups      = data.powerups      || {};
+  const coins    = data.coins    || 0;
+  const powerups = data.powerups || {};
 
   const showToast = (msg) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 2200);
   };
 
-  // ── Comprar cosmético (permanente) ──────────────────────────────────────────
-  const buyCosmetic = (item) => {
-    if (coins < item.price || ownedItems.includes(item.id)) return;
-    update((prev) => ({
-      ...prev,
-      coins: (prev.coins || 0) - item.price,
-      ownedItems: [...(prev.ownedItems || []), item.id],
-    }));
-    showToast(`${item.emoji} ${item.name} adquirido!`);
-  };
-
-  // ── Comprar consumível (incrementa contador) ────────────────────────────────
   const buyPowerup = (item) => {
     if (coins < item.price) return;
     update((prev) => ({
@@ -45,23 +33,6 @@ export default function ShopPage({ onBack }) {
     showToast(`${item.emoji} ${item.name} adquirido!`);
   };
 
-  const toggleEquip = (item) => {
-    update((prev) => {
-      const eq = { ...(prev.equippedItems || {}) };
-      if (eq[item.category] === item.id) {
-        delete eq[item.category];
-      } else {
-        eq[item.category] = item.id;
-      }
-      return { ...prev, equippedItems: eq };
-    });
-  };
-
-  const items = SHOP_ITEMS.filter((i) => i.category === activeTab);
-
-  // Oferta da Semana: 3 cosméticos com 40% off, rotativo por semana ISO
-  const weeklyOffer = useMemo(() => getWeeklyOffer(new Date()), []);
-
   return (
     <motion.div
       variants={pageVariants}
@@ -71,133 +42,56 @@ export default function ShopPage({ onBack }) {
       transition={pageTransition}
       className="flex flex-col gap-5"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div className="flex-1">
-          <h2 className="text-xl font-black text-gray-900">Loja</h2>
-          <p className="text-xs font-semibold text-gray-400">Power-ups e cosméticos</p>
-        </div>
-        <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
-          <span className="text-sm">🪙</span>
-          <span className="text-sm font-black text-amber-700">{coins.toLocaleString('pt-BR')}</span>
-        </div>
-      </div>
-
-      {/* ── Oferta da Semana ─────────────────────────────────────────────── */}
-      <div>
-        <div className="flex items-center gap-2 mb-2 px-1">
-          <Tag size={14} className="text-rose-500" />
-          <p className="text-xs font-black text-rose-600 uppercase tracking-wide">Oferta da Semana</p>
-          <span className="ml-auto text-[10px] font-bold text-gray-400">Renova toda segunda</span>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {weeklyOffer.map((item) => {
-            const rarity = RARITIES[item.rarity];
-            const owned = ownedItems.includes(item.id);
-            const canAfford = coins >= item.price;
-            return (
-              <motion.button
-                key={item.id}
-                whileTap={owned || !canAfford ? {} : { scale: 0.97 }}
-                disabled={owned || !canAfford}
-                onClick={() => buyCosmetic(item)}
-                className={`relative rounded-2xl p-3 border text-left transition-all
-                  ${owned
-                    ? 'bg-gray-50 border-gray-200 opacity-60 cursor-default'
-                    : canAfford
-                    ? `${rarity.bg} ${rarity.border} hover:shadow-md`
-                    : 'bg-gray-50 border-gray-200 opacity-70 cursor-not-allowed'}`}
-              >
-                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[9px] font-black rounded-full px-2 py-0.5 shadow">
-                  -40%
-                </span>
-                <div className="text-2xl mb-1">{item.emoji}</div>
-                <p className="text-[11px] font-black text-gray-900 leading-tight truncate">
-                  {item.name}
-                </p>
-                {owned ? (
-                  <p className="text-[10px] font-bold text-emerald-600 mt-1">✓ Você tem</p>
-                ) : (
-                  <div className="mt-1">
-                    <p className="text-[10px] line-through text-gray-400 leading-none">
-                      🪙 {item.originalPrice}
-                    </p>
-                    <p className="text-xs font-black text-rose-600 leading-none">
-                      🪙 {item.price}
-                    </p>
-                  </div>
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Category tabs */}
-      <div className="flex gap-2">
-        {SHOP_CATEGORIES.map((cat) => (
+      {/* Header — escondido quando embutido no hub Recompensas (RewardsPage) */}
+      {!embedded && (
+        <div className="flex items-center gap-3">
           <button
-            key={cat.id}
-            onClick={() => setActiveTab(cat.id)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-black transition-all ${
-              activeTab === cat.id
-                ? 'bg-violet-600 text-white shadow-md shadow-violet-200'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
+            onClick={onBack}
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
           >
-            {cat.emoji} {cat.label}
+            <ArrowLeft size={16} />
           </button>
-        ))}
-      </div>
-
-      {/* Power-ups: explicação */}
-      {activeTab === 'powerup' && (
-        <div className="bg-violet-50 border border-violet-100 rounded-2xl px-4 py-3">
-          <p className="text-xs font-bold text-violet-600 leading-snug">
-            ⚡ Power-ups são <strong>consumíveis</strong> — cada uso desconta 1 unidade do seu estoque.
-            Você pode comprar vários de cada!
-          </p>
+          <div className="flex-1">
+            <h2 className="text-xl font-black text-gray-900">Loja</h2>
+            <p className="text-xs font-semibold text-gray-400">Power-ups pra usar na partida</p>
+          </div>
+          <div className="flex items-center gap-1.5 bg-bee/15 border-2 border-bee/30 rounded-2xl px-3 py-1.5">
+            <Coins size={14} className="text-bee-dark" />
+            <span className="text-sm font-black text-bee-dark">{coins.toLocaleString('pt-BR')}</span>
+          </div>
         </div>
       )}
 
+      <div className="bg-macaw/10 border-2 border-macaw/20 rounded-2xl px-4 py-3">
+        <p className="text-xs font-bold text-macaw-dark leading-snug">
+          Power-ups são <strong>consumíveis</strong> — cada uso desconta 1 unidade do seu estoque.
+          Você pode comprar vários de cada!
+        </p>
+      </div>
+
       {/* Items list */}
       <div className="flex flex-col gap-3">
-        {items.map((item) => {
-          const rarity      = RARITIES[item.rarity];
-          const isPowerup   = item.category === 'powerup';
-          const count       = isPowerup ? (powerups[item.powerupKey] || 0) : 0;
-          const owned       = !isPowerup && ownedItems.includes(item.id);
-          const equipped    = !isPowerup && equippedItems[item.category] === item.id;
-          const canAfford   = coins >= item.price;
+        {SHOP_ITEMS.map((item) => {
+          const rarity    = RARITIES[item.rarity];
+          const count     = powerups[item.powerupKey] || 0;
+          const canAfford = coins >= item.price;
 
           return (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex items-center gap-3 p-4 rounded-2xl border transition-all ${
-                equipped
-                  ? 'bg-violet-50 border-violet-300'
-                  : owned
-                  ? 'bg-gray-50 border-gray-200'
-                  : `${rarity.bg} ${rarity.border}`
-              }`}
+              className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${rarity.bg} ${rarity.border}`}
             >
               {/* Emoji + contador de estoque */}
               <div className="relative shrink-0">
                 <div
-                  className={`w-12 h-12 rounded-xl ${rarity.bg} border ${rarity.border} flex items-center justify-center text-2xl`}
+                  className={`w-12 h-12 rounded-xl ${rarity.bg} border-2 ${rarity.border} flex items-center justify-center text-2xl`}
                 >
                   {item.emoji}
                 </div>
-                {isPowerup && count > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-violet-600 text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow">
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-macaw text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow">
                     {count}
                   </span>
                 )}
@@ -214,8 +108,8 @@ export default function ShopPage({ onBack }) {
                   </span>
                 </div>
                 <p className="text-xs text-gray-400 font-semibold leading-snug">{item.desc}</p>
-                {isPowerup && count > 0 && (
-                  <p className="text-[11px] font-bold text-violet-500 mt-0.5">
+                {count > 0 && (
+                  <p className="text-[11px] font-bold text-macaw-dark mt-0.5">
                     Estoque: {count} uso{count !== 1 ? 's' : ''}
                   </p>
                 )}
@@ -223,43 +117,17 @@ export default function ShopPage({ onBack }) {
 
               {/* Action */}
               <div className="shrink-0">
-                {isPowerup ? (
-                  // Consumível: sempre pode comprar mais
-                  <button
-                    onClick={() => buyPowerup(item)}
-                    disabled={!canAfford}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
-                      canAfford
-                        ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300'
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                    }`}
-                  >
-                    🪙 {item.price.toLocaleString('pt-BR')}
-                  </button>
-                ) : owned ? (
-                  <button
-                    onClick={() => toggleEquip(item)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
-                      equipped
-                        ? 'bg-violet-600 text-white hover:bg-violet-700'
-                        : 'bg-gray-200 text-gray-700 hover:bg-violet-100 hover:text-violet-700'
-                    }`}
-                  >
-                    {equipped ? '✓ Equipado' : 'Equipar'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => buyCosmetic(item)}
-                    disabled={!canAfford}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
-                      canAfford
-                        ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300'
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                    }`}
-                  >
-                    🪙 {item.price.toLocaleString('pt-BR')}
-                  </button>
-                )}
+                <button
+                  onClick={() => buyPowerup(item)}
+                  disabled={!canAfford}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
+                    canAfford
+                      ? 'bg-bee/20 text-bee-dark hover:bg-bee/30 border-2 border-bee/40'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed border-2 border-gray-200'
+                  }`}
+                >
+                  {item.price.toLocaleString('pt-BR')}
+                </button>
               </div>
             </motion.div>
           );
@@ -267,17 +135,15 @@ export default function ShopPage({ onBack }) {
       </div>
 
       {/* Como ganhar moedas */}
-      <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
-        <p className="text-xs font-black text-amber-700 mb-2">Como ganhar moedas? 🪙</p>
+      <div className="bg-bee/10 border-2 border-bee/20 rounded-2xl p-4">
+        <p className="text-xs font-black text-bee-dark mb-2">Como ganhar moedas?</p>
         <ul className="space-y-1">
           {[
-            ['🎮', 'Até 15 moedas por partida (0.3 × acertos)'],
-            ['🌟', '+2 moedas por Desafio Diário'],
-            ['🔥', '+1 moeda ao manter ofensiva'],
-            ['🗺️', 'Complete missões para bônus maiores'],
-          ].map(([emoji, text]) => (
-            <li key={text} className="flex items-center gap-2 text-xs text-amber-600 font-semibold">
-              <span>{emoji}</span>
+            'Até 15 moedas por partida (0.3 × acertos)',
+            '+1 moeda ao manter ofensiva',
+            'Complete missões para bônus maiores',
+          ].map((text) => (
+            <li key={text} className="text-xs text-bee-dark/80 font-semibold">
               {text}
             </li>
           ))}

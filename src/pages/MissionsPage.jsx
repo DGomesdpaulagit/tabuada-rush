@@ -43,7 +43,7 @@ function progressLabel(mission) {
 }
 
 // ── Componente ────────────────────────────────────────────────────────────────
-export default function MissionsPage({ onBack }) {
+export default function MissionsPage({ onBack, embedded = false }) {
   const { data, update } = useApp();
   const [activeTab, setActiveTab] = useState('daily');
 
@@ -90,23 +90,25 @@ export default function MissionsPage({ onBack }) {
       transition={pageTransition}
       className="flex flex-col gap-5"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div className="flex-1">
-          <h2 className="text-xl font-black text-gray-900">Missões</h2>
-          <p className="text-xs font-semibold text-gray-400">Complete para ganhar moedas</p>
+      {/* Header — escondido quando embutido no hub Recompensas (RewardsPage) */}
+      {!embedded && (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div className="flex-1">
+            <h2 className="text-xl font-black text-gray-900">Missões</h2>
+            <p className="text-xs font-semibold text-gray-400">Complete para ganhar moedas</p>
+          </div>
+          <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
+            <span className="text-sm">🪙</span>
+            <span className="text-sm font-black text-amber-700">{data.coins || 0}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
-          <span className="text-sm">🪙</span>
-          <span className="text-sm font-black text-amber-700">{data.coins || 0}</span>
-        </div>
-      </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2">

@@ -4,16 +4,17 @@
 @tailwind utilities;
 
 :root {
-  --primary: hsl(262 83% 58%);
-  --primary-dark: hsl(262 83% 48%);
-  --background: hsl(250 30% 98%);
+  /* Paleta "Caderno Quadriculado" — v5.0 (2ª rodada) */
+  --primary: #3B4FCC;      /* ink */
+  --primary-dark: #2A3A9E; /* ink-dark */
+  --background: #FBF7EC;   /* paper */
   --card: hsl(0 0% 100%);
   --border: hsl(240 6% 90%);
   --muted: hsl(240 4% 46%);
   --muted-bg: hsl(240 5% 96%);
-  --success: hsl(152 69% 45%);
-  --destructive: hsl(0 84% 60%);
-  --amber: hsl(38 92% 50%);
+  --success: #2F9E44;      /* check */
+  --destructive: #D64545;  /* pen */
+  --amber: #FFC800;
   --radius: 1rem;
 }
 

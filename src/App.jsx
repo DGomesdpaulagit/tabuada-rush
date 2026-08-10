@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getPersonalRecordQuestions, getWeeklyChallengeQuestions, getCurrentWeekKey, getModeUnlock, getFactKey, countFactsAtRiskAllOps } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps } from './utils';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -14,17 +14,15 @@ import ModesPage from './pages/ModesPage';
 import FlashcardPage from './pages/FlashcardPage';
 import GamePage from './pages/GamePage';
 import ResultsPage from './pages/ResultsPage';
-import RecordsPage from './pages/RecordsPage';
 import StatsPage from './pages/StatsPage';
-import AchievementsPage from './pages/AchievementsPage';
 import RankingPage from './pages/RankingPage';
-import CatalogPage from './pages/CatalogPage';
-import AccuracyCatalogPage from './pages/AccuracyCatalogPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 import ShopPage from './pages/ShopPage';
 import MissionsPage from './pages/MissionsPage';
 import SeasonsPage from './pages/SeasonsPage';
+import RewardsPage from './pages/RewardsPage';
+import Sidebar from './components/Sidebar';
 import { calcSeasonXp } from './constants/seasons';
 import { updateMissions, getNewlyCompleted } from './utils/missions';
 
@@ -388,20 +386,6 @@ export default function App() {
           sessionTotal > 0 ? Math.round((result.correct / sessionTotal) * 100) : 0;
         const bestAccuracy = Math.max(prev.bestAccuracy || 0, sessionAccuracy);
 
-        const dailyCompleted =
-          result.mode === 'daily' && result.dailyDate
-            ? (prev.dailyCompleted || 0) + 1
-            : prev.dailyCompleted || 0;
-
-        const survivalBest =
-          result.mode === 'survival'
-            ? Math.max(prev.survivalBest || 0, result.correct)
-            : prev.survivalBest || 0;
-        const speedBest =
-          result.mode === 'speed'
-            ? Math.max(prev.speedBest || 0, result.correct)
-            : prev.speedBest || 0;
-
         // Ofensiva diária (ano-aware): +1 se jogou ontem (mesmo ano), mantém se já jogou
         // hoje, senão reinicia em 1. Virada de ano sempre reinicia.
         const lastPlay = prev.lastPlayDate;
@@ -442,22 +426,21 @@ export default function App() {
 
         // XP v3.0 — 100% baseado em desempenho, sem bônus de dias jogados.
         //   Cada modo tem seu próprio xpMultiplier (definido em constants/index.js).
-        //   Rush = multiplicador mais baixo (5 min → score alto, XP difícil de acumular).
-        //   Daily = multiplicador mais alto (20 questões fixas, exige consistência real).
-        //   SEM streakBonus nem dailyBonus: mérito vem do score, não de dias jogados.
-        const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0.10, review: 0.16, hard: 0.22, personal: 0.18, weekly: 0.30, inverse: 0.20, combined: 0.25 };
+        const MODE_XP_MULT = { rush: 0.20, zen: 0, review: 0.16 };
         // Power-up XP Dobrado: dobra o XP desta partida e consome 1 unidade do estoque
         const xp2Active = (prev.powerups?.xp2 || 0) > 0;
         const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) * (xp2Active ? 2 : 1);
         const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
-        // Cap: 15 moedas/partida = 0.3 × acertos (não depende do score para evitar
-        // inflação causada pela duração do Rush). +2 bônus no Desafio Diário, +1 ofensiva.
+        // v5.0 · Bloco 1: mais difícil de ganhar — precisa praticar mais pra
+        // acumular. Zen não gera moeda nenhuma (é treino livre, sem recompensa).
+        // Cap: 8 moedas/partida = 0.15 × acertos, +1 bônus se manteve a ofensiva.
         const coinsEarned =
-          Math.min(15, Math.max(1, Math.floor((result.correct || 0) * 0.3))) +
-          (result.mode === 'daily' ? 2 : 0) +
-          (currentStreak > 1 ? 1 : 0);
+          result.mode === 'zen'
+            ? 0
+            : Math.min(8, Math.max(1, Math.floor((result.correct || 0) * 0.15))) +
+              (currentStreak > 1 ? 1 : 0);
 
         // ── XP de temporada (separado do XP de nível) ───────────────────────
         const earnedSeasonXp = calcSeasonXp(result, currentStreak);
@@ -531,9 +514,6 @@ export default function App() {
           bestStreak,
           bestScore,
           bestAccuracy,
-          dailyCompleted,
-          survivalBest,
-          speedBest,
           modesPlayed: allModesPlayed,
           fastestAvgMs,
           tableStats,
@@ -549,22 +529,6 @@ export default function App() {
             ...prev.records,
             ...(isNewRecord ? { [result.mode]: result.score } : {}),
           },
-          currentDailyDate: result.mode === 'daily' ? today : prev.currentDailyDate,
-          currentDailyScore: result.mode === 'daily' ? result.score : prev.currentDailyScore,
-          // Desafio Semanal: persiste melhor score da semana ISO atual
-          weeklyChallenge:
-            result.mode === 'weekly'
-              ? {
-                  week: getCurrentWeekKey(new Date()),
-                  score: Math.max(
-                    prev.weeklyChallenge?.week === getCurrentWeekKey(new Date())
-                      ? (prev.weeklyChallenge.score || 0)
-                      : 0,
-                    result.score || 0
-                  ),
-                  completedAt: new Date().toISOString(),
-                }
-              : prev.weeklyChallenge,
           coins: (prev.coins || 0) + coinsEarned + betPayout,
           activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
@@ -724,16 +688,12 @@ export default function App() {
   const startGame = useCallback((mode) => {
     if (mode === 'review') {
       setCustomQuestions(getRevisionQuestions(data.tableStats?.mult || {}, 15));
-    } else if (mode === 'personal') {
-      setCustomQuestions(getPersonalRecordQuestions(data.factStats?.mult || {}));
-    } else if (mode === 'weekly') {
-      setCustomQuestions(getWeeklyChallengeQuestions(new Date()));
     } else {
       setCustomQuestions(null);
     }
     setActiveMode(mode);
     setScreen('game');
-  }, [data.tableStats, data.factStats]);
+  }, [data.tableStats]);
 
   const handleStart = useCallback((mode) => {
     // Bloqueio defensivo: se o modo está locked, não inicia.
@@ -741,9 +701,8 @@ export default function App() {
     const unlock = getModeUnlock(mode, data);
     if (!unlock.unlocked) return;
 
-    // Apostas só para modos principais (rush/survival/speed/daily) — modos de
-    // treino, flashcard e inverso não permitem aposta.
-    const bettable = ['rush', 'survival', 'speed', 'daily'].includes(mode);
+    // Aposta só no Rush — modos de treino (Zen/Revisão) não permitem aposta.
+    const bettable = mode === 'rush';
     const hasMinCoins = (data.coins || 0) >= 10;
     if (bettable && hasMinCoins && !data.activeBet) {
       setPendingBetMode(mode);
@@ -776,8 +735,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-dvh app-shell font-nunito">
-      <div className="max-w-lg mx-auto px-4 py-6 min-h-dvh">
+    <div className="min-h-dvh app-shell font-nunito lg:flex">
+      {/* Barra lateral estilo Duolingo — só em telas largas (lg+); no
+          celular o app segue em coluna única, sem sidebar. */}
+      <Sidebar screen={screen} onNavigate={setScreen} />
+      <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-lg px-4 py-6 min-h-dvh">
         <AnimatePresence mode="wait">
           {screen === 'menu' && (
             <MenuPage
@@ -833,23 +796,11 @@ export default function App() {
               onHome={() => setScreen('menu')}
             />
           )}
-          {screen === 'records' && (
-            <RecordsPage key="records" onBack={() => setScreen('menu')} />
-          )}
           {screen === 'stats' && (
-            <StatsPage key="stats" onBack={() => setScreen('menu')} onNavigate={setScreen} />
-          )}
-          {screen === 'accuracy' && (
-            <AccuracyCatalogPage key="accuracy" onBack={() => setScreen('stats')} />
-          )}
-          {screen === 'achievements' && (
-            <AchievementsPage key="achievements" onBack={() => setScreen('menu')} />
+            <StatsPage key="stats" onBack={() => setScreen('menu')} />
           )}
           {screen === 'ranking' && (
             <RankingPage key="ranking" onBack={() => setScreen('menu')} />
-          )}
-          {screen === 'catalog' && (
-            <CatalogPage key="catalog" onBack={() => setScreen('menu')} />
           )}
           {screen === 'settings' && (
             <SettingsPage
@@ -857,6 +808,9 @@ export default function App() {
               onBack={() => setScreen('menu')}
               onNavigate={setScreen}
             />
+          )}
+          {screen === 'rewards' && (
+            <RewardsPage key="rewards" onBack={() => setScreen('menu')} />
           )}
           {screen === 'shop' && (
             <ShopPage key="shop" onBack={() => setScreen('menu')} />
@@ -868,6 +822,7 @@ export default function App() {
             <SeasonsPage key="seasons" onBack={() => setScreen('menu')} />
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Achievement / level-up toasts */}

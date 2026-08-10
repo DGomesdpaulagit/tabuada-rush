@@ -205,3 +205,58 @@ Retorna as 3 tabuadas com maior score. `getHardQuestion(tableStats)` amostra des
 **Motivo:** Alinhar o produto de volta ao propósito original e pessoal do criador — decorar a tabuada — em vez de virar um "jogo de matemática genérico". A amplitude de conteúdo (4 operações) e a profundidade de inteligência adaptativa eram os dois pilares da 4.0; só o segundo sobreviveu.
 **Trade-off:** Todo o trabalho de Fases 1, 2, 3 e partes da 6 (código de `add`/`sub`/`div`, `cellFact`, seletor de operação, radar, certificado supremo) foi descartado — ainda existe no histórico do Git caso um dia vire um projeto separado ("jogo de matemática completo"), mas não faz mais parte do Tabuada Rush.
 **Revisitar quando:** Davi quiser construir esse "jogo de matemática completo" — deve nascer como projeto NOVO, não como expansão do Tabuada Rush (decisão explícita de Davi, pra não repetir a diluição de foco).
+
+---
+
+## D015 — Paleta própria ("Caderno Quadriculado") em vez de copiar o Duolingo
+
+**Data:** 2026-08-09 · sessao-043
+**Contexto:** A sessão começou com Davi pedindo pra copiar o estilo visual do Duolingo (paleta, botões "chunky", tipografia) pra resolver a poluição visual do app. Isso foi implementado (tokens `feather`/`macaw`/`bee` no Tailwind, botões com sombra sólida e `active:translate-y`). No meio da sessão, ao revisar o resultado, Davi decidiu que só copiar cor de outro app não era a direção certa — queria algo com identidade própria, com tema "matemática" em vez de tema "Duolingo".
+**Decisão:** Criar paleta original "Caderno Quadriculado": papel/creme (`#FBF7EC`) como fundo, azul-índigo (`#3B4FCC`, token `ink`) como cor primária, vermelho-caneta (`#D64545`, `pen`) pra erro, verde-caneta (`#2F9E44`, `check`) pra acerto, grafite (`#3A3A3A`) no lugar de preto puro. Aplicada nos tokens base e no Menu; resto do app fica pra migrar na próxima sessão.
+**Motivo:** Identidade visual própria gera mais valor de marca que copiar um app de referência, mesmo que a técnica de construção (formas simples, sombra em pílula, ritmo de tamanhos — do "shape language" do Duolingo) continue sendo uma boa prática a seguir pros mascotes.
+**Trade-off:** Os tokens da paleta Duolingo continuam definidos no Tailwind (não remover ainda) — várias telas (Modos/Recompensas/Estatísticas/Loja) ainda dependem deles até a migração completa. Duas paletas coexistindo é uma inconsistência visual temporária, não permanente.
+**Revisitar quando:** A migração completa pra "Caderno Quadriculado" terminar — aí sim remover os tokens Duolingo do `tailwind.config.js`.
+
+---
+
+## D016 — Consolidação de modos: 10 → 3, Rush absorve Sobrevivência/Velocidade/Diário
+
+**Data:** 2026-08-09 · sessao-043
+**Contexto:** O app acumulou 10 modos de jogo ao longo das versões anteriores (Rush, Sobrevivência, Velocidade, Desafio Diário, Zen, Revisão, Difícil, Recorde Pessoal, Desafio Semanal, Combinado, Inverso). Davi achou o leque grande demais e pediu pra encurtar de verdade — não só reorganizar a UI, cortar os modos mesmo.
+**Decisão:** Ficam só 3 modos. Rush vira uma fusão mecânica do que eram Rush + Sobrevivência + Velocidade + Diário: timer que começa em 30s e cresce +3s por acerto, 3 vidas, termina com 3 erros OU tempo zerado. Zen e Revisão continuam como eram. Os outros 7 modos (Sobrevivência, Velocidade, Diário, Difícil, Recorde Pessoal, Semanal, Combinado, Inverso) foram DELETADOS do código (constants, GamePage, ModesPage, App.jsx) — não só escondidos da UI.
+**Motivo:** Muita opção de modo dilui o produto e sobrecarrega quem tá começando. Um modo principal bem feito (com progressão real dentro dele — o banco de tempo cresce com performance) vale mais que dez modos rasos. A fusão foi tecnicamente barata porque o reducer do GamePage já suportava timer+lives simultâneos.
+**Trade-off:** Perde-se a variedade de "sabores" de partida (não tem mais opção sem tempo com vidas ilimitadas, por exemplo — isso agora é só o Zen, que não pontua). Recordes antigos desses modos (`data.records.survival` etc.) ficam órfãos no localStorage — inofensivos, não foram limpos.
+**Revisitar quando:** Se o jogo precisar de mais variedade de partida no futuro, considerar adicionar de volta como VARIANTES do Rush (ex. um toggle de dificuldade), não como modos novos separados — pra não repetir a fragmentação.
+
+---
+
+## D017 — Reversão de D008: todos os modos liberados desde o início
+
+**Data:** 2026-08-09 · sessao-043
+**Contexto:** D008 (sessao-032) introduziu desbloqueio progressivo de modos por nível/desempenho, pra criar sensação de descoberta. Com o app reduzido a só 3 modos (D016), travar Rush/Revisão atrás de requisito de nível deixava as primeiras sessões de jogo chatas — usuário via só Zen disponível.
+**Decisão:** `UNLOCK_RULES` simplificado pra liberar Zen, Rush e Revisão desde o primeiro acesso (`{ zen: null, rush: null, review: null }`).
+**Motivo:** Com só 3 modos, o "leque pra descobrir" que justificava D008 não existe mais — trancar 2 dos 3 modos únicos do jogo é fricção pura, sem ganho de progressão percebida.
+**Trade-off:** Nenhum "momento de desbloqueio" como recompensa de progresso — mitigado porque a progressão relevante agora está DENTRO do Rush (o banco de tempo cresce com performance), não em desbloquear modo novo.
+**Revisitar quando:** Se novos modos forem adicionados no futuro (ver D016), reavaliar se desbloqueio progressivo faz sentido pra eles especificamente.
+
+---
+
+## D018 — Mascotes: fábula da Lebre e a Tartaruga em vez de vilão criado / Modo História pausado
+
+**Data:** 2026-08-09 · sessao-043
+**Contexto:** A sessão passou por duas direções de mascote antes de chegar na final. Primeiro, um vilão original ("O Resto", tema de resto de divisão, visual humanoide de pedra rachada) foi desenhado em detalhe (nome, origem, visual, prompt de imagem) — Davi achou o resultado gerado "adulto demais" (estilo dark fantasy) pra um app infantil, e decidiu que queria mascote de verdade (tipo a coruja do Duolingo — um animal/símbolo que já carrega significado), não personagem inventado do zero. Em paralelo, Davi também queria um "Modo História" com narrativa infinita gerada por IA, dificuldade expandindo com o domínio do jogador.
+**Decisão:** Mascotes viraram Tuca (tartaruga sábia, Zen/Revisão) e Vupt (lebre apressada, Rush), baseados na fábula de Esopo — domínio público, sem risco de direito autoral, e a moral da história (pressa sem cuidado perde pra constância) já embute a psicologia do jogo sem precisar inventar backstory. O Modo História foi **pausado** — não tem código implementado, fica só como ideia registrada caso volte à mesa.
+**Motivo:** Fábula conhecida = zero explicação necessária (toda criança já ouve essa história), zero risco de direito autoral (ao contrário de usar fotos de personagens famosos, que foi pedido e recusado nesta mesma sessão), e a mecânica do Rush (banco de tempo que cresce com acerto, não só velocidade) já é literalmente "devagar e sempre vence a pressa" — o mascote reforça uma mecânica que já existia, não o contrário.
+**Trade-off:** Menos ambicioso que um Modo História completo — abre mão do "mundo maior" por enquanto em troca de algo que dava pra entregar de verdade nesta sessão (arte real, animação real, integração real).
+**Revisitar quando:** Se o Modo História voltar à mesa, ele pode nascer DENTRO do universo Tuca/Vupt já estabelecido (não precisa reinventar personagens) — só precisa da decisão de conteúdo pré-escrito vs. geração ao vivo (ver notas da sessão 043 sobre custo de IA em tempo real).
+
+---
+
+## D019 — Arte de mascote via geração de IA + pipeline próprio de remoção de fundo
+
+**Data:** 2026-08-09 · sessao-043
+**Contexto:** Precisávamos de arte animada pros mascotes (Tuca/Vupt) sem orçamento pra ferramenta paga. Testamos, nesta ordem: Higgsfield (precisa de plano pago), Rive (travou no login/verificação de e-mail), DragonBones (travou também), Canva (tenho conector, mas só anima a imagem inteira — mesmo problema visual que motivou a reclamação original do Davi), SVG desenhado à mão por mim via código (qualidade muito abaixo da arte gerada por IA, descartado após 2 tentativas).
+**Decisão:** Davi gera as imagens estáticas no ChatGPT e as animações no Pika (login com Google, evita a verificação de e-mail que travava em outras ferramentas), me manda os vídeos prontos (fundo branco + marca d'água), e eu processo com um pipeline Python que criei nesta sessão (`opencv-python-headless` + `Pillow`): remove fundo via flood-fill com `FLOODFILL_FIXED_RANGE` (crítico — sem essa flag o preenchimento vaza por bordas anti-aliased e come partes claras do personagem), limpa ruído residual (`MORPH_OPEN` + maior componente conectado), recorta pelo bounding-box união de todos os frames, exporta como WebP animado com transparência.
+**Motivo:** É o único caminho que não depende de conta paga nem de ferramenta que trava no login, dá controle técnico total (consigo ajustar o algoritmo quando o resultado sai errado, como aconteceu com a barba do Tuca na primeira tentativa), e o resultado final tem a qualidade da arte gerada por IA (que o Davi aprova) em vez da qualidade limitada do meu desenho manual em SVG.
+**Trade-off:** Processo manual em 2 pontas (Davi gera e sobe os arquivos, eu processo) — mais lento que uma ferramenta integrada de ponta a ponta. Arquivos webp animados pesam mais que SVG (~150-700KB cada) — aceitável porque cada asset só carrega quando a tela de jogo monta, não no carregamento inicial do app.
+**Revisitar quando:** Se o Davi conseguir acesso a alguma ferramenta de rigging de verdade (Rive/DragonBones funcionando), animações com movimento articulado de partes (não só a imagem inteira se deformando) ficam mais fáceis de produzir — mas o pipeline de remoção de fundo continua útil de qualquer forma.

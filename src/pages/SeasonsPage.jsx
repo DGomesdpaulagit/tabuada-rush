@@ -10,7 +10,7 @@ function formatDate(str) {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function SeasonsPage({ onBack }) {
+export default function SeasonsPage({ onBack, embedded = false }) {
   const { data, update } = useApp();
   const season        = getActiveSeason();
   const seasonXp      = data.seasonXp      || 0;
@@ -51,19 +51,21 @@ export default function SeasonsPage({ onBack }) {
       transition={pageTransition}
       className="flex flex-col gap-5"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div>
-          <h2 className="text-xl font-black text-gray-900">Temporada</h2>
-          <p className="text-xs font-semibold text-gray-400">Trilha de recompensas exclusivas</p>
+      {/* Header — escondido quando embutido no hub Recompensas (RewardsPage) */}
+      {!embedded && (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <h2 className="text-xl font-black text-gray-900">Temporada</h2>
+            <p className="text-xs font-semibold text-gray-400">Trilha de recompensas exclusivas</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Season hero */}
       <motion.div

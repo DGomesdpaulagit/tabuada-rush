@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 3.17.0 (Reversão da 4.0 — só multiplicação, de volta ao foco · sessao-042)  
+**Versão:** 5.0.0 (Redesign — paleta própria, 3 modos, mascotes Tuca/Vupt · sessao-043)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -61,43 +61,62 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   utils/analysis.js      — [v2.7] analyzeUser (análise inteligente: textos automáticos data-driven)
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
+  components/Sidebar.jsx — [v5.0] nav lateral, só em telas largas (hidden lg:flex)
+  components/Mascot.jsx  — [v5.0] Tuca/Vupt — poses por humor, portal fixo na borda direita, sem balão/voz (desligados)
+  assets/mascots/*.webp  — [v5.0] poses animadas (vupt-cocky, vupt-peek-villain, vupt-thumbsup, tuca-idle, tuca-glasses, tuca-reading)
   pages/
-    MenuPage.jsx         — Menu principal com nível, modos, navegação
-    GamePage.jsx         — Gameplay com useReducer (TICK/CORRECT/WRONG/NEXT/END)
+    MenuPage.jsx         — [v5.0] Menu QI-first (card muda de cor por tier), 3 destinos primários
+    GamePage.jsx         — Gameplay com useReducer (TICK/CORRECT/WRONG/WRONG_SHIELDED/NEXT/END/ADD_TIME); [v5.0] gatilho "slow" (3s) + maybeMascot (frequência controlada)
     ResultsPage.jsx      — Tela de resultados pós-partida
-    RecordsPage.jsx      — Recordes por modo
-    StatsPage.jsx        — Dashboard estatísticas + LineChart Recharts
-    AchievementsPage.jsx — Grade de conquistas desbloqueadas/bloqueadas
-    RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria)
-    CatalogPage.jsx      — [v2.11] Catálogo de Progresso (XP, níveis, evolução, marcos, registro)
-    AccuracyCatalogPage.jsx — [v2.12] Catálogo de Precisão (precisão, velocidade, erros, por tabuada, histórico)
+    RewardsPage.jsx      — [v5.0] hub com abas Missões/Loja/Temporada (substitui 3 botões separados no Menu)
+    StatsPage.jsx        — [v5.0] Dashboard estatísticas + LineChart Recharts; absorveu Catálogo/Precisão/Acertos/Erros/Recordes/Conquistas como view-switcher interno (reorganização real ainda pendente — ver MEMORY_CORE)
+    RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria); [v5.0] 52 personagens (era 104)
     SettingsPage.jsx     — [v2.8] Configurações (som, tema, conta, notificações, acessibilidade)
   App.jsx                — Orquestrador: navegação, handleGameEnd, toasts de conquistas
   main.jsx               — Entry point React
   styles/globals.css     — CSS variables + Tailwind base
 ```
 
+**[v5.0] Páginas absorvidas como seções internas (não são mais rotas próprias):**
+`RecordsPage`/`AchievementsPage`/`CatalogPage`/`AccuracyCatalogPage`/`HitsPage`/`ErrorsPage`
+continuam existindo como componentes, mas são renderizados de dentro de
+`StatsPage` via view-switcher (`view === 'records' | 'achievements' | ...`),
+não têm mais entrada direta no Menu.
+
 ---
 
 ## 🎨 DESIGN SYSTEM
 
-### Paleta de Cores
+### [v5.0] Paleta "Caderno Quadriculado" (tokens em `tailwind.config.js`)
+> Substituiu a paleta violeta original. Passou por uma rodada intermediária
+> copiando as cores do Duolingo (tokens `feather`/`macaw`/`bee`/`cardinal`
+> ainda existem no Tailwind, usados pelas telas que ainda não migraram —
+> ver MEMORY_CORE "PRÓXIMA SESSÃO"). Ver DECISIONS.md D015.
+
 | Token | Valor | Uso |
 |-------|-------|-----|
-| Primary | `#7C3AED` violet-600 | Destaque geral |
-| Background | `hsl(250 30% 98%)` | Fundo do app |
-| Card | `#FFFFFF` | Cards brancos |
-| Success | `#10B981` emerald-500 | Acertos |
-| Destructive | `#EF4444` rose-500 | Erros |
-| Amber | `#F59E0B` | Streaks/combos |
+| `paper` (background) | `#FBF7EC` | Fundo do app — papel/creme, não branco puro |
+| `ink` (primary) | `#3B4FCC` | Cor primária — azul-índigo |
+| `ink-dark` | `#2A3A9E` | Sombra "chunky" do `ink` |
+| `pen` (destructive) | `#D64545` | Erro/correção — vermelho-caneta |
+| `check` (success) | `#2F9E44` | Acerto/confirmação — verde-caneta |
+| `graphite` | `#3A3A3A` | Texto principal — no lugar de preto puro |
 
-### Gradientes por Modo
+**Aplicada até agora:** tokens base (`tailwind.config.js`, `globals.css`),
+componentes (`ui/index.jsx`), `MenuPage`. **Pendente:** Modos, Recompensas,
+Estatísticas, Loja ainda usam os tokens Duolingo (`feather`/`macaw`/`bee`).
+
+### Botões "chunky" (herdado da rodada Duolingo, mantido)
+Sombra sólida embaixo simula profundidade; no clique, o botão desce até
+encostar na sombra (`active:translate-y-1 active:shadow-none`) em vez de só
+encolher — sensação de botão físico. Classes `shadow-chunky*` no Tailwind.
+
+### Gradientes por Modo (pós-consolidação v5.0 — só 3 modos)
 | Modo | Gradiente |
 |------|-----------|
-| Rush | `from-violet-500 to-purple-600` |
-| Sobrevivência | `from-rose-500 to-pink-600` |
-| Velocidade | `from-amber-400 to-orange-500` |
-| Desafio Diário | `from-emerald-400 to-teal-600` |
+| Rush | `from-feather to-mask` (pendente migrar pra `ink`) |
+| Zen | `from-macaw to-macaw-dark` (pendente migrar) |
+| Revisão | `from-bee to-bee-dark` (pendente migrar) |
 
 ### Tipografia
 - Fonte: **Nunito** (Google Fonts)
@@ -111,30 +130,32 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
 
 ---
 
-## 🎮 MODOS DE JOGO
+## 🎮 MODOS DE JOGO — [v5.0] reduzidos de 10 para 3 (ver DECISIONS.md D016)
 
-### Rush Mode (⚡)
-- Timer: 5 minutos (300s) contando regressivamente
-- Bônus: +1 segundo por resposta correta
-- Dificuldade: progressiva (15 → Nível 2, 30 → Nível 3)
-- Objetivo: máxima pontuação
+> Sobrevivência, Velocidade, Desafio Diário, Difícil, Recorde Pessoal,
+> Desafio Semanal, Combinado e Inverso foram DELETADOS do código na sessão
+> 043 (não só escondidos). `UNLOCK_RULES` também foi zerado — os 3 modos
+> abaixo estão liberados desde o primeiro acesso (reverte D008, ver D017).
 
-### Sobrevivência (❤️)
+### Rush (⚡) — fusão de Rush + Sobrevivência + Velocidade + Diário
+- Timer: começa em **30s**, cresce **+3s por acerto** (`bonusTime`) — "banco
+  de tempo": quanto melhor a sequência, mais tempo de jogo
+- Vidas: 3 (diminui a cada erro) — `WRONG_SHIELDED` no reducer não desconta
+  vida se o power-up Escudo estiver ativo
+- Termina: com 3 erros OU tempo zerado — o que vier primeiro
+- É o modo que sustenta a ofensiva diária (qualquer partida conta)
+- Único modo com aposta (`bettable = mode === 'rush'` em App.jsx)
+- Mascote: Vupt (lebre), poses por humor (`slow`→bate o pé, `insane`→provoca, `correct`→joinha)
+
+### Zen (🧘)
 - Timer: não tem (conta elapsed time para stats)
-- Vidas: 3 (diminui a cada erro)
-- Termina: ao perder todas as vidas
-- Objetivo: durar o máximo possível
+- Sem pressão — sem XP, sem moeda (era 0.10 de multiplicador, zerado na v5.0)
+- Mascote: Tuca (tartaruga), poses por humor (`slow`→ajusta óculos, `correct`→lendo)
 
-### Velocidade (⏱️)
-- Timer: 60 segundos countdown
-- Sem bônus de tempo
-- Objetivo: máximo de acertos em 60s
-
-### Desafio Diário (🌟)
-- Timer: sem (conta elapsed time)
-- Perguntas: 20 por dia, geradas com seed determinística (data)
-- Seed: `YYYYMMDD → seededRng` — mesmas perguntas para todos no mesmo dia
-- [v2.3] SEM bloqueio: sempre acessível; badge "✓ hoje" apenas informativo. Conta para ofensiva, gera XP (+bônus) e atualiza progresso
+### Revisão (📚)
+- 15 questões focadas nas tabuadas que o jogador mais erra
+  (`getRevisionQuestions`)
+- Mascote: Tuca (mesmas poses do Zen)
 
 ---
 
@@ -149,11 +170,16 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   bestStreak: 0,            // Maior sequência de acertos já registrada
   bestScore: 0,             // Maior pontuação em uma partida
   bestAccuracy: 0,          // Melhor taxa de acerto (0-100)
-  records: {                // Recordes por modo
-    rush: Number,
-    survival: Number,
-    speed: Number,
-    daily: Number,
+  records: {                // Recordes por modo — [v5.0] só rush/zen/review recebem valor novo;
+    rush: Number,           // chaves de modos removidos (survival/speed/daily/...) podem sobrar
+    zen: Number,            // órfãs no storage de contas antigas — inofensivo, não lido por nada
+    review: Number,
+  },
+  powerups: {                // [v5.0] shield/headstart novos — ver constants/shop.js
+    life: Number, time: Number, xp2: Number,
+    shield: Number,          // protege de 1 erro sem descontar vida (WRONG_SHIELDED)
+    headstart: Number,       // +10s no início do Rush
+    streakInsurance: Number, missionFreeze: Number,
   },
   sessions: [               // Últimas 100 sessões
     { mode, score, correct, wrong, avgMs, date }  // avgMs [v2.7.1] = tempo médio de resposta (ms)
@@ -258,8 +284,11 @@ MenuPage
 
 Sistema **lúdico** (NÃO mede QI real) — gamificação/identidade/progressão.
 
-- **Dados:** `src/constants/characters.js` → `CHARACTERS` (104, ordenados do menor ao maior
+- **Dados:** `src/constants/characters.js` → `CHARACTERS` ([v5.0] **52** — era 104, cortado pela
+  metade por pedido do Davi, 13 por tier, mantidos os mais reconhecíveis; ordenados do menor ao maior
   nível intelectual), `TIERS` (baixo/medio/alto/genio com cores e classificação) e `QI_MIN`/`QI_MAX` (70/200).
+- **[v5.0] Painel de perfil (MenuPage) muda de cor conforme o tier atual** — usa `qiInfo.tier.gradient`
+  diretamente no card. Pendente: tema por PERSONAGEM específico (não só por tier) — ver MEMORY_CORE.
 - **Personagens:** FAMOSOS e reconhecíveis (Patrick → Einstein) — `{ name, emoji, tier, desc }`.
   Nomes são apenas rótulos/referências; avatar é emoji (sem imagens externas). Ordem: Patrick Estrela (piso) → Albert Einstein (topo).
 - **Cálculo:** `computeQI(data)` em `utils` combina precisão (lifetime + melhor), velocidade (speedBest),
@@ -379,3 +408,62 @@ NÃO é IA real — interpreta dados reais e gera textos automáticos.
 - `sw.js` — Service Worker (cache básico)
 - `manifet.json` — Web App Manifest (typo original mantido no arquivo)
 - Icons: `icons/icon-192.png`, `icons/icon-512.png`
+
+---
+
+## 🐢🐇 MASCOTES — TUCA E VUPT (v5.0 — sessao-043)
+
+Inspirados na fábula de Esopo (domínio público — ver DECISIONS.md D018).
+
+- **Tuca** — tartaruga sábia e idosa. Acompanha Zen/Revisão. Poses:
+  `tuca-idle` (padrão), `tuca-glasses` (ajustando óculos — humor `slow`),
+  `tuca-reading` (lendo — humor `correct`).
+- **Vupt** — lebre apressada e convencida. Acompanha o Rush. Poses:
+  `vupt-cocky` (batendo o pé — humor `slow`), `vupt-peek-villain`
+  (espiando com cara de má — humor `insane`), `vupt-thumbsup` (joinha —
+  humor `correct`). `vupt-run` (a lebre correndo) foi REMOVIDA — não é mais
+  referenciada em lugar nenhum do código.
+
+**Componente:** `src/components/Mascot.jsx`. Sem pose específica pro humor
+atual = não renderiza nada (em vez de cair num "genérico"). Renderizado via
+`createPortal(..., document.body)` — necessário porque `position: fixed`
+dentro de uma árvore com `motion.div` (Framer Motion aplica `transform`)
+vira relativo ao ancestral transformado, não à viewport. Posição: fixo na
+borda direita da tela, 224px (`w-56 h-56`), pode vazar pra fora em telas
+estreitas (de propósito — replica referência visual do Davi). **Tamanho e
+posição ainda não confirmados como finais** — ver MEMORY_CORE.
+
+**Frequência controlada** (`GamePage.jsx`): `mascotShowCountRef` +
+`maybeMascot(mood, chance)`. Teto por partida: 2 em modos com tempo
+(`cfg.timer !== null`, ou seja Rush), 6 em modos sem tempo (Zen/Revisão).
+Cada gatilho só vira aparição real se passar num sorteio (`chance` padrão
+0.4) E não tiver batido o teto — espalha as aparições pela partida.
+Gatilhos: `slow` (3s parado na mesma questão, `useEffect` dedicado),
+`correct`/`combo`/`insane` (dentro de `handleSubmit`, conforme streak).
+
+**Balão de fala e voz (`window.speechSynthesis`) foram REMOVIDOS do
+código** (não só desativados) por pedido do Davi — estavam atrapalhando.
+Reimplementar SÓ quando ele mandar as frases finais e o áudio de verdade
+(gravado ou gerado) — não adivinhar conteúdo antes disso.
+
+**Pipeline de geração de arte** (ver DECISIONS.md D019 pro raciocínio
+completo): Davi gera imagem estática no ChatGPT → gera animação
+image-to-video no Pika (login Google) → me manda o `.mp4` (fundo branco +
+marca d'água "Pippit AI") → processo com script Python usando
+`opencv-python-headless` + `Pillow` (instalados via pip nesta sessão — não
+havia `ffmpeg`/bibliotecas de vídeo no ambiente):
+1. Pinta a marca d'água (retângulo sólido no canto)
+2. Flood-fill a partir dos 4 cantos com `cv2.FLOODFILL_FIXED_RANGE`
+   (**crítico** — sem essa flag o preenchimento vaza por bordas
+   anti-aliased e come partes claras do personagem, ex. comeu a barba
+   branca do Tuca na 1ª tentativa)
+3. Limpeza morfológica (`MORPH_OPEN` + mantém só o maior componente
+   conectado) — tira ruído/manchas residuais
+4. Recorte pelo bounding-box **união de todos os frames** (não por frame
+   individual — senão o WebP anima com dimensões inconsistentes entre
+   frames e a lib de export rejeita)
+5. Exporta como WebP animado com alpha (`Image.save(..., save_all=True,
+   format="WEBP")`)
+
+Arquivos finais em `src/assets/mascots/*.webp` (~150-700KB cada — só
+carregam quando `GamePage` monta, não pesam no load inicial).

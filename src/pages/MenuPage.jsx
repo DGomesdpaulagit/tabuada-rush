@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
-import { Trophy, BarChart2, Medal, Star, LogIn, Cloud, Sparkles, Settings, ShoppingBag, Map, Leaf, ChevronRight, Brain } from 'lucide-react';
-import { LEVELS } from '../constants';
+import { Gamepad2, Gift, BarChart2, LogIn, Cloud, Sparkles, Settings, ChevronRight, Brain, Coins, Flame, Trophy } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { getLevelIdx, getXpProgress, getQiInfo, countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
+import { getQiInfo, countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
 import { analyzeUser } from '../utils/analysis';
-import { SHOP_ITEM_MAP } from '../constants/shop';
 import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
 
@@ -13,12 +11,6 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const { data, cloudSyncing } = useApp();
   const { user } = useAuth();
 
-  const levelIdx = getLevelIdx(data.xp || 0);
-  const level = LEVELS[levelIdx];
-  const nextLevel = LEVELS[levelIdx + 1];
-  const { pct, toNext } = getXpProgress(data.xp || 0);
-  const todayStr = new Date().toISOString().split('T')[0];
-  const dailyDone = data.currentDailyDate === todayStr;
   const streak = data.currentStreak || 0;
   const bestDayStreak = data.bestDayStreak || 0;
   const coins = data.coins || 0;
@@ -29,14 +21,11 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const qiInfo = getQiInfo(data);
   const analysisHeadline = analyzeUser(data).headline;
 
-  // ── Cosméticos equipados ───────────────────────────────────────────────────
-  const equippedItems  = data.equippedItems || {};
-  const equippedFrame  = equippedItems.frame  ? SHOP_ITEM_MAP[equippedItems.frame]  : null;
-  const equippedCard   = equippedItems.card   ? SHOP_ITEM_MAP[equippedItems.card]   : null;
-  const equippedTitle  = equippedItems.title  ? SHOP_ITEM_MAP[equippedItems.title]  : null;
-  const frameStyle     = equippedFrame?.frameStyle || '';
-  const cardGradient   = equippedCard?.cardGradient  || 'from-violet-600 to-purple-600';
-  const displayTitle   = equippedTitle?.displayTitle  || level.title;
+  // Painel de perfil muda de cor conforme o personagem/tier do QI atual —
+  // TIERS já define um gradiente por faixa (baixo/médio/alto/gênio), então
+  // o card "veste a cara" de quem está sendo exibido, sem precisar de
+  // cosmético comprável (a loja de cosméticos foi removida).
+  const cardGradient = qiInfo.tier.gradient;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
   const dueFlashcards = countDueFlashcards(data.srsData?.mult || {});
   const factsAtRisk = countFactsAtRiskAllOps(data); // [v4.0 · Fase 4] curva de esquecimento
@@ -68,7 +57,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             <button
               onClick={() => onNavigate('auth')}
               title="Entrar / Criar conta"
-              className="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 hover:bg-violet-200 transition-colors"
+              className="w-9 h-9 rounded-xl bg-ink/10 flex items-center justify-center text-ink hover:bg-ink/20 transition-colors"
             >
               <LogIn size={15} />
             </button>
@@ -81,7 +70,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           className="inline-block"
         >
-          <h1 className="text-4xl font-black bg-gradient-to-r from-violet-600 to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-black text-ink">
             Tabuada Rush
           </h1>
         </motion.div>
@@ -94,7 +83,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-1 mt-1 text-xs text-violet-400 font-semibold"
+            className="flex items-center justify-center gap-1 mt-1 text-xs text-ink font-semibold"
           >
             <Cloud size={11} className="animate-pulse" />
             Sincronizando...
@@ -115,77 +104,71 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
       </div>
 
       {/* ── CARD DE PERFIL DO USUÁRIO ──────────────────────────────────────
-          Identidade + evolução + progressão. Mantém o gradiente violeta
-          original do projeto; apenas mais completo e informativo. */}
+          QI-first: uma métrica única de progressão (já é composta — inclui
+          nível, precisão, velocidade, ofensiva e consistência, ver
+          utils/computeQI). Nível/XP deixam de ser exibidos aqui; XP continua
+          existindo internamente (multiplicador de modos) e fica visível em
+          detalhe dentro de Estatísticas. */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className={`bg-gradient-to-r ${cardGradient} rounded-3xl p-5 text-white shadow-lg shadow-violet-200`}
+        className={`bg-gradient-to-r ${cardGradient} rounded-3xl p-5 text-white shadow-lg`}
       >
-        {/* Topo: avatar + título/nível + XP total */}
-        <div className="flex items-center gap-3 mb-3">
+        {/* Topo: avatar do personagem (Ranking de QI) + QI + moedas */}
+        <button
+          onClick={() => onNavigate('ranking')}
+          className="flex items-center gap-3 w-full text-left"
+        >
           <motion.div
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
-            className={`w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0 ${frameStyle}`}
+            className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0"
           >
-            {level.badge}
+            {qiInfo.char.emoji}
           </motion.div>
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide truncate">
-              {displayTitle}
+              {qiInfo.char.name}
             </p>
-            <p className="text-2xl font-black leading-tight truncate">{level.name}</p>
-            {/* Classificação intelectual (Ranking de QI) — pequena e integrada */}
-            <button
-              onClick={() => onNavigate('ranking')}
-              className="text-violet-200 text-[11px] font-bold truncate mt-0.5 hover:text-white transition-colors text-left"
-            >
-              {qiInfo.char.emoji} QI {qiInfo.qi} · {qiInfo.char.name}
-            </button>
+            <div className="flex items-baseline gap-1.5">
+              <p className="text-3xl font-black leading-tight">{qiInfo.qi}</p>
+              <p className="text-white/70 text-xs font-bold">QI</p>
+            </div>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-violet-200 text-xs font-bold">XP Total</p>
-            <p className="text-xl font-black">{data.xp || 0}</p>
-            <p className="text-amber-200 text-xs font-bold mt-0.5">🪙 {coins}</p>
+            <p className="text-amber-200 text-lg font-black flex items-center gap-1 justify-end">
+              <Coins size={16} /> {coins}
+            </p>
+            <span className="inline-flex items-center gap-0.5 text-white/70 text-[11px] font-bold">
+              Ver ranking <ChevronRight size={12} />
+            </span>
           </div>
-        </div>
-
-        {/* Barra de XP */}
-        <Progress value={pct} colorClass="bg-white/60" className="bg-white/20 h-2" />
-        <p className="text-violet-200 text-xs mt-2 font-semibold">
-          {nextLevel ? `${toNext} XP para ${nextLevel.name}` : 'Nível máximo atingido! 🎉'}
-        </p>
+        </button>
 
         {/* Divisor */}
         <div className="h-px bg-white/15 my-4" />
 
-        {/* Ofensiva diária */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🔥</span>
-            <div>
-              <p className="text-violet-200 text-xs font-bold uppercase tracking-wide">Ofensiva</p>
-              <p className="text-lg font-black leading-tight">
-                {streak} {streak === 1 ? 'dia' : 'dias'}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-violet-200 text-xs font-bold uppercase tracking-wide">Recorde</p>
-            <p className="text-lg font-black leading-tight">
-              🏆 {bestDayStreak} {bestDayStreak === 1 ? 'dia' : 'dias'}
-            </p>
-          </div>
+        {/* Ofensiva diária — recorde vira um detalhe pequeno, não uma coluna
+            inteira (menos informação disputando atenção no painel). */}
+        <div className="flex items-center gap-2">
+          <Flame size={22} className="shrink-0" />
+          <p className="text-lg font-black leading-tight">
+            {streak} {streak === 1 ? 'dia' : 'dias'}
+          </p>
+          {bestDayStreak > 0 && (
+            <span className="text-white/60 text-xs font-bold flex items-center gap-0.5 ml-1">
+              <Trophy size={11} /> {bestDayStreak}
+            </span>
+          )}
         </div>
 
         {/* Meta de ofensiva */}
-        <div className="mt-4">
+        <div className="mt-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-violet-200 text-xs font-bold uppercase tracking-wide">
-              Meta de Ofensiva
+            <p className="text-white/70 text-xs font-bold uppercase tracking-wide">
+              Meta
             </p>
             {streakGoal ? (
               // Meta travada — não pode ser alterada depois de definida (só muda
@@ -196,7 +179,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             ) : (
               <button
                 onClick={onEditGoal}
-                className="text-xs font-black bg-white text-violet-700 px-3 py-1 rounded-full hover:bg-violet-50 transition-colors"
+                className="text-xs font-black bg-white text-ink px-3 py-1 rounded-full hover:bg-paper transition-colors"
               >
                 Definir meta
               </button>
@@ -212,9 +195,9 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
         onClick={() => onNavigate('stats')}
-        className="flex items-center gap-3 w-full text-left bg-white rounded-2xl px-4 py-3 border border-gray-100 shadow-sm hover:border-violet-200 transition-colors"
+        className="flex items-center gap-3 w-full text-left bg-white rounded-2xl px-4 py-3 border-2 border-[#E0DACB] shadow-sm hover:border-ink/30 transition-colors"
       >
-        <span className="w-8 h-8 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
+        <span className="w-8 h-8 rounded-xl bg-ink/10 text-ink flex items-center justify-center shrink-0">
           <Sparkles size={15} />
         </span>
         <p className="text-sm font-bold text-gray-600 leading-snug">{analysisHeadline}</p>
@@ -249,8 +232,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
       )}
 
       {/* ── BOTÃO ESCOLHER MODO ─────────────────────────────────────────────
-          Substitui o grid antigo de modos. Leva para ModesPage com todos os
-          modos organizados (principais, treino e avançados). */}
+          Leva para ModesPage: Rush (modo principal) + Zen/Revisão (treino). */}
       <motion.button
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -258,79 +240,46 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         whileHover={{ scale: 1.01, y: -1 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onNavigate('modes')}
-        className="w-full flex items-center gap-3 rounded-3xl p-5 bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl transition-shadow"
+        className="w-full flex items-center gap-3 rounded-3xl p-5 bg-ink text-white shadow-lg hover:bg-ink/90 transition-colors"
       >
-        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0">
-          🎮
+        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+          <Gamepad2 size={22} />
         </div>
         <div className="flex-1 text-left min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-wider text-violet-200">
+          <p className="text-[10px] font-black uppercase tracking-wider text-white/70">
             Modos de Jogo
           </p>
           <p className="text-lg font-black leading-tight">Escolher Modo</p>
-          <p className="text-xs font-bold text-violet-100 mt-0.5">
+          <p className="text-xs font-bold text-white/80 mt-0.5">
             {dueFlashcards > 0
-              ? `🃏 ${dueFlashcards} flashcards para revisar`
-              : 'Rush · Sobrevivência · Velocidade · Treino · +'}
+              ? `${dueFlashcards} flashcards para revisar`
+              : 'Rush · Zen · Revisão'}
           </p>
         </div>
         <ChevronRight size={22} className="text-white shrink-0" />
       </motion.button>
 
-      {/* ── Fase 7: Loja · Missões · Temporada ──────────────────────────── */}
-      <div className="grid grid-cols-3 gap-2">
-        <button
-          onClick={() => onNavigate('shop')}
-          className="flex flex-col items-center gap-1.5 py-3 bg-amber-50 border border-amber-200 rounded-2xl hover:bg-amber-100 transition-colors active:scale-[0.97]"
-        >
-          <ShoppingBag size={18} className="text-amber-600" />
-          <span className="text-xs font-black text-amber-700">Loja</span>
-        </button>
-
+      {/* ── Destinos primários: Recompensas + Estatísticas ────────────────
+          Loja/Missões/Temporada viraram abas dentro de um único hub
+          (RewardsPage) — a Loja de cosméticos está em standby (economia
+          será repensada antes de investir em UI nova pra ela), mas as 3
+          continuam acessíveis aqui. Recordes/Conquistas/Ranking viraram
+          seções dentro de Estatísticas. */}
+      <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <button
-            onClick={() => onNavigate('missions')}
-            className="w-full flex flex-col items-center gap-1.5 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl hover:bg-emerald-100 transition-colors active:scale-[0.97]"
-          >
-            <Map size={18} className="text-emerald-600" />
-            <span className="text-xs font-black text-emerald-700">Missões</span>
-          </button>
+          <Button variant="secondary" onClick={() => onNavigate('rewards')} className="w-full">
+            <Gift size={16} />
+            Recompensas
+          </Button>
           {unclaimedMissions > 0 && (
             <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 z-10 shadow-sm">
               {unclaimedMissions}
             </span>
           )}
         </div>
-
-        <button
-          onClick={() => onNavigate('seasons')}
-          className="flex flex-col items-center gap-1.5 py-3 bg-violet-50 border border-violet-200 rounded-2xl hover:bg-violet-100 transition-colors active:scale-[0.97]"
-        >
-          <Leaf size={18} className="text-violet-600" />
-          <span className="text-xs font-black text-violet-700">Temporada</span>
-        </button>
-      </div>
-
-      {/* Action buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button variant="secondary" onClick={() => onNavigate('records')} className="w-full">
-          <Trophy size={16} />
-          Recordes
-        </Button>
         <Button variant="secondary" onClick={() => onNavigate('stats')} className="w-full">
           <BarChart2 size={16} />
           Estatísticas
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Button variant="secondary" onClick={() => onNavigate('achievements')} className="w-full">
-          <Star size={16} />
-          Conquistas
-        </Button>
-        <Button variant="secondary" onClick={() => onNavigate('ranking')} className="w-full">
-          <Medal size={16} />
-          Ranking QI
         </Button>
       </div>
 
@@ -339,7 +288,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="flex justify-around py-3 bg-gray-50 rounded-2xl border border-gray-100"
+        className="flex justify-around py-3 bg-paper rounded-2xl border border-[#E0DACB]"
       >
         <div className="text-center">
           <p className="text-lg font-black text-gray-800">{data.totalGames || 0}</p>

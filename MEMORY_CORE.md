@@ -18,9 +18,10 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-07-06
-**Versão:** 3.17.0 (Reversão da 4.0 — só multiplicação, de volta ao foco — sessao-042.md)
-**Status:** ✅ Roadmap 3.0 100% entregue (v3.3-3.8) + refinamentos (v3.9-3.10). ⚠️ Roadmap 4.0 foi entregue (Fases 1-6) e depois **parcialmente revertido** por decisão do Davi (D014 em `DECISIONS.md`) — só o pilar "Inteligência Adaptativa" sobreviveu; "Matemática Completa" (soma/subtração/divisão) foi removida. Sem roadmap formal em aberto no momento.
+**Data:** 2026-08-09
+**Versão:** 5.0.0 (Tabuada Rush 5.0 — redesign, consolidação de modos, mascotes — sessao-043.md)
+**Status:** ⚠️ Sessão gigante, várias frentes abertas simultaneamente. Build limpo o tempo todo, mas HÁ pendências diretas sinalizadas ao Davi (ver seção "PRÓXIMA SESSÃO" abaixo) — não é um estado "fechado" como o fim da sessão 042.
+**[v5.0.0]** Redesign completo por pedido do Davi: paleta própria "Caderno Quadriculado" (só aplicada no Menu + tokens base, resto do app pendente), sidebar de navegação (desktop), Menu simplificado (3 destinos primários: Modos/Recompensas/Estatísticas), **modos reduzidos de 10 pra 3** (Rush agora é a fusão de Rush+Sobrevivência+Velocidade+Diário — timer cresce com acerto, 3 vidas —, Zen e Revisão mantidos), **desbloqueio progressivo removido** (tudo liberado desde o início — reverte D008), Ranking de QI 104→52 personagens, Loja só com power-ups (cosméticos removidos, 2 power-ups novos: Escudo e Largada Turbo), economia mais dura (menos moeda por partida, Zen sem XP/moeda), e **mascotes Tuca (tartaruga) e Vupt (lebre)** — fábula de Esopo, arte gerada por IA (ChatGPT+Pika) processada por um pipeline Python próprio (remoção de fundo + WebP animado), integrados no GamePage com frequência controlada (sorteio + teto por partida). Balão de fala e voz do mascote foram DESLIGADOS temporariamente (Davi vai mandar frases/áudio finais). Ver `sessao-043.md` e `DECISIONS.md` D015-D019.
 **[v3.17.0]** Tabuada Rush voltou a ser exclusivamente sobre MULTIPLICAÇÃO — esse é o propósito original do projeto (decorar a tabuada) e a 4.0 tinha diluído isso pra "ser bom em matemática" (4 operações). Removido: `OPERATIONS.add/.sub/.div`, seletor de operação, abas de operação, radar cross-operação, certificado "Matemática Fundamental Completa", bônus de amplitude no QI. Mantido: curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer", viés adaptativo por fatos fracos (toggle "Foco em Fraquezas"). Ver `sessao-042.md`.
 **[v3.16.1]** Leaderboard Global removido por completo (página, botão, upload de score) — pedido direto do Davi. Desafio Diário/Semanal continuam existindo, só sem comparação global. Tabelas `leaderboard_daily`/`leaderboard_weekly` no Supabase ficaram órfãs (não apagadas — ver `SUPABASE_SETUP.md`).
 **Servidor dev:** `http://localhost:3000` (npm run dev) · **Produção:** https://tabuada-rush-rho.vercel.app
@@ -61,6 +62,32 @@
 > — ver `BUGS.md`.
 
 **Sem roadmap formal em aberto.** Próxima sessão: ver seção abaixo.
+
+---
+
+## 🎨 TABUADA RUSH 5.0 — EM ANDAMENTO (v4.x → v5.0.0 · sessão 043)
+
+> Sessão 043 foi um redesign grande e não terminou 100% fechado — várias
+> frentes ficaram pela metade de propósito (build limpo em todas, mas UI
+> inconsistente entre telas até a próxima sessão terminar a migração). Ver
+> `sessions/sessao-043.md` (registro completo, cronológico, inclui os
+> caminhos tentados e descartados) e `DECISIONS.md` D015-D019.
+>
+> **Entregue nesta sessão:** paleta "Caderno Quadriculado" (só Menu +
+> tokens base), sidebar desktop, Menu QI-first com 3 destinos primários,
+> modos reduzidos de 10→3 (Rush fundido, Zen, Revisão), desbloqueio
+> progressivo removido, Ranking de QI 104→52, Loja só power-ups (+Escudo
+> +Largada Turbo), economia mais dura, mascotes Tuca/Vupt com pipeline de
+> animação próprio.
+>
+> **NÃO entregue (pendência direta, sem ambiguidade — ver PRÓXIMA SESSÃO):**
+> paleta nas telas restantes, reorganização de verdade da StatsPage,
+> tamanho/posição final do mascote, balão de fala + voz (desligados,
+> esperando conteúdo final do Davi), painel temático por personagem
+> específico (não só por tier).
+>
+> **Pausado por decisão do Davi, não é bug nem esquecimento:** Modo
+> História (narrativa infinita) — ver D018.
 
 ---
 
@@ -139,41 +166,56 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — SEM ROADMAP FORMAL (foco = usar de verdade)
+## 🎯 PRÓXIMA SESSÃO — PENDÊNCIAS DIRETAS DA 5.0 (sem ambiguidade)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-042.md` (reversão
-da 4.0) + `DECISIONS.md` D014 (o porquê).
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-043.md` (registro
+completo e cronológico — inclui os caminhos tentados e descartados, útil pra
+não repetir esforço) + `DECISIONS.md` D015-D019.
 
-O Tabuada Rush voltou a ser especificamente sobre decorar a tabuada de
-multiplicação — esse é o norte pra qualquer decisão de produto daqui pra
-frente. A 4.0's "Inteligência Adaptativa" (curva de esquecimento, viés por
-fraqueza) continua ativa, escopada só pra mult.
+**Ordem sugerida (Davi validou essa priorização no fim da sessão 043):**
+1. **Tamanho/posição final do mascote** — Davi vai mandar imagens de
+   referência mostrando escala e posição exatas. A versão atual (224px,
+   fixo na borda direita via portal) é aproximação, não confirmada.
+2. **Migrar a paleta "Caderno Quadriculado" nas telas restantes** —
+   Modos/Recompensas/Estatísticas/Loja ainda usam os tokens verdes/azuis
+   do Duolingo (tentativa abandonada, ver D015). Só depois disso remover
+   os tokens Duolingo do `tailwind.config.js`.
+3. **Reorganizar a `StatsPage` de verdade** — hoje é um catch-all que
+   absorveu 6 telas antigas como abas internas; Davi já sinalizou que
+   "ainda tá bagunçada", isso foi um remendo, não a solução final.
+4. **Reativar balão de fala + voz do mascote** — só quando o Davi mandar
+   as frases finais e o áudio (gravado ou gerado). Não reimplementar sem
+   esse conteúdo.
+5. **Painel temático por personagem específico** (não só por tier) — Davi
+   quer, ex., "painel do Goku" quando o QI cair nesse personagem
+   específico. Precisa de uma estrutura de cor/tema por personagem (52
+   combinações) que ainda não existe.
 
-**Possíveis caminhos para a próxima sessão:**
-1. **Uso real** — o caminho que Davi indicou: jogar de verdade pra decorar
-   a tabuada, e trazer feedback concreto do que sentir no caminho (isso vira
-   "pequenas iterações" pontuais, não um roadmap abstrato).
-2. **Polimento e bug-fixing** — observar o app em uso e corrigir atrito
-   específico (texto confuso, número que não bate, fluxo com cliques demais).
-3. **Ação opcional pendente (não bloqueia nada):** Publicação Play Store —
-   Davi tem intenção; aguardando decisão de prioridade (assets: ícone 512²,
-   screenshots, política de privacidade, US$25 dev account, método sugerido:
-   PWABuilder).
+**Em aberto, sem decisão ainda (não é pendência técnica — é decisão de
+produto que precisa de conversa):**
+- Economia de moedas/aposta — Davi disse explicitamente "não sei o que
+  fazer, precisa ser uma ideia muito boa". Não inventar sozinho.
+- `ACHIEVEMENTS.survival_30`/`.speed_20`/`.daily_first`/`.daily_7`
+  referenciam stats de modos removidos (nunca mais incrementam) — decisão
+  de conquistas pendente, não tocado nesta sessão.
 
-**IMPORTANTE — antes de propor qualquer feature nova:** checar se ela serve
-diretamente o objetivo "decorar a tabuada de multiplicação". Se a resposta
-for vaga ("melhora a experiência geral", "deixa mais completo"), é sinal de
-alerta — foi exatamente esse tipo de raciocínio que levou à 4.0 original.
-
-**Não há urgência.**
+**Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
+História (narrativa infinita) — ver D018.
 
 ---
 
 ## 🐛 BUGS CONHECIDOS
 
-- Nenhum bug ativo conhecido
-- Preview headless (Claude Code) não suporta rAF → animações Framer Motion
-  não rodam no preview tool (não é bug do app)
+- Nenhum bug ativo conhecido no APP em si.
+- **Ambiente de preview (Claude Code, não é bug do app):** o Browser pane
+  desta sessão não compôs frames (`screenshot` falha, cliques via
+  `computer`/dispatch de evento não produzem navegação observável) —
+  testado exaustivamente na sessão 043 (aba nova, servidor reiniciado, ref
+  click, coordinate click, dispatch nativo, handler React direto — sempre
+  o mesmo resultado). Leitura (`get_page_text`/`read_page`/JS de inspeção)
+  funciona normal. Recomendação: não tentar screenshot/clique nesse
+  ambiente — verificar por build limpo + inspeção de DOM via JS, e pedir
+  confirmação visual ao Davi quando precisar de certeza.
 
 ---
 
@@ -191,10 +233,14 @@ alerta — foi exatamente esse tipo de raciocínio que levou à 4.0 original.
 | `src/services/sync.js` | loadCloudData + saveCloudData |
 | `src/pages/HitsPage.jsx` | Dashboard de Acertos (sub-página interna de StatsPage) |
 | `src/pages/ErrorsPage.jsx` | Dashboard de Erros (sub-página interna de StatsPage) |
-| `src/pages/ShopPage.jsx` | Loja de cosméticos (compra/equipa) |
+| `src/pages/ShopPage.jsx` | Loja — só power-ups desde a 5.0 (cosméticos removidos) |
+| `src/pages/RewardsPage.jsx` | [v5.0] Hub com abas Missões/Loja/Temporada |
 | `src/pages/MissionsPage.jsx` | Missões diárias/semanais/mensais |
 | `src/pages/SeasonsPage.jsx` | Trilha de temporada com recompensas |
-| `src/constants/shop.js` | Itens da loja, raridades, categorias |
+| `src/components/Sidebar.jsx` | [v5.0] Nav lateral, desktop-only (`lg+`) |
+| `src/components/Mascot.jsx` | [v5.0] Sistema de mascote — Tuca/Vupt, poses por humor, frequência controlada em `GamePage` |
+| `src/assets/mascots/*.webp` | [v5.0] Poses animadas (geradas por IA + pipeline Python de remoção de fundo — ver D019) |
+| `src/constants/shop.js` | Itens da loja — só `powerup` desde a 5.0 |
 | `src/constants/missions.js` | Pools de missões por período |
 | `src/constants/seasons.js` | Temporadas, calcSeasonXp |
 | `src/utils/missions.js` | Lógica completa de missões |
@@ -219,8 +265,9 @@ feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do
 Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
-3. `sessions/sessao-023.md` — última sessão
-4. `BUGS.md` — problemas ativos
+3. `sessions/sessao-043.md` — última sessão (redesign 5.0, longa — vale ler inteira antes de propor mudança visual/de modos)
+4. `DECISIONS.md` D015-D019 — decisões da 5.0
+5. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.
 Para ativar cloud: criar `.env` com `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`

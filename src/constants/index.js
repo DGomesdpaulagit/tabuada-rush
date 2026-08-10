@@ -1,80 +1,27 @@
 // ── MODES ──────────────────────────────────────────────────────────────────
-
-// xpMultiplier: fator aplicado ao score para calcular XP ganho por partida.
-// Rush tem o menor multiplicador pois dura 5 min e gera scores altos com facilidade.
-// Daily tem o maior pois são 20 perguntas fixas — exige consistência real.
+// v5.0 · Bloco 1 (continuação): o leque de 10 modos foi cortado pra 3.
+// Rush agora é a SOMA do que eram Rush+Sobrevivência+Velocidade+Desafio Diário:
+// um timer que começa curto e CRESCE a cada acerto (bonusTime), e 3 vidas —
+// a partida acaba quando o tempo zera OU quando erra 3 vezes, o que vier primeiro.
+// É o modo que sustenta a ofensiva diária (qualquer partida jogada conta).
 export const MODES = {
   rush: {
     id: 'rush',
     name: 'Rush',
     emoji: '⚡',
-    description: '5 minutos + bônus por acerto',
-    gradient: 'from-violet-500 to-purple-600',
-    gradientLight: 'from-violet-50 to-purple-50',
-    shadow: 'shadow-violet-200',
-    text: 'text-violet-600',
-    border: 'border-violet-200',
-    bg: 'bg-violet-600',
-    timer: 300,
-    lives: null,
-    questions: null,
-    bonusTime: 1,
-    xpMultiplier: 0.12,
-    scoreScale: 0.25,   // Rush dura 5 min → score bruto muito alto; escala para ~300 pontos médios
-    group: 'main',
-  },
-  survival: {
-    id: 'survival',
-    name: 'Sobrevivência',
-    emoji: '❤️',
-    description: '3 vidas — sem limite de tempo',
-    gradient: 'from-rose-500 to-pink-600',
-    gradientLight: 'from-rose-50 to-pink-50',
-    shadow: 'shadow-rose-200',
-    text: 'text-rose-600',
-    border: 'border-rose-200',
-    bg: 'bg-rose-500',
-    timer: null,
+    description: 'Acerte rápido pra ganhar tempo — 3 erros ou o tempo acabam com tudo',
+    gradient: 'from-feather to-mask',
+    gradientLight: 'from-mask/10 to-mask/5',
+    shadow: 'shadow-mask/30',
+    text: 'text-wing',
+    border: 'border-mask/30',
+    bg: 'bg-feather',
+    timer: 30,       // começa curto — urgência desde o primeiro segundo
     lives: 3,
     questions: null,
-    bonusTime: 0,
+    bonusTime: 3,    // cada acerto soma 3s ao relógio — "banco de tempo"
     xpMultiplier: 0.20,
-    group: 'main',
-  },
-  speed: {
-    id: 'speed',
-    name: 'Velocidade',
-    emoji: '⏱️',
-    description: '60 segundos intensos',
-    gradient: 'from-amber-400 to-orange-500',
-    gradientLight: 'from-amber-50 to-orange-50',
-    shadow: 'shadow-amber-200',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
-    bg: 'bg-amber-500',
-    timer: 60,
-    lives: null,
-    questions: null,
-    bonusTime: 0,
-    xpMultiplier: 0.16,
-    group: 'main',
-  },
-  daily: {
-    id: 'daily',
-    name: 'Desafio Diário',
-    emoji: '🌟',
-    description: '20 perguntas únicas por dia',
-    gradient: 'from-emerald-400 to-teal-600',
-    gradientLight: 'from-emerald-50 to-teal-50',
-    shadow: 'shadow-emerald-200',
-    text: 'text-emerald-600',
-    border: 'border-emerald-200',
-    bg: 'bg-emerald-500',
-    timer: null,
-    lives: null,
-    questions: 20,
-    bonusTime: 0,
-    xpMultiplier: 0.28,
+    scoreScale: 1,
     group: 'main',
   },
   // ── MODOS DE TREINO — aprendizado sem pressão competitiva ─────────────────
@@ -83,30 +30,30 @@ export const MODES = {
     name: 'Zen',
     emoji: '🧘',
     description: 'Treino livre, sem pressão',
-    gradient: 'from-teal-400 to-cyan-500',
-    gradientLight: 'from-teal-50 to-cyan-50',
-    shadow: 'shadow-teal-200',
-    text: 'text-teal-600',
-    border: 'border-teal-200',
-    bg: 'bg-teal-500',
+    gradient: 'from-macaw to-macaw-dark',
+    gradientLight: 'from-macaw/10 to-macaw/5',
+    shadow: 'shadow-macaw/30',
+    text: 'text-macaw-dark',
+    border: 'border-macaw/30',
+    bg: 'bg-macaw',
     timer: null,
     lives: null,
     questions: null,
     bonusTime: 0,
-    xpMultiplier: 0.10,   // baixo, mas existe (discreto — o jogador descobre)
+    xpMultiplier: 0,   // Zen é treino livre — sem XP, sem moeda, sem pressão
     group: 'training',
   },
   review: {
     id: 'review',
     name: 'Revisão',
     emoji: '📚',
-    description: 'Foca onde você mais erra',
-    gradient: 'from-blue-500 to-indigo-600',
-    gradientLight: 'from-blue-50 to-indigo-50',
-    shadow: 'shadow-blue-200',
-    text: 'text-blue-600',
-    border: 'border-blue-200',
-    bg: 'bg-blue-500',
+    description: 'Foca nas tabuadas que você mais erra',
+    gradient: 'from-bee to-bee-dark',
+    gradientLight: 'from-bee/15 to-bee/5',
+    shadow: 'shadow-bee/30',
+    text: 'text-bee-dark',
+    border: 'border-bee/30',
+    bg: 'bg-bee',
     timer: null,
     lives: null,
     questions: 15,        // 15 questões focadas nas tabuadas mais erradas
@@ -114,109 +61,9 @@ export const MODES = {
     xpMultiplier: 0.16,   // estudo focado — XP médio
     group: 'training',
   },
-  // ── MODO DIFÍCIL — pool exclusivo de 7, 8 e 9 ──────────────────────────────
-  hard: {
-    id: 'hard',
-    name: 'Difícil',
-    emoji: '🔥',
-    description: 'Suas 3 tabuadas mais difíceis · 90 segundos',
-    gradient: 'from-orange-500 to-red-600',
-    gradientLight: 'from-orange-50 to-red-50',
-    shadow: 'shadow-orange-200',
-    text: 'text-orange-600',
-    border: 'border-orange-200',
-    bg: 'bg-orange-500',
-    timer: 90,
-    lives: null,
-    questions: null,
-    bonusTime: 0,
-    xpMultiplier: 0.22,   // maior que os modos padrão — recompensa pela dificuldade
-    minLevel: 8,           // desbloqueado no Nível 8+
-    group: 'advanced',
-  },
-  // ── MODO RECORDE PESSOAL — bater os próprios tempos por fato ──────────────
-  personal: {
-    id: 'personal',
-    name: 'Recorde Pessoal',
-    emoji: '⏱️',
-    description: 'Bata seu próprio tempo em cada fato',
-    gradient: 'from-yellow-500 to-amber-600',
-    gradientLight: 'from-yellow-50 to-amber-50',
-    shadow: 'shadow-yellow-200',
-    text: 'text-yellow-600',
-    border: 'border-yellow-200',
-    bg: 'bg-yellow-500',
-    timer: null,
-    lives: null,
-    questions: 15,
-    bonusTime: 0,
-    xpMultiplier: 0.18,
-    personal: true,        // flag para o GamePage marcar "bateu tempo"
-    group: 'advanced',
-  },
-  // ── DESAFIO SEMANAL — 10 questões iguais para todos por semana ────────────
-  weekly: {
-    id: 'weekly',
-    name: 'Desafio Semanal',
-    emoji: '🏆',
-    description: 'Mesmas 10 questões pra todo mundo, toda semana',
-    gradient: 'from-pink-500 to-rose-600',
-    gradientLight: 'from-pink-50 to-rose-50',
-    shadow: 'shadow-pink-200',
-    text: 'text-pink-600',
-    border: 'border-pink-200',
-    bg: 'bg-pink-500',
-    timer: null,
-    lives: null,
-    questions: 10,
-    bonusTime: 0,
-    xpMultiplier: 0.30,   // alta recompensa — sai 1× por semana
-    group: 'advanced',
-  },
-  // ── MODO COMBINADO — duas operações: "3 × 7 + 4 = ?" ───────────────────────
-  combined: {
-    id: 'combined',
-    name: 'Combinado',
-    emoji: '➕',
-    description: 'Cálculo mental: a × b + c',
-    gradient: 'from-violet-600 to-fuchsia-600',
-    gradientLight: 'from-violet-50 to-fuchsia-50',
-    shadow: 'shadow-violet-200',
-    text: 'text-violet-700',
-    border: 'border-violet-200',
-    bg: 'bg-violet-600',
-    timer: null,
-    lives: null,
-    questions: 15,
-    bonusTime: 0,
-    xpMultiplier: 0.25,
-    minCertificates: 3,    // exige 3 certificados de domínio para desbloquear
-    combined: true,
-    group: 'advanced',
-  },
-  // ── MODO INVERSO — "= 56" → digite os dois fatores ─────────────────────────
-  inverse: {
-    id: 'inverse',
-    name: 'Inverso',
-    emoji: '🔄',
-    description: '"= 56" → diga os dois fatores',
-    gradient: 'from-indigo-500 to-blue-600',
-    gradientLight: 'from-indigo-50 to-blue-50',
-    shadow: 'shadow-indigo-200',
-    text: 'text-indigo-600',
-    border: 'border-indigo-200',
-    bg: 'bg-indigo-500',
-    timer: null,
-    lives: null,
-    questions: 15,        // 15 questões — modo de treino exigente
-    bonusTime: 0,
-    xpMultiplier: 0.20,   // recompensa moderada — modo desafiador
-    inverse: true,        // flag para o GamePage usar duas entradas
-    group: 'advanced',
-  },
 };
 
-// Modos exibidos no grid principal do menu (os 4 clássicos)
+// Modo(s) principal(is) exibidos em destaque no menu de modos
 export const MODE_LIST = Object.values(MODES).filter((m) => m.group === 'main');
 // Modos de treino (Zen + Revisão)
 export const TRAINING_MODE_LIST = Object.values(MODES).filter((m) => m.group === 'training');
@@ -381,10 +228,10 @@ export const ACHIEVEMENTS = [
   {
     id: 'all_modes',
     title: 'Explorador',
-    desc: 'Jogue todos os 4 modos de jogo',
+    desc: 'Jogue todos os modos de jogo',
     icon: '🗺️',
     category: 'Exploração',
-    check: (s) => (s.modesPlayed || []).length >= 4,
+    check: (s) => (s.modesPlayed || []).length >= 3,
   },
   {
     id: 'survival_30',

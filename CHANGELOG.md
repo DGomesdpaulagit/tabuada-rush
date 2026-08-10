@@ -4,6 +4,35 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [5.0.0] — 2026-08-09 — Tabuada Rush 5.0: redesign, consolidação de modos, mascotes
+
+**A maior sessão até hoje. Detalhes completos em `sessions/sessao-043.md` e `DECISIONS.md` (D015-D019).**
+
+### Adicionado
+- Paleta própria "Caderno Quadriculado" (papel/índigo/vermelho-caneta/verde-caneta) — tokens `paper`/`ink`/`pen`/`check`/`graphite` no Tailwind
+- Sidebar de navegação (`components/Sidebar.jsx`) — desktop-only (`lg+`), some no mobile
+- Card de perfil QI-first no Menu, muda de cor conforme o tier do personagem do Ranking de QI
+- `RewardsPage.jsx` — hub único com abas Missões/Loja/Temporada
+- Mascotes **Tuca** (tartaruga) e **Vupt** (lebre), inspirados na fábula de Esopo — animações reais (WebP com transparência), pose por humor do jogo (`components/Mascot.jsx`), renderizados via portal fixo na borda direita da tela
+- Pipeline Python de processamento de vídeo (remoção de fundo, limpeza de ruído, export WebP animado) — reutilizável para futuras poses
+- 2 power-ups novos: 🛡️ Escudo (protege de 1 erro) e 🚀 Largada Turbo (+10s no início do Rush)
+- Gatilho de "cutucada" no Rush/Zen/Revisão: mascote aparece (com frequência limitada e sorteada) quando o jogador demora, acerta combo, ou erra por pressa
+
+### Alterado
+- **Modos de jogo: 10 → 3.** Rush agora é a fusão de Rush+Sobrevivência+Velocidade+Diário (timer que cresce com acerto, 3 vidas). Zen e Revisão mantidos como eram.
+- **Todos os modos liberados desde o início** — reverte o desbloqueio progressivo (D008/sessao-032)
+- Ranking de QI: 104 → 52 personagens
+- Loja: só power-ups agora — cosméticos (moldura/card/tema) removidos
+- Economia mais dura: moedas por partida caem (cap 15→8), Zen não dá XP nem moeda
+- `StatsPage` absorveu Catálogo, Catálogo de Precisão, Acertos, Erros, Recordes e Conquistas como seções internas
+
+### Removido
+- Modos Sobrevivência, Velocidade, Desafio Diário, Difícil, Recorde Pessoal, Desafio Semanal, Combinado, Inverso (deletados do código, não só escondidos)
+- Cosméticos da Loja (molduras, temas de card, temas de tela de jogo) e a "Oferta da Semana"
+- Balão de fala e voz do mascote (temporário — voltam quando as frases finais/áudio real forem definidos)
+
+---
+
 ## [3.17.0] — 2026-07-06 — Reversão da 4.0: de volta ao foco (só multiplicação)
 
 **Decisão estratégica do Davi. Detalhes em `sessions/sessao-042.md` e `DECISIONS.md` (D014).**

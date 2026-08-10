@@ -677,19 +677,12 @@ export function computeCertificates(factStats = {}, operation = DEFAULT_OPERATIO
 //   'bestDayStreak' → data.bestDayStreak >= value
 //   'certificates'  → certificados de domínio desbloqueados >= value
 
+// v5.0 · Bloco 1: nenhum modo fica bloqueado — travar por nível/desempenho
+// deixava o jogo chato nos primeiros minutos. Tudo liberado desde o início.
 export const UNLOCK_RULES = {
-  zen:       null,                                          // sempre disponível
-  rush:      { type: 'level',         value: 1 },           // Nível 2 (Aprendiz)
-  survival:  { type: 'level',         value: 2 },           // Nível 3 (Estudante)
-  speed:     { type: 'totalGames',    value: 10 },          // 10 partidas no total
-  daily:     { type: 'totalCorrect',  value: 100 },         // 100 acertos no total
-  review:    { type: 'totalWrong',    value: 20 },          // 20 erros (precisa ter o que revisar)
-  flashcard: { type: 'level',         value: 3 },           // Nível 4 (Calculador)
-  inverse:   { type: 'level',         value: 4 },           // Nível 5 (Praticante)
-  hard:      { type: 'level',         value: 7 },           // Nível 8 (Hábil)
-  personal:  { type: 'level',         value: 8 },           // Nível 9 (Competente)
-  weekly:    { type: 'bestDayStreak', value: 10 },          // 10 dias de ofensiva (recorde)
-  combined:  { type: 'certificates',  value: 3 },           // 3 certificados de domínio
+  zen: null,
+  rush: null,
+  review: null,
 };
 
 // Avalia o estado de desbloqueio de um modo. Retorna { unlocked, reason, current, target }.

@@ -134,7 +134,15 @@ liga do Duolingo.
 
 ---
 
-## 6. Progressão / Níveis de tabuada (sistema novo, substitui os 28 níveis)
+## 6. Progressão / Níveis de tabuada (sistema novo, substitui os 28 níveis) — ✅ IMPLEMENTADO (Bloco 3, sessao-046)
+
+> Confirmado com o Davi (2026-08-17, ver DECISIONS.md D022): nome da faixa = só o
+> intervalo ("Tabuada 2×10", sem nome fantasia); ritmo da 1ª faixa = 6-10 meses de
+> prática diária, como descrito originalmente no áudio (não encurtado); e o fator
+> da pergunta VAI até 200 de verdade (não é só rótulo) — confirmado ciente da
+> tensão com o princípio "só tabuada tradicional". 20 faixas: 2×10, depois de 10 em
+> 10 até 190×200. Calibração de XP por faixa é estimativa (sem telemetria real
+> ainda) — ver comentário em `constants/index.js` pros números exatos.
 
 Conceito central: em vez de nível genérico (Iniciante, etc.), o nível
 **é literalmente o intervalo de tabuada que o jogador está treinando**,

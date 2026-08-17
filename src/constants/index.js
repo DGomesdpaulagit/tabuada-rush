@@ -68,47 +68,58 @@ export const MODE_LIST = Object.values(MODES).filter((m) => m.group === 'main');
 // Modos de treino (Zen + Revisão)
 export const TRAINING_MODE_LIST = Object.values(MODES).filter((m) => m.group === 'training');
 
-// ── LEVELS ─────────────────────────────────────────────────────────────────
-// Progressão de 28 níveis. Cada nível tem nome, título (identidade do usuário),
-// emoji (também usado como avatar) e XP necessário.
+// ── FAIXAS DE TABUADA (progressão de nível) [v6.0 · Bloco 3] ────────────────
+// Substitui os 28 níveis abstratos (nomes tipo "Iniciante"/"Mestre") por 20
+// faixas LITERAIS de tabuada — o "nível" do jogador é o intervalo do fator
+// que ele está treinando, andando de trás pra frente: 2×10 primeiro (a mais
+// importante e, de propósito, a mais difícil de passar), depois 10×20,
+// 20×30... até 190×200 (planejamento-6.0.md seção 6). Confirmado com o Davi
+// (2026-08-17): o fator da PERGUNTA mesmo vai até 200, não é só rótulo —
+// ver DECISIONS.md D022 pra decisão e a tensão com "só multiplicação
+// tradicional" que isso abre.
 //
-// CURVA v3.0 — EQUILIBRADA (thresholds = original × 2, XP por modo variável):
-//   Estimativa (2–3 partidas/dia, score ~150 pts, modo misto): ~60 XP/dia
-//     Nível 2 em ~1 semana | Nível 5 em ~1 mês | Nível 10 em ~5 meses
-//     Nível 15 em ~1.5 anos | Nível 20 em ~4 anos | Nível 28 = lendário
-//   XP é baseado em desempenho (score × xpMultiplier do modo) — sem bônus de dia.
-//   getLevelIdx() é baseado em XP acumulado (retrocompatível).
-
-export const LEVELS = [
-  { name: 'Iniciante',         title: 'Primeiros Passos',        xp: 0,       badge: '🌱' },
-  { name: 'Aprendiz',          title: 'Aprendiz Curioso',        xp: 360,     badge: '📚' },
-  { name: 'Estudante',         title: 'Estudante Dedicado',      xp: 800,     badge: '✏️' },
-  { name: 'Calculador',        title: 'Calculador Iniciante',    xp: 1350,    badge: '🧮' },
-  { name: 'Praticante',        title: 'Praticante Constante',    xp: 2000,    badge: '🎯' },
-  { name: 'Ágil',              title: 'Mente Ágil',              xp: 2800,    badge: '⚡' },
-  { name: 'Veloz',             title: 'Raciocínio Veloz',        xp: 4000,    badge: '🚀' },
-  { name: 'Hábil',             title: 'Hábil nos Números',       xp: 5200,    badge: '🎲' },
-  { name: 'Competente',        title: 'Competente Confiante',    xp: 6800,    badge: '💪' },
-  { name: 'Avançado',          title: 'Pensador Avançado',       xp: 8800,    badge: '📐' },
-  { name: 'Estrategista',      title: 'Estrategista Numérico',   xp: 11200,   badge: '♟️' },
-  { name: 'Tático',            title: 'Tático da Tabuada',       xp: 14000,   badge: '🗺️' },
-  { name: 'Perito',            title: 'Perito em Cálculo',       xp: 17800,   badge: '🔬' },
-  { name: 'Especialista',      title: 'Especialista Matemático', xp: 22200,   badge: '🎓' },
-  { name: 'Exímio',            title: 'Exímio Calculista',       xp: 27800,   badge: '✨' },
-  { name: 'Virtuoso',          title: 'Virtuoso dos Números',    xp: 34800,   badge: '🎼' },
-  { name: 'Mestre',            title: 'Mestre da Tabuada',       xp: 43400,   badge: '🏅' },
-  { name: 'Grão-Mestre',       title: 'Grão-Mestre Numérico',    xp: 53800,   badge: '🥇' },
-  { name: 'Sábio',             title: 'Sábio dos Cálculos',      xp: 67000,   badge: '📜' },
-  { name: 'Erudito',           title: 'Erudito Matemático',      xp: 83000,   badge: '🦉' },
-  { name: 'Prodígio',          title: 'Prodígio dos Números',    xp: 102800,  badge: '💫' },
-  { name: 'Gênio',             title: 'Gênio em Ascensão',       xp: 127400,  badge: '🧩' },
-  { name: 'Gênio Matemático',  title: 'Gênio Matemático',        xp: 157600,  badge: '🧠' },
-  { name: 'Mente Brilhante',   title: 'Mente Brilhante',         xp: 195000,  badge: '💡' },
-  { name: 'Lenda',             title: 'Lenda Viva',              xp: 241200,  badge: '👑' },
-  { name: 'Lenda Numérica',    title: 'Lenda Numérica',          xp: 298400,  badge: '🔱' },
-  { name: 'Mito',              title: 'Mito da Matemática',      xp: 368800,  badge: '🌟' },
-  { name: 'Transcendente',     title: 'Calculadora Humana',      xp: 455800,  badge: '♾️' },
+// Mantém o formato `{name, title, xp, badge}` que `getLevelIdx`/
+// `getXpProgress`/etc já sabem ler (não precisou reescrever essas funções) +
+// dois campos novos, `rangeMin`/`rangeMax`, que o motor de perguntas usa pra
+// saber que fator `a` sortear na faixa atual do jogador (ver
+// utils/getRandomQuestion).
+//
+// CALIBRAÇÃO DA 1ª FAIXA (2×10) — ESTIMATIVA, não medição real (sem
+// telemetria de jogadores ainda, recalibrar quando tiver dados de verdade):
+// assumindo ~100 XP/dia num jogador engajado (~2-3 partidas de Rush/dia,
+// XP = score × 0.20, ver App.jsx MODE_XP_MULT), 24.000 XP ≈ 240 dias ≈ 8
+// meses — dentro da janela de 6-10 meses que o Davi pediu no áudio. Faixas
+// seguintes ficam progressivamente MAIS RÁPIDAS de passar (delta de XP cai
+// 18% por faixa, chão de 1.500 XP) — reflete que quanto mais tabuada o
+// jogador já sabe, mais fácil fica aprender a próxima (áudio do Davi).
+const TABUADA_TIER_RANGES = [
+  [2, 10],
+  ...Array.from({ length: 19 }, (_, i) => [10 + i * 10, 20 + i * 10]),
 ];
+const TIER_BADGES = ['🌱', '📚', '✏️', '🧮', '🎯', '⚡', '🚀', '🎲', '💪', '📐', '♟️', '🗺️', '🔬', '🎓', '✨', '🎼', '🏅', '🥇', '📜', '🦉'];
+const FIRST_TIER_XP = 24000;
+const TIER_XP_DECAY = 0.82;
+const TIER_XP_FLOOR = 1500;
+
+function buildTabuadaTiers() {
+  let xp = 0;
+  let delta = FIRST_TIER_XP;
+  return TABUADA_TIER_RANGES.map(([min, max], i) => {
+    const tier = {
+      name: `Tabuada ${min}×${max}`,
+      title: `Tabuada ${min}×${max}`,
+      xp,
+      badge: TIER_BADGES[i] || '🔢',
+      rangeMin: min,
+      rangeMax: max,
+    };
+    xp += delta;
+    delta = Math.max(TIER_XP_FLOOR, Math.round(delta * TIER_XP_DECAY));
+    return tier;
+  });
+}
+
+export const LEVELS = buildTabuadaTiers();
 
 // Metas de ofensiva diária que o usuário pode escolher (modal de login / nova meta)
 export const STREAK_GOALS = [5, 10, 15, 20, 35, 40];

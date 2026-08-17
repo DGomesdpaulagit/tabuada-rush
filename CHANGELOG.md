@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco3] — 2026-08-17 — Tabuada Rush 6.0: Bloco 3/7 (Progressão de tabuada)
+
+**Detalhes em `sessions/sessao-046.md` e `DECISIONS.md` (D022).**
+
+### Alterado
+- `LEVELS` (`constants/index.js`) — os 28 níveis abstratos viram 20 faixas de
+  tabuada literais (2×10, 10×20 ... 190×200), com `rangeMin`/`rangeMax` novos.
+  Calibração de XP é estimativa documentada (sem telemetria real ainda).
+- `utils/getRandomQuestion`/`generateQuestion` — novo parâmetro `tierRange`: o
+  fator `a` das perguntas passa a vir da faixa atual do jogador, não de um pool
+  fixo 2-10/12. **Confirmado com o Davi que o fator vai até 200 de verdade**,
+  ciente da tensão com o princípio "só tabuada tradicional" (ver D022).
+- `Header` — selo de nível mostra a faixa real (ex. "2×10") em vez de número
+  abstrato.
+
+---
+
 ## [6.0.0-bloco2] — 2026-08-17 — Tabuada Rush 6.0: Bloco 2/7 (Vidas diárias)
 
 **Detalhes em `sessions/sessao-045.md` e `DECISIONS.md` (D021).**

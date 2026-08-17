@@ -58,16 +58,27 @@ export function getDailyQuestions(count = 20) {
 // includeExtra=true adiciona 11 e 12 ao pool de fatores `a` (a partir do nível 3).
 // forcedRow [v4.0 · Fase 5]: usado pelo viés de fatos fracos — quando presente,
 // ignora o sorteio e a progressão por diffLevel (mesmo princípio do Modo Difícil).
-export function getRandomQuestion(diffLevel = 1, includeExtra = false, forcedRow = null) {
-  const pools = {
-    1: [2, 3, 4, 5],
-    2: [2, 3, 4, 5, 6, 7],
-    3: [2, 3, 4, 5, 6, 7, 8, 9, 10],
-  };
-  let pool = pools[diffLevel] || pools[1];
-  // Tabuada do 11 e 12: apenas no nível 3+ (jogador já aquecido)
-  if (includeExtra && diffLevel >= 3) {
-    pool = [...pool, 11, 12];
+// tierRange [v6.0 · Bloco 3] [min, max]: quando presente, o fator `a` vem da
+// faixa de tabuada ATUAL do jogador (ver constants/LEVELS) em vez dos pools
+// fixos abaixo — esses pools viram só o fallback pra quando não há tier
+// (chamadas antigas/testes sem contexto de jogador).
+export function getRandomQuestion(diffLevel = 1, includeExtra = false, forcedRow = null, tierRange = null) {
+  let pool;
+  if (tierRange) {
+    const [min, max] = tierRange;
+    pool = [];
+    for (let n = min; n <= max; n++) pool.push(n);
+  } else {
+    const pools = {
+      1: [2, 3, 4, 5],
+      2: [2, 3, 4, 5, 6, 7],
+      3: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+    };
+    pool = pools[diffLevel] || pools[1];
+    // Tabuada do 11 e 12: apenas no nível 3+ (jogador já aquecido)
+    if (includeExtra && diffLevel >= 3) {
+      pool = [...pool, 11, 12];
+    }
   }
   const a = forcedRow != null ? forcedRow : pool[Math.floor(Math.random() * pool.length)];
   const b = Math.floor(Math.random() * 10) + 1;
@@ -122,13 +133,21 @@ export function getWeakPool(tableStats = {}) {
 // "tabuada" a vir do pool de fatos mais fracos do jogador em vez do sorteio
 // normal — um viés suave, não uma exclusividade (diferente do Modo Difícil).
 export function generateQuestion(operation = DEFAULT_OPERATION, diffLevel = 1, opts = {}) {
-  const { includeExtra, weakBias, tableStats } = opts;
+  const { includeExtra, weakBias, tableStats, tierRange } = opts;
   let forcedRow = null;
   if (weakBias && tableStats && Math.random() < WEAK_BIAS_PROBABILITY) {
     const weakPool = getWeakPool(tableStats);
     if (weakPool.length) forcedRow = weakPool[Math.floor(Math.random() * weakPool.length)];
   }
-  return getRandomQuestion(diffLevel, includeExtra, forcedRow);
+  return getRandomQuestion(diffLevel, includeExtra, forcedRow, tierRange);
+}
+
+// [v6.0 · Bloco 3] Faixa de tabuada [min, max] do fator `a` pro nível atual
+// do jogador (ver LEVELS.rangeMin/rangeMax em constants).
+export function getTierRange(data) {
+  const idx = getLevelIdx(data.xp || 0);
+  const tier = LEVELS[idx];
+  return tier ? [tier.rangeMin, tier.rangeMax] : [2, 10];
 }
 
 export function getDiffLevel(questionsAnswered) {

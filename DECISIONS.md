@@ -309,3 +309,43 @@ refill completo, não por vida individual).
 **Revisitar quando:** Se o Davi achar os dois conceitos confusos na prática, dá pra
 unificar depois — ex. o prompt de "perdeu a vida de partida" já checar/gastar do
 mesmo pote diário em vez de ter preço próprio (80) separado do refill (150).
+
+---
+
+## D022 — Faixas de tabuada vão até fator 200 de verdade (não só rótulo), mesmo colidindo com "só multiplicação tradicional"
+
+**Data:** 2026-08-17 · sessao-046 (Bloco 3 do reset 6.0)
+**Contexto:** O projeto tem um princípio já registrado ([[project_scope_multiplication_only]]
+na memória — a 4.0 foi revertida por diluir o propósito original: decorar A TABUADA,
+não "ser bom em matemática" em geral). O motor de perguntas sempre limitou o fator
+`a` a 2-12 (a tabuada escolar tradicional). O áudio do Davi pedia progressão em
+faixas até "2×10, 10×20, 20×30... até 200" — alertei explicitamente que, se o fator
+`a` da pergunta for até 200 de verdade, isso deixa de ser "tabuada" no sentido
+tradicional (ninguém decora "a tabuada do 127") e vira prática de cálculo mental —
+uma expansão de escopo parecida (embora não idêntica) com o que motivou a reversão
+da 4.0.
+**Decisão:** Davi confirmou, ciente da tensão, que quer o fator indo até 200 de
+verdade — perguntas tipo "127 × 6" aparecem nas faixas mais altas. Implementado:
+`LEVELS` (20 faixas, `constants/index.js`) ganhou `rangeMin`/`rangeMax` por faixa;
+`getRandomQuestion`/`generateQuestion` (`utils/index.js`) aceitam `tierRange` e
+sorteiam o fator `a` dentro da faixa atual do jogador em vez do pool fixo antigo;
+`GamePage.jsx` computa a faixa via `getTierRange(data)` e passa pro motor. O fator
+`b` continua 1-10 (mantém a estrutura de "tabuada" — cada faixa é tipo uma tabela de
+multiplicação, só que o multiplicando sobe).
+**Motivo:** Confirmação explícita e informada do Davi — ele entendeu o trade-off
+(perguntei diretamente, com 3 opções incluindo "não expande, faixa vira só
+maestria") e escolheu a expansão de propósito. Diferente da 4.0 (que eu não avisei
+a tempo, só percebi depois — ver sessao-042), aqui o aviso veio ANTES da
+implementação.
+**Trade-off:** O jogo passa a ensinar cálculo mental com números grandes, não só
+tabuada tradicional — LINHA que o próprio Davi tinha puxado antes ("o jogo é sobre
+decorar a tabuada, ponto"). Big number × small number (ex. 190×7) é mais fácil que
+number × number ambos grandes, mas ainda é bem mais difícil que tabuada clássica —
+pode frustrar jogadores que não chegaram lá organicamente. Sem soma/subtração/
+divisão ainda (isso continua fora, essa parte da D014/4.0 não mudou).
+**Calibração pendente:** `FIRST_TIER_XP`/`TIER_XP_DECAY`/`TIER_XP_FLOOR`
+(`constants/index.js`) são ESTIMATIVAS sem dados reais de jogadores — recalibrar
+quando houver telemetria de uso de verdade.
+**Revisitar quando:** Se jogadores reais acharem as faixas altas (100+) frustrantes
+ou sem sentido pedagógico, considerar a opção que não foi escolhida agora (faixas
+= maestria/velocidade dentro de 2-12, não fator novo).

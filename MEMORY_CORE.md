@@ -19,14 +19,21 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.0-bloco2 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-045.md)
+**Versão:** 6.0.0-bloco3 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-046.md)
 **Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
 um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
 abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos.
 Davi pediu pra seguir direto pelos blocos sem pausa de confirmação a cada um ("vamos
 terminar esses blocos"), mas decisões não-óbvias continuam sendo sinalizadas nos
-registros (ver D021 pra exemplo). **Blocos 1-2/7 entregues.** Blocos 3-7 (Progressão de
-tabuada, Ligas, Missões, Perfil completo, Estatísticas) ainda não começaram.
+registros (ver D021/D022 pra exemplos — inclusive uma tensão real com o princípio "só
+tabuada tradicional" que o Davi confirmou querer mesmo assim, D022). **Blocos 1-3/7
+entregues.** Blocos 4-7 (Ligas, Missões, Perfil completo, Estatísticas) ainda não
+começaram.
+**[v6.0.0-bloco3]** `LEVELS` deixou de ser 28 níveis abstratos e virou 20 faixas de
+tabuada literais (2×10 → 190×200) — o fator `a` das perguntas passa a vir da faixa
+atual do jogador (`utils/getTierRange`), fator vai até 200 de verdade (confirmado
+com o Davi, D022). Calibração de XP por faixa é estimativa documentada. Ver
+`sessao-046.md`.
 **[v6.0.0-bloco2]** Vidas diárias (pote global de 5, estilo Duolingo) — desconta em
 QUALQUER modo (inclusive Zen), bloqueia início de partida nova quando zera, repõe por
 150 moedas (pote inteiro). Coexiste com o sistema de vidas por partida que já existia
@@ -94,10 +101,15 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 > por 150 moedas. Coexiste com o sistema de vidas por partida (não substituiu). Ver
 > D021.
 >
-> **Blocos 3-7 — NÃO COMEÇADOS:** (3) Progressão de tabuada — faixas 2-10→200; (4)
-> Ligas — substitui Ranking de QI, 10 ligas; (5) Missões — diárias + mensais com
-> aceite/desconto/congelamento; (6) Perfil completo — absorve Conquistas/Recordes/
-> Catálogo; (7) Estatísticas — reorganização (não reset).
+> **Bloco 3/7 — Progressão de tabuada — ENTREGUE (sessao-046):** `LEVELS` virou 20
+> faixas de tabuada (2×10 → 190×200), motor de perguntas usa a faixa atual do
+> jogador pro fator `a`. Fator vai até 200 DE VERDADE — confirmado com o Davi
+> mesmo com a tensão contra "só tabuada tradicional". Calibração de XP é
+> estimativa. Ver D022.
+>
+> **Blocos 4-7 — NÃO COMEÇADOS:** (4) Ligas — substitui Ranking de QI, 10 ligas; (5)
+> Missões — diárias + mensais com aceite/desconto/congelamento; (6) Perfil completo —
+> absorve Conquistas/Recordes/Catálogo; (7) Estatísticas — reorganização (não reset).
 >
 > **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
 > antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
@@ -207,11 +219,11 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 3/7 em diante)
+## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 4/7 em diante)
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset) → `sessions/sessao-045.md` (Bloco 2, o mais recente) →
-`DECISIONS.md` D020-D021.
+completa do reset) → `sessions/sessao-046.md` (Bloco 3, o mais recente) →
+`DECISIONS.md` D020-D022.
 
 **A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
 balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
@@ -223,17 +235,18 @@ confirmação visual a cada bloco como no Bloco 1. Continuar sinalizando decisõ
 não-óbvias nos registros mesmo assim (ver D021 pro padrão a seguir).
 
 **Ordem dos próximos blocos:**
-1. **Bloco 3 — Progressão de tabuada**: faixas 2-10→200, cálculo de XP/dia realista
-   pra bater a meta de 6-10 meses na 1ª faixa (matemática de balanceamento a fazer
-   quando este bloco começar, não decisão de produto).
-2. **Bloco 4 — Ligas**: substitui Ranking de QI (10 ligas nomeadas, promoção/
-   rebaixamento, XP universal).
-3. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
+1. **Bloco 4 — Ligas**: substitui Ranking de QI (10 ligas nomeadas, promoção/
+   rebaixamento, XP universal). É a faixa de blocos com mais pontos "não sei ainda"
+   no planejamento (nº de personagens por liga, tamanho das zonas de promoção) —
+   próxima sessão deve propor números concretos com a lógica por trás (mesmo
+   padrão de transparência usado na calibração de XP do Bloco 3), não travar
+   esperando resposta perfeita.
+2. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
    congelamento (mecânica de "aposta com dívida" já confirmada com o Davi, ver
    planejamento-6.0.md seção 7).
-4. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
+3. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
    Estatísticas) pro `PerfilPage.jsx` criado no Bloco 1.
-5. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
+4. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
    sumário, Acertos/Erros dentro do Catálogo de Precisão.
 
 **Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
@@ -310,8 +323,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
-4. `sessions/sessao-045.md` — última sessão (Bloco 2/7 do reset — vidas diárias)
-5. `DECISIONS.md` D020-D021 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-046.md` — última sessão (Bloco 3/7 do reset — progressão de tabuada)
+5. `DECISIONS.md` D020-D022 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

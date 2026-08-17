@@ -9,9 +9,10 @@ import { LEVELS } from '../constants';
 // Substitui o card "Ofensiva diária" solto que existia antes: agora é só o
 // ícone de fogo aqui.
 //
-// O selo de nível é um PLACEHOLDER visual (usa o sistema de 28 níveis atual)
-// até o Bloco 3 trocar por faixa de tabuada real (2-10 → 200). As vidas já
-// são o sistema real do Bloco 2 (pote diário, ver utils/getLivesInfo).
+// [v6.0 · Bloco 3] O selo à esquerda mostra a faixa de tabuada REAL do
+// jogador (ex. "2×10"), não mais um número de nível abstrato — LEVELS agora
+// É a progressão de faixas (ver constants/index.js). Vidas são o sistema
+// real do Bloco 2 (pote diário, ver utils/getLivesInfo).
 export default function Header() {
   const { data } = useApp();
   const levelIdx = getLevelIdx(data.xp || 0);
@@ -24,7 +25,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 flex items-center justify-between gap-3 px-4 py-2.5 bg-surface border-b-2 border-border">
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="text-lg leading-none">{level?.badge}</span>
-        <span className="font-black text-sm text-fg">{levelIdx + 1}</span>
+        <span className="font-black text-sm text-fg">{level?.rangeMin}×{level?.rangeMax}</span>
       </div>
 
       <div className="flex items-center gap-3 shrink-0">

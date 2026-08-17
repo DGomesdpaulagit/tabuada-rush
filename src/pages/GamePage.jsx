@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Home } from 'lucide-react';
 import { MODES } from '../constants';
 import { SHOP_ITEM_MAP } from '../constants/shop';
-import { getDiffLevel, calcPoints, formatTime, generateQuestion } from '../utils';
+import { getDiffLevel, calcPoints, formatTime, generateQuestion, getTierRange } from '../utils';
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
@@ -21,10 +21,14 @@ function init(args) {
   const cfg = MODES[mode];
   const tableStats = args.tableStats || {};
   const adaptiveDifficulty = args.adaptiveDifficulty !== false;
+  // [v6.0 · Bloco 3] Faixa de tabuada atual do jogador — o fator `a` das
+  // perguntas geradas (Rush/Zen) sai daqui, não mais de um pool fixo 2-10/12.
+  const tierRange = args.tierRange || [2, 10];
   const genOpts = {
     includeExtra: args.includeExtraTables,
     weakBias: adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(mode),
     tableStats,
+    tierRange,
   };
   // Revisão usa customQuestions (getRevisionQuestions, focado nos fatos mais
   // errados). Rush e Zen geram perguntas sob demanda (sem lista fixa).
@@ -43,6 +47,7 @@ function init(args) {
     includeExtraTables: !!args.includeExtraTables,
     adaptiveDifficulty,
     tableStats,
+    tierRange,
     dailyQs: qs,
     dailyIdx: 0,
     answered: 0,
@@ -115,6 +120,7 @@ function reducer(state, action) {
             includeExtra: state.includeExtraTables,
             weakBias: state.adaptiveDifficulty && ADAPTIVE_BIAS_MODES.includes(state.mode),
             tableStats: state.tableStats,
+            tierRange: state.tierRange,
           });
       return {
         ...state,
@@ -156,6 +162,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
     customQuestions,
     includeExtraTables: !!data.includeExtraTables,
     tableStats: data.tableStats?.mult || {},
+    tierRange: getTierRange(data), // [v6.0 · Bloco 3]
   });
   const [state, dispatch] = useReducer(reducer, initArgRef.current, init);
 

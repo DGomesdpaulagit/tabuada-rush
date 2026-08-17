@@ -19,19 +19,18 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.0-bloco6 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-049.md)
-**Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
-um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
-abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos.
-Davi pediu pra seguir direto pelos blocos sem pausa de confirmação a cada um ("vamos
-terminar esses blocos"/"bora pra próxima"), mas decisões não-óbvias continuam sendo
-sinalizadas nos registros (ver D021-D025 pra exemplos). **Blocos 1-6/7 entregues.**
-Falta só o Bloco 7 (Estatísticas).
-**[v6.0.0-bloco6]** Perfil completo — absorve Conquistas/Recordes/Catálogo (saíram
-de Estatísticas). **Sistema antigo de "QI" removido por completo** (não só trocado
-de tela — `computeQI`/`getQiInfo`/`constants/characters.js` deletados do
-repositório), substituído por Faixa de tabuada + Liga em todo lugar (Menu, Perfil,
-Settings, Results, Catalog). Ver `sessao-049.md` e D025.
+**Versão:** 6.0.0 (Tabuada Rush 6.0 — RESET COMPLETO, todos os 7 blocos entregues — sessao-050.md)
+**Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
+reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
+das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
+("vamos terminar esses blocos"/"bora pra próxima"), com decisões não-óbvias sinalizadas
+nos registros mesmo assim (ver D020-D026). **Todos os 7 blocos entregues — reset
+fechado.** Não há mais bloco planejado deste reset em aberto.
+**[v6.0.0]** Bloco 7/7 (Estatísticas) — guia lateral tipo Notion (implementado sem a
+referência visual que o Davi ia mandar, nunca chegou — D026), remove "Partidas por
+modo"/"Power-ups"/"Modo Favorito", Acertos/Erros migram pro Catálogo de Precisão,
+corrige gráfico "Evolução" que filtrava por modo morto. **RESET 6.0 COMPLETO** — ver
+`sessao-050.md` e a seção "🎨 TABUADA RUSH 6.0" abaixo pro resumo de todos os blocos.
 **[v6.0.0-bloco5]** Missões: semanais removidas por completo; desafios mensais
 viraram "aposta com prazo" — precisa aceitar, não cumprir até o prazo desconta
 `penalty` do saldo (**pode ficar negativo**, testado e confirmado). Congelar
@@ -100,11 +99,12 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎨 TABUADA RUSH 6.0 — EM ANDAMENTO (v5.0.0 → v6.0.0 · sessão 044+)
+## 🎨 TABUADA RUSH 6.0 — ✅ COMPLETO (v5.0.0 → v6.0.0 · sessões 044-050)
 
 > Reset completo pedido pelo Davi — substitui a 5.0, não a continua (pendências da 5.0
 > abaixo ficam obsoletas). Spec inteira em `sessions/planejamento-6.0.md`, 7 blocos,
-> um por vez, sempre confirmando com o Davi antes de avançar pro próximo.
+> todos entregues entre 2026-08-16 e 2026-08-17. Sem próximo bloco planejado — fica
+> a critério do Davi decidir os próximos passos do projeto a partir daqui.
 >
 > **Bloco 1/7 — Base visual — ENTREGUE (sessao-044):** tokens de cor semânticos
 > dark-first via CSS var, tema escuro como padrão, sidebar nova (Arena/Ligas/Missões/
@@ -134,8 +134,10 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 > Recordes/Catálogo. Sistema antigo de QI removido por completo (não só trocado
 > de tela) — ver D025.
 >
-> **Bloco 7 — NÃO COMEÇADO:** Estatísticas — reorganização (não reset),
-> navegação lateral tipo sumário, Acertos/Erros pro Catálogo de Precisão.
+> **Bloco 7/7 — Estatísticas — ENTREGUE (sessao-050):** guia lateral tipo Notion
+> (implementado sem a referência visual do Davi, nunca chegou — D026), remove
+> "Partidas por modo"/"Power-ups"/"Modo Favorito", Acertos/Erros migram pro
+> Catálogo de Precisão, corrige gráfico "Evolução" que filtrava modo morto.
 >
 > **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
 > antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
@@ -245,37 +247,36 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — ÚLTIMO BLOCO DO RESET 6.0 (Bloco 7)
+## 🎯 PRÓXIMA SESSÃO — RESET 6.0 COMPLETO, SEM BLOCO PLANEJADO EM ABERTO
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset) → `sessions/sessao-049.md` (Bloco 6, o mais recente) →
-`DECISIONS.md` D020-D025.
+completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-050.md`
+(fechamento do reset, com a lista completa de débitos conhecidos) →
+`DECISIONS.md` D020-D026.
 
-**A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
-balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
-que a 6.0 substitui tudo isso, não são itens paralelos a retomar. Ver `sessao-044.md`
-seção 1.
+**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050): base
+visual, vidas diárias, progressão de tabuada, ligas, missões, perfil completo,
+estatísticas. Não há próximo bloco definido — a próxima sessão deve começar
+perguntando ao Davi o que ele quer fazer a seguir, não inventando um roadmap
+novo sozinho.
 
-**Davi pediu ritmo contínuo** ("vamos terminar esses blocos"/"bora pra próxima") —
-não pausar pra confirmação visual a cada bloco como no Bloco 1. Continuar
-sinalizando decisões não-óbvias nos registros mesmo assim (ver D021-D025 pro padrão).
-
-**Bloco 7 — Estatísticas (último do reset 6.0):** reorganização de verdade (NÃO
-reset — Davi foi claro sobre isso, ver planejamento-6.0.md seção 10) —
-navegação lateral tipo sumário/guia (referência: painel de tópicos do Notion,
-Davi ia mandar print), Acertos/Erros migram pra dentro do Catálogo de Precisão
-como sub-seções. Remove "Partidas por modo"/"Power-ups"/"Modo favorito" da
-tela. Mantém Análise Inteligente. `StatsPage.jsx` já teve Recordes/Conquistas/
-Catálogo removidos no Bloco 6 — o que sobra nela é exatamente o escopo do
-Bloco 7.
-
-**Depois do Bloco 7, o reset 6.0 está completo** — hora de voltar pro Davi
-revisar tudo de ponta a ponta antes de decidir os próximos passos do projeto.
-
-**Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
-planejamento-6.0.md seção 12):** nº de personagens por liga e tamanho das zonas de
-promoção/rebaixamento, nome de exibição das faixas de tabuada, formato exato do selo
-de faixa no header, lista final de power-ups.
+**Débitos conhecidos do reset (não são bugs esquecidos, estão registrados em
+`sessao-050.md` e nas decisões correspondentes) — bons candidatos se o Davi
+quiser "polir" antes de partir pra algo novo:**
+- Calibração de XP (Bloco 3, D022) e de personagens/promoção de liga
+  (Bloco 4, D023) são estimativas sem telemetria real — recalibrar quando
+  houver dados de uso de verdade.
+- Guia lateral de Estatísticas implementado sem a referência visual que o
+  Davi ia mandar (nunca chegou em 7 sessões) — D026.
+- "Pódios conquistados nas ligas" (mencionado no áudio do Perfil) não
+  implementado — sem histórico de pódio ainda, só posição atual.
+- `HitsPage`/`ErrorsPage` ainda têm filtros de modo mortos (Sobrevivência/
+  Velocidade/Diário) — não tocados, fora do escopo de reorganização do Bloco 7.
+- Rebaixamento de liga por inatividade não existe — só reavaliado em fim de
+  partida (decisão deliberada pra evitar o bug de ping-pong do Bloco 4, D023).
+- Nº de personagens por liga e tamanho das zonas de promoção/rebaixamento
+  foram decididos por mim (proposta concreta, não travei esperando resposta
+  perfeita) — se o Davi achar estranho na prática, são ajustáveis.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -348,9 +349,9 @@ feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do
 Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
-3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
-4. `sessions/sessao-049.md` — última sessão (Bloco 6/7 do reset — Perfil completo)
-5. `DECISIONS.md` D020-D025 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
+4. `sessions/sessao-050.md` — última sessão (Bloco 7/7 — fecha o reset, com lista de débitos conhecidos)
+5. `DECISIONS.md` D020-D026 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

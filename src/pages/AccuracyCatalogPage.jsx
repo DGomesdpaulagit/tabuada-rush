@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp,
-  Gauge, Calculator, Flame, Grid3x3,
+  Gauge, Calculator, Flame, Grid3x3, CheckCircle,
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -10,14 +11,19 @@ import { useApp } from '../contexts/AppContext';
 import { getAccuracy, formatDate, OPERATIONS, getFactKey } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
+import HitsPage from './HitsPage';
+import ErrorsPage from './ErrorsPage';
 
 const DAY = 86400000;
 
+// [v6.0 · Bloco 7] Só os 3 modos que existem de verdade desde a fusão da
+// 5.0 — survival/speed/daily nunca mais geram sessão nenhuma (dead code
+// removido; entradas ficavam sempre com games=0 e eram filtradas, mas não
+// faziam sentido continuar listadas aqui).
 const MODES_META = [
   { id: 'rush', label: 'Rush', grad: 'from-violet-500 to-purple-600' },
-  { id: 'survival', label: 'Sobrevivência', grad: 'from-rose-500 to-pink-600' },
-  { id: 'speed', label: 'Velocidade', grad: 'from-amber-400 to-orange-500' },
-  { id: 'daily', label: 'Desafio Diário', grad: 'from-emerald-400 to-teal-600' },
+  { id: 'zen', label: 'Zen', grad: 'from-teal-400 to-cyan-500' },
+  { id: 'review', label: 'Revisão', grad: 'from-amber-400 to-orange-500' },
 ];
 
 // Resumo de uma lista de sessões: precisão, erros e tempo médio
@@ -209,7 +215,14 @@ function AccTooltip({ active, payload, label }) {
 }
 
 export default function AccuracyCatalogPage({ onBack }) {
+  // [v6.0 · Bloco 7] Acertos/Erros deixam de ser destinos soltos da tela de
+  // Estatísticas e viram sub-seções daqui (planejamento-6.0.md seção 10).
+  const [view, setView] = useState('main');
   const { data } = useApp();
+
+  if (view === 'hits')   return <HitsPage   onBack={() => setView('main')} />;
+  if (view === 'errors') return <ErrorsPage onBack={() => setView('main')} />;
+
   const sessions = (data.sessions || []).filter((s) => s && s.date);
 
   // Sobrevivência tem lógica própria (termina após 3 erros) → excluída das métricas globais
@@ -299,6 +312,42 @@ export default function AccuracyCatalogPage({ onBack }) {
           <p className="text-sm text-gray-400 font-semibold">Modos clássicos (Sobrevivência exibida separadamente)</p>
         </div>
       </div>
+
+      {/* Acertos / Erros — sub-seções (antes eram destinos soltos em Estatísticas) */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-2 gap-3"
+      >
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setView('hits')}
+          className="flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-emerald-100 hover:shadow-emerald-200 transition-shadow"
+        >
+          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+            <CheckCircle size={16} />
+          </span>
+          <div>
+            <p className="text-sm font-black leading-tight">Acertos</p>
+            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Precisão e evolução</p>
+          </div>
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setView('errors')}
+          className="flex flex-col items-start gap-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-rose-100 hover:shadow-rose-200 transition-shadow"
+        >
+          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+            <XCircle size={16} />
+          </span>
+          <div>
+            <p className="text-sm font-black leading-tight">Erros</p>
+            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Dificuldades e falhas</p>
+          </div>
+        </motion.button>
+      </motion.div>
 
       {/* ── DESEMPENHO MATEMÁTICO (resumo) ───────────────────────────────── */}
       <motion.div

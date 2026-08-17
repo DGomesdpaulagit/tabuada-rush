@@ -245,7 +245,7 @@ Absorve o que hoje está espalhado:
 
 ---
 
-## 10. Estatísticas (reorganização, não reset)
+## 10. Estatísticas (reorganização, não reset) — ✅ IMPLEMENTADO (Bloco 7, sessao-050) — RESET 6.0 COMPLETO
 
 Diferente do resto — Davi foi claro que **não quer refazer do zero**, só
 reorganizar/catalogar melhor:
@@ -267,6 +267,17 @@ reorganizar/catalogar melhor:
   tópicos, você passa o mouse/toca e navega direto pra seção). Objetivo:
   como "estatísticas é muita coisa", precisa ficar navegável sem scroll
   cego. Davi disse que vai mandar um print de referência desse componente.
+
+> **Implementado sem o print de referência** (nunca chegou nesta sessão) — guia
+> lateral tipo TOC do Notion, com pontinhos+rótulo no hover, fixo na margem
+> direita, só em telas largas (`lg+`, mesmo breakpoint da Sidebar). É uma
+> primeira interpretação; ajustar quando/se o Davi mandar o print de verdade.
+> "Partidas por modo"/"Power-ups"/"Modo favorito" removidos da tela principal
+> de Estatísticas. Acertos/Erros viraram sub-seções do Catálogo de Precisão.
+> De brinde, corrigi o gráfico "Evolução" — filtrava por um modo ("Desafio
+> Diário") que não existe mais desde a 5.0, então nunca tinha dado nada;
+> agora mostra evolução do Rush. **Este era o último bloco do reset 6.0** —
+> ver sessao-050.md pro fechamento completo.
 
 ---
 

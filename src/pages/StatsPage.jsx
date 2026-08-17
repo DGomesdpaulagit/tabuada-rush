@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -9,9 +9,46 @@ import { getAccuracy, formatDate } from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
 import StreakHeatmap from '../components/StreakHeatmap';
-import HitsPage from './HitsPage';
-import ErrorsPage from './ErrorsPage';
 import AccuracyCatalogPage from './AccuracyCatalogPage';
+
+// ── GUIA LATERAL [v6.0 · Bloco 7] ────────────────────────────────────────────
+// "Estatísticas é muita coisa" (Davi) — sumário fixo tipo Notion pra navegar
+// direto pra seção sem rolar às cegas. Só em telas largas (lg+, mesmo
+// breakpoint da Sidebar) — a referência visual que o Davi ia mandar nunca
+// chegou nesta sessão, então essa é uma primeira interpretação; ajustar
+// quando/se ele mandar o print.
+const TOC_SECTIONS = [
+  { id: 'stats-resumo', label: 'Resumo' },
+  { id: 'stats-catalogo', label: 'Catálogo de Precisão' },
+  { id: 'stats-analise', label: 'Análise' },
+  { id: 'stats-mensal', label: 'Mês' },
+  { id: 'stats-evolucao', label: 'Evolução' },
+  { id: 'stats-erros-semana', label: 'Erros da semana' },
+  { id: 'stats-exportar', label: 'Exportar' },
+];
+
+function TableOfContents() {
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  return (
+    <nav className="hidden lg:flex flex-col gap-1 fixed right-4 top-1/2 -translate-y-1/2 z-30">
+      {TOC_SECTIONS.map((s) => (
+        <button
+          key={s.id}
+          onClick={() => scrollTo(s.id)}
+          title={s.label}
+          className="group flex items-center justify-end gap-2 py-1"
+        >
+          <span className="text-[11px] font-bold text-fg-muted opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-surface border border-border rounded-lg px-2 py-0.5 shadow-sm">
+            {s.label}
+          </span>
+          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-accent transition-colors shrink-0" />
+        </button>
+      ))}
+    </nav>
+  );
+}
 
 // Cores por tom das observações da análise
 const TONE = {
@@ -53,20 +90,20 @@ function downloadFile(content, filename, type) {
 }
 
 export default function StatsPage({ onBack }) {
-  // 'main' | 'hits' | 'errors' | 'accuracy'
-  // [v6.0 · Bloco 6] Recordes/Conquistas/Catálogo migraram pro Perfil (ver
-  // PerfilPage.jsx) — não são mais seções daqui. Catálogo de Precisão/
-  // Acertos/Erros continuam (reorganização de verdade fica pro Bloco 7).
+  // 'main' | 'accuracy'
+  // [v6.0 · Bloco 6] Recordes/Conquistas/Catálogo migraram pro Perfil.
+  // [v6.0 · Bloco 7] Acertos/Erros migraram pra DENTRO do Catálogo de
+  // Precisão (ver AccuracyCatalogPage.jsx) — não são mais destinos daqui.
+  // "Partidas por modo"/"Power-ups"/"Modo favorito" removidos de vez (pedido
+  // explícito do Davi, ver planejamento-6.0.md seção 10).
   const [view, setView] = useState('main');
 
-  // Sub-páginas internas — renderizadas no lugar desta página
-  if (view === 'hits')         return <HitsPage         onBack={() => setView('main')} />;
-  if (view === 'errors')       return <ErrorsPage        onBack={() => setView('main')} />;
-  if (view === 'accuracy')     return <AccuracyCatalogPage onBack={() => setView('main')} />;
+  if (view === 'accuracy') return <AccuracyCatalogPage onBack={() => setView('main')} />;
 
   const { data } = useApp();
   const sessions = data.sessions || [];
-  // Precisão Global exclui Sobrevivência (termina após 3 erros → distorce a taxa)
+  // Precisão Global exclui Sobrevivência (modo removido na 5.0 — filtro
+  // mantido só por segurança retroativa em sessões salvas antigas)
   const nonSurvSessions = sessions.filter(s => s.mode !== 'survival');
   const nsCorrect = nonSurvSessions.reduce((sum, s) => sum + (s.correct || 0), 0);
   const nsWrong   = nonSurvSessions.reduce((sum, s) => sum + (s.wrong   || 0), 0);
@@ -74,26 +111,16 @@ export default function StatsPage({ onBack }) {
   const analysis = analyzeUser(data);
   const monthly = analysis.monthly;
 
-  // Gráfico de evolução considera SOMENTE as partidas do Desafio Diário
+  // [v6.0 · Bloco 7] Evolução considera o Rush (modo principal) — antes
+  // filtrava por 'daily' (Desafio Diário), removido na fusão de modos da
+  // 5.0, então o gráfico nunca tinha dado pra mostrar.
   const chartData = sessions
-    .filter((s) => s.mode === 'daily')
+    .filter((s) => s.mode === 'rush')
     .slice(-20)
     .map((s, i) => ({
       name: s.date ? formatDate(s.date) : `#${i + 1}`,
       pts: s.score || 0,
     }));
-
-  const modeCount = (mode) =>
-    sessions.filter((s) => s.mode === mode).length;
-
-  const bestMode = (() => {
-    const records = data.records || {};
-    const entries = Object.entries(records);
-    if (!entries.length) return null;
-    const best = entries.reduce((a, b) => (b[1] > a[1] ? b : a));
-    const labels = { rush: 'Rush', zen: 'Zen', review: 'Revisão' };
-    return labels[best[0]] || best[0];
-  })();
 
   function exportJSON() {
     const payload = {
@@ -107,9 +134,6 @@ export default function StatsPage({ onBack }) {
         bestScore: data.bestScore,
         bestAccuracy: data.bestAccuracy,
         currentStreak: data.currentStreak,
-        dailyCompleted: data.dailyCompleted,
-        survivalBest: data.survivalBest,
-        speedBest: data.speedBest,
       },
       records: data.records || {},
       achievements: data.achievements || [],
@@ -150,8 +174,10 @@ export default function StatsPage({ onBack }) {
       transition={pageTransition}
       className="flex flex-col gap-5"
     >
+      <TableOfContents />
+
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div id="stats-resumo" className="flex items-center gap-3 scroll-mt-4">
         <button
           onClick={onBack}
           className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
@@ -199,71 +225,34 @@ export default function StatsPage({ onBack }) {
       {/* Heatmap de Ofensiva — 365 dias estilo GitHub */}
       <StreakHeatmap sessions={data.sessions || []} />
 
-      {/* Catálogo de Precisão — acesso destacado */}
+      {/* Catálogo de Precisão — agora também é onde Acertos e Erros vivem
+          (sub-seções, ver AccuracyCatalogPage.jsx) */}
       <motion.button
+        id="stats-catalogo"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setView('accuracy')}
-        className="flex items-center gap-3 w-full text-left bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl px-4 py-3 border border-violet-100 hover:border-violet-300 transition-colors"
+        className="scroll-mt-4 flex items-center gap-3 w-full text-left bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl px-4 py-3 border border-violet-100 hover:border-violet-300 transition-colors"
       >
         <span className="w-9 h-9 rounded-xl bg-violet-600 text-white flex items-center justify-center shrink-0">
           <Crosshair size={16} />
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-black text-violet-700 leading-tight">Catálogo de Precisão</p>
-          <p className="text-xs font-semibold text-violet-400">Precisão, velocidade, erros e por tabuada</p>
+          <p className="text-xs font-semibold text-violet-400">Acertos, erros, velocidade e por tabuada</p>
         </div>
       </motion.button>
 
-      {/* Dashboards: Acertos / Erros */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.22 }}
-        className="grid grid-cols-2 gap-3"
-      >
-        {/* Acertos */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setView('hits')}
-          className="flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-emerald-100 hover:shadow-emerald-200 transition-shadow"
-        >
-          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
-            <CheckCircle size={16} />
-          </span>
-          <div>
-            <p className="text-sm font-black leading-tight">Acertos</p>
-            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Precisão e evolução</p>
-          </div>
-        </motion.button>
-
-        {/* Erros */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setView('errors')}
-          className="flex flex-col items-start gap-2 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl px-4 py-4 text-white shadow-md shadow-rose-100 hover:shadow-rose-200 transition-shadow"
-        >
-          <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
-            <XCircle size={16} />
-          </span>
-          <div>
-            <p className="text-sm font-black leading-tight">Erros</p>
-            <p className="text-xs font-semibold opacity-75 leading-tight mt-0.5">Dificuldades e falhas</p>
-          </div>
-        </motion.button>
-      </motion.div>
-
       {/* Análise Inteligente */}
       <motion.div
+        id="stats-analise"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.22 }}
-        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+        className="scroll-mt-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-3">
           <Sparkles size={16} className="text-violet-500" />
@@ -286,10 +275,11 @@ export default function StatsPage({ onBack }) {
       {/* Resumo Mensal automático */}
       {monthly && (
         <motion.div
+          id="stats-mensal"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
-          className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+          className="scroll-mt-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-1">
             <Calendar size={16} className="text-violet-500" />
@@ -341,18 +331,19 @@ export default function StatsPage({ onBack }) {
 
       {/* Chart */}
       <motion.div
+        id="stats-evolucao"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+        className="scroll-mt-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
       >
-        <p className="font-black text-gray-800 mb-1">Evolução — Desafio Diário</p>
-        <p className="text-xs text-gray-400 font-semibold mb-4">Pontuação nas suas partidas do Desafio Diário</p>
+        <p className="font-black text-gray-800 mb-1">Evolução — Rush</p>
+        <p className="text-xs text-gray-400 font-semibold mb-4">Pontuação nas suas partidas de Rush</p>
         {chartData.length < 2 ? (
           <EmptyState
             icon="📈"
-            title="Poucos desafios diários"
-            description="Jogue mais alguns Desafios Diários para ver sua evolução."
+            title="Poucas partidas de Rush"
+            description="Jogue mais algumas partidas de Rush para ver sua evolução."
           />
         ) : (
           <ResponsiveContainer width="100%" height={180}>
@@ -403,10 +394,11 @@ export default function StatsPage({ onBack }) {
         const totalWeekErr = errorsByDay.reduce((s, d) => s + d.errors, 0);
         return (
           <motion.div
+            id="stats-erros-semana"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+            className="scroll-mt-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
           >
             <div className="flex items-center justify-between mb-1">
               <p className="font-black text-gray-800">Erros — Últimos 7 Dias</p>
@@ -439,113 +431,14 @@ export default function StatsPage({ onBack }) {
         );
       })()}
 
-      {/* Per-mode breakdown */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-        className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
-      >
-        <p className="font-black text-gray-800 mb-4">Por Modo</p>
-        {[
-          { id: 'rush', label: 'Rush', gradient: 'from-feather to-mask' },
-          { id: 'zen', label: 'Zen', gradient: 'from-macaw to-macaw-dark' },
-          { id: 'review', label: 'Revisão', gradient: 'from-bee to-bee-dark' },
-        ].map(({ id, label, gradient }) => {
-          const count = modeCount(id);
-          const maxCount = Math.max(...['rush', 'zen', 'review'].map(modeCount), 1);
-          return (
-            <div key={id} className="mb-3 last:mb-0">
-              <div className="flex justify-between text-sm font-semibold text-gray-600 mb-1">
-                <span>{label}</span>
-                <span className="font-black">{count} partidas</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(count / maxCount) * 100}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
-                  className={`h-full bg-gradient-to-r ${gradient} rounded-full`}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </motion.div>
-
-      {bestMode && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-          className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-4 border border-violet-100 text-center"
-        >
-          <p className="text-xs font-bold text-violet-400 uppercase tracking-wide">Modo Favorito</p>
-          <p className="text-xl font-black text-violet-700 mt-1">{bestMode}</p>
-        </motion.div>
-      )}
-
-      {/* ── Estoque de Power-ups ─────────────────────────────────────────── */}
-      {(() => {
-        const powerups = data.powerups || {};
-        const items = [
-          { key: 'life', emoji: '❤️‍🔥', name: 'Vida Extra',   desc: 'Restaura 1 vida no Survival',   color: 'bg-rose-50 border-rose-100 text-rose-700' },
-          { key: 'time', emoji: '⏱️',   name: '+60s Rush',    desc: 'Adiciona 60s no Rush',           color: 'bg-violet-50 border-violet-100 text-violet-700' },
-          { key: 'xp2',  emoji: '⚡',   name: 'XP Dobrado',   desc: 'Dobra o XP da próxima partida', color: 'bg-amber-50 border-amber-100 text-amber-700' },
-        ];
-        const totalStock = items.reduce((sum, i) => sum + (powerups[i.key] || 0), 0);
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.38 }}
-            className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
-          >
-            <div className="flex items-center justify-between mb-1">
-              <p className="font-black text-gray-800">⚡ Power-ups</p>
-              {totalStock === 0 && (
-                <span className="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">Sem estoque</span>
-              )}
-            </div>
-            <p className="text-xs text-gray-400 font-semibold mb-4">Consumíveis disponíveis na sua mochila</p>
-            <div className="flex flex-col gap-2">
-              {items.map(({ key, emoji, name, desc, color }) => {
-                const count = powerups[key] || 0;
-                return (
-                  <div
-                    key={key}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl border ${
-                      count > 0 ? color : 'bg-gray-50 border-gray-100 text-gray-400'
-                    }`}
-                  >
-                    <span className="text-xl leading-none">{emoji}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-black leading-tight ${count > 0 ? '' : 'text-gray-400'}`}>{name}</p>
-                      <p className="text-xs font-semibold opacity-70 leading-snug">{desc}</p>
-                    </div>
-                    <span className={`text-lg font-black tabular-nums ${count > 0 ? '' : 'text-gray-300'}`}>
-                      ×{count}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-            {totalStock === 0 && (
-              <p className="text-xs text-center text-gray-400 font-semibold mt-3">
-                Compre power-ups na <span className="text-violet-500 font-black">Loja</span> com suas moedas 🪙
-              </p>
-            )}
-          </motion.div>
-        );
-      })()}
-
       {/* Export section */}
       {sessions.length > 0 && (
         <motion.div
+          id="stats-exportar"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+          className="scroll-mt-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
         >
           <p className="font-black text-gray-800 mb-1">Exportar Dados</p>
           <p className="text-xs text-gray-400 font-semibold mb-4">

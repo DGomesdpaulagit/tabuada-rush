@@ -4,6 +4,38 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0] — 2026-08-17 — Tabuada Rush 6.0: Bloco 7/7 (Estatísticas) — RESET COMPLETO
+
+**Último bloco do reset 6.0. Detalhes em `sessions/sessao-050.md` e `DECISIONS.md` (D026).**
+
+### Adicionado
+- Guia lateral tipo Notion na tela de Estatísticas (`TableOfContents` em
+  `StatsPage.jsx`) — navegação direta por seção, só em telas largas.
+  Implementado sem a referência visual que o Davi ia mandar (nunca chegou) —
+  ver D026.
+
+### Removido
+- "Partidas por modo", "Power-ups" (estoque) e "Modo Favorito" — removidos de
+  vez da tela principal de Estatísticas (pedido explícito do Davi)
+
+### Alterado
+- Acertos/Erros deixam de ser destinos soltos e viram sub-seções do Catálogo
+  de Precisão (`AccuracyCatalogPage.jsx`)
+
+### Corrigido
+- Gráfico "Evolução" filtrava por um modo morto desde a 5.0 (`'daily'`) e
+  nunca mostrava dado nenhum — corrigido pra `'rush'` (modo principal atual)
+- `MODES_META` do Catálogo de Precisão referenciava modos removidos
+  (survival/speed/daily) — trocado pra rush/zen/review
+
+---
+
+**Reset 6.0 completo — todos os 7 blocos entregues (sessões 044-050):** base
+visual, vidas diárias, progressão de tabuada, ligas, missões, perfil completo,
+estatísticas. Ver `DECISIONS.md` D020-D026 pro histórico completo de decisões.
+
+---
+
 ## [6.0.0-bloco6] — 2026-08-17 — Tabuada Rush 6.0: Bloco 6/7 (Perfil completo)
 
 **Detalhes em `sessions/sessao-049.md` e `DECISIONS.md` (D025).**

@@ -466,3 +466,36 @@ a um personagem, mas você competindo com esse personagem"), não uma perda.
 Catálogo) e as 5 telas que trocaram QI por Liga/Faixa foram testadas uma a uma
 neste ambiente (sem erro de console, conteúdo renderizado correto) — ver
 `sessao-049.md`.
+
+---
+
+## D026 — Guia lateral de Estatísticas implementado sem a referência visual do Davi
+
+**Data:** 2026-08-17 · sessao-050 (Bloco 7 do reset 6.0 — ÚLTIMO BLOCO)
+**Contexto:** No áudio original, Davi pediu um "guia lateral tipo sumário" pra
+navegação da tela de Estatísticas, citando o Notion como referência, e disse
+explicitamente que ia mandar um print de exemplo. Esse print nunca chegou ao
+longo das 7 sessões do reset (044-050).
+**Decisão:** Implementei mesmo assim, em vez de esperar — um TOC fixo na
+margem direita (`fixed right-4 top-1/2`), só em telas largas (`lg+`), com
+pontinhos que mostram o rótulo da seção no hover e fazem `scrollIntoView`
+suave ao clicar. Interpretação própria do "painel de tópicos do Notion", sem
+a referência exata do Davi.
+**Motivo:** Bloquear o Bloco 7 (último do reset) esperando um print que já
+não veio em 7 sessões pareceu pior do que entregar uma primeira versão
+razoável e ajustar depois se o Davi mandar a referência e ela for diferente.
+É reversível/ajustável — não é uma decisão estrutural de dado (como D021-D025),
+é só a apresentação de uma navegação.
+**Revisitar quando:** Se o Davi mandar o print que tinha em mente, comparar e
+ajustar o componente (`TableOfContents` em `StatsPage.jsx`) pra bater com a
+referência real.
+
+---
+
+## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
+
+Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:
+(1) Base visual, (2) Vidas diárias, (3) Progressão de tabuada, (4) Ligas, (5)
+Missões, (6) Perfil completo, (7) Estatísticas. Decisões arquiteturais D020-D026
+documentam o raciocínio de cada um. Próximos passos ficam a critério do Davi —
+não há mais bloco planejado em aberto deste reset.

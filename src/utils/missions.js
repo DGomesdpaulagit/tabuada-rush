@@ -94,8 +94,15 @@ export function getActiveMissions(missionsData) {
   const daily = (!md.daily || md.daily.date !== today)
     ? initDaily(today, md.daily?.missions || [])
     : md.daily;
-  const monthly = (!md.monthly || md.monthly.month !== monthStr)
-    ? initMonthlyPool(monthStr, md.monthly?.accepted || [])
+  // [v6.0 · Bloco 5] `Array.isArray(md.monthly.accepted)` detecta o formato
+  // ANTIGO (pré-Bloco 5: `{ month, missions }`, sem `pool`/`accepted`) — sem
+  // essa checagem, um usuário com dado salvo de antes do Bloco 5 e no MESMO
+  // mês corrente ficava com `monthly` no formato velho (sem `accepted`), e
+  // `resolveChallenges`/`accepted.map(...)` quebrava o app inteiro no load
+  // (bug real encontrado em produção — TypeError "Cannot read properties of
+  // undefined (reading 'map')"). Migra pro formato novo automaticamente.
+  const monthly = (!md.monthly || md.monthly.month !== monthStr || !Array.isArray(md.monthly.accepted))
+    ? initMonthlyPool(monthStr, Array.isArray(md.monthly?.accepted) ? md.monthly.accepted : [])
     : md.monthly;
 
   return { daily, monthly };

@@ -115,3 +115,29 @@ clique direto nos botões:
 **Próximo passo:** Bloco 6 — Perfil completo (absorve Conquistas/Recordes/
 Catálogo pro `PerfilPage.jsx` do Bloco 1) — e é a hora de finalmente remover o
 sistema antigo de QI (`getQiInfo`) das 5 telas que ainda o usam, ver D023.
+
+---
+
+## Hotfix pós-deploy (mesma sessão) — B010: app travava pra usuário com dado antigo
+
+Depois do push do Bloco 5, o Davi reportou (print do console do navegador) que o
+app não abria mais — `TypeError: Cannot read properties of undefined (reading
+'map')`. Causa: `getActiveMissions` só reinicializava `missionsData.monthly`
+quando o MÊS mudava — quem já tinha `monthly` salvo no formato antigo (pré-Bloco
+5: `{month, missions}`, sem `pool`/`accepted`) e estava no mesmo mês corrente
+mantinha o formato velho. `resolveChallenges`, chamado no LOAD do app
+(`AppContext.jsx`), fazia `active.monthly.accepted.map(...)` — `accepted` vinha
+`undefined`, quebrando o `AppProvider` inteiro (trava o app pra qualquer tela,
+não só Missões, porque o provider envolve a árvore toda).
+
+**Correção:** `getActiveMissions` agora também checa `Array.isArray(md.monthly.accepted)`
+— se o formato salvo for o antigo, migra pro novo automaticamente mesmo com o mês
+batendo (progresso de missão mensal antiga é descartado — aceitável, é migração
+de schema, não perda de dado importante). Testado forçando o formato antigo no
+`localStorage` e recarregando — app abre normal agora. Ver `BUGS.md` B010.
+
+**Lição pra próxima vez:** ao mudar o FORMATO de um campo persistido
+(`missionsData.monthly` de `{month, missions}` pra `{month, pool, accepted}`),
+checar a FORMA dos dados salvos, não só a "chave de invalidação" (mês/data) que
+já existia pro caso de uso anterior — a chave de invalidação antiga não sabia
+que o formato por baixo tinha mudado.

@@ -32,6 +32,9 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   que esse modo foi fundido no Rush na 5.0 — era matematicamente impossível de
   completar (mesma classe de bug já registrada pras conquistas
   `survival_30`/`speed_20`)
+- **B010 (hotfix pós-deploy)** — app travava ao abrir pra quem tinha dado salvo de
+  antes deste bloco (`missionsData.monthly` no formato antigo não migrava se o mês
+  batesse, e quebrava o `AppProvider` inteiro). Ver `BUGS.md` B010.
 
 ---
 

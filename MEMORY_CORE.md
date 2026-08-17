@@ -19,13 +19,19 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.0 (Tabuada Rush 6.0 — RESET COMPLETO, todos os 7 blocos entregues — sessao-050.md)
+**Versão:** 6.0.1 (Tabuada Rush 6.0 completo + limpeza de débitos — sessao-051.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
 ("vamos terminar esses blocos"/"bora pra próxima"), com decisões não-óbvias sinalizadas
-nos registros mesmo assim (ver D020-D026). **Todos os 7 blocos entregues — reset
-fechado.** Não há mais bloco planejado deste reset em aberto.
+nos registros mesmo assim (ver D020-D026). Na sessão 051, o Davi pediu pra fechar os
+débitos conhecidos ANTES de partir pras próximas edições — 4 de 5 foram resolvidos por
+código (D027-D029), 1 (calibração de XP/ligas) foi explicado como não-fechável sem
+telemetria real, não ignorado. **Reset 6.0 + limpeza de débitos = fechados.**
+**[v6.0.1]** Rebaixamento por inatividade reintroduzido com grace period de 3 dias
+(corrige a causa raiz do bug do Bloco 4, não só remove a feature); Pódios nas ligas
+implementado (card novo no Perfil); filtros de modo mortos removidos de HitsPage/
+ErrorsPage/AccuracyCatalogPage. Ver `sessao-051.md` e D027-D029.
 **[v6.0.0]** Bloco 7/7 (Estatísticas) — guia lateral tipo Notion (implementado sem a
 referência visual que o Davi ia mandar, nunca chegou — D026), remove "Partidas por
 modo"/"Power-ups"/"Modo Favorito", Acertos/Erros migram pro Catálogo de Precisão,
@@ -247,36 +253,23 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — RESET 6.0 COMPLETO, SEM BLOCO PLANEJADO EM ABERTO
+## 🎯 PRÓXIMA SESSÃO — EDIÇÕES QUE O DAVI OBSERVOU USANDO O APP
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-050.md`
-(fechamento do reset, com a lista completa de débitos conhecidos) →
-`DECISIONS.md` D020-D026.
+completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-051.md`
+(limpeza de débitos, a mais recente) → `DECISIONS.md` D020-D029.
 
-**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050): base
-visual, vidas diárias, progressão de tabuada, ligas, missões, perfil completo,
-estatísticas. Não há próximo bloco definido — a próxima sessão deve começar
-perguntando ao Davi o que ele quer fazer a seguir, não inventando um roadmap
-novo sozinho.
+**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050), e os
+débitos conhecidos foram fechados na sessão 051 (D027-D029) — exceto
+calibração de XP/liga (D022/D023), que não é fechável em código, só com uso
+real ao longo do tempo. Davi disse explicitamente que a próxima conversa
+traz "as edições que observei dentro do jogo" — ou seja, feedback de uso
+real, não um novo bloco planejado por mim. Começar ouvindo o que ele traz,
+não propondo roadmap novo sozinho.
 
-**Débitos conhecidos do reset (não são bugs esquecidos, estão registrados em
-`sessao-050.md` e nas decisões correspondentes) — bons candidatos se o Davi
-quiser "polir" antes de partir pra algo novo:**
-- Calibração de XP (Bloco 3, D022) e de personagens/promoção de liga
-  (Bloco 4, D023) são estimativas sem telemetria real — recalibrar quando
-  houver dados de uso de verdade.
-- Guia lateral de Estatísticas implementado sem a referência visual que o
-  Davi ia mandar (nunca chegou em 7 sessões) — D026.
-- "Pódios conquistados nas ligas" (mencionado no áudio do Perfil) não
-  implementado — sem histórico de pódio ainda, só posição atual.
-- `HitsPage`/`ErrorsPage` ainda têm filtros de modo mortos (Sobrevivência/
-  Velocidade/Diário) — não tocados, fora do escopo de reorganização do Bloco 7.
-- Rebaixamento de liga por inatividade não existe — só reavaliado em fim de
-  partida (decisão deliberada pra evitar o bug de ping-pong do Bloco 4, D023).
-- Nº de personagens por liga e tamanho das zonas de promoção/rebaixamento
-  foram decididos por mim (proposta concreta, não travei esperando resposta
-  perfeita) — se o Davi achar estranho na prática, são ajustáveis.
+**Nº de personagens por liga e tamanho das zonas de promoção/rebaixamento**
+foram decididos por mim (proposta concreta, não travei esperando resposta
+perfeita) — se o Davi achar estranho na prática, são ajustáveis.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -350,8 +343,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-050.md` — última sessão (Bloco 7/7 — fecha o reset, com lista de débitos conhecidos)
-5. `DECISIONS.md` D020-D026 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-051.md` — última sessão (limpeza dos débitos conhecidos do reset)
+5. `DECISIONS.md` D020-D029 (reset 6.0 + limpeza) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

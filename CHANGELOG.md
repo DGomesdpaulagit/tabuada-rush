@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.1] — 2026-08-17 — Limpeza dos débitos conhecidos do reset 6.0
+
+**Detalhes em `sessions/sessao-051.md` e `DECISIONS.md` (D027-D029).**
+
+### Adicionado
+- Rebaixamento de liga por inatividade reintroduzido, com grace period de 3 dias
+  (`leagueEnteredAt`, `checkInactivityRelegation`) — corrige a causa raiz do bug
+  de "ping-pong" do Bloco 4 em vez de deixar a feature removida
+- Pódios nas ligas (`data.leaguePodiums`) — card novo no Perfil, toast ao conquistar
+
+### Corrigido
+- `HitsPage`/`ErrorsPage`/`AccuracyCatalogPage` ainda citavam modos removidos desde
+  a 5.0 (Sobrevivência/Velocidade/Diário) nos filtros — trocado por Rush/Zen/Revisão
+
+### Nota
+- Calibração de XP/Ligas (D022/D023) permanece como estimativa — não é algo que se
+  "termina" em código, só com dados reais de uso ao longo do tempo (ver DECISIONS.md)
+
+---
+
 ## [6.0.0] — 2026-08-17 — Tabuada Rush 6.0: Bloco 7/7 (Estatísticas) — RESET COMPLETO
 
 **Último bloco do reset 6.0. Detalhes em `sessions/sessao-050.md` e `DECISIONS.md` (D026).**

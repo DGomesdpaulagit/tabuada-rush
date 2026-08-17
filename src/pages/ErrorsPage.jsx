@@ -10,7 +10,8 @@ import { StatCard, EmptyState, Progress, pageVariants, pageTransition } from '..
 
 // ── Constantes ───────────────────────────────────────────────────────────────
 
-const MODE_LABELS = { rush: 'Rush', survival: 'Sobrevivência', speed: 'Velocidade', daily: 'Diário' };
+// [v6.0 · Bloco 7 — pendência] Só os 3 modos reais desde a fusão da 5.0.
+const MODE_LABELS = { rush: 'Rush', zen: 'Zen', review: 'Revisão' };
 const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -32,10 +33,7 @@ function filterSessions(sessions, timeFilter, monthFilter, yearFilter, modeFilte
     out = out.filter(s => s.date && new Date(s.date).getFullYear() === yearFilter);
   }
 
-  // "Todos" exclui Sobrevivência: lógica diferente (termina em 3 erros) → stats individuais
-  if (modeFilter === 'todos') {
-    out = out.filter(s => s.mode !== 'survival');
-  } else {
+  if (modeFilter !== 'todos') {
     out = out.filter(s => s.mode === modeFilter);
   }
   return out;
@@ -150,7 +148,7 @@ export default function ErrorsPage({ onBack }) {
   });
 
   // ── Erros por modo ────────────────────────────────────────────────────────
-  const modeData = ['rush', 'survival', 'speed', 'daily'].map(mode => {
+  const modeData = ['rush', 'zen', 'review'].map(mode => {
     const list = filtered.filter(s => s.mode === mode);
     const c = list.reduce((s, x) => s + (x.correct || 0), 0);
     const w = list.reduce((s, x) => s + (x.wrong   || 0), 0);
@@ -291,7 +289,7 @@ export default function ErrorsPage({ onBack }) {
         <div>
           <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Modo</p>
           <div className="flex gap-2 flex-wrap">
-            {[['todos','Todos'],['rush','Rush'],['survival','Sobrevivência'],['speed','Velocidade'],['daily','Diário']].map(([v, l]) => (
+            {[['todos','Todos'],['rush','Rush'],['zen','Zen'],['review','Revisão']].map(([v, l]) => (
               <button
                 key={v}
                 onClick={() => setModeFilter(v)}
@@ -305,11 +303,6 @@ export default function ErrorsPage({ onBack }) {
               </button>
             ))}
           </div>
-          {modeFilter === 'todos' && (
-            <p className="text-xs text-amber-600 font-semibold mt-2">
-              ⚡ Sobrevivência aparece separadamente — selecione para ver suas estatísticas individuais
-            </p>
-          )}
         </div>
       </motion.div>
 

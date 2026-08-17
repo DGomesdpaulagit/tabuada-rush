@@ -91,7 +91,7 @@ export default function PerfilPage() {
       </div>
 
       {/* Stats resumidas */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div className="bg-surface rounded-2xl p-4 border-2 border-border flex flex-col gap-1">
           <Flame size={18} className="text-streak" />
           <p className="text-xl font-black text-fg">{data.bestDayStreak || 0}</p>
@@ -101,6 +101,14 @@ export default function PerfilPage() {
           <Sparkles size={18} className="text-accent" />
           <p className="text-xl font-black text-fg">{data.xp || 0}</p>
           <p className="text-xs font-semibold text-fg-muted">XP total</p>
+        </div>
+        {/* [pendência pós-reset] "Pódios conquistados nas ligas", do áudio
+            original do Perfil (planejamento-6.0.md seção 9) — não tinha sido
+            implementado no Bloco 6, ver utils/leagues.js applyLeaguePromotion */}
+        <div className="bg-surface rounded-2xl p-4 border-2 border-border flex flex-col gap-1">
+          <Trophy size={18} className="text-coin" />
+          <p className="text-xl font-black text-fg">{data.leaguePodiums || 0}</p>
+          <p className="text-xs font-semibold text-fg-muted">Pódios nas ligas</p>
         </div>
       </div>
 

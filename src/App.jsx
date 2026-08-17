@@ -4,6 +4,7 @@ import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
+import { LEAGUE_MAP } from './constants/leagues';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -634,14 +635,19 @@ export default function App() {
 
       // [v6.0 · Bloco 4] Promoveu/rebaixou de liga com essa partida? Substitui
       // o antigo toast de "subiu de classificação no Ranking de QI" — ver
-      // DECISIONS.md (Ligas) e utils/leagues.js.
+      // DECISIONS.md (Ligas) e utils/leagues.js. Sempre persiste os campos de
+      // liga/pódio (mesmo sem promover/rebaixar — um pódio pode acontecer
+      // ficando na mesma liga, ver applyLeaguePromotion).
       const leaguePromo = applyLeaguePromotion(newData);
+      update((prev) => ({
+        ...prev,
+        leagueId: leaguePromo.data.leagueId,
+        leagueXpBase: leaguePromo.data.leagueXpBase,
+        leagueEnteredAt: leaguePromo.data.leagueEnteredAt,
+        leaguePodiums: leaguePromo.data.leaguePodiums,
+        leaguePodiumClaimed: leaguePromo.data.leaguePodiumClaimed,
+      }));
       if (leaguePromo.promoted || leaguePromo.relegated) {
-        update((prev) => ({
-          ...prev,
-          leagueId: leaguePromo.data.leagueId,
-          leagueXpBase: leaguePromo.data.leagueXpBase,
-        }));
         showAchievement(
           leaguePromo.promoted
             ? {
@@ -657,6 +663,13 @@ export default function App() {
                 desc: `Você caiu pra Liga ${leaguePromo.newLeague.name}`,
               }
         );
+      } else if (leaguePromo.podiumAchieved) {
+        showAchievement({
+          id: '_league_podium',
+          icon: '🏆',
+          title: 'Pódio!',
+          desc: `Você ficou entre os 3 primeiros da Liga ${leaguePromo.data.leagueId ? LEAGUE_MAP[leaguePromo.data.leagueId]?.name : ''}`,
+        });
       }
 
       // New record check

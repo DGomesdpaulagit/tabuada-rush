@@ -492,6 +492,90 @@ referência real.
 
 ---
 
+## D027 — Rebaixamento por inatividade reintroduzido, com grace period (resolve o débito do Bloco 4)
+
+**Data:** 2026-08-17 · sessao-051 (limpeza de pendências pós-reset)
+**Contexto:** Davi pediu pra fechar, nesta mesma conversa, os débitos que eu tinha
+sinalizado no fechamento do reset 6.0. Um deles era D023: rebaixamento de liga por
+inatividade tinha sido REMOVIDO do load do app porque causava um bug de
+"ping-pong" (jogador recém-promovido com 0 XP era rebaixado de volta na hora,
+sem nunca ter jogado na liga nova).
+**Decisão:** Reintroduzido com uma correção real, não um band-aid: `leagueEnteredAt`
+(novo campo) registra a DATA em que o jogador entrou na liga atual. A nova
+`checkInactivityRelegation` (`utils/leagues.js`), chamada no load do app
+(`AppContext.jsx`), só rebaixa se já se passaram `INACTIVITY_GRACE_DAYS` (3) desde
+essa data — um jogador recém-promovido tem uma janela real pra jogar antes de
+qualquer avaliação de rebaixamento por inatividade. Nunca promove (só a checagem
+pós-partida promove, ver D023).
+**Motivo:** O bug original acontecia porque a checagem rodava incondicionalmente a
+cada load, sem noção de "quanto tempo faz que ele chegou aqui". O grace period é a
+correção estrutural — resolve a causa raiz em vez de só remover a feature.
+**Verificado:** testado neste ambiente forçando `leagueEnteredAt` 5 dias atrás (com
+o jogador na zona de rebaixamento) → rebaixou corretamente no load; testado de novo
+com `leagueEnteredAt` = hoje → NÃO rebaixou (grace period segurou), confirmando que
+o bug de ping-pong não voltou.
+
+---
+
+## D028 — Pódios nas ligas implementado (resolve o débito do Bloco 6)
+
+**Data:** 2026-08-17 · sessao-051
+**Contexto:** O áudio original do Perfil mencionava "pódios conquistados nas
+ligas" como parte do resumo de estatísticas — não tinha sido implementado no
+Bloco 6 (não existia histórico de pódio nenhum, só a posição atual).
+**Decisão:** "Pódio" = ficar entre os 3 primeiros (de 11 competidores) da liga
+atual. Contado 1x por PERMANÊNCIA na liga (não 1x por partida — `leaguePodiumClaimed`
+reseta toda vez que a liga muda, promoção ou rebaixamento), incrementando
+`data.leaguePodiums`. Novo card no Perfil ("Pódios nas ligas") e toast ao
+conquistar um (dentro de `applyLeaguePromotion`, App.jsx `handleGameEnd`).
+**Motivo:** Contar por partida inflacionaria o número artificialmente (jogador
+parado no top 3 ganharia +1 pódio a cada partida só por continuar lá); contar por
+permanência reflete o que "pódio" realmente significa — uma conquista de posição,
+não um evento repetido.
+**Revisitar quando:** Se o conceito de "pódio" evoluir (ex.: só contar no fim de
+uma temporada/ciclo, se ligas ganharem reset periódico no futuro) — hoje não há
+ciclo de liga, só entrada/saída por promoção/rebaixamento.
+
+---
+
+## D029 — Referências a modos mortos removidas de HitsPage/ErrorsPage/AccuracyCatalogPage (resolve o débito do Bloco 7)
+
+**Data:** 2026-08-17 · sessao-051
+**Contexto:** `HitsPage.jsx`/`ErrorsPage.jsx` (filtro "Modo") e o cabeçalho de
+`AccuracyCatalogPage.jsx` ainda citavam Sobrevivência/Velocidade/Diário — modos
+removidos por completo desde a fusão de modos da 5.0. Registrado como débito
+conhecido no fechamento do Bloco 7 por serem arquivos grandes fora do escopo de
+"reorganização" que o Davi pediu naquele bloco.
+**Decisão:** `MODE_LABELS`/filtros trocados pra `rush`/`zen`/`review` nos dois
+arquivos; a lógica especial "Todos exclui Sobrevivência" (não existe mais motivo
+pra excluir nada) removida; o aviso "⚡ Sobrevivência aparece separadamente"
+removido. Em `AccuracyCatalogPage.jsx`, a variável `nonSurvSessions` (um filtro
+que virou identidade, já que não existem mais sessões de Sobrevivência) foi
+substituída direto por `sessions` em todos os usos, e o subtítulo do cabeçalho
+("Modos clássicos — Sobrevivência exibida separadamente") corrigido.
+**Motivo:** Pedido explícito do Davi de fechar os débitos sinalizados nesta
+mesma conversa — diferente do Bloco 7 (que tinha escopo definido como
+"reorganização, não reescrita"), aqui a limpeza pontual desses textos/filtros
+mortos é exatamente o que foi pedido, sem expandir pra reescrever os arquivos
+inteiros.
+
+---
+
+## Nota sobre calibração de XP/Ligas (D022/D023) — NÃO é um débito fechável em código
+
+**Data:** 2026-08-17
+Diferente dos itens acima, a calibração de XP por faixa (D022: `FIRST_TIER_XP`,
+`TIER_XP_DECAY`) e de personagens/zonas de promoção por liga (D023) não é algo
+que se "termina" escrevendo código — são estimativas que só podem ser corrigidas
+com dados reais de jogadores usando o app ao longo de semanas/meses (telemetria
+que não existe ainda). Não fabriquei números "definitivos" fingindo ter dados que
+não tenho — os valores atuais continuam sendo os mesmos, documentados como
+estimativa desde que foram escritos. Fica registrado aqui pra não parecer
+esquecimento: é um debito que só o TEMPO (+ uso real) resolve, não uma tarefa de
+código pendente.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

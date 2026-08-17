@@ -78,37 +78,93 @@ export function getLeagueStandings(data) {
   return { league, entries, playerRank, total: entries.length };
 }
 
+// [pendência pós-reset] "Pódio" = ficar entre os 3 primeiros (de 11) da liga
+// atual. Conta 1x por PERMANÊNCIA na liga (não 1x por partida — senão
+// jogador parado no top 3 acumularia pódio toda vez que jogasse) — resetado
+// por `leaguePodiumClaimed` sempre que a liga muda (promoção OU rebaixamento).
+const PODIUM_RANK = 3;
+
+// Empacota a troca de liga (promoção ou rebaixamento): reseta o XP-base, o
+// flag de pódio e marca a data de entrada (usada pelo grace period de
+// `checkInactivityRelegation`).
+function enterLeague(data, newLeagueId) {
+  return {
+    ...data,
+    leagueId: newLeagueId,
+    leagueXpBase: data.xp || 0,
+    leaguePodiumClaimed: false,
+    leagueEnteredAt: todayStr(),
+  };
+}
+
 // Avalia promoção/rebaixamento com base na posição ATUAL do jogador. Chamada
 // só depois de cada partida (App.jsx handleGameEnd) — DE PROPÓSITO não é
-// checada ao abrir o app, senão um jogador recém-promovido (0 XP na liga
-// nova) seria rebaixado de volta na hora, sem nunca ter tido a chance de
-// jogar ali (ver nota em AppContext.jsx). Isso significa que "não praticar"
-// não derruba de liga sozinho por passagem do tempo — só na próxima partida
-// jogada, se a posição ainda estiver ruim. Move NO MÁXIMO 1 liga por chamada
-// de propósito — zera `leagueXpBase` ao mudar de liga, então promover e
-// rebaixar na MESMA passada nunca acontece (chegou com 0 XP na liga nova,
-// não cai na zona de rebaixamento por só ter acabado de entrar).
+// checada ao abrir o app (ver checkInactivityRelegation abaixo pra essa
+// checagem, com grace period). Isso evita o "ping-pong" documentado em
+// DECISIONS.md D023: jogador recém-promovido (0 XP na liga nova) sendo
+// rebaixado de volta na hora, sem nunca ter tido a chance de jogar ali. Move
+// NO MÁXIMO 1 liga por chamada de propósito — zera `leagueXpBase` ao mudar
+// de liga, então promover e rebaixar na MESMA passada nunca acontece.
 export function applyLeaguePromotion(data) {
   const { league, playerRank, total } = getLeagueStandings(data);
   const idx = LEAGUES.findIndex((l) => l.id === league.id);
 
+  // Pódio: registrado independente de promover/rebaixar/ficar — só 1x por
+  // permanência na liga atual.
+  let base = data;
+  let podiumAchieved = false;
+  if (playerRank <= PODIUM_RANK && !data.leaguePodiumClaimed) {
+    base = { ...base, leaguePodiums: (data.leaguePodiums || 0) + 1, leaguePodiumClaimed: true };
+    podiumAchieved = true;
+  }
+
   if (playerRank <= league.promotionCount && idx < LEAGUES.length - 1) {
     const newLeague = LEAGUES[idx + 1];
     return {
-      data: { ...data, leagueId: newLeague.id, leagueXpBase: data.xp || 0 },
+      data: enterLeague(base, newLeague.id),
       promoted: true,
       relegated: false,
       newLeague,
+      podiumAchieved,
     };
   }
   if (playerRank > total - league.relegationCount && idx > 0) {
     const newLeague = LEAGUES[idx - 1];
     return {
-      data: { ...data, leagueId: newLeague.id, leagueXpBase: data.xp || 0 },
+      data: enterLeague(base, newLeague.id),
       promoted: false,
       relegated: true,
       newLeague,
+      podiumAchieved,
     };
   }
-  return { data, promoted: false, relegated: false, newLeague: null };
+  return { data: base, promoted: false, relegated: false, newLeague: null, podiumAchieved };
+}
+
+// [pendência pós-reset] Rebaixamento por INATIVIDADE — versão segura da
+// checagem que causava o bug de ping-pong (D023) quando rodava sem
+// restrição no load. Só rebaixa (nunca promove) se:
+//   1. o jogador está na zona de rebaixamento da liga atual, E
+//   2. já se passaram pelo menos INACTIVITY_GRACE_DAYS desde que entrou
+//      nela (`leagueEnteredAt`) — dá tempo real de jogar antes de ser
+//      julgado, resolvendo o problema que fez a versão anterior ser revertida.
+// Chamada só no load do app (AppContext.jsx) — "não praticar" agora custa
+// posição de verdade, mas só depois de uma janela justa, não instantâneo.
+const INACTIVITY_GRACE_DAYS = 3;
+
+export function checkInactivityRelegation(data) {
+  if (!data.leagueEnteredAt) return { data, relegated: false, newLeague: null };
+
+  const daysSinceEntry = Math.floor(
+    (new Date(todayStr()) - new Date(data.leagueEnteredAt)) / 86400000
+  );
+  if (daysSinceEntry < INACTIVITY_GRACE_DAYS) return { data, relegated: false, newLeague: null };
+
+  const { league, playerRank, total } = getLeagueStandings(data);
+  const idx = LEAGUES.findIndex((l) => l.id === league.id);
+  if (playerRank > total - league.relegationCount && idx > 0) {
+    const newLeague = LEAGUES[idx - 1];
+    return { data: enterLeague(data, newLeague.id), relegated: true, newLeague };
+  }
+  return { data, relegated: false, newLeague: null };
 }

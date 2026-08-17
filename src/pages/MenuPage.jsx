@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import { Gamepad2, Gift, BarChart2, LogIn, Cloud, Sparkles, Settings, ChevronRight, Brain, Coins, Flame, Trophy } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { getQiInfo, countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
+import { countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
+import { getLeagueStandings } from '../utils/leagues';
 import { analyzeUser } from '../utils/analysis';
 import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
@@ -18,14 +19,13 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const streakGoalBase = data.streakGoalBase || 0;
   const metaProgress = Math.max(0, streak - streakGoalBase); // progresso rumo à meta atual
   const goalPct = streakGoal ? Math.min((metaProgress / streakGoal) * 100, 100) : 0;
-  const qiInfo = getQiInfo(data);
   const analysisHeadline = analyzeUser(data).headline;
 
-  // Painel de perfil muda de cor conforme o personagem/tier do QI atual —
-  // TIERS já define um gradiente por faixa (baixo/médio/alto/gênio), então
-  // o card "veste a cara" de quem está sendo exibido, sem precisar de
-  // cosmético comprável (a loja de cosméticos foi removida).
-  const cardGradient = qiInfo.tier.gradient;
+  // [v6.0 · Bloco 6] Painel de perfil muda de cor conforme a LIGA atual (era
+  // o tier do QI antigo, ver DECISIONS.md D023) — mesma ideia, "veste a
+  // cara" de onde o jogador está, sem precisar de cosmético comprável.
+  const { league, playerRank, total: leagueTotal } = getLeagueStandings(data);
+  const cardGradient = league.gradient;
   const unclaimedMissions = countUnclaimedMissions(data.missionsData);
   const dueFlashcards = countDueFlashcards(data.srsData?.mult || {});
   const factsAtRisk = countFactsAtRiskAllOps(data); // [v4.0 · Fase 4] curva de esquecimento
@@ -115,7 +115,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         transition={{ delay: 0.1 }}
         className={`bg-gradient-to-r ${cardGradient} rounded-3xl p-5 text-white shadow-lg`}
       >
-        {/* Topo: avatar do personagem (Ranking de QI) + QI + moedas */}
+        {/* Topo: liga atual + posição + moedas */}
         <button
           onClick={() => onNavigate('ranking')}
           className="flex items-center gap-3 w-full text-left"
@@ -126,15 +126,15 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
             className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0"
           >
-            {qiInfo.char.emoji}
+            {league.emoji}
           </motion.div>
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide truncate">
-              {qiInfo.char.name}
+              Liga {league.name}
             </p>
             <div className="flex items-baseline gap-1.5">
-              <p className="text-3xl font-black leading-tight">{qiInfo.qi}</p>
-              <p className="text-white/70 text-xs font-bold">QI</p>
+              <p className="text-3xl font-black leading-tight">{playerRank}º</p>
+              <p className="text-white/70 text-xs font-bold">de {leagueTotal}</p>
             </div>
           </div>
           <div className="text-right shrink-0">
@@ -142,7 +142,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
               <Coins size={16} /> {coins}
             </p>
             <span className="inline-flex items-center gap-0.5 text-white/70 text-[11px] font-bold">
-              Ver ranking <ChevronRight size={12} />
+              Ver ligas <ChevronRight size={12} />
             </span>
           </div>
         </button>

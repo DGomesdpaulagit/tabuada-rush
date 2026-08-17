@@ -28,6 +28,7 @@ export const DEFAULTS = {
   livesData: { date: null, remaining: 5 }, // [v6.0 · Bloco 2] pote de vidas diárias — ver getLivesInfo em utils
   leagueId: 'bronze',    // [v6.0 · Bloco 4] liga atual — ver utils/leagues.js
   leagueXpBase: 0,       // XP total no momento em que entrou na liga atual (delta = xp - leagueXpBase)
+  createdAt: null,       // [v6.0 · Bloco 6] data do primeiro load — "no jogo desde..." no Perfil (setado uma vez em AppContext)
   powerups: {},              // { life: N, time: N, xp2: N } — consumíveis da loja
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
   equippedItems: {},         // { frame, card } → id do item equipado em cada slot
@@ -35,7 +36,6 @@ export const DEFAULTS = {
   seasonXp: 0,               // XP exclusivo da temporada (separado do XP de nível)
   seasonRewards: [],         // xpRequired[] de recompensas de temporada já resgatadas
   seasonId: 'temporada_1',   // id da temporada ativa no momento do save
-  qiBonus: 0,                // bônus de QI ganho via recompensas de ofensiva
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
   // Viés (não exclusividade) pelos fatos mais fracos do jogador em

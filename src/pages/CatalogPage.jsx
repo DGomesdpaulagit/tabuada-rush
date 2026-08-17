@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx, getXpProgress, getQiInfo, getAccuracy, formatDate } from '../utils';
+import { getLevelIdx, getXpProgress, getAccuracy, formatDate } from '../utils';
+import { getLeagueStandings } from '../utils/leagues';
 import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
 
@@ -40,7 +41,7 @@ export default function CatalogPage({ onBack }) {
   const { pct, toNext } = getXpProgress(xp);
   const xpInLevel = xp - level.xp;
   const levelSpan = nextLevel ? nextLevel.xp - level.xp : 0;
-  const qi = getQiInfo(data);
+  const { league, playerRank, total: leagueTotal } = getLeagueStandings(data);
 
   const totalAnswers = (data.totalCorrect || 0) + (data.totalWrong || 0);
   const overallAcc = getAccuracy(data.totalCorrect || 0, totalAnswers);
@@ -93,7 +94,7 @@ export default function CatalogPage({ onBack }) {
             </p>
             <p className="text-2xl font-black leading-tight truncate">{level.name}</p>
             <p className="text-violet-200 text-[11px] font-bold truncate mt-0.5">
-              {qi.char.emoji} QI {qi.qi} · {qi.char.name}
+              {league.emoji} Liga {league.name} · {playerRank}º de {leagueTotal}
             </p>
           </div>
         </div>

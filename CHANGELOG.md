@@ -4,6 +4,24 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco6] — 2026-08-17 — Tabuada Rush 6.0: Bloco 6/7 (Perfil completo)
+
+**Detalhes em `sessions/sessao-049.md` e `DECISIONS.md` (D025).**
+
+### Adicionado
+- `PerfilPage` completa: faixa de tabuada + liga/posição, stats resumidas,
+  "no jogo desde" (`data.createdAt`, novo), acesso a Conquistas/Recordes/Catálogo
+  (migraram de dentro da StatsPage pra dentro do Perfil)
+
+### Removido
+- **Sistema antigo de "QI" removido por completo** (`computeQI`/`getQiInfo` de
+  `utils/index.js`, `src/constants/characters.js` inteiro) — não só trocado de
+  tela, deletado do repositório. Substituído por Faixa de tabuada + Liga em
+  toda parte que antes mostrava QI (Menu, Perfil, Settings, Results, Catalog).
+  Opção "+5 de QI" removida do modal de recompensa de ofensiva.
+
+---
+
 ## [6.0.0-bloco5] — 2026-08-17 — Tabuada Rush 6.0: Bloco 5/7 (Missões)
 
 **Detalhes em `sessions/sessao-048.md` e `DECISIONS.md` (D024).**

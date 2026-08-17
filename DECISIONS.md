@@ -434,3 +434,35 @@ estar mexendo no arquivo de qualquer forma.
 **Revisitar quando:** Depois de alguns meses reais de uso, se as metas novas
 provarem fáceis/difíceis demais na prática — são estimativa, não medição (mesmo
 espírito da D022/D023).
+
+---
+
+## D025 — Sistema antigo de QI removido por completo (não só trocado de tela)
+
+**Data:** 2026-08-17 · sessao-049 (Bloco 6 do reset 6.0)
+**Contexto:** D023 (Bloco 4) tinha deixado `getQiInfo`/`computeQI`/`CHARACTERS`/
+`TIERS` (o sistema antigo de "QI" — score numérico + lista fixa de 52
+personagens) em paralelo ao sistema novo de Ligas, alimentando 5 telas que
+ainda não tinham passado pelo reset: Menu, Perfil (stub do Bloco 1), Settings,
+Results, Catalog. O Bloco 6 (Perfil completo) era o bloco marcado pra resolver
+isso de vez.
+**Decisão:** Migrei as 5 telas pra usar Faixa de tabuada (Bloco 3,
+`LEVELS`/`getLevelIdx`) + Liga (Bloco 4, `getLeagueStandings`) em vez de QI, e
+DELETEI o código antigo por completo — `computeQI`/`getQiInfo` saíram de
+`utils/index.js`, `src/constants/characters.js` (104→52 personagens ao longo
+das versões, agora zero) foi apagado do repositório. Também removi a opção
+"+5 de QI" do modal de recompensa de ofensiva (`App.jsx` RewardModal) — não
+fazia mais sentido dar bônus pra um sistema que não existe mais — e o campo
+`data.qiBonus` que só essa opção alimentava.
+**Motivo:** Manter código morto "só por precaução" contradiz o próprio padrão
+que o projeto já segue (ver histórico: 4.0 revertida com remoção completa, não
+comentada; Sobrevivência/Velocidade/Diário deletados na 5.0, não escondidos).
+Como as 5 telas foram as únicas consumidoras (confirmado por grep antes de
+apagar), não sobrou nada dependendo do sistema antigo.
+**Trade-off:** Nenhum jogador vai mais ver "QI 143" em lugar nenhum do app —
+é a intenção do reset (Davi: "não vai ser por quanto de QI você tem comparando
+a um personagem, mas você competindo com esse personagem"), não uma perda.
+**Verificado:** as 3 sub-telas que migraram pro Perfil (Conquistas/Recordes/
+Catálogo) e as 5 telas que trocaram QI por Liga/Faixa foram testadas uma a uma
+neste ambiente (sem erro de console, conteúdo renderizado correto) — ver
+`sessao-049.md`.

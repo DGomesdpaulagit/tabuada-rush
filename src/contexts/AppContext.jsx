@@ -36,8 +36,12 @@ export function AppProvider({ children }) {
   const [data, setData] = useState(() => {
     const decayed = applyStreakDecay(storage.get());
     const resolved = applyChallengeResolutions(decayed);
-    storage.set(resolved);
-    return resolved;
+    // [v6.0 · Bloco 6] "No jogo desde..." no Perfil — setado uma única vez,
+    // no primeiro load que não tem `createdAt` ainda (retroativo pra quem
+    // já jogava antes deste bloco: a partir de agora, não desde sempre).
+    const withCreatedAt = resolved.createdAt ? resolved : { ...resolved, createdAt: new Date().toISOString() };
+    storage.set(withCreatedAt);
+    return withCreatedAt;
   });
   const [cloudSyncing, setCloudSyncing] = useState(false);
 

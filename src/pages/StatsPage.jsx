@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair, CheckCircle, XCircle, Star, BookMarked } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair, CheckCircle, XCircle } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -11,10 +11,7 @@ import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../c
 import StreakHeatmap from '../components/StreakHeatmap';
 import HitsPage from './HitsPage';
 import ErrorsPage from './ErrorsPage';
-import RecordsPage from './RecordsPage';
-import AchievementsPage from './AchievementsPage';
 import AccuracyCatalogPage from './AccuracyCatalogPage';
-import CatalogPage from './CatalogPage';
 
 // Cores por tom das observações da análise
 const TONE = {
@@ -56,20 +53,16 @@ function downloadFile(content, filename, type) {
 }
 
 export default function StatsPage({ onBack }) {
-  // 'main' | 'hits' | 'errors' | 'accuracy' | 'records' | 'achievements' | 'catalog'
-  // Recordes, Conquistas, Catálogo e Catálogo de Precisão eram destinos
-  // próprios no menu principal — agora são seções dentro de Estatísticas
-  // (Bloco 1 · v5.0), reduzindo a quantidade de itens de navegação sem
-  // apagar nenhuma tela.
+  // 'main' | 'hits' | 'errors' | 'accuracy'
+  // [v6.0 · Bloco 6] Recordes/Conquistas/Catálogo migraram pro Perfil (ver
+  // PerfilPage.jsx) — não são mais seções daqui. Catálogo de Precisão/
+  // Acertos/Erros continuam (reorganização de verdade fica pro Bloco 7).
   const [view, setView] = useState('main');
 
   // Sub-páginas internas — renderizadas no lugar desta página
   if (view === 'hits')         return <HitsPage         onBack={() => setView('main')} />;
   if (view === 'errors')       return <ErrorsPage        onBack={() => setView('main')} />;
   if (view === 'accuracy')     return <AccuracyCatalogPage onBack={() => setView('main')} />;
-  if (view === 'records')      return <RecordsPage       onBack={() => setView('main')} />;
-  if (view === 'achievements') return <AchievementsPage  onBack={() => setView('main')} />;
-  if (view === 'catalog')      return <CatalogPage       onBack={() => setView('main')} />;
 
   const { data } = useApp();
   const sessions = data.sessions || [];
@@ -224,37 +217,6 @@ export default function StatsPage({ onBack }) {
           <p className="text-xs font-semibold text-violet-400">Precisão, velocidade, erros e por tabuada</p>
         </div>
       </motion.button>
-
-      {/* Recordes / Conquistas / Catálogo — antes eram destinos próprios do
-          menu, agora são seções desta tela */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.21 }}
-        className="grid grid-cols-3 gap-2"
-      >
-        <button
-          onClick={() => setView('records')}
-          className="flex flex-col items-center gap-1.5 py-3 bg-amber-50 border-2 border-amber-100 rounded-2xl hover:bg-amber-100 transition-colors active:translate-y-0.5"
-        >
-          <Trophy size={16} className="text-amber-600" />
-          <span className="text-[11px] font-black text-amber-700">Recordes</span>
-        </button>
-        <button
-          onClick={() => setView('achievements')}
-          className="flex flex-col items-center gap-1.5 py-3 bg-violet-50 border-2 border-violet-100 rounded-2xl hover:bg-violet-100 transition-colors active:translate-y-0.5"
-        >
-          <Star size={16} className="text-violet-600" />
-          <span className="text-[11px] font-black text-violet-700">Conquistas</span>
-        </button>
-        <button
-          onClick={() => setView('catalog')}
-          className="flex flex-col items-center gap-1.5 py-3 bg-blue-50 border-2 border-blue-100 rounded-2xl hover:bg-blue-100 transition-colors active:translate-y-0.5"
-        >
-          <BookMarked size={16} className="text-blue-600" />
-          <span className="text-[11px] font-black text-blue-700">Catálogo</span>
-        </button>
-      </motion.div>
 
       {/* Dashboards: Acertos / Erros */}
       <motion.div

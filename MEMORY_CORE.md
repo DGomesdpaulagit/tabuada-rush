@@ -19,14 +19,19 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.0-bloco5 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-048.md)
+**Versão:** 6.0.0-bloco6 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-049.md)
 **Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
 um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
 abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos.
 Davi pediu pra seguir direto pelos blocos sem pausa de confirmação a cada um ("vamos
 terminar esses blocos"/"bora pra próxima"), mas decisões não-óbvias continuam sendo
-sinalizadas nos registros (ver D021-D024 pra exemplos). **Blocos 1-5/7 entregues.**
-Blocos 6-7 (Perfil completo, Estatísticas) ainda não começaram.
+sinalizadas nos registros (ver D021-D025 pra exemplos). **Blocos 1-6/7 entregues.**
+Falta só o Bloco 7 (Estatísticas).
+**[v6.0.0-bloco6]** Perfil completo — absorve Conquistas/Recordes/Catálogo (saíram
+de Estatísticas). **Sistema antigo de "QI" removido por completo** (não só trocado
+de tela — `computeQI`/`getQiInfo`/`constants/characters.js` deletados do
+repositório), substituído por Faixa de tabuada + Liga em todo lugar (Menu, Perfil,
+Settings, Results, Catalog). Ver `sessao-049.md` e D025.
 **[v6.0.0-bloco5]** Missões: semanais removidas por completo; desafios mensais
 viraram "aposta com prazo" — precisa aceitar, não cumprir até o prazo desconta
 `penalty` do saldo (**pode ficar negativo**, testado e confirmado). Congelar
@@ -125,9 +130,12 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 > viraram desafios com aceite + penalidade (saldo pode ficar negativo, testado).
 > Metas revisadas pra baixo em relação ao pool antigo. Ver D024.
 >
-> **Blocos 6-7 — NÃO COMEÇADOS:** (6) Perfil completo — absorve Conquistas/
-> Recordes/Catálogo, e é onde o sistema antigo de QI finalmente sai das 5 telas
-> restantes (ver D023); (7) Estatísticas — reorganização (não reset).
+> **Bloco 6/7 — Perfil completo — ENTREGUE (sessao-049):** absorve Conquistas/
+> Recordes/Catálogo. Sistema antigo de QI removido por completo (não só trocado
+> de tela) — ver D025.
+>
+> **Bloco 7 — NÃO COMEÇADO:** Estatísticas — reorganização (não reset),
+> navegação lateral tipo sumário, Acertos/Erros pro Catálogo de Precisão.
 >
 > **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
 > antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
@@ -237,28 +245,32 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 6/7 em diante)
+## 🎯 PRÓXIMA SESSÃO — ÚLTIMO BLOCO DO RESET 6.0 (Bloco 7)
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset) → `sessions/sessao-048.md` (Bloco 5, o mais recente) →
-`DECISIONS.md` D020-D024.
+completa do reset) → `sessions/sessao-049.md` (Bloco 6, o mais recente) →
+`DECISIONS.md` D020-D025.
 
 **A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
 balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
 que a 6.0 substitui tudo isso, não são itens paralelos a retomar. Ver `sessao-044.md`
 seção 1.
 
-**Davi pediu ritmo contínuo** ("vamos terminar esses blocos") — não pausar pra
-confirmação visual a cada bloco como no Bloco 1. Continuar sinalizando decisões
-não-óbvias nos registros mesmo assim (ver D021 pro padrão a seguir).
+**Davi pediu ritmo contínuo** ("vamos terminar esses blocos"/"bora pra próxima") —
+não pausar pra confirmação visual a cada bloco como no Bloco 1. Continuar
+sinalizando decisões não-óbvias nos registros mesmo assim (ver D021-D025 pro padrão).
 
-**Ordem dos próximos blocos:**
-1. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
-   Estatísticas) pro `PerfilPage.jsx` criado no Bloco 1. **Também é a hora de
-   finalmente remover `getQiInfo`/sistema antigo de QI das 5 telas que ainda o
-   usam** (Menu, Perfil, Settings, Results, Catalog) — ver D023.
-2. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
-   sumário, Acertos/Erros dentro do Catálogo de Precisão.
+**Bloco 7 — Estatísticas (último do reset 6.0):** reorganização de verdade (NÃO
+reset — Davi foi claro sobre isso, ver planejamento-6.0.md seção 10) —
+navegação lateral tipo sumário/guia (referência: painel de tópicos do Notion,
+Davi ia mandar print), Acertos/Erros migram pra dentro do Catálogo de Precisão
+como sub-seções. Remove "Partidas por modo"/"Power-ups"/"Modo favorito" da
+tela. Mantém Análise Inteligente. `StatsPage.jsx` já teve Recordes/Conquistas/
+Catálogo removidos no Bloco 6 — o que sobra nela é exatamente o escopo do
+Bloco 7.
+
+**Depois do Bloco 7, o reset 6.0 está completo** — hora de voltar pro Davi
+revisar tudo de ponta a ponta antes de decidir os próximos passos do projeto.
 
 **Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
 planejamento-6.0.md seção 12):** nº de personagens por liga e tamanho das zonas de
@@ -305,11 +317,10 @@ História (narrativa infinita) — ver D018.
 | `src/pages/SeasonsPage.jsx` | Trilha de temporada com recompensas |
 | `src/components/Sidebar.jsx` | [v6.0] Nav lateral, desktop-only (`lg+`) — 5 destinos: Arena/Ligas/Missões/Loja/Perfil |
 | `src/components/Header.jsx` | [v6.0] Barra superior persistente (faixa/ofensiva/moedas/vidas) |
-| `src/pages/PerfilPage.jsx` | [v6.0] Novo destino — resumo mínimo, absorve Conquistas/Recordes/Catálogo no Bloco 6 |
+| `src/pages/PerfilPage.jsx` | [v6.0 · Bloco 6] Perfil completo — faixa+liga, stats, Conquistas/Recordes/Catálogo |
 | `src/constants/leagues.js` | [v6.0 · Bloco 4] 10 ligas + 100 personagens |
 | `src/utils/leagues.js` | [v6.0 · Bloco 4] Motor da competição (XP simulado, standings, promoção/rebaixamento) |
 | `src/pages/RankingPage.jsx` | [v6.0 · Bloco 4] Página "Ligas" — reescrita, usa `utils/leagues.js` |
-| `src/constants/characters.js` | Sistema ANTIGO de QI (`CHARACTERS`/`TIERS`) — mantido em paralelo, ver D023 |
 | `src/components/Mascot.jsx` | [v5.0] Sistema de mascote — Tuca/Vupt, poses por humor, frequência controlada em `GamePage` |
 | `src/assets/mascots/*.webp` | [v5.0] Poses animadas (geradas por IA + pipeline Python de remoção de fundo — ver D019) |
 | `src/constants/shop.js` | Itens da loja — só `powerup` desde a 5.0 |
@@ -338,8 +349,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
-4. `sessions/sessao-048.md` — última sessão (Bloco 5/7 do reset — missões)
-5. `DECISIONS.md` D020-D024 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-049.md` — última sessão (Bloco 6/7 do reset — Perfil completo)
+5. `DECISIONS.md` D020-D025 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

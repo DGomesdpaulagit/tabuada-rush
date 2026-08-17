@@ -4,8 +4,9 @@ import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
   Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap, Target,
 } from 'lucide-react';
-import { LEVELS } from '../constants';
-import { getLevelIdx, getQiInfo } from '../utils';
+import { LEVELS, DAILY_LIVES_MAX } from '../constants';
+import { getLevelIdx, getLivesInfo } from '../utils';
+import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { prefs } from '../lib/prefs';
@@ -188,7 +189,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
 
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = LEVELS[levelIdx];
-  const qi = getQiInfo(data);
+  const { league } = getLeagueStandings(data);
 
   return (
     <motion.div
@@ -324,14 +325,14 @@ export default function SettingsPage({ onBack, onNavigate }) {
           <div className="flex-1 min-w-0">
             <p className="font-black text-gray-900 leading-tight truncate">{level.name}</p>
             <p className="text-xs text-gray-400 font-semibold truncate">
-              {level.title} · {qi.char.emoji} {qi.char.name}
+              {level.title} · {league.emoji} Liga {league.name}
             </p>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 mt-2 mb-3">
           {[
             { label: 'XP', value: data.xp || 0 },
-            { label: 'QI', value: qi.qi },
+            { label: 'Vidas', value: `${getLivesInfo(data).remaining}/${DAILY_LIVES_MAX}` },
             { label: 'Moedas', value: data.coins || 0 },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl bg-gray-50 border border-gray-100 p-2 text-center">

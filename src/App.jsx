@@ -98,7 +98,6 @@ function GoalModal({ onSelect, onClose }) {
 function RewardModal({ milestone, onChoose }) {
   const opts = [
     { id: 'level', icon: '⭐', label: 'Subir de Nível', desc: 'Avança 1 nível agora' },
-    { id: 'qi', icon: '🧠', label: '+5 de QI', desc: 'Bônus permanente de QI' },
     { id: 'xp', icon: '✨', label: `+${milestone * 20} XP`, desc: 'Ganho direto de XP' },
     { id: 'coins', icon: '🪙', label: `+${milestone * 5} moedas`, desc: 'Moedas do jogo' },
   ];
@@ -392,8 +391,6 @@ export default function App() {
         if (choice === 'level') {
           const idx = getLevelIdx(prev.xp || 0);
           patch.xp = Math.max(prev.xp || 0, LEVELS[Math.min(idx + 1, LEVELS.length - 1)].xp);
-        } else if (choice === 'qi') {
-          patch.qiBonus = (prev.qiBonus || 0) + 5;
         } else if (choice === 'xp') {
           patch.xp = (prev.xp || 0) + m * 20;
         } else if (choice === 'coins') {

@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Home, RotateCcw, Trophy, Target, X, Flame, Clock, Share2 } from 'lucide-react';
 import { MODES, LEVELS } from '../constants';
-import { getLevelIdx, getAccuracy, getRank, formatTime, getQiInfo } from '../utils';
+import { getLevelIdx, getAccuracy, getRank, formatTime } from '../utils';
+import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import { shareCard } from '../lib/shareCard';
@@ -204,7 +205,7 @@ export default function ResultsPage({ result, onReplay, onHome }) {
       <Button
         variant="secondary"
         onClick={() => {
-          const qi = getQiInfo(data);
+          const { league } = getLeagueStandings(data);
           shareCard({
             mode: result.mode,
             score: result.score,
@@ -212,8 +213,8 @@ export default function ResultsPage({ result, onReplay, onHome }) {
             wrong: result.wrong,
             accuracy,
             bestStreak: result.bestStreak,
-            qiChar: qi?.char?.emoji,
-            qiName: qi?.char?.name,
+            qiChar: league.emoji,
+            qiName: `Liga ${league.name}`,
             isNewRecord,
           });
         }}

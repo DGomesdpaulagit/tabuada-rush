@@ -1,5 +1,4 @@
 import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX } from '../constants';
-import { CHARACTERS, TIERS, QI_MIN, QI_MAX } from '../constants/characters';
 
 // ── OPERAÇÃO ──────────────────────────────────────────────────────────────
 // O Tabuada Rush é (e continua sendo) um jogo de MULTIPLICAÇÃO — decorar a
@@ -304,35 +303,6 @@ export function getRank(score) {
   return { label: 'Iniciante', color: 'text-gray-500' };
 }
 
-// ── QI MATEMÁTICO (lúdico — gamificação, NÃO mede QI real) ──────────────────
-
-// Calcula um "QI Matemático" divertido a partir do desempenho do usuário.
-// Combina: precisão, velocidade, ofensiva, consistência e progresso (nível).
-// computeQI v3.0 — caps elevados: chegar ao QI máximo exige muito mais jogo.
-//   Caps anteriores → novos caps (tudo mais difícil):
-//   speedBest: 30 → 80  |  bestDayStreak: 30 → 120  |  totalGames: 50 → 300
-//   Isso significa que só jogadores muito dedicados chegam perto de QI 200.
-export function computeQI(data = {}) {
-  const totalCorrect = data.totalCorrect || 0;
-  const totalWrong = data.totalWrong || 0;
-  const answered = totalCorrect + totalWrong;
-
-  const acc = answered > 0 ? totalCorrect / answered : 0;
-  const accPts = acc * 40;                                              // precisão lifetime (0–40)
-  const bestAccPts = ((data.bestAccuracy || 0) / 100) * 10;            // melhor precisão (0–10)
-  const speedPts = (Math.min(data.speedBest || 0, 80) / 80) * 20;     // cap: 80 respostas (era 30)
-  const streakPts =
-    (Math.min(data.bestDayStreak || 0, 120) / 120) * 15 +              // cap: 120 dias (era 30)
-    (Math.min(data.currentStreak || 0, 60) / 60) * 5;                  // cap: 60 dias (era 15)
-  const consistencyPts = (Math.min(data.totalGames || 0, 300) / 300) * 20; // cap: 300 partidas (era 50)
-  const levelIdx = getLevelIdx(data.xp || 0);
-  const progressPts = (levelIdx / (LEVELS.length - 1)) * 30;           // progresso de nível (0–30)
-
-  const bonus = data.qiBonus || 0; // bônus de QI ganho em recompensas de ofensiva
-  const raw = QI_MIN + accPts + bestAccPts + speedPts + streakPts + consistencyPts + progressPts + bonus;
-  return Math.max(QI_MIN, Math.min(QI_MAX, Math.round(raw)));
-}
-
 // Reinicia a ofensiva se o usuário perdeu um dia OU virou o ano (conquistas e
 // recordes NÃO são afetados). Deve rodar ao abrir o app / logar.
 //
@@ -370,33 +340,6 @@ export function applyStreakDecay(data = {}) {
     return { ...data, currentStreak: 0, streakGoalBase: 0, streakInsuredAt: null };
   }
   return data;
-}
-
-// Mapeia o QI para uma posição na lista de personagens (índice 0 = mais baixo).
-// Retorna progresso fracionário até o próximo personagem.
-export function getQiInfo(data = {}) {
-  const qi = computeQI(data);
-  const len = CHARACTERS.length;
-  const span = QI_MAX - QI_MIN || 1;
-  const ratio = Math.max(0, Math.min(1, (qi - QI_MIN) / span));
-  const pos = ratio * (len - 1);
-  const idx = Math.max(0, Math.min(len - 1, Math.floor(pos)));
-  const frac = pos - idx; // 0..1 — progresso até o próximo personagem
-
-  const char = CHARACTERS[idx];
-  const nextChar = CHARACTERS[idx + 1] || null;
-  const tier = TIERS[char.tier];
-
-  return {
-    qi,
-    idx,
-    position: idx + 1,
-    total: len,
-    char,
-    tier,
-    nextChar,
-    pctToNext: nextChar ? Math.round(frac * 100) : 100,
-  };
 }
 
 // ── REGISTRO DE EVOLUÇÃO (marcos do progresso) ──────────────────────────────

@@ -220,7 +220,17 @@ quer conversar sobre adicionar mais poderes depois — não é lista fechada.
 
 ---
 
-## 9. Perfil (aba nova)
+## 9. Perfil (aba nova) — ✅ IMPLEMENTADO (Bloco 6, sessao-049)
+
+> Absorveu Conquistas/Recordes/Catálogo (saíram de Estatísticas, que ficou só
+> com Acertos/Erros/Análise/Catálogo de Precisão — reorganização de verdade é
+> Bloco 7). Sistema antigo de "QI" (`getQiInfo`/`computeQI`/`CHARACTERS`/
+> `TIERS`) foi REMOVIDO por completo (não só trocado de tela) — era a última
+> pendência sinalizada em D023. Substituído por Faixa de tabuada (Bloco 3) +
+> Liga (Bloco 4) em toda parte que antes mostrava QI. Ver DECISIONS.md D025.
+> "Pódios conquistados nas ligas" (mencionado no áudio original) NÃO foi
+> implementado — não existe histórico de pódio ainda, só a posição atual;
+> registrado como lacuna conhecida, não esquecimento.
 
 Absorve o que hoje está espalhado:
 

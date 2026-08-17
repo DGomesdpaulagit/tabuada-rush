@@ -23,15 +23,16 @@ export function Button({
     icon: 'h-12 w-12',
   };
 
-  // Paleta "Caderno Quadriculado" — ink (azul-índigo) é a cor primária,
-  // pen (vermelho) marca erro/perigo, check (verde) confirmação.
+  // v6.0 · Bloco 1 — accent (verde) é a cor primária; surface/border se
+  // adaptam ao tema via CSS vars (ver globals.css), então secondary/ghost
+  // já funcionam certo no escuro sem precisar de `dark:` aqui.
   const variants = {
-    primary: 'bg-ink text-white shadow-chunky hover:bg-ink/90',
+    primary: 'bg-accent text-white shadow-chunky-accent hover:bg-accent/90',
     secondary:
-      'bg-white text-graphite border-2 border-[#E0DACB] shadow-chunky-white hover:bg-paper',
+      'bg-surface text-fg border-2 border-border shadow-chunky-surface hover:bg-surface-2',
     ghost:
-      'bg-transparent text-graphite-soft hover:bg-paper hover:text-graphite active:translate-y-0 active:scale-95',
-    danger: 'bg-pen text-white shadow-chunky-danger hover:bg-pen/90',
+      'bg-transparent text-fg-muted hover:bg-surface-2 hover:text-fg active:translate-y-0 active:scale-95',
+    danger: 'bg-danger text-white shadow-chunky-danger hover:bg-danger/90',
     info: 'bg-check text-white shadow-chunky-check hover:bg-check/90',
   };
 
@@ -53,7 +54,7 @@ export function Card({ children, className = '', onClick, ...props }) {
   const motionProps = onClick ? { whileHover: { scale: 1.01 }, whileTap: { scale: 0.98 } } : {};
   return (
     <Comp
-      className={`bg-white rounded-3xl shadow-sm border-2 border-gray-100 ${className}`}
+      className={`bg-surface rounded-3xl shadow-sm border-2 border-border ${className}`}
       onClick={onClick}
       {...motionProps}
       {...props}
@@ -66,11 +67,11 @@ export function Card({ children, className = '', onClick, ...props }) {
 // ── BADGE ──────────────────────────────────────────────────────────────────
 export function Badge({ children, variant = 'default', className = '' }) {
   const variants = {
-    default: 'bg-gray-100 text-gray-600',
-    primary: 'bg-ink/10 text-ink-dark',
-    success: 'bg-check/10 text-check-dark',
-    danger: 'bg-pen/10 text-pen-dark',
-    amber: 'bg-bee/20 text-bee-dark',
+    default: 'bg-surface-2 text-fg-muted',
+    primary: 'bg-accent/15 text-accent',
+    success: 'bg-success/15 text-success',
+    danger: 'bg-danger/15 text-danger',
+    amber: 'bg-coin/20 text-coin',
   };
   return (
     <span

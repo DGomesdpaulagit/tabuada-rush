@@ -5,7 +5,7 @@
 const KEY = 'tr_prefs';
 
 const DEFAULTS = {
-  theme: 'light',        // 'light' | 'dark'
+  theme: 'dark',          // 'light' | 'dark' — v6.0: escuro é o tema padrão do app
   music: false,          // música de fundo (preparado; trilha em bloco futuro)
   notifications: false,  // lembretes/avisos (estrutura preparada)
   largeText: false,      // acessibilidade: texto maior

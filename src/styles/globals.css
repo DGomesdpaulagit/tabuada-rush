@@ -4,16 +4,35 @@
 @tailwind utilities;
 
 :root {
-  /* Paleta "Caderno Quadriculado" — v5.0 (2ª rodada) */
+  /* v6.0 · Bloco 1 — paleta semântica dark-first. --background/--surface/etc
+     são redefinidos dentro de html.dark logo abaixo; o tema escuro é o
+     padrão do app (ver lib/prefs.js DEFAULTS.theme), então estes valores
+     em :root só valem quando o jogador troca manualmente pro claro — e por
+     isso não usam mais bege/creme ("Caderno Quadriculado", v5.0). */
+  --background: #F7F8FA;
+  --surface: #FFFFFF;
+  --surface-2: #EEF0F4;
+  --border: #E3E5EA;
+  --fg: #1A1B22;
+  --fg-muted: #6B7280;
+  /* accent/streak/coin/success/destructive ficam em "R G B" (sem vírgula,
+     sem rgb()) de propósito — o Tailwind referencia como
+     rgb(var(--x) / <alpha-value>) pra que bg-accent/15 etc funcionem com
+     opacidade. Ver tailwind.config.js. NÃO usar var(--accent) puro em CSS
+     solto (não é uma cor válida sozinho) — usar rgb(var(--accent)). */
+  --accent: 88 204 2;        /* #58CC02 — CTA primária / nav ativa */
+  --accent-dark: 67 192 0;   /* #43C000 — sombra "chunky" do accent */
+  --streak: 255 150 0;       /* #FF9600 */
+  --coin: 255 200 0;         /* #FFC800 */
+
+  /* Legado — ainda referenciado por telas não migradas */
   --primary: #3B4FCC;      /* ink */
   --primary-dark: #2A3A9E; /* ink-dark */
-  --background: #FBF7EC;   /* paper */
   --card: hsl(0 0% 100%);
-  --border: hsl(240 6% 90%);
   --muted: hsl(240 4% 46%);
   --muted-bg: hsl(240 5% 96%);
-  --success: #2F9E44;      /* check */
-  --destructive: #D64545;  /* pen */
+  --success: 47 158 68;    /* #2F9E44 (check) — R G B pra opacidade, ver nota acima */
+  --destructive: 255 75 75; /* #FF4B4B — era #D64545 (pen), tom mais vivo */
   --amber: #FFC800;
   --radius: 1rem;
 }
@@ -81,10 +100,23 @@ input[type='number'] {
 /* Fundo global da aplicação — adapta ao tema (claro = cor original do projeto) */
 .app-shell { background-color: var(--background); }
 
+/* v6.0 · Bloco 1 — tema escuro é o PADRÃO do app. Redefine os tokens
+   semânticos novos (background/surface/surface-2/border/fg/fg-muted) pra
+   que bg-surface, text-fg, border-border etc funcionem sem precisar de
+   `dark:` em cada página. */
+html.dark {
+  --background: #10131A;
+  --surface: #171B24;
+  --surface-2: #1F2430;
+  --border: #2A2F3D;
+  --fg: #F2F3F7;
+  --fg-muted: #9098AC;
+}
+
 /* No escuro, a TELA INTEIRA escurece: html (overscroll/mobile), body e o container raiz */
-html.dark { background-color: hsl(240 12% 11%); }
-html.dark body { background-color: hsl(240 12% 11%); color: hsl(240 10% 90%); }
-html.dark .app-shell { background-color: hsl(240 12% 11%) !important; }
+html.dark { background-color: var(--background); }
+html.dark body { background-color: var(--background); color: var(--fg); }
+html.dark .app-shell { background-color: var(--background) !important; }
 
 /* Superfícies neutras */
 html.dark .bg-white { background-color: hsl(240 10% 16%) !important; }

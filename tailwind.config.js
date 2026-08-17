@@ -14,6 +14,30 @@ export default {
       // por enquanto — ainda em uso em telas que não foram re-tematizadas
       // nesta rodada (Modos/Recompensas/Estatísticas ficam pro próximo bloco).
       colors: {
+        // v6.0 · Bloco 1: paleta semântica dark-first (ver DECISIONS.md D0xx).
+        // Cada token aponta pra uma CSS var (globals.css) que muda de valor
+        // via .dark no <html> — então bg-surface/text-fg/etc já funcionam
+        // nos dois temas sem precisar de `dark:` espalhado pelas páginas.
+        // Telas ainda não migradas (Modos/Estatísticas/Loja/Recompensas)
+        // continuam usando os tokens legados abaixo até seus blocos.
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        'surface-2': 'var(--surface-2)',
+        border: 'var(--border)',
+        fg: 'var(--fg)',
+        'fg-muted': 'var(--fg-muted)',
+        // rgb(var(--x) / <alpha-value>) em vez de var(--x) direto — as vars
+        // guardam "R G B" (sem função), isso é o que deixa bg-accent/15 etc
+        // funcionar com opacidade (var() puro não aceita modificador /NN).
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        'accent-dark': 'rgb(var(--accent-dark) / <alpha-value>)',
+        streak: 'rgb(var(--streak) / <alpha-value>)',
+        coin: 'rgb(var(--coin) / <alpha-value>)',
+        danger: 'rgb(var(--destructive) / <alpha-value>)',
+        success: 'rgb(var(--success) / <alpha-value>)',
+
+        // Legado — "Caderno Quadriculado" (v5.0), mantido pra telas que
+        // ainda não migraram pro sistema de tokens novo acima.
         paper: '#FBF7EC',        // fundo principal — papel/creme, não branco puro
         'paper-line': '#C9D6F5', // linha de caderno quadriculado (textura sutil)
         ink: '#3B4FCC',          // azul-índigo — cor primária (era o verde/azul do Duolingo)
@@ -53,6 +77,8 @@ export default {
       // profundidade. Usadas pelo Button (ui/index.jsx) — o botão "afunda"
       // (active:translate-y) em vez de só encolher (scale).
       boxShadow: {
+        'chunky-accent': '0 4px 0 0 rgb(var(--accent-dark))', // v6.0 — botão primário novo
+        'chunky-surface': '0 4px 0 0 var(--border)',     // v6.0 — botão secundário novo
         chunky: '0 4px 0 0 #2A3A9E',          // ink → ink-dark
         'chunky-white': '0 4px 0 0 #E0DACB',  // borda de "papel" mais escura
         'chunky-danger': '0 4px 0 0 #B93434', // pen → pen-dark

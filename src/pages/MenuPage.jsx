@@ -179,7 +179,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
             ) : (
               <button
                 onClick={onEditGoal}
-                className="text-xs font-black bg-white text-ink px-3 py-1 rounded-full hover:bg-paper transition-colors"
+                className="text-xs font-black bg-white text-ink px-3 py-1 rounded-full hover:bg-white/90 transition-colors"
               >
                 Definir meta
               </button>
@@ -288,21 +288,21 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="flex justify-around py-3 bg-paper rounded-2xl border border-[#E0DACB]"
+        className="flex justify-around py-3 bg-surface rounded-2xl border-2 border-border"
       >
         <div className="text-center">
-          <p className="text-lg font-black text-gray-800">{data.totalGames || 0}</p>
-          <p className="text-xs font-semibold text-gray-400">Partidas</p>
+          <p className="text-lg font-black text-fg">{data.totalGames || 0}</p>
+          <p className="text-xs font-semibold text-fg-muted">Partidas</p>
         </div>
-        <div className="w-px bg-gray-200" />
+        <div className="w-px bg-border" />
         <div className="text-center">
-          <p className="text-lg font-black text-gray-800">{data.bestStreak || 0}</p>
-          <p className="text-xs font-semibold text-gray-400">Melhor Seq.</p>
+          <p className="text-lg font-black text-fg">{data.bestStreak || 0}</p>
+          <p className="text-xs font-semibold text-fg-muted">Melhor Seq.</p>
         </div>
-        <div className="w-px bg-gray-200" />
+        <div className="w-px bg-border" />
         <div className="text-center">
-          <p className="text-lg font-black text-gray-800">{data.totalCorrect || 0}</p>
-          <p className="text-xs font-semibold text-gray-400">Acertos</p>
+          <p className="text-lg font-black text-fg">{data.totalCorrect || 0}</p>
+          <p className="text-xs font-semibold text-fg-muted">Acertos</p>
         </div>
       </motion.div>
     </motion.div>

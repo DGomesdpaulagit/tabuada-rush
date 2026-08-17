@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco1] — 2026-08-16 — Tabuada Rush 6.0: reset completo (planejamento + Bloco 1/7)
+
+**Reset total pedido pelo Davi após insatisfação com a 5.0. Escopo inteiro documentado em
+`sessions/planejamento-6.0.md`. Detalhes desta sessão em `sessions/sessao-044.md` e
+`DECISIONS.md` (D020).**
+
+### Adicionado
+- `sessions/planejamento-6.0.md` — spec completa do reset (Design, Ligas, Vidas,
+  Progressão de tabuada, Missões/desafios mensais, Perfil, Estatísticas), organizada
+  por bloco de implementação
+- Sistema de tokens de cor semânticos dark-first via CSS var (`background/surface/
+  surface-2/border/fg/fg-muted/accent/accent-dark/streak/coin/danger/success`)
+- `components/Header.jsx` — barra superior persistente (faixa/ofensiva/moedas/vidas)
+- `pages/PerfilPage.jsx` — novo destino de navegação (resumo mínimo por ora)
+
+### Alterado
+- **Tema escuro é o padrão do app** (era claro) — `lib/prefs.js`
+- Sidebar: 5 destinos primários (Arena/Ligas/Missões/Loja/Perfil), substituindo os
+  antigos (Início/Modos/Recompensas/Estatísticas/Ranking QI)
+- `Button`/`Card`/`Badge` (`components/ui`) migrados pros tokens semânticos novos
+- Bege removido do fundo do tema claro
+
+### Corrigido
+- **B009** — caixa "Partidas/Melhor Seq./Acertos" na Arena, ilegível no tema escuro
+  (fundo e texto quase da mesma cor — tokens custom sem override de tema escuro)
+
+---
+
 ## [5.0.0] — 2026-08-09 — Tabuada Rush 5.0: redesign, consolidação de modos, mascotes
 
 **A maior sessão até hoje. Detalhes completos em `sessions/sessao-043.md` e `DECISIONS.md` (D015-D019).**

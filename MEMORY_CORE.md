@@ -18,9 +18,19 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-09
-**Versão:** 5.0.0 (Tabuada Rush 5.0 — redesign, consolidação de modos, mascotes — sessao-043.md)
-**Status:** ⚠️ Sessão gigante, várias frentes abertas simultaneamente. Build limpo o tempo todo, mas HÁ pendências diretas sinalizadas ao Davi (ver seção "PRÓXIMA SESSÃO" abaixo) — não é um estado "fechado" como o fim da sessão 042.
+**Data:** 2026-08-16
+**Versão:** 6.0.0-bloco1 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-044.md)
+**Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
+um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
+abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos,
+combinados um de cada vez com o Davi (ver `sessions/planejamento-6.0.md`). **Bloco 1/7
+(base visual) entregue nesta sessão** — tema escuro padrão, tokens de cor semânticos,
+sidebar/header novos, Perfil novo. Blocos 2-7 (Vidas, Progressão de tabuada, Ligas,
+Missões, Perfil completo, Estatísticas) ainda não começaram.
+**[v6.0.0-bloco1]** Reset visual: paleta semântica dark-first via CSS var (tema escuro
+é o padrão agora), sidebar com 5 destinos novos (Arena/Ligas/Missões/Loja/Perfil),
+header persistente (faixa/ofensiva/moedas/vidas — faixa e vidas são placeholder até os
+Blocos 2-3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D020.
 **[v5.0.0]** Redesign completo por pedido do Davi: paleta própria "Caderno Quadriculado" (só aplicada no Menu + tokens base, resto do app pendente), sidebar de navegação (desktop), Menu simplificado (3 destinos primários: Modos/Recompensas/Estatísticas), **modos reduzidos de 10 pra 3** (Rush agora é a fusão de Rush+Sobrevivência+Velocidade+Diário — timer cresce com acerto, 3 vidas —, Zen e Revisão mantidos), **desbloqueio progressivo removido** (tudo liberado desde o início — reverte D008), Ranking de QI 104→52 personagens, Loja só com power-ups (cosméticos removidos, 2 power-ups novos: Escudo e Largada Turbo), economia mais dura (menos moeda por partida, Zen sem XP/moeda), e **mascotes Tuca (tartaruga) e Vupt (lebre)** — fábula de Esopo, arte gerada por IA (ChatGPT+Pika) processada por um pipeline Python próprio (remoção de fundo + WebP animado), integrados no GamePage com frequência controlada (sorteio + teto por partida). Balão de fala e voz do mascote foram DESLIGADOS temporariamente (Davi vai mandar frases/áudio finais). Ver `sessao-043.md` e `DECISIONS.md` D015-D019.
 **[v3.17.0]** Tabuada Rush voltou a ser exclusivamente sobre MULTIPLICAÇÃO — esse é o propósito original do projeto (decorar a tabuada) e a 4.0 tinha diluído isso pra "ser bom em matemática" (4 operações). Removido: `OPERATIONS.add/.sub/.div`, seletor de operação, abas de operação, radar cross-operação, certificado "Matemática Fundamental Completa", bônus de amplitude no QI. Mantido: curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer", viés adaptativo por fatos fracos (toggle "Foco em Fraquezas"). Ver `sessao-042.md`.
 **[v3.16.1]** Leaderboard Global removido por completo (página, botão, upload de score) — pedido direto do Davi. Desafio Diário/Semanal continuam existindo, só sem comparação global. Tabelas `leaderboard_daily`/`leaderboard_weekly` no Supabase ficaram órfãs (não apagadas — ver `SUPABASE_SETUP.md`).
@@ -65,7 +75,29 @@
 
 ---
 
-## 🎨 TABUADA RUSH 5.0 — EM ANDAMENTO (v4.x → v5.0.0 · sessão 043)
+## 🎨 TABUADA RUSH 6.0 — EM ANDAMENTO (v5.0.0 → v6.0.0 · sessão 044+)
+
+> Reset completo pedido pelo Davi — substitui a 5.0, não a continua (pendências da 5.0
+> abaixo ficam obsoletas). Spec inteira em `sessions/planejamento-6.0.md`, 7 blocos,
+> um por vez, sempre confirmando com o Davi antes de avançar pro próximo.
+>
+> **Bloco 1/7 — Base visual — ENTREGUE (sessao-044):** tokens de cor semânticos
+> dark-first via CSS var, tema escuro como padrão, sidebar nova (Arena/Ligas/Missões/
+> Loja/Perfil), header persistente novo, Perfil novo (resumo mínimo). Ver D020.
+>
+> **Blocos 2-7 — NÃO COMEÇADOS:** (2) Vidas — 5/dia + compra; (3) Progressão de
+> tabuada — faixas 2-10→200; (4) Ligas — substitui Ranking de QI, 10 ligas; (5)
+> Missões — diárias + mensais com aceite/desconto/congelamento; (6) Perfil completo —
+> absorve Conquistas/Recordes/Catálogo; (7) Estatísticas — reorganização (não reset).
+>
+> **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
+> antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
+> rebaixamento, nome de exibição das faixas de tabuada, cálculo de XP/dia realista pra
+> bater a meta de 6-10 meses na 1ª faixa. Ver planejamento-6.0.md seção 12.
+
+---
+
+## 🎨 TABUADA RUSH 5.0 — SUBSTITUÍDA PELA 6.0, NÃO RETOMAR (v4.x → v5.0.0 · sessão 043)
 
 > Sessão 043 foi um redesign grande e não terminou 100% fechado — várias
 > frentes ficaram pela metade de propósito (build limpo em todas, mas UI
@@ -166,38 +198,37 @@
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — PENDÊNCIAS DIRETAS DA 5.0 (sem ambiguidade)
+## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 2/7 em diante)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-043.md` (registro
-completo e cronológico — inclui os caminhos tentados e descartados, útil pra
-não repetir esforço) + `DECISIONS.md` D015-D019.
+**Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
+completa do reset) → `sessions/sessao-044.md` (o que já foi feito no Bloco 1) →
+`DECISIONS.md` D020.
 
-**Ordem sugerida (Davi validou essa priorização no fim da sessão 043):**
-1. **Tamanho/posição final do mascote** — Davi vai mandar imagens de
-   referência mostrando escala e posição exatas. A versão atual (224px,
-   fixo na borda direita via portal) é aproximação, não confirmada.
-2. **Migrar a paleta "Caderno Quadriculado" nas telas restantes** —
-   Modos/Recompensas/Estatísticas/Loja ainda usam os tokens verdes/azuis
-   do Duolingo (tentativa abandonada, ver D015). Só depois disso remover
-   os tokens Duolingo do `tailwind.config.js`.
-3. **Reorganizar a `StatsPage` de verdade** — hoje é um catch-all que
-   absorveu 6 telas antigas como abas internas; Davi já sinalizou que
-   "ainda tá bagunçada", isso foi um remendo, não a solução final.
-4. **Reativar balão de fala + voz do mascote** — só quando o Davi mandar
-   as frases finais e o áudio (gravado ou gerado). Não reimplementar sem
-   esse conteúdo.
-5. **Painel temático por personagem específico** (não só por tier) — Davi
-   quer, ex., "painel do Goku" quando o QI cair nesse personagem
-   específico. Precisa de uma estrutura de cor/tema por personagem (52
-   combinações) que ainda não existe.
+**A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
+balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
+que a 6.0 substitui tudo isso, não são itens paralelos a retomar. Ver `sessao-044.md`
+seção 1.
 
-**Em aberto, sem decisão ainda (não é pendência técnica — é decisão de
-produto que precisa de conversa):**
-- Economia de moedas/aposta — Davi disse explicitamente "não sei o que
-  fazer, precisa ser uma ideia muito boa". Não inventar sozinho.
-- `ACHIEVEMENTS.survival_30`/`.speed_20`/`.daily_first`/`.daily_7`
-  referenciam stats de modos removidos (nunca mais incrementam) — decisão
-  de conquistas pendente, não tocado nesta sessão.
+**Ordem dos próximos blocos (Davi aprovou essa sequência ao fechar o planejamento):**
+1. **Bloco 2 — Vidas**: modelo 5/dia + compra pra repor (substitui o sistema atual
+   de vidas por partida).
+2. **Bloco 3 — Progressão de tabuada**: faixas 2-10→200, cálculo de XP/dia realista
+   pra bater a meta de 6-10 meses na 1ª faixa (matemática de balanceamento a fazer
+   quando este bloco começar, não decisão de produto).
+3. **Bloco 4 — Ligas**: substitui Ranking de QI (10 ligas nomeadas, promoção/
+   rebaixamento, XP universal).
+4. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
+   congelamento (mecânica de "aposta com dívida" já confirmada com o Davi, ver
+   planejamento-6.0.md seção 7).
+5. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
+   Estatísticas) pro `PerfilPage.jsx` criado no Bloco 1.
+6. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
+   sumário, Acertos/Erros dentro do Catálogo de Precisão.
+
+**Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
+planejamento-6.0.md seção 12):** nº de personagens por liga e tamanho das zonas de
+promoção/rebaixamento, nome de exibição das faixas de tabuada, formato exato do selo
+de faixa no header, lista final de power-ups.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -237,7 +268,9 @@ História (narrativa infinita) — ver D018.
 | `src/pages/RewardsPage.jsx` | [v5.0] Hub com abas Missões/Loja/Temporada |
 | `src/pages/MissionsPage.jsx` | Missões diárias/semanais/mensais |
 | `src/pages/SeasonsPage.jsx` | Trilha de temporada com recompensas |
-| `src/components/Sidebar.jsx` | [v5.0] Nav lateral, desktop-only (`lg+`) |
+| `src/components/Sidebar.jsx` | [v6.0] Nav lateral, desktop-only (`lg+`) — 5 destinos: Arena/Ligas/Missões/Loja/Perfil |
+| `src/components/Header.jsx` | [v6.0] Barra superior persistente (faixa/ofensiva/moedas/vidas) |
+| `src/pages/PerfilPage.jsx` | [v6.0] Novo destino — resumo mínimo, absorve Conquistas/Recordes/Catálogo no Bloco 6 |
 | `src/components/Mascot.jsx` | [v5.0] Sistema de mascote — Tuca/Vupt, poses por humor, frequência controlada em `GamePage` |
 | `src/assets/mascots/*.webp` | [v5.0] Poses animadas (geradas por IA + pipeline Python de remoção de fundo — ver D019) |
 | `src/constants/shop.js` | Itens da loja — só `powerup` desde a 5.0 |
@@ -265,9 +298,10 @@ feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do
 Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
-3. `sessions/sessao-043.md` — última sessão (redesign 5.0, longa — vale ler inteira antes de propor mudança visual/de modos)
-4. `DECISIONS.md` D015-D019 — decisões da 5.0
-5. `BUGS.md` — problemas ativos
+3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
+4. `sessions/sessao-044.md` — última sessão (Bloco 1/7 do reset — base visual)
+5. `DECISIONS.md` D020 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.
 Para ativar cloud: criar `.env` com `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`

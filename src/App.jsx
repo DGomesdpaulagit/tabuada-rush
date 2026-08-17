@@ -22,7 +22,9 @@ import ShopPage from './pages/ShopPage';
 import MissionsPage from './pages/MissionsPage';
 import SeasonsPage from './pages/SeasonsPage';
 import RewardsPage from './pages/RewardsPage';
+import PerfilPage from './pages/PerfilPage';
 import Sidebar from './components/Sidebar';
+import Header from './components/Header';
 import { calcSeasonXp } from './constants/seasons';
 import { updateMissions, getNewlyCompleted } from './utils/missions';
 
@@ -739,8 +741,12 @@ export default function App() {
       {/* Barra lateral estilo Duolingo — só em telas largas (lg+); no
           celular o app segue em coluna única, sem sidebar. */}
       <Sidebar screen={screen} onNavigate={setScreen} />
-      <div className="flex-1 flex justify-center">
-        <div className="w-full max-w-lg px-4 py-6 min-h-dvh">
+      <div className="flex-1 flex flex-col min-h-dvh">
+        {/* v6.0 · Bloco 1: barra superior persistente (faixa/ofensiva/moedas/
+            vidas) — some durante a partida, que já tem seu próprio HUD. */}
+        {screen !== 'game' && <Header />}
+        <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-lg px-4 py-6">
         <AnimatePresence mode="wait">
           {screen === 'menu' && (
             <MenuPage
@@ -821,7 +827,9 @@ export default function App() {
           {screen === 'seasons' && (
             <SeasonsPage key="seasons" onBack={() => setScreen('menu')} />
           )}
+          {screen === 'perfil' && <PerfilPage key="perfil" />}
         </AnimatePresence>
+        </div>
         </div>
       </div>
 

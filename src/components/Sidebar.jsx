@@ -1,24 +1,28 @@
-import { Home, Gamepad2, Gift, BarChart2, Medal, Settings } from 'lucide-react';
+import { Home, Trophy, Gift, ShoppingBag, User, Settings } from 'lucide-react';
 
 // ── SIDEBAR ────────────────────────────────────────────────────────────────
-// Nav lateral persistente estilo Duolingo (design.duolingo.com/app screenshot):
-// logo no topo, itens empilhados com ícone + label, item ativo destacado.
-// Só aparece em telas largas (lg+) — no celular o app continua em coluna
-// única, sem barra lateral (ela "some" conforme a tela, como o Davi pediu).
+// v6.0 · Bloco 1: nav lateral com os 5 destinos primários definidos no reset
+// (sessions/planejamento-6.0.md, seção 3) — Arena substitui "Início", Ligas
+// substitui "Ranking QI" (mecânica de liga em si é o Bloco 4), Missões/Loja
+// deixam de ser abas dentro de "Recompensas" e viram destinos próprios,
+// Perfil é novo. Modos/Estatísticas não são destinos de sidebar — são
+// alcançados a partir da Arena/Perfil, como no áudio do Davi.
+// Só aparece em telas largas (lg+) — no celular ainda não há nav persistente
+// (Davi pediu pra decidir o layout mobile depois, ver planejamento-6.0.md).
 const NAV_ITEMS = [
-  { id: 'menu', label: 'Início', icon: Home },
-  { id: 'modes', label: 'Modos', icon: Gamepad2 },
-  { id: 'rewards', label: 'Recompensas', icon: Gift },
-  { id: 'stats', label: 'Estatísticas', icon: BarChart2 },
-  { id: 'ranking', label: 'Ranking QI', icon: Medal },
+  { id: 'menu', label: 'Arena', icon: Home },
+  { id: 'ranking', label: 'Ligas', icon: Trophy },
+  { id: 'missions', label: 'Missões', icon: Gift },
+  { id: 'shop', label: 'Loja', icon: ShoppingBag },
+  { id: 'perfil', label: 'Perfil', icon: User },
 ];
 
 export default function Sidebar({ screen, onNavigate }) {
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 h-dvh sticky top-0 border-r-2 border-swan bg-white px-4 py-6">
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 h-dvh sticky top-0 border-r-2 border-border bg-surface px-4 py-6">
       <button
         onClick={() => onNavigate('menu')}
-        className="text-2xl font-black text-feather px-2 mb-8 text-left"
+        className="text-2xl font-black text-accent px-2 mb-8 text-left"
       >
         Tabuada Rush
       </button>
@@ -32,8 +36,8 @@ export default function Sidebar({ screen, onNavigate }) {
               onClick={() => onNavigate(id)}
               className={`flex items-center gap-3 px-3 py-3 rounded-2xl font-black text-sm uppercase tracking-wide transition-colors
                 ${active
-                  ? 'bg-macaw/10 text-macaw'
-                  : 'text-wolf hover:bg-polar hover:text-eel'}`}
+                  ? 'bg-accent/15 text-accent'
+                  : 'text-fg-muted hover:bg-surface-2 hover:text-fg'}`}
             >
               <Icon size={20} />
               {label}
@@ -47,8 +51,8 @@ export default function Sidebar({ screen, onNavigate }) {
           onClick={() => onNavigate('settings')}
           className={`flex items-center gap-3 px-3 py-3 rounded-2xl font-black text-sm uppercase tracking-wide transition-colors w-full
             ${screen === 'settings'
-              ? 'bg-macaw/10 text-macaw'
-              : 'text-wolf hover:bg-polar hover:text-eel'}`}
+              ? 'bg-accent/15 text-accent'
+              : 'text-fg-muted hover:bg-surface-2 hover:text-fg'}`}
         >
           <Settings size={20} />
           Configurações

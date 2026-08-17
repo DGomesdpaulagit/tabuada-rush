@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.3 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + escada — sessao-053.md)
+**Versão:** 6.0.4 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + escada + header maior — sessao-054.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -32,6 +32,14 @@ também resolveu o bug de ping-pong de forma mais robusta que o fix da sessão 0
 Sessão 053: fechou o último ponto em aberto de D030 ("ver outras divisões") — mostrei
 3 mockups de UI num artifact interativo antes de codar, o Davi escolheu a escada
 vertical com uma regra de acesso dele mesmo (bloqueio por progresso já alcançado).
+Sessão 054: Davi mandou screenshots do stat bar do Duolingo (bandeira/ofensiva/
+gemas/vidas + os 4 painéis de hover) como referência de PADRÃO de interação — Header
+reescrito nesse padrão, mas com os sistemas reais do jogo (sem inventar "amigos"/
+assinatura que o Duolingo tem e o Tabuada Rush não).
+**[v6.0.4]** Header maior (70px, era ~48px), faixa de tabuada juntada ao grupo de
+ofensiva/moedas/vidas (antes isolada na ponta esquerda), ícone de moedas trocou de
+`Coins` (lucide) pra 🪙, e cada uma das 4 pills abre um painel no hover/clique com
+ação real (Ver perfil / Ir pra loja / Recuperar vidas). Ver `sessao-054.md` e D032.
 **[v6.0.3]** Tela de Ligas virou escada vertical (Bronze embaixo → Diamante no topo).
 Só é possível ver roster + classificação de uma liga que o jogador JÁ alcançou algum
 dia (`leagueHighestId`, nunca desce com rebaixamento) — ligas acima disso ficam
@@ -268,27 +276,32 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONFIRMAR A ESCADA DE LIGAS, DEPOIS FEEDBACK DE USO
+## 🎯 PRÓXIMA SESSÃO — CONFIRMAR ESCADA DE LIGAS + HEADER NOVO
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-053.md` (escada de
-Ligas, a mais recente) → `sessions/planejamento-6.0.md` (spec completa do
-reset) → `DECISIONS.md` D020-D031.
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-054.md` (Header
+maior, a mais recente) → `sessions/sessao-053.md` (escada de Ligas) →
+`sessions/planejamento-6.0.md` (spec completa do reset) → `DECISIONS.md`
+D020-D032.
 
-**Pendência real, não estética:** a sessão 053 implementou a escada de Ligas
-("ver outras divisões" — D030/D031), mas **não foi confirmada visualmente**
-— o Browser pane deste ambiente não compõe frames (ver seção 🐛 BUGS
-CONHECIDOS), então a navegação/clique não pôde ser testada de ponta a ponta.
-Pedir ao Davi pra abrir a tela de Ligas e confirmar: (1) degrau desbloqueado
-abre a folha com o roster certo, (2) degrau bloqueado não faz nada e não
-revela personagens, (3) a PRÓPRIA liga atual dele não aparece bloqueada
-(o caso que a auto-cura do `leagueHighestId` existe pra evitar).
+**Pendência real, não estética (x2):** nem a escada de Ligas (053, D031)
+nem o Header novo (054, D032) foram confirmados visualmente — o Browser
+pane deste ambiente não compõe frames (ver seção 🐛 BUGS CONHECIDOS), então
+animação/clique real não pôde ser testada de ponta a ponta em nenhum dos
+dois (o Header teve o conteúdo/lógica testados via DOM/JS, mas não a
+animação nem o posicionamento visual dos painéis). Pedir ao Davi pra
+confirmar:
+1. **Ligas:** degrau desbloqueado abre a folha com o roster certo, degrau
+   bloqueado não revela nada, a PRÓPRIA liga atual dele não aparece
+   bloqueada.
+2. **Header:** os 4 painéis abrem certo ao passar o mouse (posição, se não
+   fica cortado nas bordas da tela), e se o tamanho/proporção da barra e
+   dos ícones bate com o que ele tinha em mente.
 
 **Depois disso:** os 7 blocos do reset 6.0 (sessões 044-050), a limpeza de
-débitos (051, D027-D029), a recalibração de Ligas (052, D030) e agora a
-escada (053, D031) fecham tudo que estava em aberto do Bloco 4. Davi disse
-que a próxima pauta depois disso é "as edições que observei dentro do jogo"
-— feedback de uso real, não um novo bloco planejado por mim. Começar
-ouvindo o que ele traz, não propondo roadmap novo sozinho.
+débitos (051, D027-D029), a recalibração de Ligas (052, D030), a escada
+(053, D031) e o Header (054, D032) fecham tudo que estava em aberto do
+Bloco 4 + a rodada de ajustes visuais que o Davi trouxe observando o jogo.
+Depois disso, sem roadmap novo proposto por mim — ouvir o que ele traz.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -299,8 +312,10 @@ História (narrativa infinita) — ver D018.
 
 - Nenhum bug ativo conhecido no APP em si. **Pendente de confirmação visual
   (não é bug conhecido, é falta de teste):** escada de Ligas da sessão 053
-  (D031) — build limpo e código revisado, mas navegação real não testada
-  neste ambiente. Ver seção "PRÓXIMA SESSÃO" acima.
+  (D031) e Header maior da sessão 054 (D032) — build limpo, código revisado
+  (e no caso do Header, conteúdo/lógica testados via DOM/JS), mas animação e
+  posicionamento visual reais não testados neste ambiente. Ver seção
+  "PRÓXIMA SESSÃO" acima.
 - **Ambiente de preview (Claude Code, não é bug do app):** o Browser pane
   desta sessão não compôs frames (`screenshot` falha, cliques via
   `computer`/dispatch de evento não produzem navegação observável) —
@@ -365,8 +380,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-053.md` — última sessão (escada de Ligas)
-5. `DECISIONS.md` D020-D031 (reset 6.0 + limpeza + recalibração + escada) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-054.md` — última sessão (Header maior) → `sessions/sessao-053.md` (escada de Ligas)
+5. `DECISIONS.md` D020-D032 (reset 6.0 + limpeza + recalibração + escada + header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

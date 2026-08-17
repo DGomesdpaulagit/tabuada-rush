@@ -913,7 +913,7 @@ export default function App() {
       <div className="flex-1 flex flex-col min-h-dvh">
         {/* v6.0 · Bloco 1: barra superior persistente (faixa/ofensiva/moedas/
             vidas) — some durante a partida, que já tem seu próprio HUD. */}
-        {screen !== 'game' && <Header />}
+        {screen !== 'game' && <Header onNavigate={setScreen} />}
         <div className="flex-1 flex justify-center">
         <div className="w-full max-w-lg px-4 py-6">
         <AnimatePresence mode="wait">

@@ -725,6 +725,76 @@ como base pro "próprio mapa de progresso" no Perfil (ainda não existe).
 
 ---
 
+## D032 — Header vira barra maior com painéis no hover (estilo Duolingo)
+
+**Data:** 2026-08-17 · sessao-054
+**Contexto:** Davi mandou 5 screenshots de referência (o stat bar do
+Duolingo com bandeira/ofensiva/gemas/vidas, e os 4 painéis que abrem ao
+passar o mouse em cada um) e pediu pra recriar o padrão — mas com os
+sistemas REAIS do Tabuada Rush, não inventar mecânica nova só pra imitar a
+imagem.
+
+**Decisão:**
+1. **Barra maior:** `Header.jsx` foi de `py-2.5`/`text-sm` pra `py-3.5` com
+   pills `text-base` — 70px de altura (era ~48px).
+2. **Faixa de tabuada junta ao grupo:** antes ficava sozinha na ponta
+   esquerda (`justify-between`); agora é a 1ª pill de um grupo único
+   centralizado — o equivalente direto de onde fica a bandeira do idioma no
+   Duolingo (identidade central de progresso, não "país").
+3. **Moedas trocou de ícone:** o ícone `Coins` da lucide (dois círculos
+   sobrepostos, lê fácil como "gema") virou o emoji 🪙 — que já era usado em
+   outro lugar do app (`NoLivesModal`, "Você tem 🪙 X") pra representar
+   moeda, então isso também resolve uma pequena inconsistência visual que já
+   existia entre telas.
+4. **4 painéis no hover** (mouse + toque via clique, já que Header aparece
+   em qualquer largura de tela, não só desktop) — cada um com um botão de
+   ação real, não decorativo:
+   - **Faixa:** badge + progresso (`getXpProgress`, já existia) até a
+     próxima faixa → "Ver perfil" (`screen: 'perfil'`, mostra faixa+liga
+     juntas).
+   - **Ofensiva:** contador + semana atual (derivada de `data.sessions`,
+     mesmo princípio do `StreakHeatmap` mas só 7 dias) + recorde + PRÓXIMA
+     CONQUISTA DE OFENSIVA real (`ACHIEVEMENTS.filter(categoria==='Ofensiva')`,
+     acha a primeira não batida — nada hardcoded, lê do array existente) →
+     "Ver perfil". Deliberadamente NÃO tem "ofensivas dos amigos" nem
+     "sociedade da chama acesa" do Duolingo — o jogo não tem sistema social,
+     inventar isso seria adicionar mecânica desconectada do aprendizado
+     (guarda de escopo já registrada, ver memória do projeto). A conquista
+     "Chama Acesa" (10 dias, já existe em `ACHIEVEMENTS`) cobre a mesma
+     função de "meta social a caminho" sem precisar de feature nova.
+   - **Moedas:** saldo + "Ir pra loja" (`screen: 'shop'`) — direto como o
+     Davi pediu.
+   - **Vidas:** corações preenchidos (`getLivesInfo`), tempo até o pote
+     encher de novo (calculado até meia-noite local — a mecânica real É um
+     pote diário, não regeneração por vida como no Duolingo, então o texto
+     reflete isso) e um botão "Recuperar vidas" funcional (reaproveita a
+     mesma lógica de `App.jsx handleBuyLifeRefill`, reimplementada local
+     porque o handler original depende de `pendingNoLivesMode` pra retomar
+     o modo bloqueado — aqui não tem modo pendente). Desliguei
+     deliberadamente "vidas ilimitadas — testar grátis" do mockup: é
+     assinatura premium, o jogo não tem sistema de assinatura, não é algo
+     pra inventar de lado.
+5. **Só um painel aberto por vez:** estado único `openId` no `Header`,
+   compartilhado entre as 4 pills — abrir uma fecha a anterior.
+
+**Verificado:** `npm run build` limpo. Testado neste ambiente via inspeção
+de DOM/JS (a mesma limitação de compositing do D031 impede confirmar a
+ANIMAÇÃO de hover, mas o CONTEÚDO e a INTERAÇÃO foram confirmados de
+verdade, não só lidos no código): os 4 painéis abrem com o texto certo
+(faixa mostra XP faltante real, ofensiva mostra "Faltam 5 dias pra 'Faísca'
+🔥" corretamente derivado de `ACHIEVEMENTS`), só um fica aberto por vez, e o
+fluxo de comprar reposição de vidas foi testado de ponta a ponta:
+localStorage forçado pra `coins:200, vidas:2/5` → clique em "Recuperar
+vidas" → confirmado no storage depois `coins:50, vidas:5/5` (descontou
+exatamente `LIFE_REFILL_PRICE`=150 e encheu o pote) — e o botão fica
+`disabled` sozinho tanto com pote cheio quanto sem moeda suficiente.
+
+**Revisitar quando:** confirmação visual do Davi de como o hover/animação
+fica na prática (mesma ressalva do D031) — layout/posicionamento dos
+painéis pode precisar ajuste fino olhando de verdade.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

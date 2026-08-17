@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.4] — 2026-08-17 — Header maior com painéis no hover (estilo Duolingo)
+
+**Detalhes em `sessions/sessao-054.md` e `DECISIONS.md` (D032).**
+
+### Alterado
+- Barra superior (`Header.jsx`) ficou mais alta (70px, era ~48px)
+- Faixa de tabuada saiu da ponta esquerda isolada e virou a 1ª pill do
+  mesmo grupo de ofensiva/moedas/vidas — grupo centralizado
+- Ícone de moedas trocou de `Coins` (lucide) pra 🪙, consistente com o resto
+  do app
+
+### Adicionado
+- Painel ao passar o mouse (ou tocar) em qualquer uma das 4 pills, cada um
+  com botão de ação real: Faixa → progresso até a próxima + "Ver perfil";
+  Ofensiva → semana atual + próxima conquista de ofensiva real + "Ver
+  perfil"; Moedas → saldo + "Ir pra loja"; Vidas → corações + tempo até
+  reabastecer + botão funcional "Recuperar vidas" (150 moedas)
+
+---
+
 ## [6.0.3] — 2026-08-17 — Escada de Ligas (ver outras ligas, bloqueada por progresso)
 
 **Detalhes em `sessions/sessao-053.md` e `DECISIONS.md` (D031).**

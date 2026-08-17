@@ -18,19 +18,23 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-16
-**Versão:** 6.0.0-bloco1 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-044.md)
+**Data:** 2026-08-17
+**Versão:** 6.0.0-bloco2 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-045.md)
 **Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
 um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
-abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos,
-combinados um de cada vez com o Davi (ver `sessions/planejamento-6.0.md`). **Bloco 1/7
-(base visual) entregue nesta sessão** — tema escuro padrão, tokens de cor semânticos,
-sidebar/header novos, Perfil novo. Blocos 2-7 (Vidas, Progressão de tabuada, Ligas,
-Missões, Perfil completo, Estatísticas) ainda não começaram.
+abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos.
+Davi pediu pra seguir direto pelos blocos sem pausa de confirmação a cada um ("vamos
+terminar esses blocos"), mas decisões não-óbvias continuam sendo sinalizadas nos
+registros (ver D021 pra exemplo). **Blocos 1-2/7 entregues.** Blocos 3-7 (Progressão de
+tabuada, Ligas, Missões, Perfil completo, Estatísticas) ainda não começaram.
+**[v6.0.0-bloco2]** Vidas diárias (pote global de 5, estilo Duolingo) — desconta em
+QUALQUER modo (inclusive Zen), bloqueia início de partida nova quando zera, repõe por
+150 moedas (pote inteiro). Coexiste com o sistema de vidas por partida que já existia
+(Rush, `cfg.lives`) sem substituí-lo — ver `sessao-045.md` e D021.
 **[v6.0.0-bloco1]** Reset visual: paleta semântica dark-first via CSS var (tema escuro
 é o padrão agora), sidebar com 5 destinos novos (Arena/Ligas/Missões/Loja/Perfil),
-header persistente (faixa/ofensiva/moedas/vidas — faixa e vidas são placeholder até os
-Blocos 2-3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D020.
+header persistente (faixa/ofensiva/moedas/vidas — faixa ainda é placeholder até o
+Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D020.
 **[v5.0.0]** Redesign completo por pedido do Davi: paleta própria "Caderno Quadriculado" (só aplicada no Menu + tokens base, resto do app pendente), sidebar de navegação (desktop), Menu simplificado (3 destinos primários: Modos/Recompensas/Estatísticas), **modos reduzidos de 10 pra 3** (Rush agora é a fusão de Rush+Sobrevivência+Velocidade+Diário — timer cresce com acerto, 3 vidas —, Zen e Revisão mantidos), **desbloqueio progressivo removido** (tudo liberado desde o início — reverte D008), Ranking de QI 104→52 personagens, Loja só com power-ups (cosméticos removidos, 2 power-ups novos: Escudo e Largada Turbo), economia mais dura (menos moeda por partida, Zen sem XP/moeda), e **mascotes Tuca (tartaruga) e Vupt (lebre)** — fábula de Esopo, arte gerada por IA (ChatGPT+Pika) processada por um pipeline Python próprio (remoção de fundo + WebP animado), integrados no GamePage com frequência controlada (sorteio + teto por partida). Balão de fala e voz do mascote foram DESLIGADOS temporariamente (Davi vai mandar frases/áudio finais). Ver `sessao-043.md` e `DECISIONS.md` D015-D019.
 **[v3.17.0]** Tabuada Rush voltou a ser exclusivamente sobre MULTIPLICAÇÃO — esse é o propósito original do projeto (decorar a tabuada) e a 4.0 tinha diluído isso pra "ser bom em matemática" (4 operações). Removido: `OPERATIONS.add/.sub/.div`, seletor de operação, abas de operação, radar cross-operação, certificado "Matemática Fundamental Completa", bônus de amplitude no QI. Mantido: curva de esquecimento, motor preditivo no Modo Revisão, banner "Fatos a Vencer", viés adaptativo por fatos fracos (toggle "Foco em Fraquezas"). Ver `sessao-042.md`.
 **[v3.16.1]** Leaderboard Global removido por completo (página, botão, upload de score) — pedido direto do Davi. Desafio Diário/Semanal continuam existindo, só sem comparação global. Tabelas `leaderboard_daily`/`leaderboard_weekly` no Supabase ficaram órfãs (não apagadas — ver `SUPABASE_SETUP.md`).
@@ -85,10 +89,15 @@ Blocos 2-3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` 
 > dark-first via CSS var, tema escuro como padrão, sidebar nova (Arena/Ligas/Missões/
 > Loja/Perfil), header persistente novo, Perfil novo (resumo mínimo). Ver D020.
 >
-> **Blocos 2-7 — NÃO COMEÇADOS:** (2) Vidas — 5/dia + compra; (3) Progressão de
-> tabuada — faixas 2-10→200; (4) Ligas — substitui Ranking de QI, 10 ligas; (5)
-> Missões — diárias + mensais com aceite/desconto/congelamento; (6) Perfil completo —
-> absorve Conquistas/Recordes/Catálogo; (7) Estatísticas — reorganização (não reset).
+> **Bloco 2/7 — Vidas diárias — ENTREGUE (sessao-045):** pote global de 5/dia estilo
+> Duolingo, desconta em qualquer modo, bloqueia início de partida quando zera, repõe
+> por 150 moedas. Coexiste com o sistema de vidas por partida (não substituiu). Ver
+> D021.
+>
+> **Blocos 3-7 — NÃO COMEÇADOS:** (3) Progressão de tabuada — faixas 2-10→200; (4)
+> Ligas — substitui Ranking de QI, 10 ligas; (5) Missões — diárias + mensais com
+> aceite/desconto/congelamento; (6) Perfil completo — absorve Conquistas/Recordes/
+> Catálogo; (7) Estatísticas — reorganização (não reset).
 >
 > **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
 > antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
@@ -198,31 +207,33 @@ Blocos 2-3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` 
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 2/7 em diante)
+## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 3/7 em diante)
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset) → `sessions/sessao-044.md` (o que já foi feito no Bloco 1) →
-`DECISIONS.md` D020.
+completa do reset) → `sessions/sessao-045.md` (Bloco 2, o mais recente) →
+`DECISIONS.md` D020-D021.
 
 **A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
 balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
 que a 6.0 substitui tudo isso, não são itens paralelos a retomar. Ver `sessao-044.md`
 seção 1.
 
-**Ordem dos próximos blocos (Davi aprovou essa sequência ao fechar o planejamento):**
-1. **Bloco 2 — Vidas**: modelo 5/dia + compra pra repor (substitui o sistema atual
-   de vidas por partida).
-2. **Bloco 3 — Progressão de tabuada**: faixas 2-10→200, cálculo de XP/dia realista
+**Davi pediu ritmo contínuo** ("vamos terminar esses blocos") — não pausar pra
+confirmação visual a cada bloco como no Bloco 1. Continuar sinalizando decisões
+não-óbvias nos registros mesmo assim (ver D021 pro padrão a seguir).
+
+**Ordem dos próximos blocos:**
+1. **Bloco 3 — Progressão de tabuada**: faixas 2-10→200, cálculo de XP/dia realista
    pra bater a meta de 6-10 meses na 1ª faixa (matemática de balanceamento a fazer
    quando este bloco começar, não decisão de produto).
-3. **Bloco 4 — Ligas**: substitui Ranking de QI (10 ligas nomeadas, promoção/
+2. **Bloco 4 — Ligas**: substitui Ranking de QI (10 ligas nomeadas, promoção/
    rebaixamento, XP universal).
-4. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
+3. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
    congelamento (mecânica de "aposta com dívida" já confirmada com o Davi, ver
    planejamento-6.0.md seção 7).
-5. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
+4. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
    Estatísticas) pro `PerfilPage.jsx` criado no Bloco 1.
-6. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
+5. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
    sumário, Acertos/Erros dentro do Catálogo de Precisão.
 
 **Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
@@ -299,8 +310,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
-4. `sessions/sessao-044.md` — última sessão (Bloco 1/7 do reset — base visual)
-5. `DECISIONS.md` D020 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-045.md` — última sessão (Bloco 2/7 do reset — vidas diárias)
+5. `DECISIONS.md` D020-D021 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

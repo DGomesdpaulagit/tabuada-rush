@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco2] — 2026-08-17 — Tabuada Rush 6.0: Bloco 2/7 (Vidas diárias)
+
+**Detalhes em `sessions/sessao-045.md` e `DECISIONS.md` (D021).**
+
+### Adicionado
+- Pote de vidas diárias (5, estilo Duolingo) — `data.livesData`, `utils/getLivesInfo`
+- `NoLivesModal` (`App.jsx`) — bloqueia início de partida em qualquer modo quando o
+  pote zera; oferece reposição por 150 moedas (enche o pote inteiro, não vida a vida)
+- `GamePage` — prop `onWrongAnswer`, desconta o pote diário em todo erro real
+  (qualquer modo, inclusive Zen), em paralelo ao sistema de vidas por partida
+  existente (que não foi alterado — ver D021)
+
+### Alterado
+- `Header` — contador de vidas deixa de ser placeholder, mostra o pote real
+
+---
+
 ## [6.0.0-bloco1] — 2026-08-16 — Tabuada Rush 6.0: reset completo (planejamento + Bloco 1/7)
 
 **Reset total pedido pelo Davi após insatisfação com a 5.0. Escopo inteiro documentado em

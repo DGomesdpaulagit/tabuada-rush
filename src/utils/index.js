@@ -1,4 +1,4 @@
-import { LEVELS, ACHIEVEMENTS } from '../constants';
+import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX } from '../constants';
 import { CHARACTERS, TIERS, QI_MIN, QI_MAX } from '../constants/characters';
 
 // ── OPERAÇÃO ──────────────────────────────────────────────────────────────
@@ -753,6 +753,17 @@ export function checkNewAchievements(savedData) {
 
 export function todayStr() {
   return new Date().toISOString().split('T')[0];
+}
+
+// [v6.0 · Bloco 2] Vidas diárias — lê o pote sem mutar o storage; se o dia
+// virou desde o último registro, reporta o pote cheio (o reset de verdade só
+// é gravado na próxima vez que uma vida é perdida ou comprada, ver App.jsx
+// loseLife/buyLifeRefill — evita escrever no storage só de olhar a tela).
+export function getLivesInfo(data) {
+  const today = todayStr();
+  const ld = data.livesData;
+  const remaining = !ld || ld.date !== today ? DAILY_LIVES_MAX : Math.max(0, ld.remaining);
+  return { remaining, max: DAILY_LIVES_MAX };
 }
 
 export function formatTime(seconds) {

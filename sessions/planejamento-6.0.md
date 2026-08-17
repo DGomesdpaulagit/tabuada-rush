@@ -113,7 +113,15 @@ liga do Duolingo.
 
 ---
 
-## 5. Vidas (substitui o sistema atual)
+## 5. Vidas (substitui o sistema atual) — ✅ IMPLEMENTADO (Bloco 2, sessao-045)
+
+> Decisões tomadas durante a implementação (não estavam 100% explícitas no áudio,
+> registro pra não ficar ambíguo depois): (1) o pote é **realmente global** — erro em
+> QUALQUER modo desconta, incluindo Zen (leitura literal de "qualquer modo bloqueado"
+> na seção original); (2) a reposição enche o pote INTEIRO de volta a 5 por um preço
+> fixo (150 moedas), não vida-por-vida (mesmo padrão do print de referência do
+> Duolingo: "Recuperar vidas · 350"); (3) o Escudo (power-up já existente) protege a
+> vida diária também, não só a vida de partida. Ver DECISIONS.md D021.
 
 - Copiar o modelo Duolingo: **5 vidas/erros por dia**, não por partida.
   Quando as vidas acabam, o jogador não consegue mais jogar (qualquer modo)

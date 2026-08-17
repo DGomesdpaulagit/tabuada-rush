@@ -1,6 +1,6 @@
 import { Flame, Coins, Heart } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { getLevelIdx } from '../utils';
+import { getLevelIdx, getLivesInfo } from '../utils';
 import { LEVELS } from '../constants';
 
 // ── HEADER ─────────────────────────────────────────────────────────────────
@@ -10,16 +10,15 @@ import { LEVELS } from '../constants';
 // ícone de fogo aqui.
 //
 // O selo de nível é um PLACEHOLDER visual (usa o sistema de 28 níveis atual)
-// até o Bloco 3 trocar por faixa de tabuada real (2-10 → 200). O contador de
-// vidas também é placeholder (5 fixo) até o Bloco 2 implementar o sistema
-// real de vidas diárias — não existe ainda um campo `data.lives` no storage.
+// até o Bloco 3 trocar por faixa de tabuada real (2-10 → 200). As vidas já
+// são o sistema real do Bloco 2 (pote diário, ver utils/getLivesInfo).
 export default function Header() {
   const { data } = useApp();
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = LEVELS[levelIdx];
   const streak = data.currentStreak || 0;
   const coins = data.coins || 0;
-  const lives = data.lives ?? 5; // TODO Bloco 2: sistema real de vidas diárias
+  const lives = getLivesInfo(data).remaining;
 
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between gap-3 px-4 py-2.5 bg-surface border-b-2 border-border">

@@ -118,6 +118,14 @@ export const STREAK_GOALS = [5, 10, 15, 20, 35, 40];
 // reinicia (as conquistas, não).
 export const STREAK_REWARD_MILESTONES = [40, 100, 250, 365];
 
+// ── VIDAS DIÁRIAS [v6.0 · Bloco 2] ──────────────────────────────────────────
+// Modelo Duolingo: um erro em QUALQUER modo consome 1 vida do pote do dia
+// (não é por partida). Reseta ao virar o dia (ver getLivesInfo em utils).
+// Zerou? Não dá pra começar partida nova até repor (comprar com moeda — caro
+// de propósito, ver planejamento-6.0.md seção 5) ou esperar o próximo dia.
+export const DAILY_LIVES_MAX = 5;
+export const LIFE_REFILL_PRICE = 150; // moedas — repõe o pote inteiro de volta a 5
+
 // ── ACHIEVEMENTS ───────────────────────────────────────────────────────────
 
 export const ACHIEVEMENTS = [

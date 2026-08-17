@@ -272,3 +272,40 @@ Retorna as 3 tabuadas com maior score. `getHardQuestion(tableStats)` amostra des
 **Motivo:** O bug do rodapé branco-sobre-branco é uma classe inteira de bug (qualquer token custom sem override explícito fica invisível no escuro) — tokens via CSS var elimina essa classe de bug de vez em vez de corrigir caso a caso.
 **Trade-off:** App roda temporariamente com DOIS sistemas de cor em paralelo (novo nos componentes tocados no Bloco 1: Sidebar/Header/Button/Card/Badge/MenuPage; legado no resto) até os blocos 2-7 migrarem o restante. Enquanto isso durar, dev precisa saber qual página usa qual sistema antes de estilizar algo novo nela.
 **Revisitar quando:** Ao migrar cada tela nos próximos blocos, aposentar os tokens legados que ela usava (se nenhuma outra tela mais depender deles).
+
+---
+
+## D021 — Vidas diárias como camada NOVA por cima do sistema de vidas por partida (não substituição)
+
+**Data:** 2026-08-17 · sessao-045 (Bloco 2 do reset 6.0)
+**Contexto:** O áudio do Davi pedia "5 vidas/erros por dia" estilo Duolingo — um pote
+único, global, que reseta por dia e bloqueia QUALQUER modo quando zera. O jogo já
+tinha, porém, um sistema de vidas **por partida** bem desenvolvido (`cfg.lives` no
+Rush — 3 vidas, acaba a partida — com um prompt de continuar já existente: usar Vida
+Extra do estoque, comprar 1 vida por 80 moedas, ou encerrar). Esses dois sistemas
+descrevem coisas diferentes (uma partida específica vs. o dia inteiro).
+**Decisão:** Implementei o pote diário (`data.livesData`, `getLivesInfo` em `utils`)
+como uma camada **adicional**, independente do sistema por partida — não removi nem
+alterei `cfg.lives`/o prompt de continuar do `GamePage`. Todo erro real (não protegido
+por Escudo) em qualquer modo desconta 1 do pote diário via `onWrongAnswer` (prop nova
+no `GamePage`, chamada em paralelo ao `dispatch({type:'WRONG'})`); o pote só GATEIA
+o início de uma partida NOVA (`App.jsx handleStart`), nunca interrompe uma partida em
+andamento — pode ficar negativo-efetivo (clampado em 0) no meio do jogo sem travar
+nada, só bloqueia a próxima tentativa de começar.
+**Motivo:** Rasgar o sistema por partida pra encaixar só o pote diário seria uma
+regressão de UX sem necessidade — o prompt de continuar (usar estoque/comprar 80/
+desistir) já funciona bem e resolve um problema diferente (terminar ESTA partida) do
+que o pote diário resolve (limite de prática por DIA). Rodar os dois em paralelo é
+mais simples de implementar e não contradiz nada do que o Davi pediu — ele descreveu
+o pote diário, não pediu pra remover o outro.
+**Trade-off:** Existem agora DOIS conceitos de "vida" no app ao mesmo tempo (partida
+vs. dia) — risco de confundir se não ficar bem explicado na UI. Mitigado por
+serem visualmente distintos: vidas de partida aparecem só dentro do `GamePage` (❤️❤️❤️
+no topo da partida), vida diária só no `Header` global e no modal de bloqueio.
+**Reposição:** enche o pote inteiro de volta a `DAILY_LIVES_MAX` (5) por
+`LIFE_REFILL_PRICE` (150 moedas) fixo, não vida-por-vida — replica o padrão do print
+de referência do Duolingo que o Davi mandou ("Recuperar vidas · 350" cristais por um
+refill completo, não por vida individual).
+**Revisitar quando:** Se o Davi achar os dois conceitos confusos na prática, dá pra
+unificar depois — ex. o prompt de "perdeu a vida de partida" já checar/gastar do
+mesmo pote diário em vez de ter preço próprio (80) separado do refill (150).

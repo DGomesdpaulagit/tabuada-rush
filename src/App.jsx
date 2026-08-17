@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps } from './utils';
-import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES } from './constants';
+import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
+import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
 import { maybeStreakReminder, maybeMissionExpireReminder, maybeForgettingReminder } from './lib/notify';
@@ -263,6 +263,60 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
   );
 }
 
+// ── MODAL: SEM VIDAS HOJE [v6.0 · Bloco 2] ──────────────────────────────────
+// Pote diário de vidas zerado (qualquer modo bloqueado até repor). Reposição
+// enche o pote de volta a DAILY_LIVES_MAX inteiro, não vida por vida — de
+// propósito caro (ver planejamento-6.0.md seção 5, LIFE_REFILL_PRICE).
+function NoLivesModal({ coins, onBuy, onClose }) {
+  const canBuy = coins >= LIFE_REFILL_PRICE;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface rounded-3xl p-6 w-full max-w-sm shadow-2xl border-2 border-border"
+      >
+        <div className="text-center text-4xl mb-1">💔</div>
+        <h3 className="text-xl font-black text-fg text-center">Sem vidas hoje!</h3>
+        <p className="text-sm text-fg-muted font-semibold text-center mt-1 mb-4 leading-snug">
+          Você usou suas {DAILY_LIVES_MAX} vidas do dia. Volta amanhã com o pote cheio,
+          ou compra a reposição agora.
+        </p>
+        <p className="text-xs text-center font-bold text-fg-muted mb-3">
+          Você tem 🪙 {coins.toLocaleString('pt-BR')}
+        </p>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => canBuy && onBuy()}
+            disabled={!canBuy}
+            className={`w-full py-3 rounded-2xl font-black text-sm transition-all
+              ${canBuy
+                ? 'bg-accent text-white shadow-chunky-accent hover:bg-accent/90 active:translate-y-1 active:shadow-none'
+                : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
+          >
+            🪙 Repor vidas ({LIFE_REFILL_PRICE})
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 rounded-2xl bg-surface-2 text-fg-muted text-sm font-bold hover:bg-border transition-all"
+          >
+            Volto amanhã
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ── PWA INSTALL BANNER ────────────────────────────────────────────────────
 function InstallBanner({ onInstall, onDismiss }) {
   return (
@@ -310,6 +364,7 @@ export default function App() {
   const [particlesLevel, setParticlesLevel] = useState(null);
   const [showInstall, setShowInstall] = useState(false);
   const [pendingBetMode, setPendingBetMode] = useState(null); // modo que está aguardando confirmação de aposta
+  const [pendingNoLivesMode, setPendingNoLivesMode] = useState(null); // [v6.0·Bloco 2] modo bloqueado por falta de vidas
   const deferredPrompt = useRef(null);
 
   const showAchievement = useCallback((a) => {
@@ -697,11 +752,29 @@ export default function App() {
     setScreen('game');
   }, [data.tableStats]);
 
+  // [v6.0 · Bloco 2] Perde 1 vida do pote diário (não é por partida — ver
+  // getLivesInfo/DAILY_LIVES_MAX). Reseta o pote pro dia atual antes de
+  // descontar, se o último registro for de um dia anterior.
+  const loseLife = useCallback(() => {
+    update((prev) => {
+      const info = getLivesInfo(prev);
+      return { ...prev, livesData: { date: todayStr(), remaining: Math.max(0, info.remaining - 1) } };
+    });
+  }, [update]);
+
   const handleStart = useCallback((mode) => {
     // Bloqueio defensivo: se o modo está locked, não inicia.
     // (A UI já bloqueia o clique, mas isso protege contra navegação programática.)
     const unlock = getModeUnlock(mode, data);
     if (!unlock.unlocked) return;
+
+    // [v6.0 · Bloco 2] Sem vidas hoje → bloqueia QUALQUER modo até repor
+    // (comprar) ou o dia virar. Checa antes da aposta — sem vida, nem chega
+    // a apostar.
+    if (getLivesInfo(data).remaining <= 0) {
+      setPendingNoLivesMode(mode);
+      return;
+    }
 
     // Aposta só no Rush — modos de treino (Zen/Revisão) não permitem aposta.
     const bettable = mode === 'rush';
@@ -712,6 +785,22 @@ export default function App() {
     }
     startGame(mode);
   }, [data, startGame]);
+
+  // Compra a reposição do pote de vidas (enche de volta a DAILY_LIVES_MAX) e
+  // segue direto pro modo que estava bloqueado — pula o fluxo de aposta
+  // nessa entrada específica (evita empilhar modal em cima de modal logo
+  // depois de pagar pra desbloquear).
+  const handleBuyLifeRefill = useCallback(() => {
+    if ((data.coins || 0) < LIFE_REFILL_PRICE) return;
+    update((prev) => ({
+      ...prev,
+      coins: (prev.coins || 0) - LIFE_REFILL_PRICE,
+      livesData: { date: todayStr(), remaining: DAILY_LIVES_MAX },
+    }));
+    const mode = pendingNoLivesMode;
+    setPendingNoLivesMode(null);
+    if (mode) startGame(mode);
+  }, [data.coins, pendingNoLivesMode, update, startGame]);
 
   // Confirma aposta: desconta moedas, grava data.activeBet e inicia partida.
   const handleConfirmBet = useCallback((amount) => {
@@ -783,6 +872,7 @@ export default function App() {
               onEnd={handleGameEnd}
               onBack={() => setScreen('menu')}
               powerups={data.powerups || {}}
+              onWrongAnswer={loseLife}
               onUsePowerup={(key) =>
                 update((prev) => ({
                   ...prev,
@@ -869,6 +959,18 @@ export default function App() {
               }
             }}
             onDismiss={() => setShowInstall(false)}
+          />
+        )}
+      </AP>
+
+      {/* ── Modal de sem vidas [v6.0 · Bloco 2] ─────────────────────────── */}
+      <AP>
+        {pendingNoLivesMode && (
+          <NoLivesModal
+            key="no-lives"
+            coins={data.coins || 0}
+            onBuy={handleBuyLifeRefill}
+            onClose={() => setPendingNoLivesMode(null)}
           />
         )}
       </AP>

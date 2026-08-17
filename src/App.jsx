@@ -27,7 +27,7 @@ import PerfilPage from './pages/PerfilPage';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { calcSeasonXp } from './constants/seasons';
-import { updateMissions, getNewlyCompleted } from './utils/missions';
+import { updateMissions, getNewlyCompleted, resolveChallenges } from './utils/missions';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
 
@@ -425,6 +425,11 @@ export default function App() {
         }
       }
 
+      // [v6.0 · Bloco 5] Desafios mensais resolvidos nesta partida (prazo
+      // passou) — preenchido dentro do update() abaixo, lido depois pra
+      // aplicar os toasts (mesmo padrão do bet* acima).
+      let challengeResolutions = [];
+
       const newData = update((prev) => {
         const isNewRecord =
           !prev.records?.[result.mode] || result.score > prev.records[result.mode];
@@ -504,7 +509,18 @@ export default function App() {
         const earnedSeasonXp = calcSeasonXp(result, currentStreak);
 
         // ── Atualiza progresso das missões ──────────────────────────────────
-        const updatedMissionsData = updateMissions(prev.missionsData, result, currentStreak);
+        let updatedMissionsData = updateMissions(prev.missionsData, result, currentStreak);
+
+        // [v6.0 · Bloco 5] Resolve desafios mensais cujo prazo passou (ganhou
+        // ou perdeu) — aplica moeda (pode ficar negativa, ver
+        // planejamento-6.0.md seção 7) e guarda pra mostrar toast depois.
+        const challengeResolution = resolveChallenges(updatedMissionsData);
+        updatedMissionsData = challengeResolution.missionsData;
+        challengeResolutions = challengeResolution.resolutions;
+        const challengeCoinDelta = challengeResolutions.reduce(
+          (sum, r) => sum + (r.won ? r.challenge.reward : -r.challenge.penalty),
+          0
+        );
 
         const session = {
           mode: result.mode,
@@ -587,7 +603,7 @@ export default function App() {
             ...prev.records,
             ...(isNewRecord ? { [result.mode]: result.score } : {}),
           },
-          coins: (prev.coins || 0) + coinsEarned + betPayout,
+          coins: (prev.coins || 0) + coinsEarned + betPayout + challengeCoinDelta,
           activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
@@ -703,6 +719,29 @@ export default function App() {
           desc: `-${activeBet.amount} 🪙 — tente de novo!`,
         });
       }
+
+      // [v6.0 · Bloco 5] Toast de desafio(s) mensal(is) resolvido(s) nesta partida
+      challengeResolutions.forEach((r, i) => {
+        setTimeout(
+          () =>
+            showAchievement(
+              r.won
+                ? {
+                    id: `_challenge_win_${r.challenge.id}`,
+                    icon: r.challenge.emoji,
+                    title: 'Desafio mensal cumprido!',
+                    desc: `${r.challenge.title} — +${r.challenge.reward} 🪙`,
+                  }
+                : {
+                    id: `_challenge_lose_${r.challenge.id}`,
+                    icon: '💸',
+                    title: 'Desafio mensal não cumprido',
+                    desc: `${r.challenge.title} — -${r.challenge.penalty} 🪙`,
+                  }
+            ),
+          i * 3000
+        );
+      });
 
       // xp2Used: verifica ANTES do update (data ainda tem o valor antigo, xp2 > 0 = estava ativo)
       const xp2Used = (data.powerups?.xp2 || 0) > 0;

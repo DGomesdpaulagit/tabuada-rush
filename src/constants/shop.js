@@ -47,7 +47,11 @@ export const SHOP_ITEMS = [
     powerupKey: 'missionFreeze',
     name: 'Congelar Missão',
     emoji: '❄️',
-    desc: 'Pausa uma missão diária por 24h — útil quando você sabe que não vai conseguir hoje.',
+    // v6.0 · Bloco 5: agora estende o prazo de um DESAFIO MENSAL aceito
+    // (+10 dias) — antes pausava uma missão diária, mas as diárias não têm
+    // mais risco nenhum (não precisam de seguro), o risco agora é só nos
+    // desafios mensais (ver planejamento-6.0.md seção 7).
+    desc: 'Estende em 10 dias o prazo de um desafio mensal aceito — útil quando você vê que não vai conseguir a tempo.',
     price: 50,
     rarity: 'common',
   },

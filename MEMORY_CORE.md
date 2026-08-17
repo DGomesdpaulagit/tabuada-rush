@@ -19,14 +19,19 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.0-bloco4 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-047.md)
+**Versão:** 6.0.0-bloco5 (Tabuada Rush 6.0 — reset completo, EM ANDAMENTO — sessao-048.md)
 **Status:** 🔴 A 5.0 foi considerada insatisfatória pelo Davi e está sendo **substituída por
 um reset completo (6.0)**, não uma continuação — as pendências da 5.0 (ver seção antiga
 abaixo) estão OBSOLETAS, não retomar. O reset está sendo implementado em 7 blocos.
 Davi pediu pra seguir direto pelos blocos sem pausa de confirmação a cada um ("vamos
 terminar esses blocos"/"bora pra próxima"), mas decisões não-óbvias continuam sendo
-sinalizadas nos registros (ver D021-D023 pra exemplos). **Blocos 1-4/7 entregues.**
-Blocos 5-7 (Missões, Perfil completo, Estatísticas) ainda não começaram.
+sinalizadas nos registros (ver D021-D024 pra exemplos). **Blocos 1-5/7 entregues.**
+Blocos 6-7 (Perfil completo, Estatísticas) ainda não começaram.
+**[v6.0.0-bloco5]** Missões: semanais removidas por completo; desafios mensais
+viraram "aposta com prazo" — precisa aceitar, não cumprir até o prazo desconta
+`penalty` do saldo (**pode ficar negativo**, testado e confirmado). Congelar
+Missão repropositado pra estender prazo de desafio mensal (+10 dias). Ver
+`sessao-048.md` e D024.
 **[v6.0.0-bloco4]** Ligas (10 ligas × 100 personagens) substitui o Ranking de QI —
 competição de verdade por XP, com promoção/rebaixamento (`constants/leagues.js`,
 `utils/leagues.js`). Sistema antigo (`getQiInfo`) NÃO foi removido, continua
@@ -116,10 +121,13 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 > antigo (Ranking de QI) mantido em paralelo pras 5 telas ainda não migradas.
 > Ver D023.
 >
-> **Blocos 5-7 — NÃO COMEÇADOS:** (5) Missões — diárias + mensais com aceite/
-> desconto/congelamento; (6) Perfil completo — absorve Conquistas/Recordes/
-> Catálogo, e é onde o sistema antigo de QI finalmente sai das 5 telas restantes;
-> (7) Estatísticas — reorganização (não reset).
+> **Bloco 5/7 — Missões — ENTREGUE (sessao-048):** semanais removidas; mensais
+> viraram desafios com aceite + penalidade (saldo pode ficar negativo, testado).
+> Metas revisadas pra baixo em relação ao pool antigo. Ver D024.
+>
+> **Blocos 6-7 — NÃO COMEÇADOS:** (6) Perfil completo — absorve Conquistas/
+> Recordes/Catálogo, e é onde o sistema antigo de QI finalmente sai das 5 telas
+> restantes (ver D023); (7) Estatísticas — reorganização (não reset).
 >
 > **Pontos que o próprio Davi disse "não sei ainda"** (não inventar sozinho, alinhar
 > antes de implementar): nº de personagens por liga e tamanho das zonas de promoção/
@@ -229,11 +237,11 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 5/7 em diante)
+## 🎯 PRÓXIMA SESSÃO — CONTINUAR O RESET 6.0 (Bloco 6/7 em diante)
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset) → `sessions/sessao-047.md` (Bloco 4, o mais recente) →
-`DECISIONS.md` D020-D023.
+completa do reset) → `sessions/sessao-048.md` (Bloco 5, o mais recente) →
+`DECISIONS.md` D020-D024.
 
 **A lista de pendências da 5.0 que existia aqui (mascote, paleta restante, StatsPage,
 balão de fala, painel por personagem) está OBSOLETA** — Davi confirmou explicitamente
@@ -245,14 +253,11 @@ confirmação visual a cada bloco como no Bloco 1. Continuar sinalizando decisõ
 não-óbvias nos registros mesmo assim (ver D021 pro padrão a seguir).
 
 **Ordem dos próximos blocos:**
-1. **Bloco 5 — Missões**: diárias fixas + mensais com aceite/desconto de saldo/
-   congelamento (mecânica de "aposta com dívida" já confirmada com o Davi, ver
-   planejamento-6.0.md seção 7).
-2. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
+1. **Bloco 6 — Perfil completo**: absorve Conquistas/Recordes/Catálogo (hoje em
    Estatísticas) pro `PerfilPage.jsx` criado no Bloco 1. **Também é a hora de
    finalmente remover `getQiInfo`/sistema antigo de QI das 5 telas que ainda o
    usam** (Menu, Perfil, Settings, Results, Catalog) — ver D023.
-3. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
+2. **Bloco 7 — Estatísticas**: reorganização (não reset) — navegação lateral tipo
    sumário, Acertos/Erros dentro do Catálogo de Precisão.
 
 **Em aberto, sem decisão ainda (Davi disse "não sei" — não inventar sozinho, ver
@@ -333,8 +338,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0 (ler antes de qualquer bloco novo)
-4. `sessions/sessao-047.md` — última sessão (Bloco 4/7 do reset — ligas)
-5. `DECISIONS.md` D020-D023 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-048.md` — última sessão (Bloco 5/7 do reset — missões)
+5. `DECISIONS.md` D020-D024 (reset 6.0) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

@@ -1,8 +1,4 @@
-import {
-  DAILY_MISSION_POOL,
-  WEEKLY_MISSION_POOL,
-  MONTHLY_MISSION_POOL,
-} from '../constants/missions';
+import { DAILY_MISSION_POOL, MONTHLY_CHALLENGE_POOL } from '../constants/missions';
 
 // ── Helpers de data ───────────────────────────────────────────────────────────
 
@@ -10,19 +6,23 @@ function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
-function currentWeekStart() {
-  const now = new Date();
-  // Segunda-feira como início da semana
-  const day = now.getDay(); // 0=Dom, 1=Seg...
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  return monday.toISOString().split('T')[0];
-}
-
 function currentMonthKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Último dia do mês ATUAL, como string ISO (prazo padrão de um desafio
+// mensal aceito hoje).
+function endOfMonthStr() {
+  const now = new Date();
+  const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  return last.toISOString().split('T')[0];
+}
+
+function addDaysStr(dateStr, days) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
 }
 
 // ── Seleção determinística de missões ─────────────────────────────────────────
@@ -68,34 +68,40 @@ function initDaily(date, frozenCarryOver = []) {
   return { date, missions: [...carried, ...filteredFresh].slice(0, 3 + carried.length) };
 }
 
-function initWeekly(weekStart) {
-  return { weekStart, missions: pickMissions(WEEKLY_MISSION_POOL, 2, dateSeed(weekStart) + 7777) };
+// [v6.0 · Bloco 5] Desafios mensais: `pool` (2 opções sorteadas por mês, pra
+// aceitar) é renovado toda virada de mês; `accepted` (os que o jogador
+// aceitou) NÃO é resetado — um desafio aceito continua valendo em "Mensais"
+// até seu próprio prazo passar, mesmo que isso ultrapasse a virada do mês
+// (ex.: desafio congelado com +10 dias de prazo). Ver planejamento-6.0.md
+// seção 7.
+function initMonthlyPool(month, prevAccepted = []) {
+  return {
+    month,
+    pool: pickMissions(MONTHLY_CHALLENGE_POOL, 2, dateSeed(month) + 99999),
+    accepted: prevAccepted,
+  };
 }
 
-function initMonthly(month) {
-  return { month, missions: pickMissions(MONTHLY_MISSION_POOL, 2, dateSeed(month) + 99999) };
-}
-
-// ── Obter missões ativas (com reset automático) ───────────────────────────────
+// ── Obter missões/desafios ativos (com reset automático) ──────────────────────
 // Chamada a cada leitura: verifica se o período mudou e reinicia se necessário,
 // preservando progresso das missões que NÃO mudaram de período.
 export function getActiveMissions(missionsData) {
   const today    = todayStr();
-  const weekStr  = currentWeekStart();
   const monthStr = currentMonthKey();
 
   const md = missionsData || {};
 
-  const daily   = (!md.daily   || md.daily.date      !== today)
+  const daily = (!md.daily || md.daily.date !== today)
     ? initDaily(today, md.daily?.missions || [])
     : md.daily;
-  const weekly  = (!md.weekly  || md.weekly.weekStart !== weekStr)  ? initWeekly(weekStr)    : md.weekly;
-  const monthly = (!md.monthly || md.monthly.month    !== monthStr) ? initMonthly(monthStr)  : md.monthly;
+  const monthly = (!md.monthly || md.monthly.month !== monthStr)
+    ? initMonthlyPool(monthStr, md.monthly?.accepted || [])
+    : md.monthly;
 
-  return { daily, weekly, monthly };
+  return { daily, monthly };
 }
 
-// ── Atualizar progresso de uma missão com base no resultado da partida ────────
+// ── Atualizar progresso de uma missão/desafio com base no resultado da partida ─
 function updateOne(mission, result, currentStreak) {
   if (mission.completed) return mission;
 
@@ -110,9 +116,6 @@ function updateOne(mission, result, currentStreak) {
     case 'play':
       p = p + 1;
       break;
-    case 'daily':
-      if (result.mode === 'daily') p = p + 1;
-      break;
     case 'streak':
       p = Math.max(p, result.bestStreak || 0);
       break;
@@ -126,7 +129,6 @@ function updateOne(mission, result, currentStreak) {
       p = Math.max(p, result.correct || 0);
       break;
     case 'correct_day':
-    case 'correct_week':
     case 'correct_month':
       p = p + (result.correct || 0);
       break;
@@ -142,47 +144,38 @@ function updateOne(mission, result, currentStreak) {
   return { ...mission, progress, completed };
 }
 
-// ── Atualizar todas as missões após uma partida ───────────────────────────────
+// ── Atualizar todas as missões/desafios após uma partida ──────────────────────
 export function updateMissions(missionsData, result, currentStreak) {
   const active = getActiveMissions(missionsData);
   const upd = (list) => list.map((m) => updateOne(m, result, currentStreak));
 
   return {
-    daily:   { ...active.daily,   missions: upd(active.daily.missions) },
-    weekly:  { ...active.weekly,  missions: upd(active.weekly.missions) },
-    monthly: { ...active.monthly, missions: upd(active.monthly.missions) },
+    daily: { ...active.daily, missions: upd(active.daily.missions) },
+    monthly: {
+      ...active.monthly,
+      accepted: active.monthly.accepted.map((c) =>
+        c.resolved ? c : updateOne(c, result, currentStreak)
+      ),
+    },
   };
 }
 
-// ── Contar missões completadas e sem resgate ──────────────────────────────────
+// ── Contar missões diárias completadas e sem resgate ───────────────────────────
+// (desafios mensais não têm "resgate" manual — resolvem sozinhos no prazo,
+// ver resolveChallenges)
 export function countUnclaimedMissions(missionsData) {
   const active = getActiveMissions(missionsData);
-  let count = 0;
-  const check = (ms) => ms.forEach((m) => { if (m.completed && !m.rewardClaimed) count++; });
-  check(active.daily.missions);
-  check(active.weekly.missions);
-  check(active.monthly.missions);
-  return count;
+  return active.daily.missions.filter((m) => m.completed && !m.rewardClaimed).length;
 }
 
-// ── Missões que acabaram de ser concluídas (para toast) ───────────────────────
-// Compara antes e depois e retorna as que ficaram completed=true agora.
+// ── Missões diárias que acabaram de ser concluídas (para toast) ───────────────
 export function getNewlyCompleted(before, after) {
-  const flat = (md) => {
-    const a = getActiveMissions(md);
-    return [
-      ...a.daily.missions,
-      ...a.weekly.missions,
-      ...a.monthly.missions,
-    ];
-  };
+  const flat = (md) => getActiveMissions(md).daily.missions;
   const beforeMap = Object.fromEntries(flat(before).map((m) => [m.id, m.completed]));
   return flat(after).filter((m) => m.completed && !beforeMap[m.id]);
 }
 
 // ── Congelar missão diária (carry-over para o próximo dia) ───────────────────
-// Marca `frozen: true` na missão. No próximo reset diário, a missão será
-// preservada (com progresso) e voltará ao ciclo normal — `frozen` é zerado.
 export function freezeMission(missionsData, missionId) {
   const active = getActiveMissions(missionsData);
   const missions = active.daily.missions.map((m) =>
@@ -191,13 +184,65 @@ export function freezeMission(missionsData, missionId) {
   return { ...active, daily: { ...active.daily, missions } };
 }
 
-// ── Resgatar recompensa de missão ─────────────────────────────────────────────
-export function claimMission(missionsData, period, missionId) {
+// ── Resgatar recompensa de missão diária ──────────────────────────────────────
+export function claimMission(missionsData, missionId) {
   const active = getActiveMissions(missionsData);
-  const section = active[period];
-  if (!section) return missionsData;
-  const missions = section.missions.map((m) =>
+  const missions = active.daily.missions.map((m) =>
     m.id === missionId ? { ...m, rewardClaimed: true } : m
   );
-  return { ...active, [period]: { ...section, missions } };
+  return { ...active, daily: { ...active.daily, missions } };
+}
+
+// ── DESAFIOS MENSAIS [v6.0 · Bloco 5] ─────────────────────────────────────────
+
+// Aceita um desafio do pool do mês — vira "ativo", com prazo até o fim do mês
+// atual. Não faz nada se já foi aceito (ou já não está mais no pool).
+export function acceptChallenge(missionsData, challengeId) {
+  const active = getActiveMissions(missionsData);
+  const def = active.monthly.pool.find((c) => c.id === challengeId);
+  if (!def) return active;
+  const already = active.monthly.accepted.some((c) => c.id === challengeId && !c.resolved);
+  if (already) return active;
+  const accepted = [
+    ...active.monthly.accepted,
+    {
+      ...def,
+      acceptedAt: todayStr(),
+      deadline: endOfMonthStr(),
+      frozen: false,
+      resolved: false,
+      won: null,
+    },
+  ];
+  return { ...active, monthly: { ...active.monthly, accepted } };
+}
+
+// Congela um desafio aceito — estende o prazo em 10 dias. Só funciona 1x por
+// desafio (não empilha congelamentos) e só antes de resolver.
+export function freezeChallenge(missionsData, challengeId) {
+  const active = getActiveMissions(missionsData);
+  const accepted = active.monthly.accepted.map((c) =>
+    c.id === challengeId && !c.resolved && !c.frozen
+      ? { ...c, frozen: true, deadline: addDaysStr(c.deadline, 10) }
+      : c
+  );
+  return { ...active, monthly: { ...active.monthly, accepted } };
+}
+
+// Resolve desafios aceitos cujo PRAZO passou (independente de terem virado o
+// mês ou não — um desafio congelado pode resolver só no mês seguinte, ver
+// planejamento-6.0.md seção 7). Chamada no load do app e em fim de partida.
+// Retorna o missionsData atualizado + a lista de resoluções desta chamada
+// (pra quem chamar aplicar moeda e mostrar toast).
+export function resolveChallenges(missionsData) {
+  const active = getActiveMissions(missionsData);
+  const today = todayStr();
+  const resolutions = [];
+  const accepted = active.monthly.accepted.map((c) => {
+    if (c.resolved || today <= c.deadline) return c;
+    const won = c.progress >= c.target;
+    resolutions.push({ challenge: c, won });
+    return { ...c, resolved: true, won };
+  });
+  return { missionsData: { ...active, monthly: { ...active.monthly, accepted } }, resolutions };
 }

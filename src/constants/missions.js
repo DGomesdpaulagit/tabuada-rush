@@ -1,5 +1,6 @@
 // ── POOL DE MISSÕES DIÁRIAS ───────────────────────────────────────────────────
-// 3 são sorteadas deterministicamente por dia
+// 3 são sorteadas deterministicamente por dia. Sem risco — se não completar,
+// não perde nada; se completar, só ganha (planejamento-6.0.md seção 7).
 export const DAILY_MISSION_POOL = [
   {
     id: 'dm_play_1',
@@ -18,15 +19,6 @@ export const DAILY_MISSION_POOL = [
     target: 3,
     reward: 40,
     emoji: '🎮',
-  },
-  {
-    id: 'dm_daily',
-    title: 'Desafio do Dia',
-    desc: 'Complete o Desafio Diário',
-    type: 'daily',
-    target: 1,
-    reward: 50,
-    emoji: '🌟',
   },
   {
     id: 'dm_correct_20',
@@ -102,147 +94,75 @@ export const DAILY_MISSION_POOL = [
   },
 ];
 
-// ── POOL DE MISSÕES SEMANAIS ──────────────────────────────────────────────────
-// 2 são sorteadas na segunda-feira. Metas exigem dedicação real de 5–7 dias.
-export const WEEKLY_MISSION_POOL = [
+// ── POOL DE DESAFIOS MENSAIS [v6.0 · Bloco 5] ────────────────────────────────
+// Diferente das diárias: precisa ACEITAR pra entrar (utils/missions.js
+// acceptChallenge). Completar até o prazo → ganha `reward`. Não completar →
+// desconta `penalty` do saldo (pode ficar negativo, quitado automaticamente
+// do próximo ganho — ver planejamento-6.0.md seção 7, confirmado com o Davi
+// mesmo sendo estruturalmente uma mecânica de aposta/dívida, ver DECISIONS.md).
+// `penalty` ≈ 20% do `reward`, mesma proporção do exemplo que o Davi deu no
+// áudio (ganha 500 / perde 100). Metas revisadas pra serem alcançáveis com
+// jogo consistente (não sobre-humano) — o pool antigo (pré-risco) tinha metas
+// como "250 partidas/mês" que garantiriam penalidade pra quase todo mundo.
+export const MONTHLY_CHALLENGE_POOL = [
   {
-    id: 'wm_play_35',
-    title: '35 Partidas',
-    desc: 'Jogue 35 partidas esta semana (~5/dia)',
+    id: 'mc_play_40',
+    title: '40 Partidas',
+    desc: 'Jogue 40 partidas este mês (~1-2/dia)',
     type: 'play',
-    target: 35,
-    reward: 300,
+    target: 40,
+    reward: 350,
+    penalty: 70,
     emoji: '🎮',
   },
   {
-    id: 'wm_play_60',
-    title: '60 Partidas',
-    desc: 'Jogue 60 partidas esta semana (~9/dia)',
+    id: 'mc_play_80',
+    title: '80 Partidas',
+    desc: 'Jogue 80 partidas este mês (~3/dia)',
     type: 'play',
-    target: 60,
-    reward: 500,
+    target: 80,
+    reward: 700,
+    penalty: 140,
     emoji: '🎮',
   },
   {
-    id: 'wm_daily_7',
-    title: 'Semana Perfeita',
-    desc: 'Complete o Desafio Diário todos os 7 dias desta semana',
-    type: 'daily',
-    target: 7,
-    reward: 600,
-    emoji: '🌟',
-  },
-  {
-    id: 'wm_correct_1000',
-    title: 'Mil Acertos',
-    desc: 'Acerte 1000 contas esta semana',
-    type: 'correct_week',
-    target: 1000,
-    reward: 420,
-    emoji: '✅',
-  },
-  {
-    id: 'wm_correct_2000',
-    title: 'Dois Mil Acertos',
-    desc: 'Acerte 2000 contas esta semana',
-    type: 'correct_week',
-    target: 2000,
-    reward: 750,
-    emoji: '✅',
-  },
-  {
-    id: 'wm_streak_20',
-    title: 'Sequência de 20',
-    desc: 'Faça uma sequência de 20 acertos em uma única partida',
-    type: 'streak',
-    target: 20,
+    id: 'mc_correct_1500',
+    title: '1.500 Acertos',
+    desc: 'Acerte 1.500 contas este mês (~50/dia)',
+    type: 'correct_month',
+    target: 1500,
     reward: 400,
-    emoji: '🔥',
-  },
-  {
-    id: 'wm_score_500',
-    title: '500 Pontos',
-    desc: 'Faça 500 pontos em uma única partida',
-    type: 'score',
-    target: 500,
-    reward: 450,
-    emoji: '💯',
-  },
-  {
-    id: 'wm_acc_95',
-    title: 'Precisão de 95%',
-    desc: 'Termine uma partida com 95% ou mais de precisão',
-    type: 'accuracy',
-    target: 95,
-    reward: 500,
-    emoji: '🎯',
-  },
-];
-
-// ── POOL DE MISSÕES MENSAIS ───────────────────────────────────────────────────
-// 2 são sorteadas no primeiro dia do mês. Metas exigem um mês de dedicação real.
-export const MONTHLY_MISSION_POOL = [
-  {
-    id: 'mm_play_120',
-    title: '120 Partidas',
-    desc: 'Jogue 120 partidas este mês (~4/dia)',
-    type: 'play',
-    target: 120,
-    reward: 900,
-    emoji: '🎮',
-  },
-  {
-    id: 'mm_play_250',
-    title: '250 Partidas',
-    desc: 'Jogue 250 partidas este mês (~8/dia)',
-    type: 'play',
-    target: 250,
-    reward: 1800,
-    emoji: '🎮',
-  },
-  {
-    id: 'mm_correct_4000',
-    title: '4000 Acertos',
-    desc: 'Acerte 4000 contas este mês (~130/dia)',
-    type: 'correct_month',
-    target: 4000,
-    reward: 1000,
+    penalty: 80,
     emoji: '✅',
   },
   {
-    id: 'mm_correct_8000',
-    title: '8000 Acertos',
-    desc: 'Acerte 8000 contas este mês (~270/dia)',
+    id: 'mc_correct_3000',
+    title: '3.000 Acertos',
+    desc: 'Acerte 3.000 contas este mês (~100/dia)',
     type: 'correct_month',
-    target: 8000,
-    reward: 2200,
-    emoji: '✅',
-  },
-  {
-    id: 'mm_streak_month_25',
-    title: '25 Dias de Ofensiva',
-    desc: 'Mantenha 25 dias consecutivos de ofensiva este mês',
-    type: 'streak_month',
-    target: 25,
+    target: 3000,
     reward: 800,
+    penalty: 160,
+    emoji: '✅',
+  },
+  {
+    id: 'mc_streak_month_15',
+    title: '15 Dias de Ofensiva',
+    desc: 'Mantenha 15 dias consecutivos de ofensiva este mês',
+    type: 'streak_month',
+    target: 15,
+    reward: 450,
+    penalty: 90,
     emoji: '🔥',
   },
   {
-    id: 'mm_daily_22',
-    title: '22 Desafios Diários',
-    desc: 'Complete o Desafio Diário 22 vezes este mês',
-    type: 'daily',
-    target: 22,
-    reward: 1500,
-    emoji: '🌟',
-  },
-  {
-    id: 'mm_score_350',
-    title: 'Pontuação 350',
-    desc: 'Faça 350 pontos em uma única partida',
+    id: 'mc_score_250',
+    title: 'Pontuação 250',
+    desc: 'Faça 250 pontos em uma única partida este mês',
     type: 'score',
-    target: 350,
-    reward: 1100,
+    target: 250,
+    reward: 300,
+    penalty: 60,
     emoji: '💯',
   },
 ];

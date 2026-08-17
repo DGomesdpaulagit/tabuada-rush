@@ -400,3 +400,37 @@ foram recalculados pra caber nos 10+1 competidores reais.
 estranha, dá pra reintroduzir com um grace period (ex.: só rebaixa depois de X dias
 na liga OU depois de já ter jogado pelo menos 1 partida nela) em vez do check puro
 no load que causava o bug.
+
+---
+
+## D024 — Metas dos desafios mensais revisadas pra baixo ao adicionar risco
+
+**Data:** 2026-08-17 · sessao-048 (Bloco 5 do reset 6.0)
+**Contexto:** O pool de missões mensais já existia (`MONTHLY_MISSION_POOL`) desde
+antes do reset 6.0, mas sem risco nenhum — era só uma missão longa igual a
+diária/semanal, sempre auto-ativa, sem "aceitar", sem penalidade. Metas eram
+pensadas nesse contexto sem risco: "250 partidas este mês" (~8/dia, todo santo dia
+do mês, sem falhar), "8000 acertos este mês" (~270/dia). O Bloco 5 adicionou a
+mecânica de aceitar + penalidade por não cumprir (confirmada com o Davi desde a
+pergunta inicial da sessão de planejamento, ver seção "Perguntas" do
+planejamento-6.0.md).
+**Decisão:** Manter essas metas antigas equivaleria a garantir que quase todo
+jogador que aceitasse um desafio tomasse a penalidade — não é "desafio", é "imposto".
+Reescrevi o pool inteiro (`MONTHLY_CHALLENGE_POOL`) com metas mais alcançáveis (ex.:
+40-80 partidas/mês em vez de 120-250; 1.500-3.000 acertos em vez de 4.000-8.000) e
+adicionei `penalty` por item, ~20% do `reward` — mesma proporção do exemplo que o
+próprio Davi deu no áudio (ganha 500 / perde 100).
+**Motivo:** Uma mecânica de risco só faz sentido como "desafio" (você pode ganhar OU
+perder, dependendo do seu esforço) se as duas coisas forem plausíveis. Com metas
+sobre-humanas, só existe um resultado — vira imposto disfarçado de desafio, o
+oposto do espírito "motivador" que o Davi descreveu.
+**Efeito colateral:** também removi o tipo de missão `'daily'` (`dm_daily`/
+`mm_daily_22` — "Complete o Desafio Diário X vezes") porque checava
+`result.mode === 'daily'`, e o modo "Desafio Diário" não existe mais desde a fusão
+de modos da 5.0 (virou parte do Rush) — essas missões eram matematicamente
+impossíveis de completar, mesma classe de bug já registrada em `BUGS.md`/
+`MEMORY_CORE.md` pras conquistas `survival_30`/`speed_20`. Corrigido de graça por
+estar mexendo no arquivo de qualquer forma.
+**Revisitar quando:** Depois de alguns meses reais de uso, se as metas novas
+provarem fáceis/difíceis demais na prática — são estimativa, não medição (mesmo
+espírito da D022/D023).

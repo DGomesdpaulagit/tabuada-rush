@@ -179,7 +179,15 @@ andando de trás pra frente:
 
 ---
 
-## 7. Missões e desafios mensais (mecânica de "aposta" nova)
+## 7. Missões e desafios mensais (mecânica de "aposta" nova) — ✅ IMPLEMENTADO (Bloco 5, sessao-048)
+
+> Semanais removidas de vez (código deletado, não só escondido). Metas dos
+> desafios mensais foram revisadas pra baixo em relação ao pool antigo (que
+> não tinha risco) — 250 partidas/mês, por exemplo, garantiria penalidade
+> pra quase todo jogador; ver DECISIONS.md D024 pros números novos e o
+> porquê. Testado o ciclo completo (aceitar → congelar → prazo vencer →
+> penalidade aplicada, inclusive saldo ficando negativo) via manipulação de
+> `localStorage` — funcionou exatamente como especificado.
 
 - **Missões diárias:** fixas, sem risco. Se não completar, não perde nada;
   se completar, só ganha (moedas).

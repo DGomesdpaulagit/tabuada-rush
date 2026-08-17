@@ -4,6 +4,37 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco5] — 2026-08-17 — Tabuada Rush 6.0: Bloco 5/7 (Missões)
+
+**Detalhes em `sessions/sessao-048.md` e `DECISIONS.md` (D024).**
+
+### Removido
+- Missões semanais (pool, lógica, aba na UI) — deletadas por completo
+
+### Adicionado
+- Desafios mensais com aceite + penalidade: `acceptChallenge`/`freezeChallenge`/
+  `resolveChallenges` (`utils/missions.js`) — aceitar é opcional, mas depois de
+  aceito, não cumprir até o prazo desconta `penalty` do saldo (**pode ficar
+  negativo**, quitado automaticamente do próximo ganho — testado e confirmado)
+- Power-up "Congelar Missão" repropositado: agora estende +10 dias o prazo de um
+  desafio mensal aceito (antes pausava uma diária por 24h — diárias não têm mais
+  risco, não fazia mais sentido nelas)
+
+### Alterado
+- Metas dos desafios mensais revisadas pra baixo (eram pensadas pra um sistema sem
+  risco — ex. 250 partidas/mês —, com penalidade vinculada isso garantiria falha
+  pra quase todo jogador). Ver D024.
+- `MissionsPage.jsx` — 2 abas (Diárias/Mensais), mensal mostra "Aceitos" e
+  "Disponíveis pra aceitar"
+
+### Corrigido
+- Removido o tipo de missão `'daily'` ("Complete o Desafio Diário"), morto desde
+  que esse modo foi fundido no Rush na 5.0 — era matematicamente impossível de
+  completar (mesma classe de bug já registrada pras conquistas
+  `survival_30`/`speed_20`)
+
+---
+
 ## [6.0.0-bloco4] — 2026-08-17 — Tabuada Rush 6.0: Bloco 4/7 (Ligas)
 
 **Detalhes em `sessions/sessao-047.md` e `DECISIONS.md` (D023).**

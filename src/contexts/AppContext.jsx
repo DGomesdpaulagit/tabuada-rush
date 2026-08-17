@@ -1,10 +1,25 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { storage } from '../lib/storage';
 import { applyStreakDecay } from '../utils';
+import { resolveChallenges } from '../utils/missions';
 import { useAuth } from './AuthContext';
 import { loadCloudData, saveCloudData } from '../services/sync';
 
 const Ctx = createContext(null);
+
+// [v6.0 · Bloco 5] Resolve desafios mensais vencidos (prazo passou) e aplica
+// a moeda (ganho ou penalidade) — seguro rodar no load, diferente da liga
+// (ver applyLeaguePromotion): resolução é um evento TERMINAL (marca
+// `resolved: true` e nunca reverte), não existe risco de "ping-pong".
+function applyChallengeResolutions(data) {
+  const { missionsData, resolutions } = resolveChallenges(data.missionsData);
+  if (!resolutions.length) return data;
+  const coinDelta = resolutions.reduce(
+    (sum, r) => sum + (r.won ? r.challenge.reward : -r.challenge.penalty),
+    0
+  );
+  return { ...data, missionsData, coins: (data.coins || 0) + coinDelta };
+}
 
 export function AppProvider({ children }) {
   const { user } = useAuth();
@@ -20,8 +35,9 @@ export function AppProvider({ children }) {
   // rebaixamento.
   const [data, setData] = useState(() => {
     const decayed = applyStreakDecay(storage.get());
-    storage.set(decayed);
-    return decayed;
+    const resolved = applyChallengeResolutions(decayed);
+    storage.set(resolved);
+    return resolved;
   });
   const [cloudSyncing, setCloudSyncing] = useState(false);
 
@@ -33,8 +49,9 @@ export function AppProvider({ children }) {
       setCloudSyncing(false);
       if (cloudData && Object.keys(cloudData).length > 0) {
         const decayed = applyStreakDecay(cloudData); // reset de ofensiva também no login
-        storage.set(decayed);
-        setData(decayed);
+        const resolved = applyChallengeResolutions(decayed);
+        storage.set(resolved);
+        setData(resolved);
       } else {
         // First login: push localStorage data to cloud
         const localData = storage.get();

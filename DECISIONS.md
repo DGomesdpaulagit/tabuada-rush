@@ -349,3 +349,54 @@ quando houver telemetria de uso de verdade.
 **Revisitar quando:** Se jogadores reais acharem as faixas altas (100+) frustrantes
 ou sem sentido pedagógico, considerar a opção que não foi escolhida agora (faixas
 = maestria/velocidade dentro de 2-12, não fator novo).
+
+---
+
+## D023 — Ligas: sistema antigo de Ranking de QI mantido em paralelo (não deletado), promoção/rebaixamento só checada em fim de partida
+
+**Data:** 2026-08-17 · sessao-047 (Bloco 4 do reset 6.0)
+**Contexto:** O áudio pedia pra trocar o Ranking de QI (posição estática numa lista
+fixa de 52 personagens, calculada a partir de um score "QI") por Ligas de verdade —
+10 ligas × 10 personagens, competição por XP, promoção/rebaixamento. `getQiInfo`/
+`computeQI`/`CHARACTERS`/`TIERS` (o sistema antigo) são usados em 7 arquivos
+diferentes (App.jsx, MenuPage, PerfilPage, SettingsPage, ResultsPage, CatalogPage,
+RankingPage).
+**Decisão 1 (escopo):** Não deletei o sistema antigo — criei um sistema NOVO e
+paralelo (`constants/leagues.js`, `utils/leagues.js`) e só troquei o CONTEÚDO da
+página "Ligas" (`RankingPage.jsx`, já roteada assim desde o Bloco 1) e o toast de
+promoção em `App.jsx` (que antes comparava QI, agora compara liga). As outras 5 telas
+que ainda mostram um emoji+nome "QI" (MenuPage hero card, PerfilPage, Settings,
+Results, Catalog) continuam com o sistema antigo por enquanto — são exatamente as
+telas que os Blocos 6 (Perfil) e 7 (Estatísticas) vão reorganizar de qualquer jeito,
+então trocar a fonte de dados duas vezes seria retrabalho. Ver planejamento-6.0.md
+seção 9 (Perfil) pra saber onde isso é resolvido de vez.
+**Trade-off:** Por um tempo o app mostra DOIS sistemas de "personagem" diferentes em
+telas diferentes (Menu ainda diz "QI 143 · Harry Potter", Ligas diz "Liga Safira,
+posição 3/11") — pode confundir se o Davi abrir as duas telas em sequência. Aceitável
+como estado intermediário de um rollout em blocos (mesmo padrão do Bloco 1 com a
+paleta), mas registrar aqui pra não parecer esquecimento.
+**Decisão 2 (bug encontrado e corrigido durante a implementação):** a promoção/
+rebaixamento foi inicialmente checada tanto no fim de partida quanto na abertura do
+app (mesmo padrão do `applyStreakDecay`). Isso causava um "ping-pong": jogador é
+promovido, entra na liga nova com 0 XP (correto — ninguém chega com XP emprestado),
+fecha o app, abre de novo sem ter jogado nada — 0 XP ainda é o último lugar da liga
+nova, e ele já cai rebaixado de volta, sem nunca ter tido a chance de jogar ali.
+Removida a checagem no load — agora só roda em `App.jsx handleGameEnd`, depois de
+uma partida de verdade. Consequência: "não praticar" não derruba de liga sozinho só
+por passar o tempo (diferente do que o áudio sugeria) — só na próxima vez que o
+jogador jogar, se a posição ainda estiver ruim. Troca aceitável: apostar numa
+mecânica mais simples e sem bug em vez de replicar a descrição literal com um bug
+de ping-pong.
+**Calibração (estimativa, mesmo espírito da D022):** XP simulado dos personagens usa
+janela rolante de 14 dias (não vitalício, senão personagem de liga alta vira
+matematicamente imbatível só por "existir há mais tempo") com base 60 XP/dia
+(mesma estimativa do Bloco 3) × multiplicador de liga (0.7 Bronze → 1.6 Diamante) ×
+"atividade" do personagem (0.4–0.9, sorteada por nome) ± 30% de chacoalho diário
+(pra ranking oscilar dia a dia, como descrito no áudio). Números de promoção/
+rebaixamento por liga (5/0 no Bronze até 0/3 no Diamante) também são estimativa —
+os exemplos do Davi no áudio (7/5/4) eram pensados pra um pool maior (~30/liga) e
+foram recalculados pra caber nos 10+1 competidores reais.
+**Revisitar quando:** Se o Davi achar a falta de rebaixamento-por-inatividade
+estranha, dá pra reintroduzir com um grace period (ex.: só rebaixa depois de X dias
+na liga OU depois de já ter jogado pelo menos 1 partida nela) em vez do check puro
+no load que causava o bug.

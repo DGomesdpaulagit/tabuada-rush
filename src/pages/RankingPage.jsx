@@ -1,30 +1,21 @@
-import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
-import { CHARACTERS, TIERS, TIER_ORDER } from '../constants/characters';
-import { getQiInfo } from '../utils';
+import { ArrowLeft, ArrowUp, ArrowDown } from 'lucide-react';
+import { LEAGUES } from '../constants/leagues';
+import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
-import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
+import { Button, pageVariants, pageTransition } from '../components/ui';
 
+// ── LIGAS [v6.0 · Bloco 4] ───────────────────────────────────────────────────
+// Substitui o antigo Ranking de QI (posição estática numa lista de 52
+// personagens) — agora é competição de verdade: 10 personagens simulados da
+// liga atual + o jogador, ordenados por XP. Ver utils/leagues.js pro motor.
 export default function RankingPage({ onBack }) {
   const { data } = useApp();
-  const info = getQiInfo(data);
-  const { qi, idx, position, total, char, tier, nextChar, pctToNext } = info;
+  const { league, entries, playerRank, total } = getLeagueStandings(data);
+  const leagueIdx = LEAGUES.findIndex((l) => l.id === league.id);
 
-  // Auto-scroll até o personagem atual ao abrir (após a transição de página).
-  const currentRef = useRef(null);
-  useEffect(() => {
-    const t = setTimeout(() => {
-      currentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 450);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Agrupa os personagens por categoria, preservando a ordem global (índice).
-  const groups = TIER_ORDER.map((t) => ({
-    tier: TIERS[t],
-    items: CHARACTERS.map((c, i) => ({ c, i })).filter((x) => x.c.tier === t),
-  }));
+  const promotionCut = league.promotionCount;
+  const relegationCut = total - league.relegationCount;
 
   return (
     <motion.div
@@ -39,127 +30,97 @@ export default function RankingPage({ onBack }) {
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+          className="w-10 h-10 rounded-xl bg-surface-2 flex items-center justify-center text-fg-muted hover:bg-border transition-colors"
         >
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h2 className="text-xl font-black text-gray-900">Ranking de QI Matemático</h2>
-          <p className="text-sm text-gray-400 font-semibold">Sua evolução intelectual no jogo</p>
+          <h2 className="text-xl font-black text-fg">Ligas</h2>
+          <p className="text-sm text-fg-muted font-semibold">Compita por XP com os personagens da sua liga</p>
         </div>
       </div>
 
-      {/* Hero — QI atual do usuário */}
+      {/* Hero — liga atual */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-gradient-to-br ${tier.gradient} rounded-3xl p-6 text-white shadow-lg`}
+        className={`bg-gradient-to-br ${league.gradient} rounded-3xl p-6 text-white shadow-lg`}
       >
         <div className="flex items-center gap-4">
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.1 }}
-            className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-4xl shrink-0"
-          >
-            {char.emoji}
-          </motion.div>
+          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-4xl shrink-0">
+            {league.emoji}
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide">
-              {tier.classification}
+              Liga {leagueIdx + 1} de {LEAGUES.length}
             </p>
-            <p className="text-2xl font-black leading-tight truncate">{char.name}</p>
-            <p className="text-white/80 text-xs font-semibold mt-0.5 truncate">{char.desc}</p>
+            <p className="text-2xl font-black leading-tight truncate">{league.name}</p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-white/70 text-xs font-bold uppercase tracking-wide">QI</p>
-            <motion.p
-              key={qi}
-              initial={{ scale: 1.3 }}
-              animate={{ scale: 1 }}
-              className="text-3xl font-black tabular-nums"
-            >
-              {qi}
-            </motion.p>
+            <p className="text-white/70 text-xs font-bold uppercase tracking-wide">Posição</p>
+            <p className="text-3xl font-black tabular-nums">{playerRank}º</p>
+            <p className="text-white/70 text-[11px] font-bold">de {total}</p>
           </div>
-        </div>
-
-        {/* Posição + progresso */}
-        <div className="mt-5">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-white/80 text-xs font-bold">
-              Posição {position} de {total}
-            </p>
-            <p className="text-white/80 text-xs font-bold">
-              {nextChar ? `${pctToNext}% para ${nextChar.name}` : 'Topo do ranking! 🎉'}
-            </p>
-          </div>
-          <Progress value={pctToNext} colorClass="bg-white/70" className="bg-white/20 h-2" />
         </div>
       </motion.div>
 
-      {/* Lista de classificações por categoria */}
-      <div className="flex flex-col gap-5">
-        {groups.map(({ tier: t, items }) => (
-          <div key={t.id}>
-            {/* Cabeçalho da categoria */}
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <span className="text-lg">{t.emoji}</span>
-              <div>
-                <p className={`text-sm font-black ${t.text}`}>{t.label}</p>
-                <p className="text-xs text-gray-400 font-semibold">{t.classification}</p>
+      {/* Legenda das zonas */}
+      <div className="flex items-center gap-4 px-1 text-xs font-bold">
+        {league.promotionCount > 0 && (
+          <span className="flex items-center gap-1 text-check-dark">
+            <ArrowUp size={13} /> Zona de promoção (top {league.promotionCount})
+          </span>
+        )}
+        {league.relegationCount > 0 && (
+          <span className="flex items-center gap-1 text-pen-dark">
+            <ArrowDown size={13} /> Zona de rebaixamento (últimos {league.relegationCount})
+          </span>
+        )}
+      </div>
+
+      {/* Classificação */}
+      <div className="flex flex-col gap-2">
+        {entries.map((e, i) => {
+          const rank = i + 1;
+          const inPromotion = rank <= promotionCut;
+          const inRelegation = rank > relegationCut;
+          return (
+            <div key={e.name + rank}>
+              {rank === promotionCut + 1 && promotionCut > 0 && (
+                <div className="h-px bg-check my-1 opacity-40" />
+              )}
+              {rank === relegationCut + 1 && league.relegationCount > 0 && (
+                <div className="h-px bg-pen my-1 opacity-40" />
+              )}
+              <div
+                className={`flex items-center gap-3 rounded-2xl p-3 border-2 transition-all
+                  ${e.isPlayer
+                    ? `bg-gradient-to-br ${league.gradientLight} ${league.border} ring-2 ring-offset-1 ${league.text} shadow-sm`
+                    : 'bg-surface border-border'}`}
+              >
+                <span className={`w-7 text-center text-xs font-black shrink-0
+                  ${inPromotion ? 'text-check-dark' : inRelegation ? 'text-pen-dark' : 'text-fg-muted'}`}>
+                  {rank}
+                </span>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 bg-surface-2">
+                  {e.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`font-black text-sm truncate ${e.isPlayer ? league.text : 'text-fg'}`}>
+                    {e.name}
+                  </p>
+                  {e.desc && <p className="text-xs text-fg-muted font-semibold truncate">{e.desc}</p>}
+                </div>
+                <p className="text-sm font-black text-fg-muted tabular-nums shrink-0">{e.xp} XP</p>
               </div>
             </div>
-
-            {/* Personagens da categoria */}
-            <div className="flex flex-col gap-2">
-              {items.map(({ c, i }) => {
-                const isCurrent = i === idx;
-                const unlocked = i <= idx;
-                return (
-                  <div
-                    key={c.name + i}
-                    ref={isCurrent ? currentRef : null}
-                    className={`flex items-center gap-3 rounded-2xl p-3 border transition-all
-                      ${isCurrent
-                        ? `bg-gradient-to-br ${t.gradientLight} ${t.border} ring-2 ring-offset-1 ${t.text} shadow-sm`
-                        : 'bg-white border-gray-100'}`}
-                  >
-                    {/* Posição */}
-                    <span className="w-7 text-center text-xs font-black text-gray-400 shrink-0">
-                      {i + 1}
-                    </span>
-                    {/* Avatar */}
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0
-                        ${unlocked ? t.badge : 'bg-gray-100 grayscale opacity-50'}`}
-                    >
-                      {c.emoji}
-                    </div>
-                    {/* Nome + descrição */}
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-black text-sm truncate ${isCurrent ? t.text : 'text-gray-800'}`}>
-                        {c.name}
-                      </p>
-                      <p className="text-xs text-gray-400 font-semibold truncate">{c.desc}</p>
-                    </div>
-                    {/* Marcador "você" */}
-                    {isCurrent && (
-                      <span className={`shrink-0 text-[10px] font-black px-2 py-1 rounded-full ${t.badge}`}>
-                        VOCÊ
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <Button variant="secondary" onClick={onBack} className="w-full">
         <ArrowLeft size={16} />
-        Voltar ao Menu
+        Voltar
       </Button>
     </motion.div>
   );

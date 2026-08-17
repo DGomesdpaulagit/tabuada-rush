@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.0-bloco4] — 2026-08-17 — Tabuada Rush 6.0: Bloco 4/7 (Ligas)
+
+**Detalhes em `sessions/sessao-047.md` e `DECISIONS.md` (D023).**
+
+### Adicionado
+- `constants/leagues.js` — 10 ligas (Bronze→Diamante) × 10 personagens (100 no total)
+- `utils/leagues.js` — motor da competição: XP simulado por personagem (janela
+  rolante de 14 dias, oscila dia a dia), classificação, promoção/rebaixamento
+
+### Alterado
+- `RankingPage.jsx` ("Ligas" na sidebar) — deixa de mostrar posição estática numa
+  lista de personagens e passa a mostrar a liga atual, competidores e zonas de
+  promoção/rebaixamento
+- Toast de "subiu de classificação no Ranking de QI" virou toast de promoção/
+  rebaixamento de liga
+
+### Corrigido (durante a implementação, antes de qualquer commit)
+- Bug de "ping-pong" de liga — promover e checar de novo no load do app
+  rebaixava de volta um jogador que tinha acabado de ser promovido, sem ele
+  ter jogado nada. Promoção/rebaixamento agora só é avaliado em fim de
+  partida (ver D023).
+
+**Nota de escopo:** o sistema antigo de Ranking de QI (`getQiInfo`) não foi
+removido — continua alimentando 5 telas que ainda não passaram pelo reset 6.0
+(Menu, Perfil, Settings, Results, Catalog). Ver D023.
+
+---
+
 ## [6.0.0-bloco3] — 2026-08-17 — Tabuada Rush 6.0: Bloco 3/7 (Progressão de tabuada)
 
 **Detalhes em `sessions/sessao-046.md` e `DECISIONS.md` (D022).**

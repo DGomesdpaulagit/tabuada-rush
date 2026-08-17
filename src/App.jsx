@@ -2,7 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, getQiInfo, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
+import { checkNewAchievements, todayStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
+import { applyLeaguePromotion } from './utils/leagues';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -618,16 +619,31 @@ export default function App() {
         setShowParticles(true);
       }
 
-      // Subiu de classificação no Ranking de QI?
-      const prevQi = getQiInfo(data);
-      const newQi = getQiInfo(newData);
-      if (newQi.idx > prevQi.idx) {
-        showAchievement({
-          id: '_qi_up',
-          icon: newQi.char.emoji,
-          title: 'Nova Classificação!',
-          desc: `Agora você é ${newQi.char.name} · QI ${newQi.qi}`,
-        });
+      // [v6.0 · Bloco 4] Promoveu/rebaixou de liga com essa partida? Substitui
+      // o antigo toast de "subiu de classificação no Ranking de QI" — ver
+      // DECISIONS.md (Ligas) e utils/leagues.js.
+      const leaguePromo = applyLeaguePromotion(newData);
+      if (leaguePromo.promoted || leaguePromo.relegated) {
+        update((prev) => ({
+          ...prev,
+          leagueId: leaguePromo.data.leagueId,
+          leagueXpBase: leaguePromo.data.leagueXpBase,
+        }));
+        showAchievement(
+          leaguePromo.promoted
+            ? {
+                id: '_league_up',
+                icon: leaguePromo.newLeague.emoji,
+                title: 'Promoção de Liga!',
+                desc: `Você subiu pra Liga ${leaguePromo.newLeague.name}`,
+              }
+            : {
+                id: '_league_down',
+                icon: leaguePromo.newLeague.emoji,
+                title: 'Rebaixamento de Liga',
+                desc: `Você caiu pra Liga ${leaguePromo.newLeague.name}`,
+              }
+        );
       }
 
       // New record check

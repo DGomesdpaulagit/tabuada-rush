@@ -80,7 +80,16 @@ removidas). Ícone de missão = baú.
 
 ---
 
-## 4. Ligas (substitui o Ranking de QI)
+## 4. Ligas (substitui o Ranking de QI) — ✅ IMPLEMENTADO (Bloco 4, sessao-047)
+
+> Números de promoção/rebaixamento e calibração de XP dos personagens são
+> estimativa (ver DECISIONS.md D023 pros números exatos e o porquê). Sistema
+> antigo (Ranking de QI/`getQiInfo`) NÃO foi deletado — continua alimentando 5
+> telas que ainda não foram pro reset 6.0 (Menu, Perfil, Settings, Results,
+> Catalog); só a página "Ligas" em si e o toast de promoção usam o sistema
+> novo. Ver D023 pro raciocínio completo, incluindo um bug de ping-pong
+> encontrado e corrigido durante a implementação (promoção/rebaixamento só
+> é checado em fim de partida agora, não mais ao abrir o app).
 
 Mudança de conceito: hoje o Ranking de QI é uma **comparação estática**
 (seu QI vs. personagens fixos). Na 6.0 vira **competição ativa**, estilo

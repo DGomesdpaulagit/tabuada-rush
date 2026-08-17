@@ -9,6 +9,15 @@ const Ctx = createContext(null);
 export function AppProvider({ children }) {
   const { user } = useAuth();
   // Ao iniciar, aplica o reset de ofensiva (dia perdido / virada de ano) e persiste.
+  // [v6.0 · Bloco 4] Promoção/rebaixamento de liga NÃO é checado aqui de
+  // propósito — só em App.jsx handleGameEnd (depois de uma partida de
+  // verdade). Cheguei a checar no load também, mas isso criava um "ping-pong":
+  // jogador é promovido, entra na liga nova com 0 XP (correto, ninguém chega
+  // com XP emprestado), fecha o app, abre de novo sem ter jogado nada — 0 XP
+  // ainda é o último lugar, cai relegado na hora, sem nunca ter tido a chance
+  // de jogar na liga nova. Só reavaliar no fim de partida garante que o
+  // jogador sempre teve pelo menos 1 chance de pontuar antes de qualquer
+  // rebaixamento.
   const [data, setData] = useState(() => {
     const decayed = applyStreakDecay(storage.get());
     storage.set(decayed);

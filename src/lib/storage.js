@@ -26,6 +26,8 @@ export const DEFAULTS = {
   pendingStreakReward: null, // marco com recompensa pendente de escolha (ou null)
   coins: 0,                  // moedas do jogo (economia)
   livesData: { date: null, remaining: 5 }, // [v6.0 · Bloco 2] pote de vidas diárias — ver getLivesInfo em utils
+  leagueId: 'bronze',    // [v6.0 · Bloco 4] liga atual — ver utils/leagues.js
+  leagueXpBase: 0,       // XP total no momento em que entrou na liga atual (delta = xp - leagueXpBase)
   powerups: {},              // { life: N, time: N, xp2: N } — consumíveis da loja
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
   equippedItems: {},         // { frame, card } → id do item equipado em cada slot

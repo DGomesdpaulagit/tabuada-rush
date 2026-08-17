@@ -651,6 +651,7 @@ export default function App() {
       update((prev) => ({
         ...prev,
         leagueId: leaguePromo.data.leagueId,
+        leagueHighestId: leaguePromo.data.leagueHighestId,
         leagueXpBase: leaguePromo.data.leagueXpBase,
         leagueEnteredAt: leaguePromo.data.leagueEnteredAt,
         leaguePodiums: leaguePromo.data.leaguePodiums,

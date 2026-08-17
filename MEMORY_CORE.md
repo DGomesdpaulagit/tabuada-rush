@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.2 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas — sessao-052.md)
+**Versão:** 6.0.3 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + escada — sessao-053.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -29,6 +29,15 @@ nos registros mesmo assim (ver D020-D026). Sessão 051: fechados os débitos con
 em aberto do Bloco 4 (XP/faixa, personagens/liga, zonas de promoção) — recalibração
 completa implementada, incluindo um modelo de tempo novo (ciclo global de 6 dias) que
 também resolveu o bug de ping-pong de forma mais robusta que o fix da sessão 051.
+Sessão 053: fechou o último ponto em aberto de D030 ("ver outras divisões") — mostrei
+3 mockups de UI num artifact interativo antes de codar, o Davi escolheu a escada
+vertical com uma regra de acesso dele mesmo (bloqueio por progresso já alcançado).
+**[v6.0.3]** Tela de Ligas virou escada vertical (Bronze embaixo → Diamante no topo).
+Só é possível ver roster + classificação de uma liga que o jogador JÁ alcançou algum
+dia (`leagueHighestId`, nunca desce com rebaixamento) — ligas acima disso ficam
+bloqueadas (cadeado, sem nome/roster visível). **Não confirmado visualmente ainda**
+(limitação do Browser pane deste ambiente, ver BUGS.md) — pedir ao Davi pra testar.
+Ver `sessao-053.md` e D031.
 **[v6.0.2]** Recalibração completa das Ligas: XP das faixas de tabuada recalculado
 (âncoras do Davi), personagens por liga decrescendo 20→4 (114 no total, Einstein foi
 pra Diamante), zonas de promoção decrescendo 8→0, promoção/rebaixamento agora por
@@ -259,24 +268,27 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — EDIÇÕES QUE O DAVI OBSERVOU USANDO O APP
+## 🎯 PRÓXIMA SESSÃO — CONFIRMAR A ESCADA DE LIGAS, DEPOIS FEEDBACK DE USO
 
-**Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-052.md`
-(recalibração de Ligas, a mais recente) → `DECISIONS.md` D020-D030.
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-053.md` (escada de
+Ligas, a mais recente) → `sessions/planejamento-6.0.md` (spec completa do
+reset) → `DECISIONS.md` D020-D031.
 
-**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050), os
-débitos conhecidos foram fechados na sessão 051 (D027-D029), e a
-recalibração de Ligas (XP/faixa, personagens/liga, zonas de promoção, ciclo
-de 6 dias) foi entregue na sessão 052 com números reais dados pelo Davi
-(D030) — não sobrou mais nenhuma pergunta em aberto do Bloco 4. Davi disse
-explicitamente que a próxima conversa traz "as edições que observei dentro
-do jogo" — ou seja, feedback de uso real, não um novo bloco planejado por
-mim. Começar ouvindo o que ele traz, não propondo roadmap novo sozinho.
+**Pendência real, não estética:** a sessão 053 implementou a escada de Ligas
+("ver outras divisões" — D030/D031), mas **não foi confirmada visualmente**
+— o Browser pane deste ambiente não compõe frames (ver seção 🐛 BUGS
+CONHECIDOS), então a navegação/clique não pôde ser testada de ponta a ponta.
+Pedir ao Davi pra abrir a tela de Ligas e confirmar: (1) degrau desbloqueado
+abre a folha com o roster certo, (2) degrau bloqueado não faz nada e não
+revela personagens, (3) a PRÓPRIA liga atual dele não aparece bloqueada
+(o caso que a auto-cura do `leagueHighestId` existe pra evitar).
 
-**Em aberto, não é pendência técnica:** "ver outras divisões" (acompanhar a
-competição de uma liga que não é a do jogador) — o próprio Davi disse que
-isso precisa de conversa antes de virar decisão (D030).
+**Depois disso:** os 7 blocos do reset 6.0 (sessões 044-050), a limpeza de
+débitos (051, D027-D029), a recalibração de Ligas (052, D030) e agora a
+escada (053, D031) fecham tudo que estava em aberto do Bloco 4. Davi disse
+que a próxima pauta depois disso é "as edições que observei dentro do jogo"
+— feedback de uso real, não um novo bloco planejado por mim. Começar
+ouvindo o que ele traz, não propondo roadmap novo sozinho.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -285,7 +297,10 @@ História (narrativa infinita) — ver D018.
 
 ## 🐛 BUGS CONHECIDOS
 
-- Nenhum bug ativo conhecido no APP em si.
+- Nenhum bug ativo conhecido no APP em si. **Pendente de confirmação visual
+  (não é bug conhecido, é falta de teste):** escada de Ligas da sessão 053
+  (D031) — build limpo e código revisado, mas navegação real não testada
+  neste ambiente. Ver seção "PRÓXIMA SESSÃO" acima.
 - **Ambiente de preview (Claude Code, não é bug do app):** o Browser pane
   desta sessão não compôs frames (`screenshot` falha, cliques via
   `computer`/dispatch de evento não produzem navegação observável) —
@@ -350,8 +365,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-052.md` — última sessão (recalibração completa das Ligas)
-5. `DECISIONS.md` D020-D030 (reset 6.0 + limpeza + recalibração) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-053.md` — última sessão (escada de Ligas)
+5. `DECISIONS.md` D020-D031 (reset 6.0 + limpeza + recalibração + escada) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 6.0.2 (Reset completo + débitos fechados + Ligas recalibradas com números reais do Davi · sessao-052; ver `sessions/planejamento-6.0.md`)  
+**Versão:** 6.0.3 (Reset completo + débitos fechados + Ligas recalibradas + escada de Ligas · sessao-053; ver `sessions/planejamento-6.0.md`)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

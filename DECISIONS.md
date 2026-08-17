@@ -670,6 +670,61 @@ futura se o Davi quiser.
 
 ---
 
+## D031 — "Ver outras ligas" vira escada com bloqueio por progresso
+
+**Data:** 2026-08-17 · sessao-053
+**Contexto:** D030 deixou "ver outras divisões" como conversa em aberto, não
+decisão fechada. Nesta sessão o Davi trouxe a resposta: mostrei 3 mockups de
+UI (lista abaixo do ranking, trilha vertical/escada, seletor de chips no
+topo) num artifact interativo com a paleta real do app — ele escolheu a
+escada, com uma regra de acesso que eu não tinha proposto nos mockups:
+**progresso bloqueia visualização**. Só dá pra ver o roster/classificação de
+uma liga que o jogador JÁ alcançou algum dia (mesmo se caiu dela depois);
+ligas acima da mais alta já alcançada ficam bloqueadas (sem nome, sem
+roster, só um cadeado).
+
+**Decisão:**
+1. **Novo campo `leagueHighestId`** (`storage.js` DEFAULTS + `enterLeague`
+   em `utils/leagues.js`) — a liga mais alta já alcançada. Só SOBE, nunca
+   desce com rebaixamento (`Math.max` entre o índice guardado e o novo).
+   Saves antigos (sem o campo, ou com ele desatualizado) se auto-curam no
+   próximo load: `applyLeaguePromotion` agora recalcula
+   `leagueHighestId = max(liga atual, valor guardado)` incondicionalmente,
+   ANTES do gate de ciclo de 6 dias — senão um jogador com save antigo
+   veria a própria liga atual aparecer bloqueada na escada.
+2. **`App.jsx` handleGameEnd** precisou incluir `leagueHighestId` na lista
+   explícita de campos persistidos do resultado de `applyLeaguePromotion`
+   (o código já filtrava campo a campo, não fazia spread do objeto inteiro)
+   — sem isso a promoção calculava certo mas nunca gravava.
+3. **`RankingPage.jsx` reescrita** — escada vertical (Bronze embaixo,
+   Diamante no topo), degraus desbloqueados (`idx <= highestIdx`) abrem uma
+   folha (bottom sheet) com roster + zona de promoção/rebaixamento via
+   `getLeagueStandings(data, league.id)` (motor já suportava override desde
+   o Bloco 4 — D030 item 4). Liga atual mostra a linha "Você" + posição
+   real (comportamento já embutido em `getLeagueStandings`: só inclui o
+   jogador quando `leagueId === data.leagueId`); ligas já passadas mas não
+   atuais mostram só o roster, sem "Você" — mesma regra que o Davi definiu
+   pras respostas do Q2 na conversa anterior sobre os mockups. Degraus
+   bloqueados não abrem nada (disabled, sem clique), sem revelar nome nem
+   personagens.
+
+**Verificado:** `npm run build` limpo. Navegação real (clique + animação de
+página) não pôde ser confirmada neste ambiente — Browser pane roda com
+`document.hidden === true` (aba sem compositing real), então a transição
+`AnimatePresence mode="wait"` do `App.jsx` trava indefinidamente no
+`requestAnimationFrame` e a página nova nunca monta (mesma limitação já
+registrada em BUGS.md, não é bug do app). Confirmei a lógica lendo o código
+(auto-cura testada mentalmente pros 3 casos: save novo, save antigo sem
+campo, jogador rebaixado depois de promovido) e o roteamento em si (o
+clique no menu lateral mudou a classe ativa pra "Ligas" corretamente).
+**Pedir ao Davi pra confirmar visualmente** — abrir/fechar a folha, e testar
+que uma liga acima da mais alta alcançada fica realmente bloqueada.
+
+**Revisitar quando:** se o Davi quiser, dá pra reaproveitar a mesma escada
+como base pro "próprio mapa de progresso" no Perfil (ainda não existe).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

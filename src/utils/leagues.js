@@ -107,15 +107,26 @@ export function getLeagueStandings(data, leagueIdOverride = null) {
 const PODIUM_RANK = 3;
 
 // Empacota a troca de liga (promoção ou rebaixamento): reseta o XP-base, o
-// flag de pódio e marca a data de entrada (informativo).
+// flag de pódio e marca a data de entrada (informativo). `leagueHighestId`
+// só SOBE (nunca desce com rebaixamento) — é o que controla o que fica
+// desbloqueado na escada de ligas (RankingPage): o jogador sempre pode
+// revisitar qualquer liga que já alcançou, mesmo caindo dela depois.
 function enterLeague(data, newLeagueId) {
+  const newIdx = leagueIndexOf(newLeagueId);
+  const storedHighestIdx = leagueIndexOf(data.leagueHighestId || data.leagueId);
+  const highestIdx = Math.max(newIdx, storedHighestIdx < 0 ? 0 : storedHighestIdx);
   return {
     ...data,
     leagueId: newLeagueId,
+    leagueHighestId: LEAGUES[highestIdx].id,
     leagueXpBase: data.xp || 0,
     leaguePodiumClaimed: false,
     leagueEnteredAt: todayStr(),
   };
+}
+
+function leagueIndexOf(id) {
+  return LEAGUES.findIndex((l) => l.id === id);
 }
 
 // [v6.0 · recalibração 2026-08-17] Relógio GLOBAL de ciclos de 6 dias — não
@@ -138,6 +149,14 @@ export function getCurrentCycle() {
 // sendo rebaixado de volta na hora) — como só existe UMA avaliação por
 // ciclo, não tem como promover e reavaliar na mesma passada nunca mais.
 export function applyLeaguePromotion(data) {
+  // Auto-cura do leagueHighestId: sempre, independente do gate de ciclo
+  // abaixo — senão um save antigo (sem o campo) ou desatualizado ficaria com
+  // a própria liga atual bloqueada na escada. Nunca abaixa o valor, só sobe.
+  const currentIdx = leagueIndexOf(data.leagueId || LEAGUES[0].id);
+  const storedHighestIdx = leagueIndexOf(data.leagueHighestId);
+  const healedHighestId = LEAGUES[Math.max(currentIdx, storedHighestIdx < 0 ? 0 : storedHighestIdx)].id;
+  if (healedHighestId !== data.leagueHighestId) data = { ...data, leagueHighestId: healedHighestId };
+
   const cycle = getCurrentCycle();
   const noop = { data, promoted: false, relegated: false, newLeague: null, podiumAchieved: false };
   if (data.leagueLastCycleChecked === cycle) return noop;

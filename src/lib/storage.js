@@ -27,6 +27,7 @@ export const DEFAULTS = {
   coins: 0,                  // moedas do jogo (economia)
   livesData: { date: null, remaining: 5 }, // [v6.0 · Bloco 2] pote de vidas diárias — ver getLivesInfo em utils
   leagueId: 'bronze',    // [v6.0 · Bloco 4] liga atual — ver utils/leagues.js
+  leagueHighestId: 'bronze', // [v6.0 · escada de ligas] liga mais alta já alcançada (nunca desce com rebaixamento) — define o que fica desbloqueado na tela de Ligas. Auto-curado em applyLeaguePromotion pra saves antigos sem este campo.
   leagueXpBase: 0,       // XP total no momento em que entrou na liga atual (delta = xp - leagueXpBase)
   leagueEnteredAt: null, // data (YYYY-MM-DD) em que entrou na liga atual — informativo
   leaguePodiums: 0,      // nº de vezes que ficou entre os 3 primeiros de uma liga

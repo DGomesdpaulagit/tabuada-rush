@@ -4,6 +4,24 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.3] — 2026-08-17 — Escada de Ligas (ver outras ligas, bloqueada por progresso)
+
+**Detalhes em `sessions/sessao-053.md` e `DECISIONS.md` (D031).**
+
+### Adicionado
+- Tela de Ligas reescrita como escada vertical (Bronze embaixo → Diamante no
+  topo). Toca num degrau desbloqueado pra abrir uma folha com o roster
+  completo + zona de promoção/rebaixamento daquela liga
+- `leagueHighestId` — liga mais alta já alcançada (só sobe, nunca desce com
+  rebaixamento); controla o que fica desbloqueado na escada. Saves antigos
+  se auto-curam no load
+
+### Alterado
+- Ligas acima da mais alta já alcançada ficam bloqueadas (cadeado, sem nome
+  nem roster visível)
+
+---
+
 ## [6.0.2] — 2026-08-17 — Recalibração completa das Ligas
 
 **Detalhes em `sessions/sessao-052.md` e `DECISIONS.md` (D030).**

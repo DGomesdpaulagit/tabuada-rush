@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.2] — 2026-08-17 — Recalibração completa das Ligas
+
+**Detalhes em `sessions/sessao-052.md` e `DECISIONS.md` (D030).**
+
+### Alterado
+- Curva de XP das faixas de tabuada recalculada (âncoras do Davi: 1ª faixa 9
+  meses, última faixa ~28,5 meses no total)
+- Personagens por liga: 114 no total, decrescendo de 20 (Bronze) a 4 (Diamante)
+  — era fixo em 10/liga. Einstein migrou de Pérola pra Diamante.
+- Zonas de promoção decrescentes (8 no Bronze até 0 na Diamante)
+- `leagueMultiplier` esticado (0.7×-2.2×) — ligas altas ficam de fato muito
+  mais difíceis com pote menor de personagens
+- Promoção/rebaixamento de liga agora avaliado por CICLO GLOBAL de 6 dias
+  (era a cada partida) — XP dos personagens atualiza a cada 12h
+
+### Adicionado
+- 9 conquistas novas por liga alcançada (Prata até Diamante)
+- Bônus de +25% XP enquanto no pódio (top 3) da liga Diamante
+
+### Removido
+- `checkInactivityRelegation`/grace-period manual (D027, sessão 051) — o
+  modelo de ciclo de 6 dias já resolve o mesmo problema de forma mais robusta
+
+---
+
 ## [6.0.1] — 2026-08-17 — Limpeza dos débitos conhecidos do reset 6.0
 
 **Detalhes em `sessions/sessao-051.md` e `DECISIONS.md` (D027-D029).**

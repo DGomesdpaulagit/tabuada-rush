@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import { storage } from '../lib/storage';
 import { applyStreakDecay } from '../utils';
 import { resolveChallenges } from '../utils/missions';
-import { checkInactivityRelegation } from '../utils/leagues';
+import { applyLeaguePromotion } from '../utils/leagues';
 import { useAuth } from './AuthContext';
 import { loadCloudData, saveCloudData } from '../services/sync';
 
@@ -25,19 +25,17 @@ function applyChallengeResolutions(data) {
 export function AppProvider({ children }) {
   const { user } = useAuth();
   // Ao iniciar, aplica o reset de ofensiva (dia perdido / virada de ano) e persiste.
-  // [v6.0 · Bloco 4, refinado pós-reset] PROMOÇÃO de liga nunca é checada
-  // aqui — só em App.jsx handleGameEnd (depois de uma partida de verdade).
-  // REBAIXAMENTO por inatividade agora É checado no load, mas com grace
-  // period (`checkInactivityRelegation`, ver utils/leagues.js) — é a versão
-  // segura da checagem que causava o "ping-pong" documentado em D023
-  // (jogador recém-promovido com 0 XP sendo rebaixado de volta na hora, sem
-  // nunca ter jogado na liga nova). Com o grace period, só rebaixa depois de
-  // alguns dias de fato parado — "não praticar" volta a custar posição, como
-  // o áudio original pedia, sem reintroduzir o bug.
+  // [v6.0 · recalibração 2026-08-17] `applyLeaguePromotion` agora é seguro
+  // de chamar tanto aqui (load) quanto em App.jsx handleGameEnd (fim de
+  // partida) — a checagem só avalia promoção/rebaixamento/pódio UMA VEZ POR
+  // CICLO de 6 dias (ver getCurrentCycle em utils/leagues.js); fora disso é
+  // um no-op instantâneo. Isso substitui o grace-period manual que existia
+  // antes (D027) — o próprio ciclo já evita o "ping-pong" (D023): não tem
+  // como promover e reavaliar de novo na mesma passada, só no ciclo seguinte.
   const [data, setData] = useState(() => {
     const decayed = applyStreakDecay(storage.get());
     const resolved = applyChallengeResolutions(decayed);
-    const leagueChecked = checkInactivityRelegation(resolved).data;
+    const leagueChecked = applyLeaguePromotion(resolved).data;
     // [v6.0 · Bloco 6] "No jogo desde..." no Perfil — setado uma única vez,
     // no primeiro load que não tem `createdAt` ainda (retroativo pra quem
     // já jogava antes deste bloco: a partir de agora, não desde sempre).
@@ -58,7 +56,7 @@ export function AppProvider({ children }) {
       if (cloudData && Object.keys(cloudData).length > 0) {
         const decayed = applyStreakDecay(cloudData); // reset de ofensiva também no login
         const resolved = applyChallengeResolutions(decayed);
-        const leagueChecked = checkInactivityRelegation(resolved).data;
+        const leagueChecked = applyLeaguePromotion(resolved).data;
         storage.set(leagueChecked);
         setData(leagueChecked);
       } else {

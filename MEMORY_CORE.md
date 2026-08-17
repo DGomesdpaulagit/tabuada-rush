@@ -19,19 +19,25 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.1 (Tabuada Rush 6.0 completo + limpeza de débitos — sessao-051.md)
+**Versão:** 6.0.2 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas — sessao-052.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
 ("vamos terminar esses blocos"/"bora pra próxima"), com decisões não-óbvias sinalizadas
-nos registros mesmo assim (ver D020-D026). Na sessão 051, o Davi pediu pra fechar os
-débitos conhecidos ANTES de partir pras próximas edições — 4 de 5 foram resolvidos por
-código (D027-D029), 1 (calibração de XP/ligas) foi explicado como não-fechável sem
-telemetria real, não ignorado. **Reset 6.0 + limpeza de débitos = fechados.**
+nos registros mesmo assim (ver D020-D026). Sessão 051: fechados os débitos conhecidos
+(D027-D029). Sessão 052: o Davi respondeu com especificações concretas pras perguntas
+em aberto do Bloco 4 (XP/faixa, personagens/liga, zonas de promoção) — recalibração
+completa implementada, incluindo um modelo de tempo novo (ciclo global de 6 dias) que
+também resolveu o bug de ping-pong de forma mais robusta que o fix da sessão 051.
+**[v6.0.2]** Recalibração completa das Ligas: XP das faixas de tabuada recalculado
+(âncoras do Davi), personagens por liga decrescendo 20→4 (114 no total, Einstein foi
+pra Diamante), zonas de promoção decrescendo 8→0, promoção/rebaixamento agora por
+CICLO de 6 dias (não mais por partida — resolve D023 de vez), 9 conquistas novas por
+liga, bônus de XP no pódio Diamante. Ver `sessao-052.md` e D030.
 **[v6.0.1]** Rebaixamento por inatividade reintroduzido com grace period de 3 dias
-(corrige a causa raiz do bug do Bloco 4, não só remove a feature); Pódios nas ligas
-implementado (card novo no Perfil); filtros de modo mortos removidos de HitsPage/
-ErrorsPage/AccuracyCatalogPage. Ver `sessao-051.md` e D027-D029.
+(corrige a causa raiz do bug do Bloco 4, não só remove a feature — SUPERADO pelo
+modelo de ciclo da v6.0.2, ver D030); Pódios nas ligas implementado; filtros de modo
+mortos removidos de HitsPage/ErrorsPage/AccuracyCatalogPage. Ver `sessao-051.md` e D027-D029.
 **[v6.0.0]** Bloco 7/7 (Estatísticas) — guia lateral tipo Notion (implementado sem a
 referência visual que o Davi ia mandar, nunca chegou — D026), remove "Partidas por
 modo"/"Power-ups"/"Modo Favorito", Acertos/Erros migram pro Catálogo de Precisão,
@@ -256,20 +262,21 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — EDIÇÕES QUE O DAVI OBSERVOU USANDO O APP
 
 **Ler obrigatoriamente antes de começar:** `sessions/planejamento-6.0.md` (spec
-completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-051.md`
-(limpeza de débitos, a mais recente) → `DECISIONS.md` D020-D029.
+completa do reset, todas as 7 seções marcadas ✅) → `sessions/sessao-052.md`
+(recalibração de Ligas, a mais recente) → `DECISIONS.md` D020-D030.
 
-**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050), e os
-débitos conhecidos foram fechados na sessão 051 (D027-D029) — exceto
-calibração de XP/liga (D022/D023), que não é fechável em código, só com uso
-real ao longo do tempo. Davi disse explicitamente que a próxima conversa
-traz "as edições que observei dentro do jogo" — ou seja, feedback de uso
-real, não um novo bloco planejado por mim. Começar ouvindo o que ele traz,
-não propondo roadmap novo sozinho.
+**Os 7 blocos do reset 6.0 foram todos entregues** (sessões 044-050), os
+débitos conhecidos foram fechados na sessão 051 (D027-D029), e a
+recalibração de Ligas (XP/faixa, personagens/liga, zonas de promoção, ciclo
+de 6 dias) foi entregue na sessão 052 com números reais dados pelo Davi
+(D030) — não sobrou mais nenhuma pergunta em aberto do Bloco 4. Davi disse
+explicitamente que a próxima conversa traz "as edições que observei dentro
+do jogo" — ou seja, feedback de uso real, não um novo bloco planejado por
+mim. Começar ouvindo o que ele traz, não propondo roadmap novo sozinho.
 
-**Nº de personagens por liga e tamanho das zonas de promoção/rebaixamento**
-foram decididos por mim (proposta concreta, não travei esperando resposta
-perfeita) — se o Davi achar estranho na prática, são ajustáveis.
+**Em aberto, não é pendência técnica:** "ver outras divisões" (acompanhar a
+competição de uma liga que não é a do jogador) — o próprio Davi disse que
+isso precisa de conversa antes de virar decisão (D030).
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -343,8 +350,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-051.md` — última sessão (limpeza dos débitos conhecidos do reset)
-5. `DECISIONS.md` D020-D029 (reset 6.0 + limpeza) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-052.md` — última sessão (recalibração completa das Ligas)
+5. `DECISIONS.md` D020-D030 (reset 6.0 + limpeza + recalibração) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

@@ -490,7 +490,16 @@ export default function App() {
         const MODE_XP_MULT = { rush: 0.20, zen: 0, review: 0.16 };
         // Power-up XP Dobrado: dobra o XP desta partida e consome 1 unidade do estoque
         const xp2Active = (prev.powerups?.xp2 || 0) > 0;
-        const gameXp = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) * (xp2Active ? 2 : 1);
+        // [pendência pós-reset] Pódio da Diamante dá XP extra enquanto durar
+        // (avaliado por ciclo de 6 dias — ver utils/leagues.js). Checa o
+        // estado ANTES desta partida (prev), igual ao xp2Active acima.
+        const DIAMOND_PODIUM_BONUS = 1.25;
+        const diamondBonusActive = !!prev.diamondPodiumActive;
+        const gameXp = Math.round(
+          Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) *
+            (xp2Active ? 2 : 1) *
+            (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1)
+        );
         const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
@@ -646,6 +655,8 @@ export default function App() {
         leagueEnteredAt: leaguePromo.data.leagueEnteredAt,
         leaguePodiums: leaguePromo.data.leaguePodiums,
         leaguePodiumClaimed: leaguePromo.data.leaguePodiumClaimed,
+        leagueLastCycleChecked: leaguePromo.data.leagueLastCycleChecked,
+        diamondPodiumActive: leaguePromo.data.diamondPodiumActive,
       }));
       if (leaguePromo.promoted || leaguePromo.relegated) {
         showAchievement(
@@ -684,8 +695,11 @@ export default function App() {
         });
       }
 
-      // Achievement check
-      const newAchievements = checkNewAchievements(newData);
+      // Achievement check — usa newData COM os campos de liga já atualizados
+      // (leaguePromo.data), senão uma conquista de "chegou na liga X" só
+      // apareceria na partida seguinte (checkNewAchievements corre antes do
+      // update() de liga terminar de persistir).
+      const newAchievements = checkNewAchievements({ ...newData, ...leaguePromo.data });
       if (newAchievements.length) {
         update((prev) => ({
           ...prev,

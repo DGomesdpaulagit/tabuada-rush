@@ -576,6 +576,100 @@ código pendente.
 
 ---
 
+## D030 — Recalibração completa das Ligas (personagens/promoção decrescentes, ciclo de 6 dias, pódio Diamante, conquistas por liga)
+
+**Data:** 2026-08-17 · sessao-052 (recalibração pós-limpeza de débitos)
+**Contexto:** Depois da limpeza de débitos (sessao-051), o Davi respondeu com
+especificações detalhadas e concretas pras 3 perguntas que eu tinha deixado em
+aberto desde o Bloco 4 (D023): quanto XP por faixa de tabuada, quantos
+personagens por liga, e o tamanho das zonas de promoção. Em vez de números
+ilustrativos meus, agora são regras reais dadas pelo Davi.
+
+**Decisões, uma por uma:**
+
+1. **XP por faixa de tabuada (Bloco 3, D022):** Davi deu 2 âncoras — 1ª faixa
+   (2×10) leva 8-10 meses (usei 9), e completar a ÚLTIMA faixa (chegar na
+   20ª) leva "um pouco mais de 28 meses" jogando todo dia com boa
+   quantidade de XP. Recalculei a curva geométrica (`FIRST_TIER_XP=27000`,
+   `TIER_XP_DECAY=0.68`, `TIER_XP_FLOOR=300` em `constants/index.js`) pra
+   bater as duas âncoras ao mesmo tempo (~28,55 meses no total, a
+   100 XP/dia) — método exatamente como o Davi descreveu (XP/dia × meses,
+   resolver a curva).
+
+2. **Personagens por liga:** Davi confirmou — Bronze (a menor divisão) tem
+   20, decrescendo até ~4 na Diamante ("quanto mais você subir, mais difícil
+   fica ficar entre o pódio"). `constants/leagues.js` recalibrado: 20, 18,
+   16, 14, 12, 10, 8, 7, 5, 4 (Bronze→Diamante), 114 personagens no total
+   (14 novos adicionados nas ligas baixas, ligas altas enxugadas — não
+   deletadas do histórico, só reduzidas). **Einstein migrou de Pérola pra
+   Diamante** — foi o exemplo literal que o Davi deu de personagem "que vive
+   dentro do jogo, joga toda hora, quase impossível de destronar".
+
+3. **Zonas de promoção decrescentes:** âncoras dadas pelo Davi — Bronze top
+   8, Safira top 4. Recalibrado com a mesma lógica decrescente: 8, 7, 6, 4,
+   3, 3, 2, 2, 1, 0 (Bronze→Diamante). `leagueMultiplier` (o quanto os
+   personagens de cada liga são mais fortes) também foi esticado de
+   0.7-1.6× pra 0.7-2.2× — sem isso, o pote menor de personagens no topo não
+   ficaria de fato "muito mais difícil".
+
+4. **Todas as ligas competem o tempo todo, não só a do jogador:**
+   `getLeagueStandings(data, leagueIdOverride)` já suportava consultar
+   qualquer liga (não só a atual) — mantido e documentado explicitamente.
+   Ver "outras divisões" como tela nova NÃO foi implementado — o próprio
+   Davi disse "pode ser que a gente consiga ver isso, não sei, podemos
+   conversar" — deixado como decisão em aberto, não uma pendência.
+
+5. **Nunca cai mais de 1 liga por vez:** já era assim desde o Bloco 4
+   (`idx - 1`, nunca pula liga) — confirmado, sem mudança de código.
+
+6. **Conquistas por liga alcançada:** `ACHIEVEMENTS` (`constants/index.js`)
+   ganhou 9 entradas novas (`league_prata` até `league_diamante` — Bronze
+   fica de fora, ninguém é "promovido" pra ela). Concedida no momento exato
+   da promoção (`App.jsx` passa `{...newData, ...leaguePromo.data}` pro
+   `checkNewAchievements`, não o `newData` cru — senão a conquista só
+   apareceria na partida seguinte). Fica permanente mesmo se o jogador cair
+   depois (mesmo espírito de recordes).
+
+7. **Bônus de XP no pódio da Diamante:** `data.diamondPodiumActive`
+   (`true` quando o jogador está entre os 3 primeiros da Diamante,
+   reavaliado a cada ciclo) dá **+25% de XP** em toda partida enquanto durar
+   (`App.jsx handleGameEnd`, mesmo padrão do XP Dobrado já existente).
+
+8. **Modelo de tempo — a mudança mais estrutural:** Davi pediu XP dos
+   personagens atualizando a cada 12h e promoção/rebaixamento avaliados a
+   cada 6 dias (não mais a cada partida). Implementado com um "ciclo global"
+   (`getCurrentCycle()`, época fixa 2026-01-01, 6 dias por ciclo) — a mesma
+   ideia de número de ciclo pra todo mundo, então todas as ligas "rodam" o
+   mesmo relógio o tempo todo. `applyLeaguePromotion` só reavalia
+   promoção/rebaixamento/pódio se o ciclo mudou desde a última checagem
+   (`leagueLastCycleChecked`); fora isso é um no-op instantâneo — seguro
+   chamar em toda partida E no load do app sem risco de re-avaliar de mais.
+   XP dos personagens (`getCharacterXp`) trocou de "seed por dia" pra "seed
+   por meio-dia" (`halfDaySlot`), dando a granularidade de 12h pedida sem
+   precisar guardar nada a mais no storage.
+
+**Efeito colateral bom:** o modelo de ciclo TAMBÉM resolve o bug de
+ping-pong (D023) de um jeito mais robusto que o grace period manual que eu
+tinha posto na sessão 051 (D027) — como só existe UMA avaliação por ciclo de
+6 dias, fisicamente não tem como promover e reavaliar de novo na mesma
+passada. `checkInactivityRelegation`/grace-period manual (D027) foi
+REMOVIDO — virou redundante, `applyLeaguePromotion` sozinho já cobre load E
+fim de partida com segurança.
+
+**Verificado:** testado neste ambiente — liga Bronze mostra 21 competidores
+(20 personagens + jogador) e "zona de promoção (top 8)"; liga Diamante
+mostra 5 competidores (4 personagens + jogador, incluindo Einstein) e "zona
+de rebaixamento (últimos 1)", sem zona de promoção (correto, é o topo); XP
+dos personagens da Diamante (1894-2674) muito maior que os do Bronze
+(746-1006), confirmando o multiplicador de liga esticado; tela de
+Conquistas carrega as 9 novas entradas de liga sem erro.
+
+**Revisitar quando:** mesma ressalva de sempre — calibração de XP/liga é
+estimativa até existir uso real. "Ver outras divisões" fica pra uma conversa
+futura se o Davi quiser.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

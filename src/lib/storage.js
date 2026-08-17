@@ -28,9 +28,11 @@ export const DEFAULTS = {
   livesData: { date: null, remaining: 5 }, // [v6.0 · Bloco 2] pote de vidas diárias — ver getLivesInfo em utils
   leagueId: 'bronze',    // [v6.0 · Bloco 4] liga atual — ver utils/leagues.js
   leagueXpBase: 0,       // XP total no momento em que entrou na liga atual (delta = xp - leagueXpBase)
-  leagueEnteredAt: null, // [pendência pós-reset] data (YYYY-MM-DD) em que entrou na liga atual — usado pro grace period do rebaixamento por inatividade
-  leaguePodiums: 0,      // [pendência pós-reset] nº de vezes que ficou entre os 3 primeiros de uma liga
-  leaguePodiumClaimed: false, // já contou pódio nesta permanência na liga atual? (evita contar de novo todo jogo)
+  leagueEnteredAt: null, // data (YYYY-MM-DD) em que entrou na liga atual — informativo
+  leaguePodiums: 0,      // nº de vezes que ficou entre os 3 primeiros de uma liga
+  leaguePodiumClaimed: false, // já contou pódio nesta permanência na liga atual? (evita contar de novo todo ciclo)
+  leagueLastCycleChecked: null, // [recalibração 2026-08-17] nº do último ciclo de 6 dias em que promoção/rebaixamento foi avaliado — ver utils/leagues.js
+  diamondPodiumActive: false,   // pódio (top 3) da liga Diamante dá bônus de XP enquanto durar — ver App.jsx handleGameEnd
   createdAt: null,       // [v6.0 · Bloco 6] data do primeiro load — "no jogo desde..." no Perfil (setado uma vez em AppContext)
   powerups: {},              // { life: N, time: N, xp2: N } — consumíveis da loja
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)

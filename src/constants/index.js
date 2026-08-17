@@ -1,3 +1,5 @@
+import { LEAGUES } from './leagues';
+
 // ── MODES ──────────────────────────────────────────────────────────────────
 // v5.0 · Bloco 1 (continuação): o leque de 10 modos foi cortado pra 3.
 // Rush agora é a SOMA do que eram Rush+Sobrevivência+Velocidade+Desafio Diário:
@@ -84,22 +86,28 @@ export const TRAINING_MODE_LIST = Object.values(MODES).filter((m) => m.group ===
 // saber que fator `a` sortear na faixa atual do jogador (ver
 // utils/getRandomQuestion).
 //
-// CALIBRAÇÃO DA 1ª FAIXA (2×10) — ESTIMATIVA, não medição real (sem
-// telemetria de jogadores ainda, recalibrar quando tiver dados de verdade):
-// assumindo ~100 XP/dia num jogador engajado (~2-3 partidas de Rush/dia,
-// XP = score × 0.20, ver App.jsx MODE_XP_MULT), 24.000 XP ≈ 240 dias ≈ 8
-// meses — dentro da janela de 6-10 meses que o Davi pediu no áudio. Faixas
-// seguintes ficam progressivamente MAIS RÁPIDAS de passar (delta de XP cai
-// 18% por faixa, chão de 1.500 XP) — reflete que quanto mais tabuada o
-// jogador já sabe, mais fácil fica aprender a próxima (áudio do Davi).
+// CALIBRAÇÃO DA CURVA — recalibrada em 2026-08-17 com o método que o Davi
+// pediu: ~100 XP/dia num jogador engajado (~2-3 partidas de Rush/dia, XP =
+// score × 0.20, ver App.jsx MODE_XP_MULT) × meses-alvo. Davi deu 2 âncoras:
+//   - 1ª faixa (2×10, a mais dura de propósito): 8-10 meses → usei 9 meses
+//     = 270 dias × 100 XP/dia = 27.000 XP
+//   - Completar a ÚLTIMA faixa (chegar na 20ª, 190×200): "um pouco mais de
+//     28 meses" jogando todo dia com boa quantidade de XP → 28 meses = 840
+//     dias × 100 XP/dia = 84.000 XP de soma total
+// A partir dessas 2 âncoras, resolvi a razão geométrica de decaimento do
+// delta por faixa (≈0.68 — cada faixa pede ~32% menos XP que a anterior)
+// que faz a SOMA das 19 faixas seguintes bater ~84.000 XP total — dá
+// 85.353 XP / 100 por dia ≈ 28,45 meses, dentro do "um pouco mais de 28"
+// pedido. Ainda é ESTIMATIVA (sem telemetria real de jogador, só o cálculo
+// que o Davi pediu pra fazer) — recalibrar quando houver dado de uso real.
 const TABUADA_TIER_RANGES = [
   [2, 10],
   ...Array.from({ length: 19 }, (_, i) => [10 + i * 10, 20 + i * 10]),
 ];
 const TIER_BADGES = ['🌱', '📚', '✏️', '🧮', '🎯', '⚡', '🚀', '🎲', '💪', '📐', '♟️', '🗺️', '🔬', '🎓', '✨', '🎼', '🏅', '🥇', '📜', '🦉'];
-const FIRST_TIER_XP = 24000;
-const TIER_XP_DECAY = 0.82;
-const TIER_XP_FLOOR = 1500;
+const FIRST_TIER_XP = 27000;
+const TIER_XP_DECAY = 0.68;
+const TIER_XP_FLOOR = 300;
 
 function buildTabuadaTiers() {
   let xp = 0;
@@ -342,4 +350,21 @@ export const ACHIEVEMENTS = [
     category: 'Ofensiva',
     check: (s) => (s.bestDayStreak || 0) >= 365,
   },
+
+  // [pendência pós-reset] Conquista ao ALCANÇAR cada liga por promoção — não
+  // pela Bronze (ponto de partida, ninguém é "promovido" pra ela). Fica
+  // permanente mesmo se o jogador for rebaixado depois (mesmo espírito de
+  // recordes: maior marca já atingida, não estado atual).
+  ...LEAGUES.slice(1).map((league) => ({
+    id: `league_${league.id}`,
+    title: `Liga ${league.name}`,
+    desc: `Chegue na Liga ${league.name}`,
+    icon: league.emoji,
+    category: 'Ligas',
+    check: (s) => {
+      const idx = LEAGUES.findIndex((l) => l.id === s.leagueId);
+      const targetIdx = LEAGUES.findIndex((l) => l.id === league.id);
+      return idx >= targetIdx;
+    },
+  })),
 ];

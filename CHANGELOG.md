@@ -15,9 +15,12 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 - Container do App vai a `max-w-5xl` só na tela de Ligas
 
 ### Adicionado
-- Painel lateral na tela de Ligas (proposta inicial, aberta a mudança):
-  "Sua corrida" (quem está logo acima, XP que falta pra passar, e a
-  vantagem sobre quem vem atrás) + status da zona de promoção
+- Painel lateral na tela de Ligas: "Sua corrida" (quem está logo acima, XP
+  que falta pra passar, e a vantagem sobre quem vem atrás) + status da zona
+  de promoção
+- Ficha do personagem: clicar numa linha da classificação abre a ficha dele
+  no topo do painel, com a descrição que cada um dos 114 personagens já
+  tinha e nunca aparecia
 
 ### Corrigido
 - Scroll horizontal de 4px na tela de Ligas (era a barra de rolagem

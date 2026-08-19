@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, TrendingUp, TrendingDown, Trophy } from 'lucide-react';
+import { ArrowLeft, Lock, TrendingUp, TrendingDown, Trophy, X } from 'lucide-react';
 import { LEAGUES } from '../constants/leagues';
 import { getLeagueStandings, getCycleDaysRemaining } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
@@ -18,12 +18,22 @@ import { pageVariants, pageTransition } from '../components/ui';
 const MEDALS = ['🥇', '🥈', '🥉'];
 
 // Linha da classificação — usada na lista principal e no painel lateral.
-function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false }) {
+// Vira botão quando `onSelect` é passado (abre a ficha do personagem no
+// painel da direita); a linha do próprio jogador nunca é clicável, não tem
+// ficha pra mostrar.
+function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false, onSelect, selected }) {
+  const clicavel = !!onSelect && !entry.isPlayer;
+  const Tag = clicavel ? 'button' : 'div';
   return (
-    <div
-      className={`flex items-center gap-3 rounded-2xl transition-all
+    <Tag
+      {...(clicavel ? { type: 'button', onClick: () => onSelect(entry, rank) } : {})}
+      className={`w-full text-left flex items-center gap-3 rounded-2xl transition-all
         ${compact ? 'px-2 py-1.5' : 'px-3 py-2.5'}
-        ${entry.isPlayer ? 'bg-surface-2 border-2 border-accent' : 'border-2 border-transparent'}`}
+        ${entry.isPlayer
+          ? 'bg-surface-2 border-2 border-accent'
+          : selected
+            ? 'bg-surface-2 border-2 border-border'
+            : `border-2 border-transparent ${clicavel ? 'hover:bg-surface-2' : ''}`}`}
     >
       <span
         className={`w-7 text-center text-sm font-black shrink-0 tabular-nums
@@ -41,7 +51,7 @@ function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false }) 
         {entry.name}
       </p>
       <p className="text-sm font-black text-fg-muted tabular-nums shrink-0">{entry.xp} XP</p>
-    </div>
+    </Tag>
   );
 }
 
@@ -54,7 +64,15 @@ export default function RankingPage({ onBack }) {
   const highestIdx = Math.max(currentIdx, storedHighestIdx);
 
   const [selectedId, setSelectedId] = useState(currentLeagueId);
+  // Personagem cuja ficha está aberta no painel da direita (null = nenhum).
+  const [ficha, setFicha] = useState(null);
   const selectedLeague = LEAGUES.find((l) => l.id === selectedId) || LEAGUES[currentIdx];
+
+  // Trocar de divisão fecha a ficha — o personagem aberto é de outra liga.
+  const trocarLiga = (id) => {
+    setSelectedId(id);
+    setFicha(null);
+  };
   const standings = getLeagueStandings(data, selectedLeague.id);
   const daysLeft = getCycleDaysRemaining();
 
@@ -110,7 +128,7 @@ export default function RankingPage({ onBack }) {
                   key={league.id}
                   type="button"
                   disabled={!unlocked}
-                  onClick={() => setSelectedId(league.id)}
+                  onClick={() => trocarLiga(league.id)}
                   title={unlocked ? league.name : 'Divisão bloqueada'}
                   className={`shrink-0 rounded-2xl flex items-center justify-center transition-all
                     ${isSelected ? 'w-20 h-20 text-4xl' : 'w-14 h-14 text-2xl opacity-70'}
@@ -151,6 +169,8 @@ export default function RankingPage({ onBack }) {
                 rank={i + 1}
                 inPromotion={i + 1 <= promoCut}
                 inRelegation={i + 1 > standings.total - selectedLeague.relegationCount}
+                onSelect={(entry, rank) => setFicha({ ...entry, rank })}
+                selected={ficha?.name === e.name}
               />
             ))}
           </div>
@@ -158,6 +178,41 @@ export default function RankingPage({ onBack }) {
 
         {/* ── Painel lateral ───────────────────────────────────────────── */}
         <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-4 lg:overflow-y-auto lg:min-h-0">
+          {/* Ficha do personagem — aparece no topo ao clicar numa linha da
+              classificação. Usa a `desc` que cada um dos 114 personagens já
+              tem em constants/leagues.js. */}
+          {ficha && (
+            <motion.div
+              key={ficha.name}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`rounded-2xl p-4 text-white bg-gradient-to-br ${selectedLeague.gradient} shadow-lg shrink-0`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-3xl shrink-0">
+                  {ficha.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-lg leading-tight">{ficha.name}</p>
+                  <p className="text-white/75 text-xs font-bold">
+                    {ficha.rank}º na Divisão {selectedLeague.name} · {ficha.xp} XP
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFicha(null)}
+                  aria-label="Fechar ficha"
+                  className="w-7 h-7 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center shrink-0 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              {ficha.desc && (
+                <p className="text-sm font-semibold text-white/90 mt-3 leading-snug">{ficha.desc}</p>
+              )}
+            </motion.div>
+          )}
+
           {isOwnLeague ? (
             <>
               <div className="bg-surface border-2 border-border rounded-2xl p-4">
@@ -221,9 +276,23 @@ export default function RankingPage({ onBack }) {
               </p>
               <p className="text-xs font-bold text-fg-muted mb-1.5">Líder desta divisão</p>
               {standings.entries[0] && (
-                <RosterRow entry={standings.entries[0]} rank={1} inPromotion inRelegation={false} compact />
+                <RosterRow
+                  entry={standings.entries[0]}
+                  rank={1}
+                  inPromotion
+                  inRelegation={false}
+                  compact
+                  onSelect={(entry, rank) => setFicha({ ...entry, rank })}
+                  selected={ficha?.name === standings.entries[0].name}
+                />
               )}
             </div>
+          )}
+
+          {!ficha && (
+            <p className="text-xs font-semibold text-fg-muted text-center px-2 shrink-0">
+              Toque num personagem da lista pra ver a ficha dele.
+            </p>
           )}
         </aside>
       </div>

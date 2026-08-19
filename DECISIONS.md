@@ -984,6 +984,16 @@ Evitei de propósito qualquer coisa social (o Duolingo preenche esse espaço
 com amigos/status) — o jogo não tem sistema social, e inventar um seria
 mecânica desconectada do aprendizado.
 
+**Resposta do Davi (mesma sessão): quer "Sua corrida" E "Ficha do
+personagem" juntos.** Implementado assim: clicar numa linha da
+classificação abre a ficha no TOPO do painel (emoji grande, nome, posição,
+XP e a `desc` que cada um dos 114 personagens já tem em
+`constants/leagues.js` — conteúdo que existia e nunca era mostrado), com
+"Sua corrida" seguindo logo abaixo. Detalhes: a linha do próprio jogador
+não é clicável (não tem ficha); trocar de divisão fecha a ficha sozinha (o
+personagem aberto é de outra liga); e quando nenhuma está aberta, uma
+dica explica que dá pra tocar.
+
 **Verificado** (medido, não revisado): desktop 1280×720 — página não rola,
 0 de sobra horizontal, lista rola sozinha (300px+), título fora da caixa
 que rola, colunas lado a lado (lista 272-920, painel 944-1264). 23 linhas

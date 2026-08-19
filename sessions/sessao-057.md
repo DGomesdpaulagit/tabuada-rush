@@ -78,6 +78,19 @@ Evitei de propósito qualquer coisa social — o Duolingo preenche esse espaço
 com amigos/status, mas o jogo não tem sistema social e inventar um seria
 mecânica desconectada do aprendizado.
 
+**Davi respondeu ainda nesta sessão: quer os DOIS** — "Sua corrida" e a
+ficha do personagem. Implementado junto: clicar numa linha da
+classificação abre a ficha no topo do painel (emoji grande, nome, posição,
+XP e a descrição que cada um dos 114 personagens já tinha em
+`constants/leagues.js` e nunca era mostrada em lugar nenhum), com "Sua
+corrida" seguindo logo abaixo.
+
+Detalhes que resolvi sem perguntar: a linha do próprio jogador não é
+clicável (não existe ficha dele); trocar de divisão fecha a ficha sozinha
+(o personagem aberto é de outra liga); e quando nenhuma ficha está aberta,
+uma linha discreta avisa que dá pra tocar nos personagens — senão a
+interação ficaria escondida.
+
 ---
 
 ## Verificação
@@ -125,8 +138,9 @@ gosto não.
    projeto (ver seção 1). Ele vai mandar de tudo: arena, ligas, loja,
    ofensiva, moedas, vidas, e os escudos de cada divisão (inclusive
    bloqueadas).
-2. **Conteúdo do painel lateral** — "Sua corrida" é chute embasado meu, não
-   decisão dele. Perguntar se serve ou se prefere outra direção.
+
+**Resolvido nesta sessão:** o conteúdo do painel lateral — ele escolheu
+"Sua corrida" + ficha do personagem, os dois já implementados.
 
 **Pendente de olhada dele:** estética do layout novo (2 colunas) e o Header
 no canto (sessão 055).

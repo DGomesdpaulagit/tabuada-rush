@@ -141,6 +141,15 @@ export function getCurrentCycle() {
   return Math.floor(days / CYCLE_DAYS);
 }
 
+// Quantos dias faltam pro ciclo virar (promoção/rebaixamento serem
+// reavaliados). É o "4 dias" que aparece embaixo do nome da divisão na
+// RankingPage — mesmo relógio global do getCurrentCycle, nunca 0 (no
+// último dia mostra "1 dia", não "0 dias").
+export function getCycleDaysRemaining() {
+  const days = Math.floor((Date.now() - LEAGUE_EPOCH_MS) / 86400000);
+  return CYCLE_DAYS - (days % CYCLE_DAYS);
+}
+
 // Avalia promoção/rebaixamento/pódio com base na posição do jogador — mas
 // SÓ UMA VEZ POR CICLO (6 dias, ver getCurrentCycle). Chamar isso a cada
 // partida OU a cada load do app é seguro: se o ciclo atual já foi avaliado

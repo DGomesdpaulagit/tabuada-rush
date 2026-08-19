@@ -355,7 +355,17 @@ function InstallBanner({ onInstall, onDismiss }) {
 export default function App() {
   const { data, update } = useApp();
   const { user } = useAuth();
-  const [screen, setScreen] = useState('menu');
+  // [ferramenta de verificação, só em DEV] `?screen=ranking` abre direto numa
+  // tela. Existe porque o Browser pane do ambiente de desenvolvimento roda com
+  // a aba oculta (`document.hidden`), o que congela o rAF e trava a transição
+  // `AnimatePresence mode="wait"` — sem isso não dá pra inspecionar nenhuma
+  // tela que não seja a inicial. `import.meta.env.DEV` é false no build de
+  // produção, então o parâmetro é ignorado lá (Vite remove o ramo morto).
+  const [screen, setScreen] = useState(() => {
+    if (!import.meta.env.DEV) return 'menu';
+    const requested = new URLSearchParams(window.location.search).get('screen');
+    return requested && requested !== 'game' ? requested : 'menu';
+  });
   const [activeMode, setActiveMode] = useState(null);
   const [lastResult, setLastResult] = useState(null);
   const [achievementQueue, setAchievementQueue] = useState([]);

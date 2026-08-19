@@ -849,6 +849,81 @@ aberto.
 
 ---
 
+## D034 — Ligas copiada literal do Duolingo; e a causa raiz de "não consigo ver rodando"
+
+**Data:** 2026-08-17 · sessao-056
+**Contexto:** O Davi viu o carrossel entregue na sessão 055 e reprovou:
+"ficou horrível, as letras estavam quase em cima do ícone, cortado". E
+cobrou (com razão) uma explicação real pro fato de eu entregar tela atrás
+de tela sem nunca ter visto nenhuma rodando.
+
+### Parte 1 — a causa raiz do "não consigo ver rodando"
+
+**Não é limitação de ser IA, é uma janela fechada.** O Browser pane do
+ambiente de desenvolvimento estava COLAPSADO na tela do Davi. Navegador
+nenhum renderiza (compõe frames de) uma aba que não está visível — é
+economia de bateria, comportamento padrão do Chrome. Consequências
+encadeadas, todas explicadas por essa única causa:
+- `document.hidden === true` / `visibilityState: 'hidden'` (medido)
+- `screenshot` estoura timeout: literalmente "the Browser pane is not
+  displayed, so the page is not compositing frames"
+- `requestAnimationFrame` fica congelado → o `AnimatePresence mode="wait"`
+  do `App.jsx` nunca completa a animação de saída → a tela nova NUNCA
+  monta. É por isso que clicar em "Ligas" no menu não levava a lugar
+  nenhum: não era clique perdido, era a transição travada.
+- `tabs_select` (trazer a aba pra frente) NÃO resolve — testado; a aba já
+  era a ativa, o problema é o pane em si estar oculto.
+
+**Correção do lado do Davi:** abrir/expandir o Browser pane no Claude Code.
+Com ele aberto, screenshot e animação funcionam normalmente.
+
+**Correção do meu lado (pra não depender disso), 2 ferramentas novas:**
+1. **Atalho `?screen=<tela>` só em DEV** (`App.jsx`) — pula a navegação e
+   monta qualquer tela direto, contornando o `AnimatePresence` travado.
+   Gated em `import.meta.env.DEV` e bloqueia `game` (que precisa de
+   `activeMode`); confirmado que o Vite remove o ramo no build de produção
+   (0 ocorrências de `screen=` no bundle).
+2. **Asserções de geometria via JS** em vez de "revisei o código": medir
+   `getBoundingClientRect` pra detectar exatamente as classes de bug que o
+   Davi reportou — sobreposição entre elementos vizinhos, texto truncado
+   (`scrollWidth > clientWidth`), colisão nome×valor nas linhas de lista,
+   scroll horizontal indevido no corpo. Isso pega "letra em cima do ícone"
+   sem precisar enxergar a tela.
+
+### Parte 2 — layout novo (cópia literal da referência)
+
+Davi foi explícito: "não precisa ficar inventando nada, é mais simples do
+que você espera". A ordem da tela agora é exatamente a da screenshot:
+1. Fileira de escudos das divisões — **só escudos, sem rótulo de texto
+   embaixo de cada um.** Era essa a origem do "letra em cima do ícone": eu
+   tinha posto nome + selo "você" em caixas de 64px de largura. O nome
+   aparece uma vez só, grande, no item 2.
+2. `Divisão <Nome>` centralizado e grande
+3. `Os N primeiros avançam pra próxima divisão.` (= zona de promoção,
+   `promotionCount`)
+4. `N dias` — prazo do ciclo, via `getCycleDaysRemaining()` novo em
+   `utils/leagues.js` (mesmo relógio global de 6 dias do
+   `getCurrentCycle`, nunca mostra "0 dias")
+5. Classificação (medalha 🥇🥈🥉 nos 3 primeiros)
+
+**REMOVIDO a pedido dele:** o card de "Liga X de 10 / sua posição Nº de M".
+
+**Verificado de verdade desta vez** (com as 2 ferramentas acima, não é
+mais "revisei o código"): 10 escudos, 0 sobreposições, selecionado 80×80 vs
+56×56 dos outros; 21 linhas de classificação com 0 colisões nome×XP e 0
+nomes truncados; sem scroll horizontal no corpo; título não cortado. Com um
+save de teste (`leagueId: 'prata'`, `leagueHighestId: 'ouro'`) confirmei a
+regra de acesso: Bronze/Prata/Ouro clicáveis, as 7 acima `disabled`; abre
+selecionado na liga atual (Prata); clicar em Ouro troca pra "Divisão Ouro"
+com o `promotionCount` dela (6) e SEM a linha "Você"; clicar num escudo
+bloqueado não faz nada.
+
+**Ainda não visto com os próprios olhos:** cor, proporção e "beleza" do
+resultado — geometria eu meço, gosto não. Enquanto o pane estiver fechado,
+isso continua dependendo do Davi olhar.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

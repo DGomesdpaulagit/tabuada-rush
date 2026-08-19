@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.6] — 2026-08-17 — Ligas copiada da referência; ferramentas de verificação
+
+**Detalhes em `sessions/sessao-056.md` e `DECISIONS.md` (D034).**
+
+### Alterado
+- Tela de Ligas refeita seguindo a referência à risca: escudos das divisões
+  no topo **sem rótulo de texto** (a colisão "letra em cima do ícone" vinha
+  daí), nome da divisão grande e centralizado, "Os N primeiros avançam pra
+  próxima divisão.", prazo do ciclo em dias, e a classificação
+
+### Removido
+- Card "Liga X de 10 / sua posição Nº de M" da tela de Ligas
+
+### Adicionado
+- `getCycleDaysRemaining()` em `utils/leagues.js` — dias até o ciclo virar
+- Atalho `?screen=<tela>` **só em DEV** (`App.jsx`) pra abrir qualquer tela
+  direto; removido do build de produção pelo Vite
+
+---
+
 ## [6.0.5] — 2026-08-17 — Ligas em carrossel horizontal; Header no canto superior direito
 
 **Detalhes em `sessions/sessao-055.md` e `DECISIONS.md` (D033).**

@@ -795,6 +795,60 @@ painéis pode precisar ajuste fino olhando de verdade.
 
 ---
 
+## D033 — Ligas vira carrossel horizontal; Header vai pro canto superior direito; ícones ficam pendentes de arquivo
+
+**Data:** 2026-08-17 · sessao-055
+**Contexto:** Davi mandou (por áudio + 3 imagens de referência) uma
+correção em cima do que foi entregue nas sessões 053/054: a escada
+VERTICAL de Ligas devia ser um carrossel HORIZONTAL (mais perto do
+Duolingo de verdade — fileira de divisões no topo, roster embaixo), e o
+grupo de indicadores do Header (faixa/ofensiva/moedas/vidas) devia sair do
+centro da barra e ir pro canto superior direito da tela — mesma posição da
+bandeira/fogo/gema/coração na referência do Duolingo. Ele também reforçou
+que esse grupo tem que aparecer em TODAS as telas (inclusive Perfil, que
+ele hesitou mas confirmou), sumindo só durante uma partida — isso já era
+assim, não mudou.
+
+**Decisão:**
+1. **`RankingPage.jsx` reescrita de novo** — fileira horizontal rolável
+   (Bronze à esquerda → Diamante à direita, `overflow-x-auto` +
+   `snap-x`), badge da liga selecionada com anel de destaque, bloqueadas
+   mostram cadeado (mesma regra de acesso do D031, só mudou a
+   apresentação). Tocar numa liga desbloqueada troca o card + roster
+   exibidos EMBAIXO da fileira, sem modal (era bottom sheet na v anterior)
+   — mais perto de como o Duolingo mostra o placar direto abaixo da
+   fileira de divisões.
+2. **`Header.jsx` reposicionado** — trocou `justify-center` (grupo
+   centralizado dentro de uma coluna `max-w-lg`) por `justify-end` sem
+   limite de largura, encostando o grupo de pills na borda direita da
+   barra. Os painéis de hover também precisaram mudar de ancoragem
+   (`left-1/2 -translate-x-1/2` → `right-0`) — senão o painel do item mais
+   à direita (Vidas) vazaria pra fora da tela.
+3. **Troca de ícone por imagem (foguinho/moedinha/coração) — BLOQUEADA,
+   não é decisão, é limitação de ferramenta:** as 3 imagens que o Davi
+   anexou na mensagem existem só dentro do chat — minhas ferramentas de
+   arquivo não têm acesso ao binário de uma imagem colada/anexada na
+   conversa, só consigo VER ela (não salvar). Pedido ao Davi pra colocar os
+   3 arquivos PNG dentro do projeto (`src/assets/icons/`) — assim que
+   estiverem lá, reaproveito em TODOS os lugares que hoje usam `Flame`/🔥,
+   🪙, `Heart`/❤️ (Header, `NoLivesModal`, `PerfilPage`, `ResultsPage`,
+   `ShopPage` etc.) numa passada só.
+
+**Verificado:** `npm run build` limpo. Header: confirmado via DOM/JS que o
+grupo de pills encosta mesmo na borda direita (`right: 1260px` de
+`1276px` de largura útil, a diferença bate com o `padding` da barra).
+**Ligas: só revisão de código, não testado interativamente** — a mesma
+limitação de compositing do D031/D032 bloqueia a navegação
+`AnimatePresence mode="wait"` neste ambiente, e desta vez nem a tentativa
+de forçar via patch de `requestAnimationFrame` funcionou (framer-motion já
+tinha capturado a referência original antes do patch rodar).
+
+**Revisitar quando:** o Davi mandar os 3 arquivos de ícone — aí sim vira
+uma sessão de "trocar ícone em todo canto do app", não uma decisão em
+aberto.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.4 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + escada + header maior — sessao-054.md)
+**Versão:** 6.0.5 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + carrossel de Ligas + header no canto — sessao-055.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -36,6 +36,15 @@ Sessão 054: Davi mandou screenshots do stat bar do Duolingo (bandeira/ofensiva/
 gemas/vidas + os 4 painéis de hover) como referência de PADRÃO de interação — Header
 reescrito nesse padrão, mas com os sistemas reais do jogo (sem inventar "amigos"/
 assinatura que o Duolingo tem e o Tabuada Rush não).
+Sessão 055: Davi corrigiu duas coisas em cima do que foi entregue (escada de Ligas
+devia ser carrossel HORIZONTAL, não vertical; Header devia estar no canto superior
+direito, não centralizado) e mandou 3 imagens (foguinho/moedinha/coração) pra
+substituir os ícones — **isso ficou bloqueado**, minhas ferramentas não conseguem
+extrair o binário de imagem colada no chat, precisa que ele salve os arquivos no
+projeto. Ver D033.
+**[v6.0.5]** Ligas: escada vertical virou carrossel horizontal rolável (fileira de
+divisões no topo, roster embaixo, sem modal). Header: grupo de indicadores saiu do
+centro e foi pro canto superior direito. Ver `sessao-055.md` e D033.
 **[v6.0.4]** Header maior (70px, era ~48px), faixa de tabuada juntada ao grupo de
 ofensiva/moedas/vidas (antes isolada na ponta esquerda), ícone de moedas trocou de
 `Coins` (lucide) pra 🪙, e cada uma das 4 pills abre um painel no hover/clique com
@@ -276,32 +285,39 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — CONFIRMAR ESCADA DE LIGAS + HEADER NOVO
+## 🎯 PRÓXIMA SESSÃO — ÍCONES BLOQUEADOS + CONFIRMAR VISUAL (Ligas + Header)
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-054.md` (Header
-maior, a mais recente) → `sessions/sessao-053.md` (escada de Ligas) →
-`sessions/planejamento-6.0.md` (spec completa do reset) → `DECISIONS.md`
-D020-D032.
+**Ler obrigatoriamente antes de começar:** `sessions/sessao-055.md`
+(carrossel de Ligas + Header no canto, a mais recente) →
+`sessions/sessao-054.md` (Header maior) → `sessions/sessao-053.md` (escada
+de Ligas, já substituída pelo carrossel) → `sessions/planejamento-6.0.md`
+(spec completa do reset) → `DECISIONS.md` D020-D033.
 
-**Pendência real, não estética (x2):** nem a escada de Ligas (053, D031)
-nem o Header novo (054, D032) foram confirmados visualmente — o Browser
-pane deste ambiente não compõe frames (ver seção 🐛 BUGS CONHECIDOS), então
-animação/clique real não pôde ser testada de ponta a ponta em nenhum dos
-dois (o Header teve o conteúdo/lógica testados via DOM/JS, mas não a
-animação nem o posicionamento visual dos painéis). Pedir ao Davi pra
-confirmar:
-1. **Ligas:** degrau desbloqueado abre a folha com o roster certo, degrau
-   bloqueado não revela nada, a PRÓPRIA liga atual dele não aparece
-   bloqueada.
-2. **Header:** os 4 painéis abrem certo ao passar o mouse (posição, se não
-   fica cortado nas bordas da tela), e se o tamanho/proporção da barra e
-   dos ícones bate com o que ele tinha em mente.
+**BLOQUEIO REAL — precisa do Davi pra destravar:** ele mandou 3 imagens
+(foguinho/moedinha/coração) pra substituir os ícones de ofensiva/moedas/
+vidas em todo o app. Minhas ferramentas de arquivo NÃO conseguem extrair o
+binário de uma imagem colada/anexada direto na conversa — só consigo vê-la.
+**Pedir pra ele salvar os 3 arquivos PNG dentro do projeto** (sugestão:
+`src/assets/icons/streak.png` / `coin.png` / `life.png`, mas qualquer
+caminho serve, é só avisar). Assim que estiverem lá, trocar em todo lugar
+que hoje usa 🔥/`Flame`, 🪙, ❤️/`Heart` pra essas 3 coisas (Header,
+`NoLivesModal`, `PerfilPage`, `ResultsPage`, `ShopPage`, etc — varrer o
+projeto inteiro, não só o Header). Ver D033.
+
+**Pendência de confirmação visual (acumulada, nenhuma delas foi vista
+rodando de verdade — só código + inspeção de DOM):**
+1. **Ligas — virou carrossel horizontal** (sessão 055, substituiu a escada
+   vertical da 053): fileira de divisões no topo, roster embaixo, liga
+   bloqueada só mostra cadeado.
+2. **Header — foi pro canto superior direito** (sessão 055, substituiu o
+   centralizado da 054): confirmar se o posicionamento bate com a
+   referência, e se os 4 painéis de hover (sessão 054) abrem sem cortar
+   nas bordas.
 
 **Depois disso:** os 7 blocos do reset 6.0 (sessões 044-050), a limpeza de
-débitos (051, D027-D029), a recalibração de Ligas (052, D030), a escada
-(053, D031) e o Header (054, D032) fecham tudo que estava em aberto do
-Bloco 4 + a rodada de ajustes visuais que o Davi trouxe observando o jogo.
-Depois disso, sem roadmap novo proposto por mim — ouvir o que ele traz.
+débitos (051), a recalibração de Ligas (052), e a rodada de ajustes visuais
+que o Davi trouxe observando o jogo (053-055) fecham tudo que estava em
+aberto. Sem roadmap novo proposto por mim — ouvir o que ele traz.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -311,8 +327,9 @@ História (narrativa infinita) — ver D018.
 ## 🐛 BUGS CONHECIDOS
 
 - Nenhum bug ativo conhecido no APP em si. **Pendente de confirmação visual
-  (não é bug conhecido, é falta de teste):** escada de Ligas da sessão 053
-  (D031) e Header maior da sessão 054 (D032) — build limpo, código revisado
+  (não é bug conhecido, é falta de teste):** carrossel de Ligas e
+  reposicionamento do Header da sessão 055 (D033), Header maior/painéis da
+  sessão 054 (D032) — build limpo, código revisado
   (e no caso do Header, conteúdo/lógica testados via DOM/JS), mas animação e
   posicionamento visual reais não testados neste ambiente. Ver seção
   "PRÓXIMA SESSÃO" acima.
@@ -380,8 +397,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-054.md` — última sessão (Header maior) → `sessions/sessao-053.md` (escada de Ligas)
-5. `DECISIONS.md` D020-D032 (reset 6.0 + limpeza + recalibração + escada + header) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-055.md` — última sessão (carrossel de Ligas + Header no canto) → `sessions/sessao-054.md` (Header maior/painéis)
+5. `DECISIONS.md` D020-D033 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

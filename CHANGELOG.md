@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.5] — 2026-08-17 — Ligas em carrossel horizontal; Header no canto superior direito
+
+**Detalhes em `sessions/sessao-055.md` e `DECISIONS.md` (D033).**
+
+### Alterado
+- Tela de Ligas: escada vertical virou carrossel horizontal rolável
+  (fileira de divisões no topo, roster embaixo, sem modal)
+- Header: grupo de indicadores saiu do centro e foi pro canto superior
+  direito da tela
+
+### Pendente
+- Troca dos ícones de ofensiva/moedas/vidas pelas imagens que o Davi
+  forneceu — bloqueada até ele colocar os arquivos no projeto (ver D033)
+
+---
+
 ## [6.0.4] — 2026-08-17 — Header maior com painéis no hover (estilo Duolingo)
 
 **Detalhes em `sessions/sessao-054.md` e `DECISIONS.md` (D032).**

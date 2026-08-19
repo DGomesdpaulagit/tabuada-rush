@@ -88,7 +88,7 @@ function StatItem({ id, openId, setOpenId, trigger, children }) {
             transition={{ duration: 0.15 }}
             onMouseEnter={open}
             onMouseLeave={scheduleClose}
-            className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 max-w-[88vw] bg-surface border-2 border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-72 max-w-[88vw] bg-surface border-2 border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
           >
             {children}
           </motion.div>
@@ -146,8 +146,8 @@ export default function Header({ onNavigate }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-center px-4 py-3.5 bg-surface border-b-2 border-border">
-      <div className="w-full max-w-lg flex items-center justify-center gap-2">
+    <header className="sticky top-0 z-40 flex items-center justify-end px-4 py-3.5 bg-surface border-b-2 border-border">
+      <div className="flex items-center gap-2">
         {/* Faixa de tabuada — equivalente à "bandeira" do Duolingo */}
         <StatItem
           id="faixa"

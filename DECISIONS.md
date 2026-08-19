@@ -924,6 +924,83 @@ isso continua dependendo do Davi olhar.
 
 ---
 
+## D035 — Ligas em 2 colunas, lista rolando sozinha; e folha de ícones é viável
+
+**Data:** 2026-08-17 · sessao-057
+
+### 1. Uma imagem só de ícones BASTA (respondendo pergunta do Davi)
+
+Ele perguntou se precisa exportar um arquivo por ícone ou se uma folha
+única serve. **Serve uma só** — testado, não chutado: Pillow 12.3.0 está
+disponível (Python 3.14.3), e escrevi um auto-split que acha as "ilhas" de
+pixels não-transparentes por flood fill e recorta cada uma. Prova feita com
+uma folha sintética de 6 ícones: detectou os 6 e recortou todos com
+bounding box correto.
+
+**A condição que importa não é quantidade, é ser ARQUIVO:** eu não consigo
+extrair o binário de imagem colada/anexada no chat — só enxergá-la. Uma
+folha salva em disco dentro do projeto eu recorto sozinho; dez imagens
+coladas na conversa continuam inúteis. Ideal: fundo transparente e um
+respiro entre os ícones (encostados viram uma ilha só). Sem transparência
+dá pra fazer por grade fixa, só preciso saber linhas×colunas.
+
+### 2. Layout de 2 colunas + a lista é que rola
+
+Davi: "não vai ser a página que vai descer, e sim os personagens... a
+divisão bronze sempre vai aparecer". E que estava "muito centralizado,
+com cara de IA".
+
+- `App.jsx`: container passa a `max-w-5xl` **só** quando `screen === 'ranking'`
+  (as outras telas seguem em `max-w-lg` — mudança contida).
+- Coluna esquerda: escudos + bloco da divisão **fixos**, classificação em
+  caixa própria com `overflow-y-auto`.
+- Coluna direita (`lg:w-80`): painel de contexto, preenchendo o vazio.
+
+**Detalhe não óbvio (altura travada só no desktop):** travar a altura em
+`calc(100dvh-70px-3rem)` é o que faz a lista rolar em vez da página. Mas
+com as colunas empilhadas no celular o conteúdo passa de 1500px — a altura
+fixa + `overflow-hidden` cortava metade dos personagens **sem como
+alcançá-los**. Peguei isso medindo (`clientHeight` 694 vs `scrollHeight`
+1504) e resolvi prefixando tudo com `lg:`: desktop trava e a lista rola,
+celular flui e a página rola.
+
+**Efeito colateral bom:** o scroll horizontal de 4px que eu tinha detectado
+sumiu junto. Causa era encadeada — página rolava → aparecia barra de 4px →
+`clientWidth` caía 4px → layout de 1280 sobrava 4px. Sem scroll vertical,
+sem barra, sem sobra.
+
+### 3. Painel lateral — conteúdo é PROPOSTA, não decisão fechada
+
+Davi ainda não sabe o que quer ali ("a gente pode ir pensando"), mas
+mencionou "o personagem que está em cima de mim". Implementei nessa linha,
+como ponto de partida pra ele reagir:
+- **"Sua corrida"** — quem está logo acima com o XP que falta pra passar, e
+  quem está logo abaixo com a vantagem atual. Transforma "estou em 8º" em
+  "faltam 20 XP", que é acionável e liga direto a jogar mais.
+- **"Zona de promoção"** — se está dentro, ou quantas posições/XP faltam.
+- Vendo uma liga que não é a sua: mostra o líder dela.
+
+Evitei de propósito qualquer coisa social (o Duolingo preenche esse espaço
+com amigos/status) — o jogo não tem sistema social, e inventar um seria
+mecânica desconectada do aprendizado.
+
+**Verificado** (medido, não revisado): desktop 1280×720 — página não rola,
+0 de sobra horizontal, lista rola sozinha (300px+), título fora da caixa
+que rola, colunas lado a lado (lista 272-920, painel 944-1264). 23 linhas
+reais com 0 colisões nome×XP, 0 quase-colando (<6px), 0 nomes truncados.
+Mobile 375×812 — 0 sobra horizontal, escudos rolam contidos, 23
+personagens todos alcançáveis. Contas do painel conferidas na mão: jogador
+com 640 XP em 8º → "faltam 20 XP" (Minions 660) e "17 XP de vantagem"
+(Homer 623). Build limpo.
+
+**Nota de método:** meu primeiro detector de colisão deu 1 falso positivo
+(pegou o card inteiro como se fosse linha, comparando o título com um XP
+de outra linha). Refinei pra exigir que nome e XP sejam filhos DIRETOS da
+mesma linha — aí deu 0. Vale lembrar disso: asserção de geometria mal
+escrita mente igual "revisei o código".
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

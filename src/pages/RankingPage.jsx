@@ -1,25 +1,49 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock } from 'lucide-react';
+import { ArrowLeft, Lock, TrendingUp, TrendingDown, Trophy } from 'lucide-react';
 import { LEAGUES } from '../constants/leagues';
 import { getLeagueStandings, getCycleDaysRemaining } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
-import { Button, pageVariants, pageTransition } from '../components/ui';
+import { pageVariants, pageTransition } from '../components/ui';
 
-// ── LIGAS [reformulação — referência literal do Duolingo, pedido do Davi] ────
-// Layout copiado da screenshot que o Davi mandou, sem invenção:
-//   1. fileira de escudos das divisões no topo (SÓ escudos, sem rótulo de
-//      texto embaixo de cada um — era isso que colidia/cortava na versão
-//      anterior; o nome aparece uma vez só, grande, embaixo)
-//   2. nome da divisão selecionada, centralizado e grande
-//   3. "Os N primeiros avançam pra próxima divisão." (= zona de promoção)
-//   4. "N dias" — quanto falta pro ciclo virar (getCycleDaysRemaining)
-//   5. classificação
-// NÃO tem card de "Liga X de 10 / sua posição" — o Davi pediu explicitamente
-// pra tirar. Regra de acesso é a mesma de antes (D031, não mudou): só liga
-// já alcançada (`leagueHighestId`) é clicável; acima disso, escudo cinza
-// com cadeado.
+// ── LIGAS [layout de 2 colunas, referência Duolingo] ─────────────────────────
+// Estrutura (pedido do Davi, ver DECISIONS.md D035):
+//   Coluna esquerda  → escudos + bloco da divisão (FIXOS) + classificação
+//                      (rola SOZINHA, dentro da própria caixa — a página não
+//                      desce, quem desce é a lista)
+//   Coluna direita   → painel de contexto, pra não sobrar espaço vazio e o
+//                      conteúdo parar de ficar centralizado demais
+// Regra de acesso não mudou (D031): só liga já alcançada (`leagueHighestId`)
+// é clicável; acima disso, escudo cinza com cadeado.
 const MEDALS = ['🥇', '🥈', '🥉'];
+
+// Linha da classificação — usada na lista principal e no painel lateral.
+function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false }) {
+  return (
+    <div
+      className={`flex items-center gap-3 rounded-2xl transition-all
+        ${compact ? 'px-2 py-1.5' : 'px-3 py-2.5'}
+        ${entry.isPlayer ? 'bg-surface-2 border-2 border-accent' : 'border-2 border-transparent'}`}
+    >
+      <span
+        className={`w-7 text-center text-sm font-black shrink-0 tabular-nums
+          ${inPromotion ? 'text-check-dark' : inRelegation ? 'text-pen-dark' : 'text-fg-muted'}`}
+      >
+        {MEDALS[rank - 1] || rank}
+      </span>
+      <div
+        className={`rounded-full flex items-center justify-center shrink-0 bg-surface-2
+          ${compact ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'}`}
+      >
+        {entry.emoji}
+      </div>
+      <p className={`flex-1 min-w-0 font-black text-sm truncate ${entry.isPlayer ? 'text-accent' : 'text-fg'}`}>
+        {entry.name}
+      </p>
+      <p className="text-sm font-black text-fg-muted tabular-nums shrink-0">{entry.xp} XP</p>
+    </div>
+  );
+}
 
 export default function RankingPage({ onBack }) {
   const { data } = useApp();
@@ -34,6 +58,20 @@ export default function RankingPage({ onBack }) {
   const standings = getLeagueStandings(data, selectedLeague.id);
   const daysLeft = getCycleDaysRemaining();
 
+  const isOwnLeague = selectedLeague.id === currentLeagueId;
+  const rank = standings.playerRank;
+  const promoCut = selectedLeague.promotionCount;
+
+  // Contexto do painel lateral: quem está logo acima e logo abaixo do jogador,
+  // e a distância em XP — é o que transforma "estou em 9º" em "faltam 40 XP".
+  const acima = isOwnLeague && rank > 1 ? standings.entries[rank - 2] : null;
+  const abaixo = isOwnLeague && rank < standings.total ? standings.entries[rank] : null;
+  const meuXp = isOwnLeague ? standings.entries[rank - 1]?.xp ?? 0 : 0;
+  const faltaPraSubir = acima ? Math.max(1, acima.xp - meuXp) : null;
+  const vantagem = abaixo ? Math.max(0, meuXp - abaixo.xp) : null;
+  const foraDaZona = isOwnLeague && promoCut > 0 && rank > promoCut;
+  const xpPraZona = foraDaZona ? Math.max(1, (standings.entries[promoCut - 1]?.xp ?? 0) - meuXp) : null;
+
   return (
     <motion.div
       variants={pageVariants}
@@ -41,9 +79,17 @@ export default function RankingPage({ onBack }) {
       animate="animate"
       exit="exit"
       transition={pageTransition}
-      className="flex flex-col"
+      /* SÓ no desktop (lg+): altura travada no que sobra da janela (100dvh −
+         header de 70px − o py-6 do container do App). Sem isso a PÁGINA rola,
+         e página rolando é justamente o que o Davi não quer aqui: quem rola é
+         a lista de personagens, dentro da própria caixa. Bônus: sem scroll
+         vertical na página não aparece barra de rolagem, e sem barra some
+         também a sobra de 4px que causava scroll horizontal.
+         No celular NÃO trava: com as colunas empilhadas o conteúdo passa de
+         1500px e a altura fixa cortaria metade dos personagens sem como
+         alcançá-los — lá a página rola normal, como se espera de mobile. */
+      className="flex flex-col lg:h-[calc(100dvh-70px-3rem)] lg:overflow-hidden"
     >
-      {/* Voltar */}
       <button
         onClick={onBack}
         className="w-10 h-10 rounded-xl bg-surface-2 flex items-center justify-center text-fg-muted hover:bg-border transition-colors mb-4 shrink-0"
@@ -51,79 +97,136 @@ export default function RankingPage({ onBack }) {
         <ArrowLeft size={18} />
       </button>
 
-      {/* 1. Escudos das divisões — só ícones, sem texto embaixo */}
-      <div className="flex items-end justify-center gap-3 overflow-x-auto pb-2 -mx-4 px-4">
-        {LEAGUES.map((league, idx) => {
-          const unlocked = idx <= highestIdx;
-          const isSelected = league.id === selectedLeague.id;
-          return (
-            <button
-              key={league.id}
-              type="button"
-              disabled={!unlocked}
-              onClick={() => setSelectedId(league.id)}
-              title={unlocked ? league.name : 'Divisão bloqueada'}
-              className={`shrink-0 rounded-2xl flex items-center justify-center transition-all
-                ${isSelected ? 'w-20 h-20 text-4xl' : 'w-14 h-14 text-2xl opacity-70'}
-                ${unlocked
-                  ? `bg-gradient-to-br ${league.gradient} text-white ${isSelected ? 'shadow-lg' : 'hover:opacity-100'}`
-                  : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
-            >
-              {unlocked ? league.emoji : <Lock size={isSelected ? 26 : 18} />}
-            </button>
-          );
-        })}
-      </div>
+      <div className="flex flex-col lg:flex-row lg:items-stretch gap-6 lg:flex-1 lg:min-h-0">
+        {/* ── Coluna da liga ───────────────────────────────────────────── */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          {/* Escudos — só ícones, sem rótulo de texto (evita colisão) */}
+          <div className="flex items-end justify-center gap-3 overflow-x-auto pb-2 shrink-0">
+            {LEAGUES.map((league, idx) => {
+              const unlocked = idx <= highestIdx;
+              const isSelected = league.id === selectedLeague.id;
+              return (
+                <button
+                  key={league.id}
+                  type="button"
+                  disabled={!unlocked}
+                  onClick={() => setSelectedId(league.id)}
+                  title={unlocked ? league.name : 'Divisão bloqueada'}
+                  className={`shrink-0 rounded-2xl flex items-center justify-center transition-all
+                    ${isSelected ? 'w-20 h-20 text-4xl' : 'w-14 h-14 text-2xl opacity-70'}
+                    ${unlocked
+                      ? `bg-gradient-to-br ${league.gradient} text-white ${isSelected ? 'shadow-lg' : 'hover:opacity-100'}`
+                      : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
+                >
+                  {unlocked ? league.emoji : <Lock size={isSelected ? 26 : 18} />}
+                </button>
+              );
+            })}
+          </div>
 
-      {/* 2/3/4. Nome + zona de promoção + prazo do ciclo */}
-      <div className="text-center mt-4">
-        <h2 className="text-2xl font-black text-fg">Divisão {selectedLeague.name}</h2>
-        <p className="text-sm text-fg-muted font-semibold mt-1">
-          {selectedLeague.promotionCount > 0
-            ? `Os ${selectedLeague.promotionCount} primeiros avançam pra próxima divisão.`
-            : 'Divisão mais alta — não há pra onde subir.'}
-        </p>
-        <p className="text-sm font-black text-coin mt-1">
-          {daysLeft} {daysLeft === 1 ? 'dia' : 'dias'}
-        </p>
-      </div>
+          {/* Bloco da divisão — FIXO, nunca sai da tela */}
+          <div className="text-center mt-4 shrink-0">
+            <h2 className="text-2xl font-black text-fg">Divisão {selectedLeague.name}</h2>
+            <p className="text-sm text-fg-muted font-semibold mt-1">
+              {promoCut > 0
+                ? `Os ${promoCut} primeiros avançam pra próxima divisão.`
+                : 'Divisão mais alta — não há pra onde subir.'}
+            </p>
+            <p className="text-sm font-black text-coin mt-1">
+              {daysLeft} {daysLeft === 1 ? 'dia' : 'dias'}
+            </p>
+          </div>
 
-      <div className="h-px bg-border my-5" />
+          <div className="h-px bg-border my-5 shrink-0" />
 
-      {/* 5. Classificação */}
-      <div className="flex flex-col gap-2">
-        {standings.entries.map((e, i) => {
-          const rank = i + 1;
-          const inPromotion = rank <= selectedLeague.promotionCount;
-          const inRelegation = rank > standings.total - selectedLeague.relegationCount;
-          return (
-            <div
-              key={e.name + rank}
-              className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all
-                ${e.isPlayer ? 'bg-surface-2 border-2 border-accent' : 'border-2 border-transparent'}`}
-            >
-              <span
-                className={`w-7 text-center text-sm font-black shrink-0 tabular-nums
-                  ${inPromotion ? 'text-check-dark' : inRelegation ? 'text-pen-dark' : 'text-fg-muted'}`}
-              >
-                {MEDALS[i] || rank}
-              </span>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 bg-surface-2">
-                {e.emoji}
+          {/* Classificação — no desktop é ELA que rola, não a página
+              (`lg:min-h-0` é o que permite o flex encolher e a rolagem
+              acontecer aqui dentro). No celular flui normal e quem rola é a
+              página. */}
+          <div className="flex flex-col gap-2 lg:overflow-y-auto lg:flex-1 lg:min-h-0 lg:pr-1">
+            {standings.entries.map((e, i) => (
+              <RosterRow
+                key={e.name + i}
+                entry={e}
+                rank={i + 1}
+                inPromotion={i + 1 <= promoCut}
+                inRelegation={i + 1 > standings.total - selectedLeague.relegationCount}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Painel lateral ───────────────────────────────────────────── */}
+        <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-4 lg:overflow-y-auto lg:min-h-0">
+          {isOwnLeague ? (
+            <>
+              <div className="bg-surface border-2 border-border rounded-2xl p-4">
+                <p className="font-black text-fg mb-3">Sua corrida</p>
+
+                {acima ? (
+                  <div className="mb-3">
+                    <p className="text-xs font-bold text-fg-muted mb-1.5 flex items-center gap-1">
+                      <TrendingUp size={13} className="text-check-dark" />
+                      Faltam <span className="text-fg">{faltaPraSubir} XP</span> pra passar
+                    </p>
+                    <RosterRow entry={acima} rank={rank - 1} inPromotion={rank - 1 <= promoCut} inRelegation={false} compact />
+                  </div>
+                ) : (
+                  <p className="text-sm font-bold text-check-dark mb-3">
+                    🏆 Você está em 1º lugar na divisão!
+                  </p>
+                )}
+
+                {abaixo && (
+                  <div>
+                    <p className="text-xs font-bold text-fg-muted mb-1.5 flex items-center gap-1">
+                      <TrendingDown size={13} className="text-pen-dark" />
+                      {vantagem} XP de vantagem sobre
+                    </p>
+                    <RosterRow entry={abaixo} rank={rank + 1} inPromotion={false} inRelegation={false} compact />
+                  </div>
+                )}
               </div>
-              <p className={`flex-1 min-w-0 font-black text-sm truncate ${e.isPlayer ? 'text-accent' : 'text-fg'}`}>
-                {e.name}
-              </p>
-              <p className="text-sm font-black text-fg-muted tabular-nums shrink-0">{e.xp} XP</p>
-            </div>
-          );
-        })}
-      </div>
 
-      <Button variant="secondary" onClick={onBack} className="w-full mt-6">
-        <ArrowLeft size={16} />
-        Voltar
-      </Button>
+              <div className="bg-surface border-2 border-border rounded-2xl p-4">
+                <p className="font-black text-fg mb-2 flex items-center gap-2">
+                  <Trophy size={16} className="text-coin" />
+                  Zona de promoção
+                </p>
+                {promoCut === 0 ? (
+                  <p className="text-sm font-semibold text-fg-muted">
+                    Você está na divisão mais alta. Aqui o jogo é só não cair.
+                  </p>
+                ) : foraDaZona ? (
+                  <p className="text-sm font-semibold text-fg-muted">
+                    Você está em <span className="text-fg font-black">{rank}º</span>. Suba{' '}
+                    <span className="text-fg font-black">{rank - promoCut}</span>{' '}
+                    {rank - promoCut === 1 ? 'posição' : 'posições'} (
+                    <span className="text-fg font-black">{xpPraZona} XP</span>) pra entrar na zona.
+                  </p>
+                ) : (
+                  <p className="text-sm font-semibold text-check-dark">
+                    Você está dentro! Em <span className="font-black">{rank}º</span> — mantenha até o
+                    ciclo virar e sobe de divisão.
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="bg-surface border-2 border-border rounded-2xl p-4">
+              <p className="font-black text-fg mb-1">Você já passou por aqui</p>
+              <p className="text-sm font-semibold text-fg-muted mb-3">
+                Sua divisão atual é a{' '}
+                <span className="text-fg font-black">{LEAGUES[currentIdx].name}</span>.
+              </p>
+              <p className="text-xs font-bold text-fg-muted mb-1.5">Líder desta divisão</p>
+              {standings.entries[0] && (
+                <RosterRow entry={standings.entries[0]} rank={1} inPromotion inRelegation={false} compact />
+              )}
+            </div>
+          )}
+        </aside>
+      </div>
     </motion.div>
   );
 }

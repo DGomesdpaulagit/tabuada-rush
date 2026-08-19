@@ -925,7 +925,9 @@ export default function App() {
             vidas) — some durante a partida, que já tem seu próprio HUD. */}
         {screen !== 'game' && <Header onNavigate={setScreen} />}
         <div className="flex-1 flex justify-center">
-        <div className="w-full max-w-lg px-4 py-6">
+        {/* Ligas usa a largura toda (coluna da liga + painel lateral, estilo
+            Duolingo); as demais telas seguem na coluna estreita de sempre. */}
+        <div className={`w-full px-4 py-6 ${screen === 'ranking' ? 'max-w-5xl' : 'max-w-lg'}`}>
         <AnimatePresence mode="wait">
           {screen === 'menu' && (
             <MenuPage

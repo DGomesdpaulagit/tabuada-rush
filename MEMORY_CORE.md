@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.6 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + Ligas refeita da referência + header no canto — sessao-056.md)
+**Versão:** 6.0.7 (Tabuada Rush 6.0 completo + limpeza + recalibração de Ligas + Ligas em 2 colunas + header no canto — sessao-057.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -411,8 +411,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-056.md` — última sessão (Ligas da referência + causa raiz do preview) → `sessions/sessao-055.md` (Header no canto)
-5. `DECISIONS.md` D020-D034 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-057.md` — última sessão (Ligas em 2 colunas + folha de ícones) → `sessions/sessao-056.md` (causa raiz do preview)
+5. `DECISIONS.md` D020-D035 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

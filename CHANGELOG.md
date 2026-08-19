@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.7] — 2026-08-17 — Ligas em 2 colunas; a lista rola, a página não
+
+**Detalhes em `sessions/sessao-057.md` e `DECISIONS.md` (D035).**
+
+### Alterado
+- Tela de Ligas em 2 colunas no desktop: escudos + bloco da divisão ficam
+  **fixos**, e a classificação rola dentro da própria caixa (a página não
+  desce mais). No celular segue empilhado com rolagem normal de página
+- Container do App vai a `max-w-5xl` só na tela de Ligas
+
+### Adicionado
+- Painel lateral na tela de Ligas (proposta inicial, aberta a mudança):
+  "Sua corrida" (quem está logo acima, XP que falta pra passar, e a
+  vantagem sobre quem vem atrás) + status da zona de promoção
+
+### Corrigido
+- Scroll horizontal de 4px na tela de Ligas (era a barra de rolagem
+  vertical encolhendo a largura útil)
+
+---
+
 ## [6.0.6] — 2026-08-17 — Ligas copiada da referência; ferramentas de verificação
 
 **Detalhes em `sessions/sessao-056.md` e `DECISIONS.md` (D034).**

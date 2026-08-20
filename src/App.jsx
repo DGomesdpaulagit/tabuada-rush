@@ -100,7 +100,7 @@ function RewardModal({ milestone, onChoose }) {
   const opts = [
     { id: 'level', icon: '⭐', label: 'Subir de Nível', desc: 'Avança 1 nível agora' },
     { id: 'xp', icon: '✨', label: `+${milestone * 20} XP`, desc: 'Ganho direto de XP' },
-    { id: 'coins', icon: '🪙', label: `+${milestone * 5} moedas`, desc: 'Moedas do jogo' },
+    { id: 'coins', icon: '💰', label: `+${milestone * 5} moedas`, desc: 'Moedas do jogo' },
   ];
   return (
     <motion.div
@@ -228,7 +228,7 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
           }
         </p>
         <p className="text-xs text-center font-bold text-gray-500 mb-3">
-          Você tem 🪙 {coins.toLocaleString('pt-BR')}
+          Você tem 💰 {coins.toLocaleString('pt-BR')}
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-3">
@@ -244,7 +244,7 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
                     ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-200 hover:scale-[1.03] active:scale-95'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
               >
-                🪙 {amt}
+                💰 {amt}
                 <span className="block text-[10px] font-bold mt-0.5">
                   ganha {amt * 3}
                 </span>
@@ -293,7 +293,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
           ou compra a reposição agora.
         </p>
         <p className="text-xs text-center font-bold text-fg-muted mb-3">
-          Você tem 🪙 {coins.toLocaleString('pt-BR')}
+          Você tem 💰 {coins.toLocaleString('pt-BR')}
         </p>
         <div className="flex flex-col gap-2">
           <button
@@ -304,7 +304,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
                 ? 'bg-accent text-white shadow-chunky-accent hover:bg-accent/90 active:translate-y-1 active:shadow-none'
                 : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
           >
-            🪙 Repor vidas ({LIFE_REFILL_PRICE})
+            💰 Repor vidas ({LIFE_REFILL_PRICE})
           </button>
           <button
             onClick={onClose}
@@ -744,14 +744,14 @@ export default function App() {
           id: '_bet_win',
           icon: '💰',
           title: 'Aposta vencida!',
-          desc: `+${betPayout} 🪙 (apostou ${activeBet.amount})`,
+          desc: `+${betPayout} 💰 (apostou ${activeBet.amount})`,
         });
       } else if (betResult === 'lose') {
         showAchievement({
           id: '_bet_lose',
           icon: '💸',
           title: 'Aposta perdida',
-          desc: `-${activeBet.amount} 🪙 — tente de novo!`,
+          desc: `-${activeBet.amount} 💰 — tente de novo!`,
         });
       }
 
@@ -765,13 +765,13 @@ export default function App() {
                     id: `_challenge_win_${r.challenge.id}`,
                     icon: r.challenge.emoji,
                     title: 'Desafio mensal cumprido!',
-                    desc: `${r.challenge.title} — +${r.challenge.reward} 🪙`,
+                    desc: `${r.challenge.title} — +${r.challenge.reward} 💰`,
                   }
                 : {
                     id: `_challenge_lose_${r.challenge.id}`,
                     icon: '💸',
                     title: 'Desafio mensal não cumprido',
-                    desc: `${r.challenge.title} — -${r.challenge.penalty} 🪙`,
+                    desc: `${r.challenge.title} — -${r.challenge.penalty} 💰`,
                   }
             ),
           i * 3000

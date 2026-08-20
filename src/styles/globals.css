@@ -35,6 +35,13 @@
   --destructive: 255 75 75; /* #FF4B4B — era #D64545 (pen), tom mais vivo */
   --amber: #FFC800;
   --radius: 1rem;
+
+  /* Altura da barra superior persistente (components/Header.jsx). Fica aqui
+     como FONTE ÚNICA porque a RankingPage precisa do valor pra travar a
+     própria altura (é o que faz a lista de personagens rolar em vez da
+     página). Antes o número estava chapado nos dois lugares e saiu de
+     sincronia sozinho quando o header cresceu 4px. */
+  --header-h: 74px;
 }
 
 * {

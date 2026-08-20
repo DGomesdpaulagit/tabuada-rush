@@ -78,7 +78,7 @@ export default function PerfilPage() {
         </div>
         <div className="h-px bg-white/15 my-4" />
         <div className="flex items-center gap-3">
-          <span className="text-3xl leading-none">{league.emoji}</span>
+          <span className="text-3xl">{league.emoji}</span>
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide">Liga</p>
             <p className="text-lg font-black leading-tight">{league.name}</p>

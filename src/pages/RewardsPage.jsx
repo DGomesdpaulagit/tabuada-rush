@@ -46,7 +46,7 @@ export default function RewardsPage({ onBack }) {
           <p className="text-xs font-semibold text-gray-400">Missões, loja e temporada</p>
         </div>
         <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
-          <span className="text-sm">🪙</span>
+          <span className="text-sm">💰</span>
           <span className="text-sm font-black text-amber-700">{(data.coins || 0).toLocaleString('pt-BR')}</span>
         </div>
       </div>

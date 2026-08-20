@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.8] — 2026-08-17 — Correções visuais das Ligas + emoji quebrado no Windows
+
+**Detalhes em `sessions/sessao-058.md` e `DECISIONS.md` (D036).**
+
+### Corrigido
+- Caixa "Zona de promoção" com o texto rachando no meio de "(693 XP)"
+- Escudo da divisão cortado pela metade (`justify-center` corta pela
+  esquerda quando o conteúdo transborda)
+- Emoji que não existe na fonte do Windows 10 e aparecia como `□` — 33
+  ocorrências, incluindo a moeda 🪙 que eu mesmo tinha introduzido na
+  v6.0.4 (agora 💰)
+- `leading-none` cortando o glifo de emoji no Header/Perfil/Estatísticas
+- Altura do header duplicada em dois lugares e fora de sincronia — virou a
+  variável única `--header-h`
+
+---
+
 ## [6.0.7] — 2026-08-17 — Ligas em 2 colunas; a lista rola, a página não
 
 **Detalhes em `sessions/sessao-057.md` e `DECISIONS.md` (D035).**

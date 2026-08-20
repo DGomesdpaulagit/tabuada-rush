@@ -133,7 +133,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
             <p className="text-xs font-semibold text-fg-muted">Complete para ganhar moedas</p>
           </div>
           <div className="flex items-center gap-1.5 bg-coin/15 border border-coin/30 rounded-2xl px-3 py-1.5">
-            <span className="text-sm">🪙</span>
+            <span className="text-sm">💰</span>
             <span className="text-sm font-black text-coin">{data.coins || 0}</span>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
         </div>
         {activeTab === 'daily' && claimableCoins > 0 && (
           <span className="text-xs font-black text-success bg-success/15 rounded-full px-2.5 py-0.5">
-            +{claimableCoins} 🪙 para resgatar
+            +{claimableCoins} 💰 para resgatar
           </span>
         )}
       </div>
@@ -192,7 +192,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <p className="text-sm font-black text-fg leading-tight">{mission.title}</p>
-                      <span className="text-xs font-black text-coin shrink-0">🪙 {mission.reward}</span>
+                      <span className="text-xs font-black text-coin shrink-0">💰 {mission.reward}</span>
                     </div>
                     <p className="text-xs text-fg-muted font-semibold mb-2">{mission.desc}</p>
                     <Progress
@@ -227,7 +227,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                     <Snowflake size={12} />
                     {(data.powerups?.missionFreeze || 0) > 0
                       ? `Congelar (estoque ×${data.powerups.missionFreeze})`
-                      : 'Congelar (🪙 50)'}
+                      : 'Congelar (💰 50)'}
                   </button>
                 )}
                 {mission.frozen && (
@@ -262,7 +262,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-0.5">
                           <p className="text-sm font-black text-fg leading-tight">{c.title}</p>
-                          <span className="text-xs font-black text-coin shrink-0">🪙 +{c.reward}</span>
+                          <span className="text-xs font-black text-coin shrink-0">💰 +{c.reward}</span>
                         </div>
                         <p className="text-xs text-fg-muted font-semibold mb-2">{c.desc}</p>
                         <Progress
@@ -279,7 +279,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                     {!c.completed && (
                       <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-danger">
                         <AlertTriangle size={12} />
-                        Não cumprir custa 🪙 {c.penalty} do seu saldo
+                        Não cumprir custa 💰 {c.penalty} do seu saldo
                       </p>
                     )}
                     {!c.completed && !c.frozen && (
@@ -291,7 +291,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                         <Snowflake size={12} />
                         {(data.powerups?.missionFreeze || 0) > 0
                           ? `Congelar +10 dias (estoque ×${data.powerups.missionFreeze})`
-                          : 'Congelar +10 dias (🪙 50)'}
+                          : 'Congelar +10 dias (💰 50)'}
                       </button>
                     )}
                     {c.frozen && (
@@ -324,9 +324,9 @@ export default function MissionsPage({ onBack, embedded = false }) {
                       <p className="text-sm font-black text-fg leading-tight">{c.title}</p>
                       <p className="text-xs text-fg-muted font-semibold mb-1">{c.desc}</p>
                       <p className="text-xs font-bold">
-                        <span className="text-coin">Ganha 🪙 {c.reward}</span>
+                        <span className="text-coin">Ganha 💰 {c.reward}</span>
                         {' · '}
-                        <span className="text-danger">perde 🪙 {c.penalty} se não cumprir</span>
+                        <span className="text-danger">perde 💰 {c.penalty} se não cumprir</span>
                       </p>
                     </div>
                   </div>

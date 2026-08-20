@@ -1011,6 +1011,64 @@ escrita mente igual "revisei o código".
 
 ---
 
+## D036 — Correções visuais das Ligas + emoji que não existe na fonte do Windows
+
+**Data:** 2026-08-17 · sessao-058
+**Contexto:** Davi mandou screenshots do estado atual ao lado da referência
+do Duolingo, pedindo pra arrumar a caixa de promoção ("está cortada").
+Primeira vez que consegui de fato COMPARAR o resultado com o alvo — as
+imagens no chat resolveram o que o Browser pane fechado impedia (D034).
+
+**1. Caixa "Zona de promoção" — texto rachando.** Era uma frase corrida
+com números embutidos, e quebrava no meio de "(693 XP)" — número numa
+linha, unidade na outra. Refeita como blocos separados (posição / XP que
+falta em destaque / posições que faltam), com `whitespace-nowrap` em todo
+par número+unidade pra nunca mais rachar no meio.
+
+**2. Escudo Bronze cortado pela metade — a causa era `justify-center`.**
+A fileira de 10 divisões transbordava a coluna em 22px. Com
+`justify-center` num container que transborda, o navegador corta pela
+ESQUERDA (medido: primeiro escudo em x=250 com a coluna começando em 272).
+Duas correções: escudos menores (44px / 64px o selecionado) pra caberem no
+desktop, e o padrão `overflow-x-auto` no pai + `w-max mx-auto` no filho —
+centraliza quando cabe, rola a partir da esquerda quando não cabe, nunca
+corta. **Pegadinha no meio do caminho:** ao simplesmente remover o
+`overflow-x-auto` os escudos passaram a empurrar a página no celular (79px
+de scroll horizontal) — foi o `w-max mx-auto` que resolveu os dois casos.
+
+**3. Emoji que não renderiza no Windows 10 (defeito que EU introduzi).**
+Nas imagens do Davi vários ícones apareciam como caixa vazia `□`. Causa:
+emoji do Unicode 13.0+ (2020+) não existem na fonte do Windows 10 dele.
+O pior é que a moeda 🪙 (U+1FA99) fui eu quem introduziu na v6.0.4
+"corrigindo" o ícone — troquei um ícone que funcionava por um emoji que
+não renderiza na máquina dele, em 30 lugares. Varri o projeto por
+codepoint e troquei 33 ocorrências por equivalentes universais (Unicode
+6.0): moeda 🪙→💰, Mr. Bean 🫖→☕, Pinóquio 🪵→👃 (combina melhor com a
+piada dele, "o nariz denuncia"), Burro do Shrek 🫏→🐴. Mantidos 🦥/🦦
+(Unicode 12.0, renderizam).
+
+**4. `leading-none` cortando glifo de emoji.** `line-height: 1` é menor
+que o glifo de emoji (~1.2), então o desenho estourava a caixa. Removido
+dos spans de emoji no Header, PerfilPage e StatsPage. **Ressalva honesta:**
+sobra ~2px em alguns glifos mesmo assim, mas verifiquei que nenhum
+ancestral tem `overflow: hidden` — o glifo pinta normal, não é defeito
+visível. Meu detector era rigoroso demais pra emoji.
+
+**5. Número mágico da altura do header eliminado.** A RankingPage travava
+a altura com `calc(100dvh-70px-3rem)`; ao corrigir o `leading-none` o
+header cresceu pra 74px e a conta saiu de sincronia sozinha (a página
+voltou a rolar). Agora é `--header-h` em `globals.css`, usada pelo
+`Header.jsx` e pela `RankingPage` — fonte única, não tem como divergir de
+novo.
+
+**Verificado (medido, desktop 1280×720 e mobile 375×812):** escudos
+centralizados com folga idêntica dos dois lados (58px/58px), 0 cortados,
+0 sobra horizontal em ambos, página não rola no desktop, lista rola
+sozinha, 0 textos cortados, 22 personagens alcançáveis no celular,
+variável `--header-h` batendo com a altura real do header (74=74).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

@@ -146,7 +146,11 @@ export default function Header({ onNavigate }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-end px-4 py-3.5 bg-surface border-b-2 border-border">
+    <header
+      /* Altura vem de --header-h (globals.css) — a RankingPage usa a MESMA
+         variável pra travar a altura dela. Ver comentário lá no CSS. */
+      className="sticky top-0 z-40 flex items-center justify-end px-4 bg-surface border-b-2 border-border h-[var(--header-h)] shrink-0"
+    >
       <div className="flex items-center gap-2">
         {/* Faixa de tabuada — equivalente à "bandeira" do Duolingo */}
         <StatItem
@@ -155,14 +159,14 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <span className="text-xl leading-none">{level?.badge}</span>
+              <span className="text-xl">{level?.badge}</span>
               <span className="text-fg">{level?.rangeMin}×{level?.rangeMax}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl leading-none">{level?.badge}</span>
+              <span className="text-3xl">{level?.badge}</span>
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-wide text-fg-muted">Faixa atual</p>
                 <p className="font-black text-fg leading-tight truncate">{level?.name}</p>
@@ -240,14 +244,14 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <span className="text-lg leading-none">🪙</span>
+              <span className="text-lg">💰</span>
               <span className="text-coin">{coins}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-1">
-              <span className="text-3xl leading-none">🪙</span>
+              <span className="text-3xl">💰</span>
               <div className="min-w-0">
                 <p className="font-black text-fg leading-tight">Moedas</p>
                 <p className="text-xs font-bold text-fg-muted">Você tem {coins.toLocaleString('pt-BR')} moedas</p>
@@ -298,7 +302,7 @@ export default function Header({ onNavigate }) {
                 <Heart size={15} className="fill-danger text-danger" />
                 Recuperar vidas
               </span>
-              <span className="flex items-center gap-1 text-coin">🪙 {LIFE_REFILL_PRICE}</span>
+              <span className="flex items-center gap-1 text-coin">💰 {LIFE_REFILL_PRICE}</span>
             </button>
           </div>
           <div className="px-4 pb-4">

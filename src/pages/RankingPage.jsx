@@ -98,7 +98,7 @@ export default function RankingPage({ onBack }) {
       exit="exit"
       transition={pageTransition}
       /* SÓ no desktop (lg+): altura travada no que sobra da janela (100dvh −
-         header de 70px − o py-6 do container do App). Sem isso a PÁGINA rola,
+         --header-h − o py-6 do container do App). Sem isso a PÁGINA rola,
          e página rolando é justamente o que o Davi não quer aqui: quem rola é
          a lista de personagens, dentro da própria caixa. Bônus: sem scroll
          vertical na página não aparece barra de rolagem, e sem barra some
@@ -106,7 +106,7 @@ export default function RankingPage({ onBack }) {
          No celular NÃO trava: com as colunas empilhadas o conteúdo passa de
          1500px e a altura fixa cortaria metade dos personagens sem como
          alcançá-los — lá a página rola normal, como se espera de mobile. */
-      className="flex flex-col lg:h-[calc(100dvh-70px-3rem)] lg:overflow-hidden"
+      className="flex flex-col lg:h-[calc(100dvh-var(--header-h)-3rem)] lg:overflow-hidden"
     >
       <button
         onClick={onBack}
@@ -118,8 +118,16 @@ export default function RankingPage({ onBack }) {
       <div className="flex flex-col lg:flex-row lg:items-stretch gap-6 lg:flex-1 lg:min-h-0">
         {/* ── Coluna da liga ───────────────────────────────────────────── */}
         <div className="flex-1 min-w-0 flex flex-col">
-          {/* Escudos — só ícones, sem rótulo de texto (evita colisão) */}
-          <div className="flex items-end justify-center gap-3 overflow-x-auto pb-2 shrink-0">
+          {/* Escudos — só ícones, sem rótulo de texto (evita colisão).
+              O padrão aqui é `overflow-x-auto` no PAI + `w-max mx-auto` no
+              FILHO, de propósito: com `justify-center` direto num container
+              que transborda, o navegador corta pela ESQUERDA e o primeiro
+              escudo some pela metade (era o Bronze cortado). Assim, quando
+              cabe (desktop) o `mx-auto` centraliza; quando não cabe
+              (celular) começa da esquerda e rola, sem cortar nem empurrar a
+              página. */}
+          <div className="overflow-x-auto shrink-0">
+            <div className="flex items-end gap-2 w-max mx-auto pb-1">
             {LEAGUES.map((league, idx) => {
               const unlocked = idx <= highestIdx;
               const isSelected = league.id === selectedLeague.id;
@@ -131,15 +139,16 @@ export default function RankingPage({ onBack }) {
                   onClick={() => trocarLiga(league.id)}
                   title={unlocked ? league.name : 'Divisão bloqueada'}
                   className={`shrink-0 rounded-2xl flex items-center justify-center transition-all
-                    ${isSelected ? 'w-20 h-20 text-4xl' : 'w-14 h-14 text-2xl opacity-70'}
+                    ${isSelected ? 'w-16 h-16 text-3xl' : 'w-11 h-11 text-xl opacity-70'}
                     ${unlocked
                       ? `bg-gradient-to-br ${league.gradient} text-white ${isSelected ? 'shadow-lg' : 'hover:opacity-100'}`
                       : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
                 >
-                  {unlocked ? league.emoji : <Lock size={isSelected ? 26 : 18} />}
+                  {unlocked ? league.emoji : <Lock size={isSelected ? 22 : 15} />}
                 </button>
               );
             })}
+            </div>
           </div>
 
           {/* Bloco da divisão — FIXO, nunca sai da tela */}
@@ -253,15 +262,35 @@ export default function RankingPage({ onBack }) {
                     Você está na divisão mais alta. Aqui o jogo é só não cair.
                   </p>
                 ) : foraDaZona ? (
-                  <p className="text-sm font-semibold text-fg-muted">
-                    Você está em <span className="text-fg font-black">{rank}º</span>. Suba{' '}
-                    <span className="text-fg font-black">{rank - promoCut}</span>{' '}
-                    {rank - promoCut === 1 ? 'posição' : 'posições'} (
-                    <span className="text-fg font-black">{xpPraZona} XP</span>) pra entrar na zona.
-                  </p>
+                  /* Antes isso era uma frase corrida e quebrava feio no meio
+                     de "(693 XP)" — número numa linha, unidade na outra.
+                     Agora cada dado é um bloco próprio, e os pares
+                     número+unidade levam `whitespace-nowrap` pra nunca
+                     rachar no meio. */
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-semibold text-fg-muted leading-snug">
+                      Você está em{' '}
+                      <span className="text-fg font-black whitespace-nowrap">{rank}º</span> de{' '}
+                      <span className="text-fg font-black whitespace-nowrap">{standings.total}</span>.
+                    </p>
+                    <div className="flex items-center justify-between gap-3 bg-surface-2 rounded-xl px-3 py-2">
+                      <span className="text-xs font-bold text-fg-muted">Pra entrar na zona</span>
+                      <span className="text-sm font-black text-fg whitespace-nowrap">
+                        +{xpPraZona} XP
+                      </span>
+                    </div>
+                    <p className="text-xs font-semibold text-fg-muted leading-snug">
+                      Faltam{' '}
+                      <span className="text-fg font-black whitespace-nowrap">
+                        {rank - promoCut} {rank - promoCut === 1 ? 'posição' : 'posições'}
+                      </span>
+                      .
+                    </p>
+                  </div>
                 ) : (
-                  <p className="text-sm font-semibold text-check-dark">
-                    Você está dentro! Em <span className="font-black">{rank}º</span> — mantenha até o
+                  <p className="text-sm font-semibold text-check-dark leading-snug">
+                    Você está dentro! Em{' '}
+                    <span className="font-black whitespace-nowrap">{rank}º</span> — mantenha até o
                     ciclo virar e sobe de divisão.
                   </p>
                 )}

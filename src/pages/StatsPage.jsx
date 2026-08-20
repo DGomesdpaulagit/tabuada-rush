@@ -265,7 +265,7 @@ export default function StatsPage({ onBack }) {
               key={i}
               className={`flex items-start gap-3 rounded-2xl p-3 border ${TONE[ins.tone] || TONE.neutral}`}
             >
-              <span className="text-lg leading-none">{ins.icon}</span>
+              <span className="text-lg">{ins.icon}</span>
               <p className="text-sm font-bold leading-snug">{ins.text}</p>
             </div>
           ))}

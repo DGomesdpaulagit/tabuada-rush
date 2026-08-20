@@ -4,6 +4,25 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.10] — 2026-08-17 — Varredura completa dos ícones
+
+**Detalhes em `sessions/sessao-060.md` e `DECISIONS.md` (D038).**
+
+### Corrigido
+- Loja: preço dos power-ups não mostrava o ícone de moeda (e agora fica
+  dessaturado quando não dá pra comprar)
+- Perfil: "XP total" usava ícone genérico em vez do ícone de XP
+- Catálogo de Progresso: liga, ofensiva, XP e marcos de progresso usavam
+  emoji/ícone genérico
+- Menu, Estatísticas, Catálogo de Precisão e mapa de ofensiva: ofensiva e
+  recordes passam a usar a arte
+
+### Corrigido (regressão da 6.0.9)
+- `User` foi removido por engano dos imports do `Sidebar.jsx` durante a
+  limpeza de ícones não usados — quebraria o Perfil em tempo de execução
+
+---
+
 ## [6.0.9] — 2026-08-17 — Ícones do Davi no lugar dos emoji
 
 **Detalhes em `sessions/sessao-059.md` e `DECISIONS.md` (D037).**

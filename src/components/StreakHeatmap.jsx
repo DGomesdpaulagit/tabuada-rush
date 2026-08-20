@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Flame } from 'lucide-react';
+
+import GameIcon from './GameIcon';
 
 // 365 dias, agrupados por semana (colunas) e dia da semana (linhas).
 // Cor por intensidade:
@@ -99,7 +100,7 @@ export default function StreakHeatmap({ sessions = [] }) {
     >
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
-          <Flame size={16} className="text-orange-500" />
+          <GameIcon name="ofensiva" size={17} />
           <p className="font-black text-gray-800">Ofensiva — 365 dias</p>
         </div>
         <p className="text-[10px] font-bold text-gray-400">

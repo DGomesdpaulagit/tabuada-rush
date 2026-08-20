@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.9 (Tabuada Rush 6.0 completo + Ligas em 2 colunas + ícones de arte própria — sessao-059.md)
+**Versão:** 6.0.10 (Tabuada Rush 6.0 completo + Ligas em 2 colunas + ícones em todo o app — sessao-060.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,11 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.10]** Varredura completa dos ícones — Davi listou um por um os lugares que a
+059 deixou passar (Loja sem ícone no preço, Perfil com XP errado, Catálogo com liga/
+ofensiva/XP/marcos errados). Regra dele: **todo** lugar que menciona moeda/ofensiva/XP
+usa a arte. Item travado na Loja resolvido com `grayscale` no CSS (não precisou de
+ícone preto novo). Ver `sessao-060.md` e D038.
 **[v6.0.9]** Os 22 ícones de arte própria do Davi entraram no jogo (Header, Sidebar,
 Ligas, Perfil, Loja, Missões, Jogo, Temporadas). Os arquivos vieram SEM transparência
 (recorte de tela, fundos em tons diferentes) — pipeline de flood fill a partir das
@@ -312,24 +317,29 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — REDIMENSIONAR ÍCONES, DEPOIS PAINEL DA ARENA
+## 🎯 PRÓXIMA SESSÃO — ORDEM DEFINIDA PELO DAVI
 
-**Ler antes:** `sessions/sessao-059.md` (ícones no jogo, a mais recente) →
-`sessions/sessao-058.md` (correções visuais) → `DECISIONS.md` D020-D037.
+**Ler antes:** `sessions/sessao-060.md` (varredura dos ícones, a mais
+recente) → `sessions/sessao-059.md` (pipeline de processamento dos ícones)
+→ `DECISIONS.md` D020-D038.
 
-**Ordem combinada com o Davi:**
-1. **Redimensionar os ícones** — ajuste fino de tamanho agora que dá pra ver
-   todos no lugar. Os tamanhos atuais foram estimativa minha.
-2. **Mudança do painel central da Arena.**
+**Ele deu a ordem explicitamente — seguir nesta sequência:**
+1. ~~Corrigir os ícones faltando~~ — feito na sessão 060.
+2. **Ícones dos power-ups** (escudo, foguete de XP) — ele vai mandar.
+3. **Reformular o painel central da Arena.** ⚠️ Ele avisou que esse painel
+   vai mudar e pediu pra NÃO mexer nele antes dessa conversa — não
+   antecipar.
+4. **Imagens dos 104 personagens** — ele fornece, eu coloco na caixinha de
+   cada um (hoje é emoji em `constants/leagues.js`).
 
-**Aguardando dele:** imagens dos PERSONAGENS, começando pela Bronze. Ele vai
-baixando aos poucos e eu coloco na caixinha de cada um (hoje é o emoji em
-`constants/leagues.js`). Mesma regra de sempre: precisa ser ARQUIVO salvo no
-disco, imagem colada no chat eu não consigo extrair (D033/D037).
+**Regra que continua valendo:** arquivo salvo em disco (Downloads serve).
+Imagem colada no chat eu vejo mas não extraio (D033). Pipeline de remoção
+de fundo + fatiamento de folha está em D037 — folha única funciona, desde
+que tenha respiro entre os itens.
 
-**Ferramenta pronta pra isso:** o pipeline de remoção de fundo + fatiamento
-está documentado em D037 — folha única com vários personagens funciona,
-desde que tenha um respiro entre eles.
+**Ponto em aberto pra ele confirmar:** usei o ícone de ofensiva também em
+"Melhor Sequência" (acertos seguidos numa partida, não dias seguidos). Se
+ele achar que confunde, é trocar em 2 lugares — ver D038.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -418,8 +428,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-059.md` — última sessão (ícones do Davi no jogo) → `sessions/sessao-058.md` (correções visuais + emoji do Windows)
-5. `DECISIONS.md` D020-D037 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-060.md` — última sessão (varredura dos ícones) → `sessions/sessao-059.md` (ícones do Davi no jogo)
+5. `DECISIONS.md` D020-D038 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

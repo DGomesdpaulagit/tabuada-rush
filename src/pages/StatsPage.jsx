@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart2, Target, Trophy, Flame, Download, Sparkles, Calendar, Crosshair } from 'lucide-react';
+import { ArrowLeft, BarChart2, Target, Download, Sparkles, Calendar, Crosshair } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -10,6 +10,7 @@ import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
 import StreakHeatmap from '../components/StreakHeatmap';
 import AccuracyCatalogPage from './AccuracyCatalogPage';
+import GameIcon from '../components/GameIcon';
 
 // ── GUIA LATERAL [v6.0 · Bloco 7] ────────────────────────────────────────────
 // "Estatísticas é muita coisa" (Davi) — sumário fixo tipo Notion pra navegar
@@ -207,14 +208,14 @@ export default function StatsPage({ onBack }) {
           delay={0.1}
         />
         <StatCard
-          icon={<Trophy size={16} />}
+          icon={<GameIcon name="podio" size={17} />}
           label="Maior Pontuação"
           value={data.bestScore || 0}
           colorClass="bg-amber-100 text-amber-600"
           delay={0.15}
         />
         <StatCard
-          icon={<Flame size={16} />}
+          icon={<GameIcon name="ofensiva" size={17} />}
           label="Melhor Sequência"
           value={data.bestStreak || 0}
           colorClass="bg-rose-100 text-rose-600"

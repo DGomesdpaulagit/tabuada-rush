@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Sparkles, Star, BookMarked, ChevronRight, Calendar } from 'lucide-react';
+import { User, Star, BookMarked, ChevronRight, Calendar } from 'lucide-react';
 import GameIcon from '../components/GameIcon';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -99,7 +99,7 @@ export default function PerfilPage() {
           <p className="text-xs font-semibold text-fg-muted">Recorde de ofensiva</p>
         </div>
         <div className="bg-surface rounded-2xl p-4 border-2 border-border flex flex-col gap-1">
-          <Sparkles size={18} className="text-accent" />
+          <GameIcon name="xp" size={20} />
           <p className="text-xl font-black text-fg">{data.xp || 0}</p>
           <p className="text-xs font-semibold text-fg-muted">XP total</p>
         </div>

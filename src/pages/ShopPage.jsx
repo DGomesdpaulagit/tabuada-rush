@@ -121,12 +121,20 @@ export default function ShopPage({ onBack, embedded = false }) {
                 <button
                   onClick={() => buyPowerup(item)}
                   disabled={!canAfford}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
                     canAfford
                       ? 'bg-bee/20 text-bee-dark hover:bg-bee/30 border-2 border-bee/40'
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed border-2 border-gray-200'
                   }`}
                 >
+                  {/* Sem moeda suficiente = item travado: a moedinha fica
+                      dessaturada junto com o resto do botão, em vez de ficar
+                      dourada e viva num botão apagado. */}
+                  <GameIcon
+                    name="moedas"
+                    size={14}
+                    className={canAfford ? '' : 'grayscale opacity-50'}
+                  />
                   {item.price.toLocaleString('pt-BR')}
                 </button>
               </div>
@@ -138,13 +146,14 @@ export default function ShopPage({ onBack, embedded = false }) {
       {/* Como ganhar moedas */}
       <div className="bg-bee/10 border-2 border-bee/20 rounded-2xl p-4">
         <p className="text-xs font-black text-bee-dark mb-2">Como ganhar moedas?</p>
-        <ul className="space-y-1">
+        <ul className="space-y-1.5">
           {[
-            'Até 15 moedas por partida (0.3 × acertos)',
-            '+1 moeda ao manter ofensiva',
-            'Complete missões para bônus maiores',
-          ].map((text) => (
-            <li key={text} className="text-xs text-bee-dark/80 font-semibold">
+            { art: 'moedas', text: 'Até 15 moedas por partida (0.3 × acertos)' },
+            { art: 'ofensiva', text: '+1 moeda ao manter ofensiva' },
+            { art: 'missoes', text: 'Complete missões para bônus maiores' },
+          ].map(({ art, text }) => (
+            <li key={text} className="flex items-center gap-1.5 text-xs text-bee-dark/80 font-semibold">
+              <GameIcon name={art} size={14} />
               {text}
             </li>
           ))}

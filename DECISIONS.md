@@ -1123,6 +1123,64 @@ app monta e renderiza depois deles — não são erros do estado final.
 
 ---
 
+## D038 — Varredura completa dos ícones (o que a sessão 059 deixou passar)
+
+**Data:** 2026-08-17 · sessao-060
+**Contexto:** Davi aprovou os ícones da 059 mas apontou, um por um, os
+lugares onde eu não tinha trocado. A regra que ele deu é mais forte do que
+eu tinha aplicado: **"toda vez que mencionar a moedinha tem que ter o
+ícone"** e **"todos, todos, quando estiver aparecendo ofensiva precisa
+estar o ícone da ofensiva"**. Na 059 eu troquei onde era óbvio; ele quer a
+regra valendo em todo lugar.
+
+**Corrigido:**
+| Onde | Estava | Agora |
+|---|---|---|
+| Loja — preço dos power-ups | só o número | ícone de moeda + número |
+| Loja — "Como ganhar moedas" | texto puro | ícone por linha (moeda/ofensiva/missões) |
+| Perfil — "XP total" | `Sparkles` (lucide) | `xp.png` |
+| Catálogo — liga na descrição | emoji 🥉 | escudo da divisão |
+| Catálogo — "XP Total" no resumo | sem ícone | `xp.png` |
+| Catálogo — "Ofensiva" no resumo | emoji 🔥 | `ofensiva.png` |
+| Catálogo — "Experiência (XP)" | `Sparkles` | `xp.png` |
+| Catálogo — "Marcos de Progresso" | `Award` | `podio.png` |
+| Catálogo — "Ofensiva recorde" | `Flame` | `ofensiva.png` |
+| Catálogo — "Maior pontuação" | `Trophy` | `podio.png` |
+| Menu, Estatísticas, Precisão, Heatmap | `Flame`/`Trophy` | arte correspondente |
+
+**Item bloqueado na Loja:** Davi ofereceu fazer uma versão preta do ícone
+pra quando não dá pra comprar. Não precisa — resolvi com
+`grayscale opacity-50` no CSS. Mesma arte, sem arquivo novo pra manter.
+
+**Decisão de escopo que vale registrar:** "Melhor Sequência" (acertos
+consecutivos DENTRO de uma partida) recebeu o ícone de ofensiva, mesmo não
+sendo a ofensiva diária. São conceitos diferentes; usei a mesma arte porque
+a chama é o símbolo natural de "sequência" nos dois sentidos e misturar
+lucide com arte na mesma grade fica pior. **Se o Davi discordar, é trocar
+em 2 lugares** (`StatsPage`, `AccuracyCatalogPage`).
+
+**Não trocados de propósito:** `Sparkles` em "Análise Inteligente"
+(Menu/Stats), "Boa sessão!" (Flashcard) e "Reduzir animações"
+(Configurações) — nada disso é XP, é só brilho decorativo. "Nível
+alcançado" e "Total de acertos" seguem com lucide: não há arte pra eles.
+
+**Bug que eu introduzi e peguei na verificação:** ao limpar imports órfãos
+da lucide, meu script removeu `User` do `Sidebar.jsx` — mas lá o uso é
+`icon: User` (propriedade de objeto), formato que o regex não reconhecia.
+**O `npm run build` passou mesmo assim** (identificador indefinido só
+quebra em tempo de execução), então build limpo não teria pego. Só apareceu
+porque fui conferir arquivo por arquivo depois. Lição: script de limpeza de
+import precisa cobrir uso como valor, não só `<Componente>`.
+
+**Verificado:** Loja — 7 botões de preço com ícone, todos os bloqueados com
+a moeda dessaturada; Perfil — "XP total" usando `xp.png`; Catálogo —
+`liga-safira.png`/`xp.png`/`podio.png`/`ofensiva.png` presentes e **zero**
+SVG de `flame`/`trophy`/`sparkles`/`award` sobrando; Estatísticas — "Maior
+Pontuação"→pódio, "Melhor Sequência"→ofensiva. 0 imagens quebradas, 0 sobra
+horizontal em todas as telas.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

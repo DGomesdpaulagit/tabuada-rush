@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp,
-  Gauge, Calculator, Flame, Grid3x3, CheckCircle,
-} from 'lucide-react';
+import { ArrowLeft, Target, Zap, XCircle, Crosshair, TrendingUp, Gauge, Calculator, Grid3x3, CheckCircle } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -13,6 +10,7 @@ import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
 import HitsPage from './HitsPage';
 import ErrorsPage from './ErrorsPage';
+import GameIcon from '../components/GameIcon';
 
 const DAY = 86400000;
 
@@ -590,7 +588,7 @@ export default function AccuracyCatalogPage({ onBack }) {
           <StatCard icon={<Calculator size={16} />} label="Contas respondidas" value={answered} colorClass="bg-violet-100 text-violet-600" delay={0.05} />
           <StatCard icon={<Target size={16} />} label="Total de acertos" value={totalCorrect} colorClass="bg-emerald-100 text-emerald-600" delay={0.1} />
           <StatCard icon={<XCircle size={16} />} label="Total de erros" value={totalWrong} colorClass="bg-rose-100 text-rose-600" delay={0.15} />
-          <StatCard icon={<Flame size={16} />} label="Melhor sequência" value={data.bestStreak || 0} colorClass="bg-amber-100 text-amber-600" delay={0.2} />
+          <StatCard icon={<GameIcon name="ofensiva" size={17} />} label="Melhor sequência" value={data.bestStreak || 0} colorClass="bg-amber-100 text-amber-600" delay={0.2} />
         </div>
       </div>
 

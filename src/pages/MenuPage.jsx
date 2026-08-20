@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Gamepad2, Gift, BarChart2, LogIn, Cloud, Sparkles, Settings, ChevronRight, Brain, Coins, Flame, Trophy } from 'lucide-react';
+import { Gamepad2, Gift, BarChart2, LogIn, Cloud, Sparkles, Settings, ChevronRight, Brain, Coins } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
@@ -7,6 +7,7 @@ import { getLeagueStandings } from '../utils/leagues';
 import { analyzeUser } from '../utils/analysis';
 import { countUnclaimedMissions } from '../utils/missions';
 import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
+import GameIcon from '../components/GameIcon';
 
 export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
   const { data, cloudSyncing } = useApp();
@@ -153,13 +154,13 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         {/* Ofensiva diária — recorde vira um detalhe pequeno, não uma coluna
             inteira (menos informação disputando atenção no painel). */}
         <div className="flex items-center gap-2">
-          <Flame size={22} className="shrink-0" />
+          <GameIcon name="ofensiva" size={24} />
           <p className="text-lg font-black leading-tight">
             {streak} {streak === 1 ? 'dia' : 'dias'}
           </p>
           {bestDayStreak > 0 && (
             <span className="text-white/60 text-xs font-bold flex items-center gap-0.5 ml-1">
-              <Trophy size={11} /> {bestDayStreak}
+              <GameIcon name="podio" size={12} /> {bestDayStreak}
             </span>
           )}
         </div>

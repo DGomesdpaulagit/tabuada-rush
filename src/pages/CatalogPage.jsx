@@ -1,12 +1,10 @@
 import { motion } from 'framer-motion';
-import {
-  ArrowLeft, TrendingUp, Star, Flame, Trophy, Sparkles,
-  Calendar, Lock, Check, Target, Award, History,
-} from 'lucide-react';
+import { ArrowLeft, TrendingUp, Star, Lock, Check, Target, History } from 'lucide-react';
 import { LEVELS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { getLevelIdx, getXpProgress, getAccuracy, formatDate } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
+import GameIcon, { LeagueIcon } from '../components/GameIcon';
 import { analyzeUser } from '../utils/analysis';
 import { Progress, StatCard, EmptyState, Button, pageVariants, pageTransition } from '../components/ui';
 
@@ -94,17 +92,22 @@ export default function CatalogPage({ onBack }) {
             </p>
             <p className="text-2xl font-black leading-tight truncate">{level.name}</p>
             <p className="text-violet-200 text-[11px] font-bold truncate mt-0.5">
-              {league.emoji} Liga {league.name} · {playerRank}º de {leagueTotal}
+              <LeagueIcon leagueId={league.id} size={14} className="inline-block align-text-bottom mr-1" />
+              Liga {league.name} · {playerRank}º de {leagueTotal}
             </p>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-2xl bg-white/10 p-3 text-center">
-            <p className="text-xl font-black leading-none">{data.xp || 0}</p>
+            <p className="text-xl font-black leading-none flex items-center justify-center gap-1">
+              <GameIcon name="xp" size={16} />{data.xp || 0}
+            </p>
             <p className="text-violet-200 text-[11px] font-bold mt-1">XP Total</p>
           </div>
           <div className="rounded-2xl bg-white/10 p-3 text-center">
-            <p className="text-xl font-black leading-none">🔥 {data.currentStreak || 0}</p>
+            <p className="text-xl font-black leading-none flex items-center justify-center gap-1">
+              <GameIcon name="ofensiva" size={16} />{data.currentStreak || 0}
+            </p>
             <p className="text-violet-200 text-[11px] font-bold mt-1">Ofensiva</p>
           </div>
           <div className="rounded-2xl bg-white/10 p-3 text-center">
@@ -122,7 +125,7 @@ export default function CatalogPage({ onBack }) {
         className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles size={16} className="text-violet-500" />
+          <GameIcon name="xp" size={17} />
           <p className="font-black text-gray-800">Experiência (XP)</p>
         </div>
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -184,7 +187,7 @@ export default function CatalogPage({ onBack }) {
       {/* ── MARCOS DE PROGRESSO ──────────────────────────────────────────── */}
       <div>
         <div className="flex items-center gap-2 mb-3 px-1">
-          <Award size={15} className="text-violet-500" />
+          <GameIcon name="podio" size={16} />
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Marcos de Progresso</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -196,14 +199,14 @@ export default function CatalogPage({ onBack }) {
             delay={0.05}
           />
           <StatCard
-            icon={<Flame size={16} />}
+            icon={<GameIcon name="ofensiva" size={17} />}
             label="Ofensiva recorde"
             value={`${data.bestDayStreak || 0} dias`}
             colorClass="bg-rose-100 text-rose-600"
             delay={0.1}
           />
           <StatCard
-            icon={<Trophy size={16} />}
+            icon={<GameIcon name="podio" size={17} />}
             label="Maior pontuação"
             value={data.bestScore || 0}
             colorClass="bg-amber-100 text-amber-600"

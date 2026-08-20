@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Coins } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import GameIcon from '../components/GameIcon';
 import { SHOP_ITEMS, RARITIES } from '../constants/shop';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
@@ -56,7 +57,7 @@ export default function ShopPage({ onBack, embedded = false }) {
             <p className="text-xs font-semibold text-gray-400">Power-ups pra usar na partida</p>
           </div>
           <div className="flex items-center gap-1.5 bg-bee/15 border-2 border-bee/30 rounded-2xl px-3 py-1.5">
-            <Coins size={14} className="text-bee-dark" />
+            <GameIcon name="moedas" size={14} />
             <span className="text-sm font-black text-bee-dark">{coins.toLocaleString('pt-BR')}</span>
           </div>
         </div>

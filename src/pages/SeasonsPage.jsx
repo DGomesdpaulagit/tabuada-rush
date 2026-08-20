@@ -4,6 +4,7 @@ import { useApp } from '../contexts/AppContext';
 import { getActiveSeason } from '../constants/seasons';
 import { SHOP_ITEM_MAP } from '../constants/shop';
 import { pageVariants, pageTransition, Progress } from '../components/ui';
+import GameIcon from '../components/GameIcon';
 
 function formatDate(str) {
   const d = new Date(str + 'T12:00:00');
@@ -172,7 +173,9 @@ export default function SeasonsPage({ onBack, embedded = false }) {
                 {/* Reward info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-lg shrink-0">{rw.emoji}</span>
+                    {rw.art
+                      ? <GameIcon name={rw.art} size={20} />
+                      : <span className="text-lg shrink-0">{rw.emoji}</span>}
                     <div className="min-w-0">
                       <p className="text-sm font-black text-gray-900 leading-tight">{rw.label}</p>
                       <p className="text-xs text-gray-400 font-semibold">

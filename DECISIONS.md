@@ -1069,6 +1069,60 @@ variável `--header-h` batendo com a altura real do header (74=74).
 
 ---
 
+## D037 — Ícones do Davi entram no jogo (pipeline de remoção de fundo + fatiamento)
+
+**Data:** 2026-08-17 · sessao-059
+**Contexto:** Davi salvou 14 PNGs em `~/Downloads` — o que destrava o
+bloqueio registrado em D033 (imagem colada no chat eu vejo mas não consigo
+extrair; arquivo em disco eu processo).
+
+**O problema que os arquivos traziam:** **nenhum tinha transparência.** Eram
+recortes de tela com o fundo chapado — e em tons DIFERENTES entre si
+(`#131F24`, `#202F36`, `#050D0E`, e dois em branco puro). Colar direto ia
+gerar retângulos visíveis em volta de cada ícone, e os dois brancos ficariam
+como caixas brancas no tema escuro.
+
+**Pipeline aplicado (Pillow + numpy, script na sessão):**
+1. **Remoção de fundo por flood fill a partir das bordas**, não por "toda
+   cor parecida com o fundo". Essa distinção importa: vários ícones têm
+   miolo escuro parecido com o fundo (o escudo da Obsidiana é quase preto) —
+   apagar por cor faria buraco no meio do desenho. Preenchendo só o que está
+   conectado à moldura, o interior fica intacto.
+2. **Recorte automático** na bounding box do conteúdo.
+3. **Fatiamento da folha das 9 divisões** (1536×1024): grade fixa 3×3 saiu
+   torta (larguras 282/441/221 — cortava escudo no meio), então troquei por
+   detecção de ilhas conectadas → 9 escudos consistentes (~282×315) num grid
+   limpo. Ordem da folha bate 1:1 com `LEAGUES` depois da Bronze.
+4. **Redimensionamento** pra no máximo 192px (nenhum ícone aparece acima de
+   ~80px na UI; 192 cobre tela 2×): **1269KB → 435KB**.
+
+**Componente `GameIcon`:** os ícones têm proporções diferentes entre si (o
+foguinho é alto e fino, a arena é larga). Caixa quadrada com
+`object-contain` faz todos ocuparem o mesmo espaço visual sem distorcer —
+é o que mantém as fileiras alinhadas.
+
+**Onde entrou:** Header (ofensiva/moedas/vidas), Sidebar (arena/ligas/
+missões/loja), RankingPage (10 escudos + divisão bloqueada + pódio),
+Perfil, Loja, Missões, Jogo, Recompensas, Temporadas.
+
+**Faixa de tabuada continua emoji** — pedido explícito do Davi.
+
+**Limite honesto — 11 lugares ficaram com emoji 💰:** são strings JS puras
+(`icon: '💰'` de toast, `desc:` de notificação). String não renderiza
+componente; trocar exigiria mudar o modelo de dados dos toasts. Não estão
+quebrados (💰 é Unicode 6.0, renderiza), só não usam a arte. Em
+`constants/seasons.js` dava pra resolver limpo, então resolvi: as
+recompensas ganharam um campo `art` e a SeasonsPage prefere a arte quando
+existe.
+
+**Verificado:** build limpo; 0 imagens quebradas em Arena/Ligas/Perfil/Loja/
+Missões; mapeamento escudo→divisão conferido 1:1 nas 10; 0 sobra horizontal
+em todas as telas. **Ressalva:** o console do preview acumula erros de
+estados transitórios do HMR (de quando eu trocava imports); confirmei que o
+app monta e renderiza depois deles — não são erros do estado final.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

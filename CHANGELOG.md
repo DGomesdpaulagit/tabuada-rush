@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.9] — 2026-08-17 — Ícones do Davi no lugar dos emoji
+
+**Detalhes em `sessions/sessao-059.md` e `DECISIONS.md` (D037).**
+
+### Adicionado
+- 22 ícones de arte própria em `src/assets/icons/` (ofensiva, moedas, vidas,
+  XP, arena, ligas, missões, loja, pódio, baú, divisão bloqueada, missão
+  travada e os 10 escudos de divisão)
+- Componente `GameIcon` / `LeagueIcon`
+
+### Alterado
+- Header, Sidebar, Ligas, Perfil, Loja, Missões, Jogo, Recompensas e
+  Temporadas passam a usar a arte no lugar de emoji/ícones da lucide
+- Faixa de tabuada segue com emoji (pedido do Davi)
+
+---
+
 ## [6.0.8] — 2026-08-17 — Correções visuais das Ligas + emoji quebrado no Windows
 
 **Detalhes em `sessions/sessao-058.md` e `DECISIONS.md` (D036).**

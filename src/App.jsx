@@ -31,6 +31,7 @@ import { calcSeasonXp } from './constants/seasons';
 import { updateMissions, getNewlyCompleted, resolveChallenges } from './utils/missions';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
+import GameIcon from './components/GameIcon';
 
 // ── ACHIEVEMENT TOAST ──────────────────────────────────────────────────────
 function AchievementToast({ achievement, onDone }) {
@@ -228,7 +229,7 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
           }
         </p>
         <p className="text-xs text-center font-bold text-gray-500 mb-3">
-          Você tem 💰 {coins.toLocaleString('pt-BR')}
+          Você tem <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> {coins.toLocaleString('pt-BR')}
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-3">
@@ -244,7 +245,7 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
                     ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-200 hover:scale-[1.03] active:scale-95'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
               >
-                💰 {amt}
+                <GameIcon name="moedas" size={14} className="inline-block align-text-bottom" /> {amt}
                 <span className="block text-[10px] font-bold mt-0.5">
                   ganha {amt * 3}
                 </span>
@@ -293,7 +294,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
           ou compra a reposição agora.
         </p>
         <p className="text-xs text-center font-bold text-fg-muted mb-3">
-          Você tem 💰 {coins.toLocaleString('pt-BR')}
+          Você tem <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> {coins.toLocaleString('pt-BR')}
         </p>
         <div className="flex flex-col gap-2">
           <button
@@ -304,7 +305,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
                 ? 'bg-accent text-white shadow-chunky-accent hover:bg-accent/90 active:translate-y-1 active:shadow-none'
                 : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
           >
-            💰 Repor vidas ({LIFE_REFILL_PRICE})
+            <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> Repor vidas ({LIFE_REFILL_PRICE})
           </button>
           <button
             onClick={onClose}

@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.8 (Tabuada Rush 6.0 completo + Ligas em 2 colunas + correções visuais + emoji do Windows — sessao-058.md)
+**Versão:** 6.0.9 (Tabuada Rush 6.0 completo + Ligas em 2 colunas + ícones de arte própria — sessao-059.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,12 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.9]** Os 22 ícones de arte própria do Davi entraram no jogo (Header, Sidebar,
+Ligas, Perfil, Loja, Missões, Jogo, Temporadas). Os arquivos vieram SEM transparência
+(recorte de tela, fundos em tons diferentes) — pipeline de flood fill a partir das
+bordas + recorte + fatiamento da folha de 9 divisões + redimensionamento (1269KB →
+435KB). Componente `GameIcon`/`LeagueIcon`. Faixa de tabuada segue emoji (pedido dele).
+11 lugares seguem com 💰 por serem string pura de toast. Ver `sessao-059.md` e D037.
 **[v6.0.8]** Correções visuais das Ligas a partir de screenshots do Davi (foi assim
 que consegui COMPARAR com a referência — foto no chat resolve o que o Browser pane
 fechado impede): caixa de promoção não racha mais no meio de "(693 XP)", escudo não
@@ -306,34 +312,24 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — ÍCONES BLOQUEADOS + CONFIRMAR VISUAL (Ligas + Header)
+## 🎯 PRÓXIMA SESSÃO — REDIMENSIONAR ÍCONES, DEPOIS PAINEL DA ARENA
 
-**Ler obrigatoriamente antes de começar:** `sessions/sessao-056.md` (Ligas
-refeita da referência + causa raiz do preview, a mais recente) →
-`sessions/sessao-055.md` (Header no canto) → `sessions/planejamento-6.0.md`
-(spec completa do reset) → `DECISIONS.md` D020-D034.
+**Ler antes:** `sessions/sessao-059.md` (ícones no jogo, a mais recente) →
+`sessions/sessao-058.md` (correções visuais) → `DECISIONS.md` D020-D037.
 
-**BLOQUEIO REAL — precisa do Davi pra destravar:** ele vai colocar na pasta
-do projeto os ícones de TUDO (arena, ligas, loja, ofensiva, moedas, vidas, e
-os escudos de CADA divisão — inclusive das bloqueadas), com nomes
-organizados. Motivo do bloqueio: minhas ferramentas de arquivo NÃO
-conseguem extrair o binário de uma imagem colada/anexada na conversa — só
-consigo vê-la, não salvá-la. Assim que os arquivos estiverem no projeto,
-varrer o app INTEIRO e trocar (Header, `NoLivesModal`, `PerfilPage`,
-`ResultsPage`, `ShopPage`, `Sidebar`, `RankingPage`, `constants/leagues.js`
-— não só o Header). Ver D033/D034.
+**Ordem combinada com o Davi:**
+1. **Redimensionar os ícones** — ajuste fino de tamanho agora que dá pra ver
+   todos no lugar. Os tamanhos atuais foram estimativa minha.
+2. **Mudança do painel central da Arena.**
 
-**Pendência de confirmação visual — só o que é subjetivo:** geometria eu
-já meço sozinho agora (ver ferramentas em D034), então o que falta é
-gosto/estética: se o layout novo de Ligas e o Header no canto ficaram bons
-de verdade. **Dica pra dar ao Davi:** se ele abrir o Browser pane no Claude
-Code, eu passo a conseguir tirar screenshot e ver as telas por conta
-própria — o pane fechado é a causa raiz de tudo isso (D034).
+**Aguardando dele:** imagens dos PERSONAGENS, começando pela Bronze. Ele vai
+baixando aos poucos e eu coloco na caixinha de cada um (hoje é o emoji em
+`constants/leagues.js`). Mesma regra de sempre: precisa ser ARQUIVO salvo no
+disco, imagem colada no chat eu não consigo extrair (D033/D037).
 
-**Depois disso:** os 7 blocos do reset 6.0 (sessões 044-050), a limpeza de
-débitos (051), a recalibração de Ligas (052), e a rodada de ajustes visuais
-que o Davi trouxe observando o jogo (053-055) fecham tudo que estava em
-aberto. Sem roadmap novo proposto por mim — ouvir o que ele traz.
+**Ferramenta pronta pra isso:** o pipeline de remoção de fundo + fatiamento
+está documentado em D037 — folha única com vários personagens funciona,
+desde que tenha um respiro entre eles.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -422,8 +418,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-058.md` — última sessão (correções visuais + emoji do Windows) → `sessions/sessao-057.md` (Ligas em 2 colunas + folha de ícones)
-5. `DECISIONS.md` D020-D036 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-059.md` — última sessão (ícones do Davi no jogo) → `sessions/sessao-058.md` (correções visuais + emoji do Windows)
+5. `DECISIONS.md` D020-D037 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

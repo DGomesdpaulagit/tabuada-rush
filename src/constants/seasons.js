@@ -19,13 +19,13 @@ export const SEASONS = [
     rewards: [
       {
         xpRequired: 100,
-        emoji: '💰',
+        emoji: '💰', art: 'moedas',
         label: '50 Moedas',
         reward: { type: 'coins', amount: 50 },
       },
       {
         xpRequired: 300,
-        emoji: '💰',
+        emoji: '💰', art: 'moedas',
         label: '100 Moedas',
         reward: { type: 'coins', amount: 100 },
       },
@@ -37,7 +37,7 @@ export const SEASONS = [
       },
       {
         xpRequired: 1000,
-        emoji: '💰',
+        emoji: '💰', art: 'moedas',
         label: '200 Moedas',
         reward: { type: 'coins', amount: 200 },
       },
@@ -49,7 +49,7 @@ export const SEASONS = [
       },
       {
         xpRequired: 2000,
-        emoji: '💰',
+        emoji: '💰', art: 'moedas',
         label: '300 Moedas',
         reward: { type: 'coins', amount: 300 },
       },
@@ -61,7 +61,7 @@ export const SEASONS = [
       },
       {
         xpRequired: 5000,
-        emoji: '💰',
+        emoji: '💰', art: 'moedas',
         label: '500 Moedas',
         reward: { type: 'coins', amount: 500 },
       },

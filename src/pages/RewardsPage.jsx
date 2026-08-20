@@ -7,6 +7,7 @@ import { pageVariants, pageTransition } from '../components/ui';
 import MissionsPage from './MissionsPage';
 import ShopPage from './ShopPage';
 import SeasonsPage from './SeasonsPage';
+import GameIcon from '../components/GameIcon';
 
 // Hub único pra Missões / Loja / Temporada — antes eram 3 botões separados no
 // menu principal, agora são 3 abas de uma mesma tela (Bloco 1 · v5.0). A Loja
@@ -46,7 +47,7 @@ export default function RewardsPage({ onBack }) {
           <p className="text-xs font-semibold text-gray-400">Missões, loja e temporada</p>
         </div>
         <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-1.5">
-          <span className="text-sm">💰</span>
+          <GameIcon name="moedas" size={16} />
           <span className="text-sm font-black text-amber-700">{(data.coins || 0).toLocaleString('pt-BR')}</span>
         </div>
       </div>

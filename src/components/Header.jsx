@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Heart, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { getLevelIdx, getXpProgress, getLivesInfo, todayStr } from '../utils';
 import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from '../constants';
 import { Progress } from './ui';
+import GameIcon from './GameIcon';
 
 // ── HEADER [v6.0 · escada de Ligas / barra maior] ────────────────────────────
 // Reescrita a pedido do Davi: os 4 indicadores (faixa/ofensiva/moedas/vidas)
@@ -195,14 +196,14 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <Flame size={18} className="fill-streak text-streak" />
+              <GameIcon name="ofensiva" size={20} />
               <span className="text-streak">{streak}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-3">
-              <Flame size={30} className="fill-streak text-streak shrink-0" />
+              <GameIcon name="ofensiva" size={32} />
               <div className="min-w-0">
                 <p className="font-black text-fg leading-tight">
                   {streak > 0 ? `${streak} dia${streak === 1 ? '' : 's'} de ofensiva` : 'Nenhuma ofensiva ainda'}
@@ -219,7 +220,7 @@ export default function Header({ onNavigate }) {
                       ${d.played ? 'bg-streak text-white' : d.isFuture ? 'bg-transparent' : 'bg-surface-2'}
                       ${d.isToday && !d.played ? 'ring-2 ring-streak' : ''}`}
                   >
-                    {d.played && <Flame size={12} className="fill-white" />}
+                    {d.played && <GameIcon name="ofensiva" size={13} />}
                   </div>
                 </div>
               ))}
@@ -244,14 +245,14 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <span className="text-lg">💰</span>
+              <GameIcon name="moedas" size={20} />
               <span className="text-coin">{coins}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-1">
-              <span className="text-3xl">💰</span>
+              <GameIcon name="moedas" size={32} />
               <div className="min-w-0">
                 <p className="font-black text-fg leading-tight">Moedas</p>
                 <p className="text-xs font-bold text-fg-muted">Você tem {coins.toLocaleString('pt-BR')} moedas</p>
@@ -273,7 +274,7 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <Heart size={18} className="fill-danger text-danger" />
+              <GameIcon name="vidas" size={20} />
               <span className="text-danger">{lives}</span>
             </>
           }
@@ -282,10 +283,11 @@ export default function Header({ onNavigate }) {
             <p className="font-black text-fg text-center mb-2">Vidas</p>
             <div className="flex items-center justify-center gap-1.5 mb-3">
               {Array.from({ length: maxLives }, (_, i) => (
-                <Heart
+                <GameIcon
                   key={i}
-                  size={22}
-                  className={i < lives ? 'fill-danger text-danger' : 'fill-surface-2 text-border'}
+                  name="vidas"
+                  size={24}
+                  className={i < lives ? '' : 'opacity-25 grayscale'}
                 />
               ))}
             </div>
@@ -299,10 +301,10 @@ export default function Header({ onNavigate }) {
               className="flex items-center justify-between w-full px-3 py-2.5 rounded-xl bg-surface-2 font-black text-sm text-fg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-border transition-colors"
             >
               <span className="flex items-center gap-2">
-                <Heart size={15} className="fill-danger text-danger" />
+                <GameIcon name="vidas" size={16} />
                 Recuperar vidas
               </span>
-              <span className="flex items-center gap-1 text-coin">💰 {LIFE_REFILL_PRICE}</span>
+              <span className="flex items-center gap-1 text-coin"><GameIcon name="moedas" size={15} />{LIFE_REFILL_PRICE}</span>
             </button>
           </div>
           <div className="px-4 pb-4">

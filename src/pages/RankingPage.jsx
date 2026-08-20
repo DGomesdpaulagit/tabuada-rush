@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, TrendingUp, TrendingDown, Trophy, X } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, X } from 'lucide-react';
 import { LEAGUES } from '../constants/leagues';
 import { getLeagueStandings, getCycleDaysRemaining } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
+import GameIcon, { LeagueIcon } from '../components/GameIcon';
 
 // ── LIGAS [layout de 2 colunas, referência Duolingo] ─────────────────────────
 // Estrutura (pedido do Davi, ver DECISIONS.md D035):
@@ -138,13 +139,13 @@ export default function RankingPage({ onBack }) {
                   disabled={!unlocked}
                   onClick={() => trocarLiga(league.id)}
                   title={unlocked ? league.name : 'Divisão bloqueada'}
-                  className={`shrink-0 rounded-2xl flex items-center justify-center transition-all
-                    ${isSelected ? 'w-16 h-16 text-3xl' : 'w-11 h-11 text-xl opacity-70'}
-                    ${unlocked
-                      ? `bg-gradient-to-br ${league.gradient} text-white ${isSelected ? 'shadow-lg' : 'hover:opacity-100'}`
-                      : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
+                  className={`shrink-0 flex items-center justify-center transition-all
+                    ${isSelected ? 'w-16 h-16' : 'w-11 h-11 opacity-70 hover:opacity-100'}
+                    ${unlocked ? '' : 'cursor-not-allowed'}`}
                 >
-                  {unlocked ? league.emoji : <Lock size={isSelected ? 22 : 15} />}
+                  {unlocked
+                    ? <LeagueIcon leagueId={league.id} size={isSelected ? 64 : 44} alt={league.name} />
+                    : <GameIcon name="divisao-bloqueada" size={isSelected ? 58 : 40} />}
                 </button>
               );
             })}
@@ -254,7 +255,7 @@ export default function RankingPage({ onBack }) {
 
               <div className="bg-surface border-2 border-border rounded-2xl p-4">
                 <p className="font-black text-fg mb-2 flex items-center gap-2">
-                  <Trophy size={16} className="text-coin" />
+                  <GameIcon name="podio" size={18} />
                   Zona de promoção
                 </p>
                 {promoCut === 0 ? (

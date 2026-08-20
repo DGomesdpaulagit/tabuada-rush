@@ -1,4 +1,5 @@
-import { Home, Trophy, Gift, ShoppingBag, User, Settings } from 'lucide-react';
+import { User, Settings } from 'lucide-react';
+import GameIcon from './GameIcon';
 
 // ── SIDEBAR ────────────────────────────────────────────────────────────────
 // v6.0 · Bloco 1: nav lateral com os 5 destinos primários definidos no reset
@@ -9,11 +10,13 @@ import { Home, Trophy, Gift, ShoppingBag, User, Settings } from 'lucide-react';
 // alcançados a partir da Arena/Perfil, como no áudio do Davi.
 // Só aparece em telas largas (lg+) — no celular ainda não há nav persistente
 // (Davi pediu pra decidir o layout mobile depois, ver planejamento-6.0.md).
+// `art` = PNG do Davi (ver components/GameIcon.jsx); `icon` = fallback da
+// lucide pros destinos que ainda não têm arte própria (Perfil/Configurações).
 const NAV_ITEMS = [
-  { id: 'menu', label: 'Arena', icon: Home },
-  { id: 'ranking', label: 'Ligas', icon: Trophy },
-  { id: 'missions', label: 'Missões', icon: Gift },
-  { id: 'shop', label: 'Loja', icon: ShoppingBag },
+  { id: 'menu', label: 'Arena', art: 'arena' },
+  { id: 'ranking', label: 'Ligas', art: 'liga' },
+  { id: 'missions', label: 'Missões', art: 'missoes' },
+  { id: 'shop', label: 'Loja', art: 'loja' },
   { id: 'perfil', label: 'Perfil', icon: User },
 ];
 
@@ -28,7 +31,7 @@ export default function Sidebar({ screen, onNavigate }) {
       </button>
 
       <nav className="flex flex-col gap-1">
-        {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
+        {NAV_ITEMS.map(({ id, label, icon: Icon, art }) => {
           const active = screen === id;
           return (
             <button
@@ -39,7 +42,7 @@ export default function Sidebar({ screen, onNavigate }) {
                   ? 'bg-accent/15 text-accent'
                   : 'text-fg-muted hover:bg-surface-2 hover:text-fg'}`}
             >
-              <Icon size={20} />
+              {art ? <GameIcon name={art} size={22} /> : <Icon size={20} />}
               {label}
             </button>
           );

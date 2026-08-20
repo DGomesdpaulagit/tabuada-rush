@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Flame, Sparkles, Trophy, Star, BookMarked, ChevronRight, Calendar } from 'lucide-react';
+import { User, Sparkles, Star, BookMarked, ChevronRight, Calendar } from 'lucide-react';
+import GameIcon from '../components/GameIcon';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getLevelIdx } from '../utils';
@@ -93,7 +94,7 @@ export default function PerfilPage() {
       {/* Stats resumidas */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-surface rounded-2xl p-4 border-2 border-border flex flex-col gap-1">
-          <Flame size={18} className="text-streak" />
+          <GameIcon name="ofensiva" size={20} />
           <p className="text-xl font-black text-fg">{data.bestDayStreak || 0}</p>
           <p className="text-xs font-semibold text-fg-muted">Recorde de ofensiva</p>
         </div>
@@ -106,7 +107,7 @@ export default function PerfilPage() {
             original do Perfil (planejamento-6.0.md seção 9) — não tinha sido
             implementado no Bloco 6, ver utils/leagues.js applyLeaguePromotion */}
         <div className="bg-surface rounded-2xl p-4 border-2 border-border flex flex-col gap-1">
-          <Trophy size={18} className="text-coin" />
+          <GameIcon name="podio" size={20} />
           <p className="text-xl font-black text-fg">{data.leaguePodiums || 0}</p>
           <p className="text-xs font-semibold text-fg-muted">Pódios nas ligas</p>
         </div>
@@ -132,7 +133,7 @@ export default function PerfilPage() {
           className="flex items-center gap-3 w-full text-left bg-surface rounded-2xl px-4 py-3.5 border-2 border-border hover:border-coin/40 transition-colors"
         >
           <span className="w-9 h-9 rounded-xl bg-coin/15 text-coin flex items-center justify-center shrink-0">
-            <Trophy size={16} />
+            <GameIcon name="podio" size={18} />
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-fg">Recordes</p>

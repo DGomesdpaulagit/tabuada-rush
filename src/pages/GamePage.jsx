@@ -8,6 +8,7 @@ import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
 import Mascot, { TUCA_POSES, VUPT_POSES, MASCOTS } from '../components/Mascot';
+import GameIcon from '../components/GameIcon';
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
 
@@ -509,7 +510,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               <p className="text-sm text-gray-500 font-semibold mb-4">
                 Estoque: <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span>
                 {' · '}
-                Moedas: <span className="font-black text-amber-600">💰 {data.coins || 0}</span>
+                Moedas: <span className="font-black text-amber-600"><GameIcon name="moedas" size={14} className="inline-block align-text-bottom" /> {data.coins || 0}</span>
               </p>
               <div className="flex flex-col gap-2">
                 {(powerups.life || 0) > 0 && (
@@ -525,7 +526,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                     onClick={handleBuyLifeSpot}
                     className="w-full py-3 rounded-2xl bg-amber-500 text-white font-black text-sm hover:bg-amber-600 active:scale-[0.98] transition-all"
                   >
-                    💰 Comprar Vida Agora (80)
+                    <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> Comprar Vida Agora (80)
                   </button>
                 )}
                 <button
@@ -867,7 +868,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               }}
               className="w-full py-2.5 rounded-2xl border border-amber-200 bg-amber-50 text-amber-700 text-sm font-black hover:bg-amber-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
             >
-              💰 Comprar +60s Agora (30)
+              <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> Comprar +60s Agora (30)
             </motion.button>
           )}
         </AnimatePresence>

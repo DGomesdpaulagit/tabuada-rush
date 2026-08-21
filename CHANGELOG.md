@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.11] — 2026-08-17 — Ofensiva congelada, calendário da semana e medalhas
+
+**Detalhes em `sessions/sessao-061.md` e `DECISIONS.md` (D039).**
+
+### Adicionado
+- Barra superior: a ofensiva alterna entre acesa (laranja) e congelada
+  (azul) — ícone e cor do número mudam juntos
+- Calendário da semana no painel da ofensiva usa os marcadores de dia
+  feito / congelado / vazio
+- Medalhas de 1º, 2º e 3º na classificação das Ligas
+
+### Corrigido
+- Calendário da semana marcava o dia errado depois das 21h (conversão pra
+  UTC). Passou a usar data local
+
+### Conhecido, não corrigido
+- `todayStr()` tem o mesmo problema de fuso e afeta vidas diárias,
+  ofensiva e desafio diário — ver D039, precisa de decisão
+
+---
+
 ## [6.0.10] — 2026-08-17 — Varredura completa dos ícones
 
 **Detalhes em `sessions/sessao-060.md` e `DECISIONS.md` (D038).**

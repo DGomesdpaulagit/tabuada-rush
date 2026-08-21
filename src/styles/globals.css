@@ -23,6 +23,9 @@
   --accent: 88 204 2;        /* #58CC02 — CTA primária / nav ativa */
   --accent-dark: 67 192 0;   /* #43C000 — sombra "chunky" do accent */
   --streak: 255 150 0;       /* #FF9600 */
+  /* Ofensiva CONGELADA (barra superior) — azul do ícone de gelo que o Davi
+     forneceu, amostrado da própria arte pra número e ícone combinarem. */
+  --frozen: 56 190 240;      /* #38BEF0 */
   --coin: 255 200 0;         /* #FFC800 */
 
   /* Legado — ainda referenciado por telas não migradas */

@@ -9,6 +9,13 @@
 // Uma caixa quadrada com `object-contain` faz todos ocuparem o mesmo espaço
 // visual sem distorcer, que é o que mantém as fileiras alinhadas.
 import ofensiva from '../assets/icons/ofensiva.png';
+import ofensivaCongelada from '../assets/icons/ofensiva-congelada.png';
+import diaFeito from '../assets/icons/dia-feito.png';
+import diaCongelado from '../assets/icons/dia-congelado.png';
+import diaVazio from '../assets/icons/dia-vazio.png';
+import posicao1 from '../assets/icons/posicao-1.png';
+import posicao2 from '../assets/icons/posicao-2.png';
+import posicao3 from '../assets/icons/posicao-3.png';
 import moedas from '../assets/icons/moedas.png';
 import vidas from '../assets/icons/vidas.png';
 import xp from '../assets/icons/xp.png';
@@ -33,6 +40,10 @@ import ligaDiamante from '../assets/icons/liga-diamante.png';
 
 export const ICONS = {
   ofensiva,
+  'ofensiva-congelada': ofensivaCongelada,
+  'dia-feito': diaFeito,
+  'dia-congelado': diaCongelado,
+  'dia-vazio': diaVazio,
   moedas,
   vidas,
   xp,
@@ -45,6 +56,10 @@ export const ICONS = {
   'divisao-bloqueada': divisaoBloqueada,
   'missao-travada': missaoTravada,
 };
+
+// Medalhas de 1º/2º/3º da classificação (RankingPage). Índice 0-based:
+// PODIUM_ICONS[0] = 1º lugar.
+export const PODIUM_ICONS = [posicao1, posicao2, posicao3];
 
 // Escudo de cada divisão, pela `id` em constants/leagues.js.
 export const LEAGUE_ICONS = {

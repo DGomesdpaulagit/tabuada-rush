@@ -32,6 +32,7 @@ export default {
         accent: 'rgb(var(--accent) / <alpha-value>)',
         'accent-dark': 'rgb(var(--accent-dark) / <alpha-value>)',
         streak: 'rgb(var(--streak) / <alpha-value>)',
+        frozen: 'rgb(var(--frozen) / <alpha-value>)',
         coin: 'rgb(var(--coin) / <alpha-value>)',
         danger: 'rgb(var(--destructive) / <alpha-value>)',
         success: 'rgb(var(--success) / <alpha-value>)',

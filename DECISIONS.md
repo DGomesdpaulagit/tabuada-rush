@@ -1181,6 +1181,69 @@ horizontal em todas as telas.
 
 ---
 
+## D039 — Ofensiva acesa/congelada, calendário da semana e medalhas do pódio
+
+**Data:** 2026-08-17 · sessao-061
+**Contexto:** Davi mandou 3 artes novas: a tira do calendário (dia feito /
+dia congelado / dia vazio), a chama congelada, e as medalhas de 1º/2º/3º.
+
+**1. Processamento.** A tira do calendário veio como um painel inteiro
+(360×106, com moldura laranja + fundo escuro + as 7 letras). Recortei a
+área interna primeiro — flood fill direto da borda pararia na moldura — e
+depois separei os 7 marcadores por ilha, classificando por cor média: 3
+laranjas (feito), 2 azuis (congelado), 2 cinzas (vazio). Guardei um de
+cada. As medalhas vieram numa tira vertical e saíram por ilha também.
+
+**2. Estado congelado — reaproveitei mecânica que JÁ existia.** O jogo tem
+"Seguro de Ofensiva" (`streakInsurance`): quando o jogador perde um dia, o
+seguro preserva a ofensiva e marca `streakInsuredAt`, esperando ele jogar
+em 24h. Isso é literalmente uma ofensiva congelada — não precisei inventar
+estado novo. Regra final na barra superior:
+- **congelada (azul):** `streak === 0` **ou** `streakInsuredAt` ativo
+- **acesa (laranja):** ofensiva > 0 sem seguro pendente
+
+Ícone e cor do número trocam juntos. Token `--frozen` novo
+(`#38BEF0`, amostrado da própria arte). **Só na barra** — as outras menções
+de ofensiva no app seguem com a chama acesa, como o Davi pediu.
+
+**3. Calendário da semana.** Cada dia usa um dos 3 marcadores. O estado
+"congelado" só aparece no dia em que o seguro foi de fato consumido
+(`streakInsuredAt`) — é o único congelamento que dá pra afirmar com dado
+real; não invento congelamento em dia que o jogador simplesmente não jogou.
+
+**4. Medalhas:** 1º/2º/3º da classificação passam a usar a arte; da 4ª
+posição em diante segue o número.
+
+### BUG DE FUSO HORÁRIO ENCONTRADO (fora do pedido)
+
+Ao testar o calendário, os dias marcados apareciam **deslocados em um dia**.
+Causa: `toISOString()` converte pra UTC, e no Brasil (UTC-3) tudo que
+acontece depois das 21h local cai no dia seguinte. Medido em tempo real:
+às **22:05 local de 20/ago**, `new Date().toISOString()` já retornava
+**21/ago**.
+
+Corrigi **dentro do calendário** (passou a usar data local) — confirmado:
+os dias injetados agora caem no dia certo, e "hoje" marca quinta-feira,
+que é o dia real.
+
+**O problema maior NÃO foi corrigido, de propósito:** `todayStr()` em
+`utils/index.js` usa a mesma conversão UTC e é usada por **vidas diárias,
+ofensiva, desafio diário e `lastPlayDate`**. Ou seja: todo dia entre 21h e
+meia-noite o jogo inteiro "vira o dia" 3 horas antes pro Davi. Mexer nisso
+altera semântica de mecânica (pode zerar ofensiva de alguém na transição),
+então é decisão dele, em sessão própria — não algo pra eu trocar de lado
+enquanto coloco ícone.
+
+**Verificado:** os 3 cenários da barra testados forçando o save —
+`streak 0` → `ofensiva-congelada.png` + `rgb(56,190,240)`; `streak 7` →
+`ofensiva.png` + `rgb(255,150,0)`; `streak 7 + seguro` → congelada + texto
+"Congelada pelo Seguro — jogue pra reacender". Calendário com os 3 estados
+simultâneos e "hoje" no dia certo. Medalhas: `posicao-1/2/3.png` nos três
+primeiros, número do 4º em diante. 0 imagens quebradas, 0 sobra horizontal,
+0 textos cortados.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

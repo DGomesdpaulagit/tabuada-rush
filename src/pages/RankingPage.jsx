@@ -5,7 +5,7 @@ import { LEAGUES } from '../constants/leagues';
 import { getLeagueStandings, getCycleDaysRemaining } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
-import GameIcon, { LeagueIcon } from '../components/GameIcon';
+import GameIcon, { LeagueIcon, PODIUM_ICONS } from '../components/GameIcon';
 
 // ── LIGAS [layout de 2 colunas, referência Duolingo] ─────────────────────────
 // Estrutura (pedido do Davi, ver DECISIONS.md D035):
@@ -16,7 +16,8 @@ import GameIcon, { LeagueIcon } from '../components/GameIcon';
 //                      conteúdo parar de ficar centralizado demais
 // Regra de acesso não mudou (D031): só liga já alcançada (`leagueHighestId`)
 // é clicável; acima disso, escudo cinza com cadeado.
-const MEDALS = ['🥇', '🥈', '🥉'];
+// As 3 primeiras posições usam as medalhas de arte (PODIUM_ICONS); da 4ª em
+// diante é só o número.
 
 // Linha da classificação — usada na lista principal e no painel lateral.
 // Vira botão quando `onSelect` é passado (abre a ficha do personagem no
@@ -37,10 +38,18 @@ function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false, on
             : `border-2 border-transparent ${clicavel ? 'hover:bg-surface-2' : ''}`}`}
     >
       <span
-        className={`w-7 text-center text-sm font-black shrink-0 tabular-nums
+        className={`w-7 flex items-center justify-center text-sm font-black shrink-0 tabular-nums
           ${inPromotion ? 'text-check-dark' : inRelegation ? 'text-pen-dark' : 'text-fg-muted'}`}
       >
-        {MEDALS[rank - 1] || rank}
+        {PODIUM_ICONS[rank - 1]
+          ? <img
+              src={PODIUM_ICONS[rank - 1]}
+              alt={`${rank}º lugar`}
+              draggable={false}
+              style={{ width: compact ? 18 : 22 }}
+              className="object-contain select-none"
+            />
+          : rank}
       </span>
       <div
         className={`rounded-full flex items-center justify-center shrink-0 bg-surface-2

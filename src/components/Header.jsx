@@ -16,26 +16,47 @@ import GameIcon from './GameIcon';
 // central do progresso do jogador).
 const DAY_LABELS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-function currentWeekActivity(sessions = []) {
+// Semana atual pro painel da ofensiva. Cada dia vira um de três estados,
+// que são exatamente os três marcadores da arte que o Davi forneceu:
+//   'feito'     → jogou nesse dia
+//   'congelado' → o Seguro de Ofensiva cobriu esse dia (`streakInsuredAt`);
+//                 a ofensiva ficou preservada sem ele ter jogado
+//   'vazio'     → não jogou (ou o dia ainda nem chegou)
+// Data no fuso LOCAL (YYYY-MM-DD). Não dá pra usar `toISOString()` aqui:
+// ele converte pra UTC, e no Brasil (UTC-3) tudo que acontece depois das
+// 21h cai no dia seguinte. Uma partida às 22h de quinta apareceria na
+// sexta no calendário. Ver nota sobre `todayStr()` em BUGS.md — a mesma
+// armadilha existe no resto do app e é decisão separada.
+function dataLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function currentWeekActivity(data) {
+  const sessions = data.sessions || [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const sunday = new Date(today);
   sunday.setDate(today.getDate() - today.getDay());
-  const todayKey = today.toISOString().split('T')[0];
+  const todayKey = dataLocal(today);
 
   const playedDates = new Set();
   for (const s of sessions) {
     if (!s?.date) continue;
     const d = new Date(s.date);
     if (isNaN(d.getTime())) continue;
-    playedDates.add(d.toISOString().split('T')[0]);
+    playedDates.add(dataLocal(d));
   }
+
+  // Dia em que o seguro foi consumido — é o único "congelado" que dá pra
+  // afirmar com dado real; não invento congelamento onde não houve.
+  const insuredKey = data.streakInsuredAt ? dataLocal(new Date(data.streakInsuredAt)) : null;
 
   return Array.from({ length: 7 }, (_, i) => {
     const day = new Date(sunday);
     day.setDate(sunday.getDate() + i);
-    const key = day.toISOString().split('T')[0];
-    return { key, label: DAY_LABELS[i], isToday: key === todayKey, isFuture: day > today, played: playedDates.has(key) };
+    const key = dataLocal(day);
+    const estado = playedDates.has(key) ? 'feito' : key === insuredKey ? 'congelado' : 'vazio';
+    return { key, label: DAY_LABELS[i], isToday: key === todayKey, isFuture: day > today, estado };
   });
 }
 
@@ -123,8 +144,18 @@ export default function Header({ onNavigate }) {
 
   const streak = data.currentStreak || 0;
   const bestStreak = data.bestDayStreak || 0;
-  const weekActivity = currentWeekActivity(data.sessions || []);
+  const weekActivity = currentWeekActivity(data);
   const streakGoal = nextStreakAchievement(data);
+
+  // [pedido do Davi] A chama da BARRA SUPERIOR alterna entre acesa e
+  // congelada — ícone e cor do número mudam juntos. Congelada quando:
+  //   · não há ofensiva (streak 0), ou
+  //   · o Seguro de Ofensiva está segurando a ofensiva até a próxima
+  //     partida (`streakInsuredAt`, ver utils/applyStreakDecay) — aí ela
+  //     está literalmente congelada, não perdida.
+  // Isso vale SÓ aqui na barra; as outras menções de ofensiva no app
+  // seguem sempre com a chama acesa (ele foi explícito).
+  const ofensivaCongelada = streak === 0 || !!data.streakInsuredAt;
 
   const coins = data.coins || 0;
 
@@ -196,31 +227,43 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <GameIcon name="ofensiva" size={20} />
-              <span className="text-streak">{streak}</span>
+              <GameIcon name={ofensivaCongelada ? 'ofensiva-congelada' : 'ofensiva'} size={20} />
+              {/* Cor do número acompanha o ícone: laranja acesa, azul congelada */}
+              <span className={ofensivaCongelada ? 'text-frozen' : 'text-streak'}>{streak}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-3">
-              <GameIcon name="ofensiva" size={32} />
+              <GameIcon name={ofensivaCongelada ? 'ofensiva-congelada' : 'ofensiva'} size={32} />
               <div className="min-w-0">
                 <p className="font-black text-fg leading-tight">
                   {streak > 0 ? `${streak} dia${streak === 1 ? '' : 's'} de ofensiva` : 'Nenhuma ofensiva ainda'}
                 </p>
-                <p className="text-xs font-bold text-fg-muted">Recorde: {bestStreak} dias</p>
+                <p className="text-xs font-bold text-fg-muted">
+                  {data.streakInsuredAt
+                    ? 'Congelada pelo Seguro — jogue pra reacender'
+                    : `Recorde: ${bestStreak} dias`}
+                </p>
               </div>
             </div>
+            {/* Semana: marcador de dia feito / congelado / vazio (arte do Davi) */}
             <div className="flex items-center justify-between gap-1 mb-3">
               {weekActivity.map((d) => (
                 <div key={d.key} className="flex flex-col items-center gap-1">
-                  <span className={`text-[9px] font-bold ${d.isToday ? 'text-streak' : 'text-fg-muted'}`}>{d.label}</span>
-                  <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center
-                      ${d.played ? 'bg-streak text-white' : d.isFuture ? 'bg-transparent' : 'bg-surface-2'}
-                      ${d.isToday && !d.played ? 'ring-2 ring-streak' : ''}`}
+                  <span
+                    className={`text-[9px] font-bold ${
+                      d.isToday ? (ofensivaCongelada ? 'text-frozen' : 'text-streak') : 'text-fg-muted'
+                    }`}
                   >
-                    {d.played && <GameIcon name="ofensiva" size={13} />}
+                    {d.label}
+                  </span>
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    <GameIcon
+                      name={`dia-${d.estado}`}
+                      size={d.estado === 'congelado' ? 22 : 20}
+                      className={d.isFuture ? 'opacity-40' : ''}
+                    />
                   </div>
                 </div>
               ))}

@@ -28,6 +28,18 @@ Notas:
 - Esta rotina é executada por mim ao final de cada bloco enquanto a sessão está ativa.
   Não é um hook automático (deploy cego a cada parada seria arriscado).
 
+## ✅ Checagem de processo (D042 — a sessão 063 pulou o passo 1 sem eu notar)
+Antes de considerar qualquer sessão encerrada, conferir que a `Versão` no topo de
+`MEMORY_CORE.md` bate com a última entrada de `CHANGELOG.md`. **Se não bater, a
+rotina acima não foi cumprida** — voltar e completar os passos 1 e 4 antes de seguir
+pra outra coisa. Commit+push sozinho (passo 2) NÃO conta como sessão registrada.
+
+## 📋 Planejamento antes de codar (pedido do Davi, sessão 064)
+`PLANO_ACAO.md` (raiz) é o backlog vivo — ler antes de começar qualquer trabalho novo,
+atualizar (marcar itens, mover de fase) ao terminar cada fase. Ideias que surgirem no
+meio de uma fase e não pertencem a ela vão pra `PENDENCIAS.md`, não pro meio da fase
+em andamento. Não implementar uma fase nova sem o Davi ter confirmado o plano dela.
+
 ## Estrutura
 - `src/constants/` — `index.js` (MODES, LEVELS 28 c/ title, ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).
 - `src/utils/index.js` — geração de perguntas, scoring, datas, `computeQI`/`getQiInfo`.
@@ -36,7 +48,7 @@ Notas:
 - `src/App.jsx` — orquestrador (navegação por `screen`, `handleGameEnd`, toasts).
 
 ## Contexto / memória
-Ler em ordem: `MEMORY_CORE.md` → `MEMORY.md` → última `sessions/sessao-00X.md` → `BUGS.md`.
+Ler em ordem: `MEMORY_CORE.md` → `MEMORY.md` → `PLANO_ACAO.md` → última `sessions/sessao-00X.md` → `BUGS.md`.
 
 ## Git/Deploy
 - Remote canônico: `origin` (github.com/DGomesdpaulagit/tabuada-rush). Branch `main`.

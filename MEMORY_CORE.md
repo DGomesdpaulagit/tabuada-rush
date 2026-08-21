@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.12 (Tabuada Rush 6.0 completo + ícones dos power-ups + fuso corrigido — sessao-062.md)
+**Versão:** 6.0.13 (Tabuada Rush 6.0 completo + cards da Loja unificados + guia Duolingo — sessao-063.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.13]** Cards da Loja unificados (o Épico aparecia branco no tema escuro —
+`bg-purple-50` era a única raridade sem override; agora todo card usa
+`bg-surface`/`border-border`, raridade só na etiqueta). + Guia de estilo Duolingo
+extraído de verdade das 8 imagens que o Davi mandou (formas só arredondadas, ritmo,
+~15 formas, paleta oficial de 34 cores) — vira referência pra ícones futuros, ver
+D041. **Esta sessão (063) ficou sem registro completo** — commit e CHANGELOG
+aconteceram, mas sessao-063.md e este arquivo não foram atualizados na hora. Corrigido
+retroativamente na sessão 064, com checagem de processo nova — ver D042.
 **[v6.0.12]** Ícones dos 7 power-ups na Loja (folha de fundo BRANCO com desenho
 branco — exigiu flood fill de tolerância 8 + alpha chapado; rampa suave dava
 chuvisco). **Bug de fuso CORRIGIDO** a pedido do Davi: `localDateStr` novo em
@@ -330,29 +338,50 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — PAINEL CENTRAL DA ARENA (chegou a vez)
+## 🎯 PRÓXIMA SESSÃO — SEGUIR O `PLANO_ACAO.md` (backlog grande, por fases)
 
-**Ler antes:** `sessions/sessao-062.md` (a mais recente) →
-`sessions/sessao-061.md` (ofensiva congelada) → `DECISIONS.md` D020-D040.
+**Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` (raiz do projeto
+— é a fonte viva do que fazer, atualizada a cada sessão) →
+`sessions/sessao-064.md` (a mais recente) → `sessions/sessao-063.md` →
+`DECISIONS.md` D020-D042.
 
-**Fila do Davi — os 2 primeiros estão feitos:**
-1. ~~Ícones dos power-ups~~ — feito na 062.
-2. ~~Correção do fuso horário~~ — feito na 062 (D040).
-3. **➡️ Reformular o painel central da Arena.** Ele pediu várias vezes pra
-   NÃO mexer antes da conversa — agora a fila chegou nele. **Começar
-   perguntando o que ele quer**, não propondo.
-4. **Imagens dos 104 personagens** — ele fornece aos poucos, começando pela
-   Bronze. Vão na caixinha de cada personagem (hoje emoji em
-   `constants/leagues.js`).
+**Por que existe um arquivo de plano separado (pedido explícito do Davi,
+sessão 064):** ele trouxe um backlog grande de uma vez (ícones, remoção do
+XP Dobrado, Mochila, Poções, loja rotativa, baús, páginas de resumo
+pós-partida) e pediu um plano de ação vivo — não pra implementar tudo de
+uma vez, mas pra "ir selecionando e fazendo" por fases, com cada fase
+aprovada antes de começar. **`PLANO_ACAO.md` é a lista de verdade; não
+duplicar o backlog aqui.**
 
-**Em aberto (ele nunca comentou):** o ícone de ofensiva usado também em
-"Melhor Sequência" (acertos seguidos numa partida, não dias seguidos) —
-ver D038. Se incomodar, é trocar em 2 lugares.
+**Ordem de fases combinada com ele:** Fase 0 (higiene de registro — feita
+na 064) → Fase 1 (troca de ícones simples) → Fase 2 (remoção do XP Dobrado
++ regra nova do botão Congelar Missão) → Fase 3 (Mochila) → Fase 4
+(Poções de XP) → Fase 5 (loja rotativa diária) → Fase 6 (baús/recompensas
+por tempo de jogo) → Fase 7 (páginas de resumo pós-partida) → **depois
+disso, o painel central da Arena** (ele pediu pra NÃO mexer nele antes de
+fechar o resto).
 
-**Lições de método que valem pra arte (D040):** conferir PNG com
+**Ideias soltas que aparecerem no meio do caminho (ex.: animação nas telas
+finais) vão pra `PENDENCIAS.md`, não pro meio da fase atual** — é
+exatamente o que o Davi pediu pra não perder o fio da fase em andamento.
+
+**Em aberto, ainda sem resposta do Davi:**
+- Ícone de ofensiva usado também em "Melhor Sequência" (D038) — confunde?
+- Estilo dos ícones futuros: chapado tipo Duolingo (D041) ou 3D/gradiente
+  como os que já existem (moeda, baú)?
+- Fase 6 (baús como recompensa aleatória por tempo de jogo) tem cara de
+  mecânica de loot/gacha — não é motivo pra recusar, mas vale mencionar a
+  guarda de escopo do projeto (mecânica de "vício" desconectada do
+  aprendizado) quando chegar a vez de implementar.
+
+**Lições de método que valem pra arte (D037/D039-D041):** conferir PNG com
 transparência SEMPRE composto sobre o fundo escuro real do app — arquivo
-solto no visualizador engana (branco sobre branco). Pipeline de recorte em
-D037/D039/D040.
+solto no visualizador engana (branco sobre branco).
+
+**Checagem de processo nova (D042):** antes de encerrar qualquer sessão,
+conferir que a `Versão` no topo deste arquivo bate com a última entrada do
+`CHANGELOG.md`. Se não bater, a rotina de fim de bloco (`CLAUDE.md`) não
+foi cumprida — voltar e completar antes de seguir.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -440,10 +469,11 @@ feito + próximos passos/sessões/etapas. Detalhes em `CLAUDE.md`. Dar o link do
 Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
-3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-062.md` — última sessão (power-ups + fuso) → `sessions/sessao-061.md` (ofensiva congelada + calendário)
-5. `DECISIONS.md` D020-D040 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
-6. `BUGS.md` — problemas ativos
+3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
+4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
+5. `sessions/sessao-064.md` — última sessão → `sessions/sessao-063.md` → `sessions/sessao-062.md`
+6. `DECISIONS.md` D020-D042 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo) — D015-D019 (5.0) são história, não aplicam mais
+7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.
 Para ativar cloud: criar `.env` com `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`

@@ -1312,6 +1312,105 @@ horizontal em Loja/Missões/Estatísticas/Perfil. Build limpo.
 
 ---
 
+## D041 — Cards da Loja unificados + guia de estilo Duolingo (referência de arte)
+
+**Data:** 2026-08-17 (madrugada 21/08) · sessao-063
+
+**Cards da Loja:** o card "XP Dobrado" (Épico) aparecia branco no tema
+escuro — `bg-purple-50` era a única cor de raridade sem override em
+`globals.css`. Resolvido tirando a cor do card inteiro: todos usam
+`bg-surface`/`border-border` agora, a raridade vive só na etiqueta
+(`RARITIES[x].badge`, novo). Ver `sessao-063.md` pro detalhe.
+
+**Guia de estilo Duolingo — referência pra ícones futuros.** O Davi mandou
+8 imagens do guia oficial (`design.duolingo.com`) pra eu gerar um prompt
+melhor pro ícone de foguete. Extraído de verdade (não de memória) e
+guardado aqui pra não se perder:
+
+- **Formas:** só retângulo de canto arredondado, círculo, triângulo de
+  canto arredondado. Nunca canto vivo, nunca elipse inclinada (sugere
+  perspectiva — o Duolingo é sempre plano), nunca ponta viva.
+- **Ritmo:** alternar peso visual (forma grande + pequena) — peso uniforme
+  é monótono.
+- **Simplicidade:** ~15 formas é o alvo (6 = abstrato demais, 30 = formas
+  demais).
+- **Sombra:** só pílula, nunca oval; sempre mais escura que a base; só
+  existe apoiada num chão, não se aplica a ícone solto transparente.
+- **Regra de cor:** nunca cinza puro; pastel claro no lugar de branco puro
+  como base; poucas cores por ilustração (a régua do sapo: 3 tons de verde
+  = ok, 5 cores variadas = errado).
+
+**Paleta oficial completa (nome do animal → hex), pra reusar sempre que
+precisar de uma cor "no estilo Duolingo":**
+
+| Cinza/vermelho | | Amarelo/laranja/marrom | | Verde/azul/roxo | |
+|---|---|---|---|---|---|
+| Polar | `#F7F7F7` | Canário | `#FFF5D3` | Esponja marinha | `#D7FFB8` |
+| Cisne | `#E5E5E5` | Pato | `#FBE56D` | Tartaruga | `#A5ED6E` |
+| Lebre | `#AFAFAF` | Abelha | `#FFC800` | Coruja | `#58CC02` |
+| Lobo | `#777777` | Leão | `#FFB100` | Rã-arborícola | `#58A700` |
+| Enguia | `#4B4B4B` | Raposa | `#FF9600` | Iguana | `#DDF4FF` |
+| Lula | `#EBE3E3` | Guepardo | `#FFCE8E` | Anchova | `#D2E4E8` |
+| Peixe Andante | `#FFDFE0` | Macaco | `#E5A259` | Beluga | `#BBF2FF` |
+| Flamingo | `#FFB2B2` | Camelo | `#E7A601` | Água-viva da Lua | `#7AF0F2` |
+| Porco | `#F5A4A4` | Cobaia | `#CD7900` | Gaio-azul | `#84D8FF` |
+| Caranguejo | `#FF7878` | Urso-pardo | `#A56644` | Arara | `#1CB0F6` |
+| Cardeal | `#FF4B4B` | | | Baleia | `#1899D6` |
+| Formiga de fogo | `#EA2B2B` | | | Jubarte | `#2B70C9` |
+| | | | | Narval | `#1453A3` |
+| | | | | Estrela-do-mar | `#FFAADE` |
+| | | | | Besouro | `#CE82FF` |
+| | | | | Betta | `#9069CD` |
+| | | | | Borboleta | `#6F4EA1` |
+
+**Conflito identificado com o app (registrado, não resolvido):** o guia
+Duolingo assume ilustração sobre fundo BRANCO; o Tabuada Rush é escuro.
+Pastel claro sobre escuro funciona bem (bom contraste); a regra de sombra
+não se aplica (ícone é PNG transparente solto, sem chão). **Os ícones que
+já existem no jogo (moeda, baú) têm gradiente/volume 3D — isso NÃO é o
+estilo Duolingo real (que é chapado).** Pergunta em aberto pro Davi: migrar
+tudo pro chapado aos poucos, ou manter os ícones novos no estilo que já
+está no app (3D/gradiente)? Nenhuma decisão tomada ainda.
+
+---
+
+## D042 — Falha de processo: sessão sem registro completo, e correção
+
+**Data:** 2026-08-17 (sessão seguinte à 063) · sessao-064
+
+**O que o Davi encontrou:** pediu pra eu conferir os arquivos de registro
+antes de qualquer coisa nova, porque "recentemente você não fez muito essa
+certificação". Conferido: ele tinha razão, mas de forma específica — não é
+que o histórico geral esteja ruim (sessões 044-062 estão todas registradas,
+com D020-D040 documentando cada decisão não-óbvia). **A sessão 063**
+especificamente (correção de cor dos cards + guia Duolingo) teve commit e
+`CHANGELOG.md` feitos, mas `sessions/sessao-063.md` nunca foi criado e
+`MEMORY_CORE.md`/`MEMORY.md` ficaram parados na versão anterior — passos 1
+e 4 da "ROTINA OBRIGATÓRIA DE FIM DE BLOCO/SESSÃO" (`CLAUDE.md`) foram
+pulados naquela sessão.
+
+**Corrigido retroativamente:** `sessions/sessao-063.md` escrito agora (ver
+acima e o próprio arquivo), `MEMORY_CORE.md`/`MEMORY.md` atualizados pra
+6.0.13.
+
+**Correção de processo, pra não repetir:** `CLAUDE.md` ganhou uma checagem
+de auto-verificação barata — antes de considerar qualquer sessão encerrada,
+conferir que a `Versão` no topo do `MEMORY_CORE.md` bate com a última
+entrada do `CHANGELOG.md`. Se não bater, a rotina não foi cumprida e falta
+concluir os passos 1 e 4 antes de seguir em frente.
+
+**Também criados nesta sessão** (pedido explícito do Davi — quer um plano
+de ação vivo, revisado a cada nova sessão, ANTES de começar a implementar
+qualquer coisa nova):
+- `PLANO_ACAO.md` — backlog atual (ícones, remoção do XP Dobrado, Mochila,
+  Poções, loja rotativa, baús/recompensas por tempo de jogo, páginas de
+  resumo pós-partida), organizado em fases, cada item com checkbox.
+- `PENDENCIAS.md` — ideias soltas que aparecerem no caminho sem desviar do
+  que está em andamento (o Davi pediu isso especificamente pra ideias de
+  animação nas telas finais de partida).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

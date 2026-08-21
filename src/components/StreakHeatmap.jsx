@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 import GameIcon from './GameIcon';
+import { localDateStr } from '../utils';
 
 // 365 dias, agrupados por semana (colunas) e dia da semana (linhas).
 // Cor por intensidade:
@@ -36,7 +37,7 @@ export default function StreakHeatmap({ sessions = [] }) {
       if (!s?.date) continue;
       const d = new Date(s.date);
       if (isNaN(d.getTime())) continue;
-      const k = d.toISOString().split('T')[0];
+      const k = localDateStr(d);
       map[k] = (map[k] || 0) + 1;
     }
     return map;
@@ -64,7 +65,7 @@ export default function StreakHeatmap({ sessions = [] }) {
           week.push(null); // futuro
           continue;
         }
-        const key = day.toISOString().split('T')[0];
+        const key = localDateStr(day);
         const count = sessionsByDate[key] || 0;
         week.push({ date: key, count, day });
       }

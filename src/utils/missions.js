@@ -2,8 +2,15 @@ import { DAILY_MISSION_POOL, MONTHLY_CHALLENGE_POOL } from '../constants/mission
 
 // ── Helpers de data ───────────────────────────────────────────────────────────
 
+function dataLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function todayStr() {
-  return new Date().toISOString().split('T')[0];
+  // Data LOCAL — ver nota em utils/index.js localDateStr (D040). Antes era
+  // toISOString(), que fazia o dia virar 3h antes no Brasil.
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 function currentMonthKey() {
@@ -16,13 +23,13 @@ function currentMonthKey() {
 function endOfMonthStr() {
   const now = new Date();
   const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  return last.toISOString().split('T')[0];
+  return dataLocal(last);
 }
 
 function addDaysStr(dateStr, days) {
   const d = new Date(dateStr + 'T00:00:00');
   d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
+  return dataLocal(d);
 }
 
 // ── Seleção determinística de missões ─────────────────────────────────────────

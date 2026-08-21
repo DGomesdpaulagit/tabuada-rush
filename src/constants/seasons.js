@@ -1,3 +1,10 @@
+// Data LOCAL (YYYY-MM-DD). Cópia proposital do helper de utils/index.js:
+// `constants/` não pode importar de `utils/` (utils já importa constants —
+// daria ciclo). Ver D040 pro motivo de não usar toISOString aqui.
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 // ── TEMPORADAS ────────────────────────────────────────────────────────────────
 // Cada temporada tem: id, nome, tema, identidade visual, datas e trilha de
 // recompensas. A trilha define o XP necessário e o prêmio de cada marco.
@@ -83,7 +90,7 @@ export const SEASONS = [
 
 // Temporada ativa (a última da lista, ou por data)
 export function getActiveSeason() {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   return (
     SEASONS.find((s) => s.startDate <= today && s.endDate >= today) ||
     SEASONS[SEASONS.length - 1]

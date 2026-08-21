@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.11 (Tabuada Rush 6.0 completo + ofensiva congelada + calendário + medalhas — sessao-061.md)
+**Versão:** 6.0.12 (Tabuada Rush 6.0 completo + ícones dos power-ups + fuso corrigido — sessao-062.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,12 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.12]** Ícones dos 7 power-ups na Loja (folha de fundo BRANCO com desenho
+branco — exigiu flood fill de tolerância 8 + alpha chapado; rampa suave dava
+chuvisco). **Bug de fuso CORRIGIDO** a pedido do Davi: `localDateStr` novo em
+utils, `todayStr()` delega, ~25 chaves de dia migradas (incluindo uma 2ª cópia de
+`todayStr` escondida em missions.js). Guard de migração impede que save antigo com
+data UTC no futuro zere a ofensiva. Ver `sessao-062.md` e D040.
 **[v6.0.11]** Barra superior: ofensiva alterna acesa (laranja) / congelada (azul) —
 reaproveita o "Seguro de Ofensiva" (`streakInsuredAt`) que JÁ existia, não inventei
 estado novo. Calendário da semana com marcadores feito/congelado/vazio; medalhas de
@@ -324,32 +330,29 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FILA DO DAVI + 1 DECISÃO PENDENTE
+## 🎯 PRÓXIMA SESSÃO — PAINEL CENTRAL DA ARENA (chegou a vez)
 
-**Ler antes:** `sessions/sessao-061.md` (a mais recente) →
-`sessions/sessao-060.md` (varredura dos ícones) → `DECISIONS.md` D020-D039.
+**Ler antes:** `sessions/sessao-062.md` (a mais recente) →
+`sessions/sessao-061.md` (ofensiva congelada) → `DECISIONS.md` D020-D040.
 
-**Fila, na ordem que ele definiu:**
-1. ~~Ícones de calendário / ofensiva congelada / medalhas~~ — feito na 061.
-2. **Ícones dos power-ups** — ele avisou que vai mandar.
-3. **Reformular o painel central da Arena.** ⚠️ Não mexer antes da conversa
-   — ele pediu explicitamente.
-4. **Imagens dos 104 personagens.**
+**Fila do Davi — os 2 primeiros estão feitos:**
+1. ~~Ícones dos power-ups~~ — feito na 062.
+2. ~~Correção do fuso horário~~ — feito na 062 (D040).
+3. **➡️ Reformular o painel central da Arena.** Ele pediu várias vezes pra
+   NÃO mexer antes da conversa — agora a fila chegou nele. **Começar
+   perguntando o que ele quer**, não propondo.
+4. **Imagens dos 104 personagens** — ele fornece aos poucos, começando pela
+   Bronze. Vão na caixinha de cada personagem (hoje emoji em
+   `constants/leagues.js`).
 
-**⚠️ DECISÃO PENDENTE DELE — bug de fuso horário (D039):** `todayStr()` usa
-`toISOString()` (UTC). No Brasil (UTC-3) o app "vira o dia" às 21h em vez
-da meia-noite. Afeta **vidas diárias, ofensiva (`lastPlayDate`) e desafio
-diário**. Medido: 22:05 de 20/ago → o app já achava que era 21/ago. Foi
-corrigido SÓ no calendário da semana (Header). Corrigir no resto muda
-semântica de mecânica (pode zerar ofensiva na transição), então precisa
-ele decidir. **Perguntar.**
+**Em aberto (ele nunca comentou):** o ícone de ofensiva usado também em
+"Melhor Sequência" (acertos seguidos numa partida, não dias seguidos) —
+ver D038. Se incomodar, é trocar em 2 lugares.
 
-**Em aberto da 060 (ele não comentou):** usei o ícone de ofensiva também em
-"Melhor Sequência" (acertos seguidos numa partida, não dias). Se
-incomodar, é trocar em 2 lugares.
-
-**Regra que continua valendo:** arquivo salvo em disco. Imagem colada no
-chat eu vejo mas não extraio (D033). Pipeline de recorte em D037/D039.
+**Lições de método que valem pra arte (D040):** conferir PNG com
+transparência SEMPRE composto sobre o fundo escuro real do app — arquivo
+solto no visualizador engana (branco sobre branco). Pipeline de recorte em
+D037/D039/D040.
 
 **Pausado por decisão explícita do Davi, não retomar sem ele pedir:** Modo
 História (narrativa infinita) — ver D018.
@@ -438,8 +441,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 1. Este arquivo (MEMORY_CORE.md) — 2 min
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-4. `sessions/sessao-061.md` — última sessão (ofensiva congelada + calendário + medalhas) → `sessions/sessao-060.md` (varredura dos ícones)
-5. `DECISIONS.md` D020-D039 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
+4. `sessions/sessao-062.md` — última sessão (power-ups + fuso) → `sessions/sessao-061.md` (ofensiva congelada + calendário)
+5. `DECISIONS.md` D020-D040 (reset 6.0 + limpeza + recalibração + Ligas/Header) — D015-D019 (5.0) são história, não aplicam mais
 6. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

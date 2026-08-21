@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
+import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
 import { LEAGUE_MAP } from './constants/leagues';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
@@ -463,7 +463,7 @@ export default function App() {
         const lastPlay = prev.lastPlayDate;
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        const yStr = yesterday.toISOString().split('T')[0];
+        const yStr = localDateStr(yesterday);
         const yearTurn =
           lastPlay && new Date(lastPlay).getFullYear() < new Date(today).getFullYear();
         const currentStreak = yearTurn

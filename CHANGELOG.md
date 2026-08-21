@@ -4,6 +4,21 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.12] — 2026-08-17 — Ícones dos power-ups + correção do fuso horário
+
+**Detalhes em `sessions/sessao-062.md` e `DECISIONS.md` (D040).**
+
+### Corrigido
+- **O jogo virava o dia às 21h em vez da meia-noite** (conversão pra UTC).
+  Afetava ofensiva, vidas diárias, desafio diário e missões. Agora usa data
+  local em todo lugar
+- Saves antigos com data em UTC não perdem a ofensiva na atualização
+
+### Adicionado
+- Ícones dos 7 power-ups da loja
+
+---
+
 ## [6.0.11] — 2026-08-17 — Ofensiva congelada, calendário da semana e medalhas
 
 **Detalhes em `sessions/sessao-061.md` e `DECISIONS.md` (D039).**

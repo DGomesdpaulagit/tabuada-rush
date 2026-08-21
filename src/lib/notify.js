@@ -1,3 +1,4 @@
+import { localDateStr } from '../utils';
 // Notificações reais via Web Notifications API.
 // maybeMissionExpireReminder: avisa sobre missões diárias prestes a expirar.
 //   Dispara quando restam ≤ 2h do dia e há missões pendentes/não resgatadas.
@@ -78,7 +79,7 @@ export function maybeMissionExpireReminder(missionsData) {
   const midnight = new Date(now); midnight.setHours(24, 0, 0, 0);
   const msLeft  = midnight - now;
   const ONE_HOUR = 3_600_000;
-  const today   = now.toISOString().split('T')[0];
+  const today   = localDateStr(now);
   const remKey  = `tr_mission_remind_${today}`;
 
   if (localStorage.getItem(remKey)) return; // já lembrou hoje
@@ -134,7 +135,7 @@ export function maybeMissionExpireReminder(missionsData) {
 // Lembrete local ao abrir o app (1×/dia) se ainda não jogou hoje.
 export function maybeStreakReminder(data = {}) {
   if (!notificationsSupported() || Notification.permission !== 'granted') return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   if (data.lastPlayDate === today) return;                         // já praticou hoje
   if (localStorage.getItem('tr_last_reminder') === today) return;  // já lembrou hoje
   localStorage.setItem('tr_last_reminder', today);
@@ -149,7 +150,7 @@ export function maybeStreakReminder(data = {}) {
 export function maybeForgettingReminder(count) {
   if (!notificationsSupported() || Notification.permission !== 'granted') return;
   if (!count || count <= 0) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   const remKey = `tr_forgetting_remind_${today}`;
   if (localStorage.getItem(remKey)) return; // já lembrou hoje
   localStorage.setItem(remKey, '1');

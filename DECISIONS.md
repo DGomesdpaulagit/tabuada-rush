@@ -1244,6 +1244,74 @@ primeiros, número do 4º em diante. 0 imagens quebradas, 0 sobra horizontal,
 
 ---
 
+## D040 — Ícones dos power-ups + correção do fuso horário (o dia virava às 21h)
+
+**Data:** 2026-08-17 · sessao-062
+
+### Parte 1 — ícones dos power-ups
+
+Folha 2×2 com foguete, escudo, floco de neve e cronômetro. **Fundo branco
+(249,249,249) e o desenho contém branco (253-255)** — 6 unidades de
+diferença. Isso quebrou as duas abordagens anteriores:
+- **Flood fill com tolerância folgada (40):** vazou pra dentro e comeu o
+  corpo branco do foguete. O desenho tem traços de contorno em
+  cinza-quase-branco que *furam* a silhueta e deixam a mancha entrar.
+- **Limiar simples com rampa de alpha:** deixou o branco *semitransparente*
+  (alpha ~43%), e o fundo escuro do app vazava por baixo — aspecto de
+  chuvisco.
+
+**O que funcionou:** flood fill só de fora, tolerância apertada (8, contra
+os 12 de diferença do branco do desenho), **alpha chapado 0/255**.
+
+**Armadilha de diagnóstico que vale registrar:** por duas rodadas eu achei
+que o corpo do foguete tinha sumido — mas era **branco sobre o fundo branco
+do visualizador**. Só apareceu quando compus os PNGs sobre o `#171B24` real
+do app. Verificar arte com transparência exige compor sobre o fundo de
+destino, não olhar o arquivo solto.
+
+**Mapeamento dos 7 power-ups:** Congelar Missão→floco, +60s→cronômetro,
+Escudo→escudo, Largada Turbo→foguete; Vida Extra→`vidas` e XP
+Dobrado→`xp` (o Davi indicou). **Decisão minha:** "Seguro de Ofensiva"
+ficou com `ofensiva-congelada` — ele não disse, e havia conflito (Seguro e
+Escudo usavam o mesmo 🛡️). A chama de gelo é semanticamente exata: o
+Seguro literalmente congela a ofensiva (é o mesmo `streakInsuredAt` do
+D039). `SHOP_ITEMS` ganhou o campo `art`; `emoji` fica de reserva pra item
+novo sem ícone.
+
+### Parte 2 — correção do fuso horário (a pedido do Davi)
+
+Bug reportado em D039, agora corrigido. Era `toISOString()` (UTC) gerando
+chave de dia: no Brasil (UTC-3) o jogo virava o dia **às 21h**.
+
+**Alcance real, maior do que parecia:** 14 usos de `todayStr()`, uma
+**segunda cópia** de `todayStr()` dentro de `utils/missions.js` (não
+importava de utils), e ~10 conversões cruas espalhadas em App, Header,
+StreakHeatmap, seasons, notify, ErrorsPage, HitsPage, StatsPage e analysis.
+
+**Correção:** `localDateStr(date)` novo em `utils/index.js`, `todayStr()`
+passa a delegar pra ele, e todas as chaves de dia migradas. Ficaram em UTC
+só os **nomes de arquivo de exportação** (`tabuada-rush-2026-08-20.json`) —
+não comparam com nada.
+
+**`constants/seasons.js` tem uma cópia proposital do helper:** `constants/`
+não pode importar de `utils/` porque `utils/index.js` já importa
+`constants/` — daria ciclo.
+
+**Risco de migração — tratado.** Saves gravados antes da correção têm
+`lastPlayDate` em UTC. Quem jogou depois das 21h tem a data **no futuro**
+em relação ao dia local, e `applyStreakDecay` leria isso como "não jogou
+nem ontem nem hoje" e **zeraria a ofensiva**. Guard adicionado: `if (last >
+today) return data` — ninguém joga no futuro, então data futura é o
+artefato de UTC e vale como "jogou hoje".
+
+**Verificado:** save legado com `lastPlayDate` no futuro → ofensiva de 12
+dias **preservada** (antes zeraria). Quebra real (último jogo 5 dias atrás)
+→ **zera corretamente**, mecânica intacta, e a barra vira congelada/azul
+sozinha. Os 7 power-ups com o ícone certo, 0 imagens quebradas, 0 sobra
+horizontal em Loja/Missões/Estatísticas/Perfil. Build limpo.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

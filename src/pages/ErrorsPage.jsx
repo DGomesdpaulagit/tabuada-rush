@@ -5,7 +5,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { formatDate } from '../utils';
+import { formatDate, localDateStr} from '../utils';
 import { StatCard, EmptyState, Progress, pageVariants, pageTransition } from '../components/ui';
 
 // ── Constantes ───────────────────────────────────────────────────────────────
@@ -21,8 +21,8 @@ function filterSessions(sessions, timeFilter, monthFilter, yearFilter, modeFilte
   let out = sessions;
 
   if (timeFilter === 'dia') {
-    const today = now.toISOString().split('T')[0];
-    out = out.filter(s => s.date && new Date(s.date).toISOString().split('T')[0] === today);
+    const today = localDateStr(now);
+    out = out.filter(s => s.date && localDateStr(new Date(s.date)) === today);
   } else if (timeFilter === 'mes') {
     out = out.filter(s => {
       if (!s.date) return false;

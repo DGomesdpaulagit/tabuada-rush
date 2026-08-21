@@ -5,7 +5,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useApp } from '../contexts/AppContext';
-import { getAccuracy, formatDate } from '../utils';
+import { getAccuracy, formatDate, localDateStr} from '../utils';
 import { analyzeUser } from '../utils/analysis';
 import { Button, StatCard, EmptyState, pageVariants, pageTransition } from '../components/ui';
 import StreakHeatmap from '../components/StreakHeatmap';
@@ -380,7 +380,7 @@ export default function StatsPage({ onBack }) {
         const last7 = Array.from({ length: 7 }, (_, i) => {
           const d = new Date();
           d.setDate(d.getDate() - (6 - i));
-          return d.toISOString().split('T')[0];
+          return localDateStr(d);
         });
         const errorsByDay = last7.map((day) => {
           const dayErrors = sessions

@@ -16,6 +16,10 @@ import diaVazio from '../assets/icons/dia-vazio.png';
 import posicao1 from '../assets/icons/posicao-1.png';
 import posicao2 from '../assets/icons/posicao-2.png';
 import posicao3 from '../assets/icons/posicao-3.png';
+import puLargada from '../assets/icons/pu-largada.png';
+import puEscudo from '../assets/icons/pu-escudo.png';
+import puCongelar from '../assets/icons/pu-congelar.png';
+import puTempo from '../assets/icons/pu-tempo.png';
 import moedas from '../assets/icons/moedas.png';
 import vidas from '../assets/icons/vidas.png';
 import xp from '../assets/icons/xp.png';
@@ -55,6 +59,11 @@ export const ICONS = {
   'bau-moedas': bauMoedas,
   'divisao-bloqueada': divisaoBloqueada,
   'missao-travada': missaoTravada,
+  // Power-ups da loja (ver constants/shop.js, campo `art`)
+  'pu-largada': puLargada,
+  'pu-escudo': puEscudo,
+  'pu-congelar': puCongelar,
+  'pu-tempo': puTempo,
 };
 
 // Medalhas de 1º/2º/3º da classificação (RankingPage). Índice 0-based:

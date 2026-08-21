@@ -317,9 +317,16 @@ export function applyStreakDecay(data = {}) {
   const today = todayStr();
   if (last === today) return data; // já praticou hoje — ofensiva intacta
 
+  // [migração D040] Saves gravados ANTES da correção de fuso guardaram a
+  // data em UTC. Quem jogou depois das 21h tem `lastPlayDate` no FUTURO em
+  // relação ao dia local — e o cálculo abaixo leria isso como "não jogou
+  // nem ontem nem hoje" e zeraria a ofensiva injustamente. Ninguém joga no
+  // futuro: se a data for maior que hoje, trata como jogo de hoje.
+  if (last > today) return data;
+
   const y = new Date();
   y.setDate(y.getDate() - 1);
-  const yStr = y.toISOString().split('T')[0];
+  const yStr = localDateStr(y);
 
   const missedDay = last !== yStr; // não jogou nem ontem nem hoje → perdeu a ofensiva
   const yearTurn = new Date(last).getFullYear() < new Date(today).getFullYear();
@@ -713,8 +720,22 @@ export function checkNewAchievements(savedData) {
 
 // ── DATE HELPERS ──────────────────────────────────────────────────────────
 
+// [correção 2026-08-17 · D040] Data no fuso LOCAL (YYYY-MM-DD).
+//
+// Antes isso era `toISOString().split('T')[0]`, que converte pra UTC. No
+// Brasil (UTC-3) o efeito era o jogo "virar o dia" às 21h em vez da
+// meia-noite: uma partida às 22h de quinta contava como sexta. Isso afetava
+// ofensiva, vidas diárias e desafio diário ao mesmo tempo — medido em
+// 20/08 22:05, quando `toISOString()` já devolvia 21/08.
+//
+// Usar SEMPRE esta função (ou `localDateStr` pra uma data específica) pra
+// gerar chave de dia. Nunca `toISOString()` pra isso.
+export function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export function todayStr() {
-  return new Date().toISOString().split('T')[0];
+  return localDateStr();
 }
 
 // [v6.0 · Bloco 2] Vidas diárias — lê o pote sem mutar o storage; se o dia

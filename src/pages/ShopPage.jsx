@@ -89,7 +89,9 @@ export default function ShopPage({ onBack, embedded = false }) {
                 <div
                   className={`w-12 h-12 rounded-xl ${rarity.bg} border-2 ${rarity.border} flex items-center justify-center text-2xl`}
                 >
-                  {item.emoji}
+                  {/* `art` é a arte do Davi; `emoji` fica de reserva pra
+                      qualquer item novo que ainda não tenha ícone próprio. */}
+                  {item.art ? <GameIcon name={item.art} size={30} /> : item.emoji}
                 </div>
                 {count > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-macaw text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow">

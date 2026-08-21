@@ -1,3 +1,4 @@
+import { localDateStr } from './index';
 // ── ANÁLISE INTELIGENTE DO USUÁRIO ──────────────────────────────────────────
 // NÃO é IA real. É um motor que interpreta os DADOS REAIS do usuário (sessões +
 // estatísticas) e gera textos automáticos de evolução, precisão, velocidade,
@@ -156,7 +157,7 @@ function buildMonthly(sessions, data) {
   for (const s of monthList) counts[s.mode] = (counts[s.mode] || 0) + 1;
   const favKey = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
   const daysActive = new Set(
-    monthList.map((s) => new Date(s.date).toISOString().split('T')[0])
+    monthList.map((s) => localDateStr(new Date(s.date)))
   ).size;
 
   const monthMs = meanRespMs(monthList);

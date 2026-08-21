@@ -1,24 +1,27 @@
 // ── RARIDADES ────────────────────────────────────────────────────────────────
+// [2026-08-17] Antes cada raridade pintava o CARD INTEIRO (`bg-gray-100`/
+// `bg-blue-50`/`bg-purple-50`). Dois problemas: os cards ficavam de cores
+// diferentes entre si (o Davi pediu todos iguais), e `bg-purple-50` não tinha
+// override no tema escuro em globals.css — o card Épico aparecia BRANCO no
+// escuro. Agora o card usa sempre `bg-surface`/`border-border` (tokens que
+// seguem o tema) e a raridade vive só na etiqueta, via `badge`.
 export const RARITIES = {
   common: {
     label: 'Comum',
-    textColor: 'text-gray-500',
-    bg: 'bg-gray-100',
-    border: 'border-gray-200',
+    textColor: 'text-fg-muted',
+    badge: 'bg-fg-muted/15 text-fg-muted',
     gem: '⚪',
   },
   rare: {
     label: 'Raro',
-    textColor: 'text-blue-600',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
+    textColor: 'text-blue-400',
+    badge: 'bg-blue-400/15 text-blue-400',
     gem: '🔵',
   },
   epic: {
     label: 'Épico',
-    textColor: 'text-purple-600',
-    bg: 'bg-purple-50',
-    border: 'border-purple-200',
+    textColor: 'text-violet-400',
+    badge: 'bg-violet-400/15 text-violet-400',
     gem: '💜',
   },
 };

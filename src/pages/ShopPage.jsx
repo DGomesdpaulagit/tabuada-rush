@@ -82,13 +82,11 @@ export default function ShopPage({ onBack, embedded = false }) {
               key={item.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${rarity.bg} ${rarity.border}`}
+              className="flex items-center gap-3 p-4 rounded-2xl border-2 bg-surface border-border transition-all"
             >
               {/* Emoji + contador de estoque */}
               <div className="relative shrink-0">
-                <div
-                  className={`w-12 h-12 rounded-xl ${rarity.bg} border-2 ${rarity.border} flex items-center justify-center text-2xl`}
-                >
+                <div className="w-12 h-12 rounded-xl bg-surface-2 border-2 border-border flex items-center justify-center text-2xl">
                   {/* `art` é a arte do Davi; `emoji` fica de reserva pra
                       qualquer item novo que ainda não tenha ícone próprio. */}
                   {item.art ? <GameIcon name={item.art} size={30} /> : item.emoji}
@@ -103,14 +101,12 @@ export default function ShopPage({ onBack, embedded = false }) {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                  <p className="text-sm font-black text-gray-900 leading-tight">{item.name}</p>
-                  <span
-                    className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${rarity.bg} ${rarity.textColor} border ${rarity.border} shrink-0`}
-                  >
+                  <p className="text-sm font-black text-fg leading-tight">{item.name}</p>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${rarity.badge}`}>
                     {rarity.gem} {rarity.label}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 font-semibold leading-snug">{item.desc}</p>
+                <p className="text-xs text-fg-muted font-semibold leading-snug">{item.desc}</p>
                 {count > 0 && (
                   <p className="text-[11px] font-bold text-macaw-dark mt-0.5">
                     Estoque: {count} uso{count !== 1 ? 's' : ''}

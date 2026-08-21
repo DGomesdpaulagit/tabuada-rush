@@ -4,6 +4,16 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.13] — 2026-08-17 — Cards da Loja todos na mesma cor
+
+### Corrigido
+- O card "XP Dobrado" (Épico) aparecia **branco** no tema escuro:
+  `bg-purple-50` era a única cor de raridade sem adaptação pro escuro
+- Os cards tinham cores diferentes entre si (uma por raridade). Agora todos
+  usam o mesmo fundo; a raridade aparece só na etiqueta
+
+---
+
 ## [6.0.12] — 2026-08-17 — Ícones dos power-ups + correção do fuso horário
 
 **Detalhes em `sessions/sessao-062.md` e `DECISIONS.md` (D040).**

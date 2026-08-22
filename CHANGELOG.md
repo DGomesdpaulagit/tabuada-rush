@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.14] — 2026-08-17 — Fases 1 e 2 do backlog: ícones novos + XP Dobrado removido
+
+**Detalhes em `sessions/sessao-065.md` e `DECISIONS.md` (D043).**
+
+### Adicionado
+- 16 ícones de arte própria novos (vidas, vida extra, congelar missão,
+  largada turbo, +60s, ofensiva, missões diárias/mensais, mochila, 3
+  poções de XP, 4 baús)
+- Categorias de missão (Diárias/Mensais) usam ícone em vez de emoji
+
+### Removido
+- Power-up **XP Dobrado** — saiu da Loja, do cálculo de XP, do HUD da
+  partida e do resumo pós-partida (substituído pelas Poções de XP, ainda
+  não implementadas)
+
+### Alterado
+- Botão "Congelar Missão" só aparece quando o item já está na mochila do
+  jogador (estoque > 0) — sem mais opção de comprar na hora por moeda ali
+
+---
+
 ## [6.0.13] — 2026-08-17 — Cards da Loja todos na mesma cor
 
 ### Corrigido

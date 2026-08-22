@@ -499,16 +499,17 @@ export default function App() {
         // XP v3.0 — 100% baseado em desempenho, sem bônus de dias jogados.
         //   Cada modo tem seu próprio xpMultiplier (definido em constants/index.js).
         const MODE_XP_MULT = { rush: 0.20, zen: 0, review: 0.16 };
-        // Power-up XP Dobrado: dobra o XP desta partida e consome 1 unidade do estoque
-        const xp2Active = (prev.powerups?.xp2 || 0) > 0;
         // [pendência pós-reset] Pódio da Diamante dá XP extra enquanto durar
         // (avaliado por ciclo de 6 dias — ver utils/leagues.js). Checa o
-        // estado ANTES desta partida (prev), igual ao xp2Active acima.
+        // estado ANTES desta partida (prev).
         const DIAMOND_PODIUM_BONUS = 1.25;
         const diamondBonusActive = !!prev.diamondPodiumActive;
+        // [D043] Power-up XP Dobrado (multiplicador fixo por 1 partida) foi
+        // removido — substituído pelas Poções de XP (multiplicador por
+        // TEMPO, não por partida, ver PLANO_ACAO.md Fase 4). Quando a Fase 4
+        // for implementada, o multiplicador da poção ativa entra aqui.
         const gameXp = Math.round(
           Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) *
-            (xp2Active ? 2 : 1) *
             (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1)
         );
         const xp = (prev.xp || 0) + gameXp;
@@ -625,10 +626,7 @@ export default function App() {
           activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
-          // Consome 1 unidade do XP Dobrado se estava ativo
-          powerups: xp2Active
-            ? { ...(prev.powerups || {}), xp2: Math.max(0, (prev.powerups?.xp2 || 0) - 1) }
-            : (prev.powerups || {}),
+          powerups: prev.powerups || {},
         };
 
         // Registro de evolução: anexa os novos marcos atingidos nesta partida.
@@ -779,9 +777,7 @@ export default function App() {
         );
       });
 
-      // xp2Used: verifica ANTES do update (data ainda tem o valor antigo, xp2 > 0 = estava ativo)
-      const xp2Used = (data.powerups?.xp2 || 0) > 0;
-      setLastResult({ ...result, xp2Used, betResult, betPayout, betAmount: activeBet?.amount });
+      setLastResult({ ...result, betResult, betPayout, betAmount: activeBet?.amount });
       setScreen('results');
     },
     [data, update, showAchievement]

@@ -1411,6 +1411,80 @@ qualquer coisa nova):
 
 ---
 
+## D043 — Fases 1 e 2 do PLANO_ACAO.md: ícones novos + remoção do XP Dobrado
+
+**Data:** 2026-08-17 · sessao-065
+
+Davi confirmou as 3 perguntas em aberto do `PLANO_ACAO.md` (remover XP
+Dobrado de vez; calendário de 5 dias é mesmo diferente, ele manda
+referência quando chegar a vez; "partida" na Fase 6 é a duração REAL, não
+por modo — ele lembrou que o bônus de combo do Rush pode esticar uma
+partida bem além do esperado) e mandou seguir com a Fase 1.
+
+### Fase 1 — 16 ícones novos processados
+
+Mesmo pipeline de flood-fill das sessões anteriores (D037/D040), com dois
+achados que mudaram o resultado:
+
+1. **"Vidas" e "Vida Extra" são ícones DIFERENTES**, apesar do Davi ter
+   escrito "usar o mesmo ícone de vidas" no texto original. Ele baixou dois
+   arquivos distintos: `novo_icone_vidas.png` (coração liso, uso geral) e
+   `novo_icone_vida_extra.png` (coração com cruz — ícone médico, uso
+   específico do power-up de reviver). O arquivo mais específico venceu a
+   instrução escrita — usei o coração-com-cruz só no power-up Vida Extra
+   (`pu-vida-extra`, novo). **Sinalizado no código pra ele confirmar.**
+2. **Sem ícone novo pro Escudo** — não veio nenhum arquivo com esse nome;
+   mantido `pu-escudo.png` da sessão 062 sem alteração.
+
+Trocados (mesmo arquivo de destino, então nem precisou mexer em import):
+`vidas.png`, `ofensiva.png` (estado "acesa"), `pu-largada.png`,
+`pu-congelar.png`, `pu-tempo.png`. Novos (registro novo em `GameIcon.jsx`):
+`pu-vida-extra`, `missao-mensal`, `missao-diaria`, `mochila`, `pocao-xp-1/2/3`
+(fatiados de uma folha vertical única — sem cor diferenciando os 3 tiers,
+mapeei por formato: tubo=x1,5, erlenmeyer=x2, redonda=x3, é uma suposição
+minha, não confirmada), `bau-madeira/ferro/ouro/mistico` (fatiados de uma
+fileira horizontal de 4, ordem bateu exatamente com os 4 tiers do
+`PLANO_ACAO.md` Fase 6). Os 3 últimos grupos (mochila/poções/baús) só
+foram REGISTRADOS — as telas que os usam (Fases 3/4/6) ainda não existem.
+
+Categorias de missão (Diárias/Mensais) também trocadas de emoji (☀️/🗓️)
+pra arte, e o ícone "Congelar" nos botões/badges de missão (antes
+`Snowflake` da lucide) virou a mesma arte usada na Loja — consistência
+entre os dois lugares que mencionam a mesma coisa (mesmo princípio da
+"varredura" da sessão 060, D038).
+
+### Fase 2 — XP Dobrado removido; regra nova do Congelar Missão
+
+**XP Dobrado:** removido de `SHOP_ITEMS`, do cálculo de XP em
+`App.jsx handleGameEnd` (multiplicador ×2 por partida saiu do lugar; deixei
+um comentário marcando onde o multiplicador das Poções de XP vai entrar na
+Fase 4 — são conceitos diferentes: XP Dobrado valia por 1 PARTIDA, Poção
+vale por TEMPO), do badge no HUD do `GamePage`, e do banner/label especial
+no `ResultsPage` (a lógica de `highlight` nos cards de stat também saiu —
+ficou morta, nada mais usa).
+
+**Regra nova do Congelar Missão** (`MissionsPage.jsx`): antes o botão
+aparecia sempre, com fallback de comprar na hora por 50 moedas quando não
+tinha estoque. Agora **o botão só existe se `powerups.missionFreeze > 0`**
+— sem estoque, não aparece nada (nem preço, nem botão desabilitado). Vale
+tanto pra missão diária quanto pra desafio mensal já aceito (mesma regra,
+dois lugares).
+
+**Verificado:** Loja com 6 itens (XP Dobrado sumiu), 0 imagens quebradas,
+Vida Extra usando `pu-vida-extra.png`. Regra do Congelar testada nos dois
+sentidos — sem estoque: botão ausente, sem qualquer menção de preço; com
+estoque forçado (2): botão aparece com "estoque ×2", clique consome
+1 (`estoque ×2` → `1`) e a missão passa a mostrar "Congelada — sobrevive
+até amanhã". Header mostra a chama nova tanto acesa (streak>0) quanto
+congelada (streak=0). 0 erros no console. Build limpo.
+
+**Nota útil pra Fase 6 (achada nesta sessão, não implementada ainda):**
+`result.timePlayed` já existe e é exibido no `ResultsPage` — é a fonte
+natural pra medir a duração real de uma partida (resolvendo o "o que conta
+como partida" que o Davi esclareceu), sem precisar instrumentar nada novo.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

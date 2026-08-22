@@ -35,7 +35,7 @@ export const DEFAULTS = {
   leagueLastCycleChecked: null, // [recalibração 2026-08-17] nº do último ciclo de 6 dias em que promoção/rebaixamento foi avaliado — ver utils/leagues.js
   diamondPodiumActive: false,   // pódio (top 3) da liga Diamante dá bônus de XP enquanto durar — ver App.jsx handleGameEnd
   createdAt: null,       // [v6.0 · Bloco 6] data do primeiro load — "no jogo desde..." no Perfil (setado uma vez em AppContext)
-  powerups: {},              // { life: N, time: N, xp2: N } — consumíveis da loja
+  powerups: {},              // { life: N, time: N, shield: N, headstart: N, streakInsurance: N, missionFreeze: N } — consumíveis da loja (xp2/XP Dobrado removido — ver D043, substituído pelas Poções de XP)
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
   equippedItems: {},         // { frame, card } → id do item equipado em cada slot
   missionsData: null,        // { daily, monthly } — v6.0 · Bloco 5: semanais removidas, controlado por utils/missions.js

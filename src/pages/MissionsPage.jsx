@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, CheckCircle, Snowflake, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { getActiveMissions, claimMission, freezeMission, acceptChallenge, freezeChallenge } from '../utils/missions';
 import { pageVariants, pageTransition, Progress } from '../components/ui';
@@ -10,8 +10,8 @@ import GameIcon from '../components/GameIcon';
 // Semanais removidas por pedido do Davi — só diárias (sem risco) e mensais
 // (desafios que precisam ser aceitos, com recompensa/penalidade).
 const TABS = [
-  { id: 'daily',   label: 'Diárias', emoji: '☀️' },
-  { id: 'monthly', label: 'Mensais', emoji: '🗓️' },
+  { id: 'daily',   label: 'Diárias', art: 'missao-diaria' },
+  { id: 'monthly', label: 'Mensais', art: 'missao-mensal' },
 ];
 
 function resetLabel(tab) {
@@ -68,19 +68,19 @@ export default function MissionsPage({ onBack, embedded = false }) {
     }));
   };
 
-  // Congelar missão diária: consome 1 missionFreeze do estoque OU 50 moedas
+  // [D043] Congelar missão diária: SÓ consome 1 missionFreeze do estoque —
+  // o fallback de comprar com moeda direto aqui foi removido a pedido do
+  // Davi. O item precisa estar na Mochila antes (comprado na Loja ou
+  // achado jogando, ver PLANO_ACAO.md Fases 3/5/6); o botão nem aparece
+  // sem estoque (ver JSX abaixo).
   const handleFreezeDaily = (mission) => {
     update((prev) => {
       const stock = prev.powerups?.missionFreeze || 0;
-      const useStock = stock > 0;
-      if (!useStock && (prev.coins || 0) < 50) return prev;
+      if (stock === 0) return prev;
       return {
         ...prev,
         missionsData: freezeMission(prev.missionsData, mission.id),
-        coins: useStock ? prev.coins : (prev.coins || 0) - 50,
-        powerups: useStock
-          ? { ...(prev.powerups || {}), missionFreeze: stock - 1 }
-          : (prev.powerups || {}),
+        powerups: { ...(prev.powerups || {}), missionFreeze: stock - 1 },
       };
     });
   };
@@ -94,20 +94,16 @@ export default function MissionsPage({ onBack, embedded = false }) {
     }));
   };
 
-  // Congelar desafio mensal aceito: +10 dias de prazo. Consome 1
-  // missionFreeze do estoque OU 50 moedas (mesmo preço/estoque da diária).
+  // [D043] Congelar desafio mensal aceito (+10 dias de prazo): mesma regra
+  // nova da diária — só consome estoque, sem fallback de moeda.
   const handleFreezeChallenge = (challenge) => {
     update((prev) => {
       const stock = prev.powerups?.missionFreeze || 0;
-      const useStock = stock > 0;
-      if (!useStock && (prev.coins || 0) < 50) return prev;
+      if (stock === 0) return prev;
       return {
         ...prev,
         missionsData: freezeChallenge(prev.missionsData, challenge.id),
-        coins: useStock ? prev.coins : (prev.coins || 0) - 50,
-        powerups: useStock
-          ? { ...(prev.powerups || {}), missionFreeze: stock - 1 }
-          : (prev.powerups || {}),
+        powerups: { ...(prev.powerups || {}), missionFreeze: stock - 1 },
       };
     });
   };
@@ -146,13 +142,14 @@ export default function MissionsPage({ onBack, embedded = false }) {
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
-            className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
               activeTab === t.id
                 ? 'bg-accent text-white shadow-md'
                 : 'bg-surface-2 text-fg-muted hover:bg-border'
             }`}
           >
-            {t.emoji} {t.label}
+            <GameIcon name={t.art} size={16} />
+            {t.label}
           </button>
         ))}
       </div>
@@ -219,21 +216,20 @@ export default function MissionsPage({ onBack, embedded = false }) {
                     Recompensa resgatada
                   </div>
                 )}
-                {!mission.completed && !mission.frozen && (
+                {/* [D043] Só aparece com o item já na Mochila (estoque > 0) —
+                    sem fallback de compra com moeda aqui. */}
+                {!mission.completed && !mission.frozen && (data.powerups?.missionFreeze || 0) > 0 && (
                   <button
                     onClick={() => handleFreezeDaily(mission)}
-                    disabled={(data.powerups?.missionFreeze || 0) === 0 && (data.coins || 0) < 50}
-                    className="mt-2 w-full py-2 rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700 text-xs font-black hover:bg-cyan-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-2 w-full py-2 rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700 text-xs font-black hover:bg-cyan-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"
                   >
-                    <Snowflake size={12} />
-                    {(data.powerups?.missionFreeze || 0) > 0
-                      ? `Congelar (estoque ×${data.powerups.missionFreeze})`
-                      : <>Congelar (<GameIcon name="moedas" size={12} className="inline-block align-text-bottom" /> 50)</>}
+                    <GameIcon name="pu-congelar" size={14} />
+                    Congelar (estoque ×{data.powerups.missionFreeze})
                   </button>
                 )}
                 {mission.frozen && (
                   <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-cyan-600">
-                    <Snowflake size={12} />
+                    <GameIcon name="pu-congelar" size={14} />
                     Congelada — sobrevive até amanhã
                   </div>
                 )}
@@ -283,21 +279,19 @@ export default function MissionsPage({ onBack, embedded = false }) {
                         Não cumprir custa <GameIcon name="moedas" size={13} className="inline-block align-text-bottom" /> {c.penalty} do seu saldo
                       </p>
                     )}
-                    {!c.completed && !c.frozen && (
+                    {/* [D043] Mesma regra da diária — só aparece com estoque */}
+                    {!c.completed && !c.frozen && (data.powerups?.missionFreeze || 0) > 0 && (
                       <button
                         onClick={() => handleFreezeChallenge(c)}
-                        disabled={(data.powerups?.missionFreeze || 0) === 0 && (data.coins || 0) < 50}
-                        className="mt-2 w-full py-2 rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700 text-xs font-black hover:bg-cyan-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="mt-2 w-full py-2 rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700 text-xs font-black hover:bg-cyan-100 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"
                       >
-                        <Snowflake size={12} />
-                        {(data.powerups?.missionFreeze || 0) > 0
-                          ? `Congelar +10 dias (estoque ×${data.powerups.missionFreeze})`
-                          : <>Congelar +10 dias (<GameIcon name="moedas" size={12} className="inline-block align-text-bottom" /> 50)</>}
+                        <GameIcon name="pu-congelar" size={14} />
+                        Congelar +10 dias (estoque ×{data.powerups.missionFreeze})
                       </button>
                     )}
                     {c.frozen && (
                       <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-cyan-600">
-                        <Snowflake size={12} />
+                        <GameIcon name="pu-congelar" size={14} />
                         Congelado — prazo estendido
                       </div>
                     )}

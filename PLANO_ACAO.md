@@ -12,29 +12,26 @@
 
 ---
 
-## ⚠️ Conflitos no texto original do Davi — flagados, não resolvidos sozinho
+## ✅ Conflitos resolvidos (respondidos pelo Davi na sessão 065)
 
-Antes de qualquer fase, três coisas no brief dele se contradizem ou faltam
-informação. Não assumi resposta nenhuma — cada uma vira uma pergunta na
-fase correspondente:
-
-1. **XP Dobrado:** ele mandou excluir o power-up inteiro ("EXCLUIR O
-   POWER-UP XP DOBRADO DO JOGO... POIS CRIAMOS AS POÇÕES"), mas depois, na
-   lista de categorias da Mochila e na tabela de probabilidade de drop de
-   baús/power-ups, o XP Dobrado ainda aparece listado. Tratando como
-   **resíduo do rascunho** — meu entendimento é remover de verdade,
-   inclusive da lista de drops. **Confirmar antes da Fase 2.**
-2. **Calendário da ofensiva na página de resumo (Fase 7, página 4):** ele
-   descreveu uma janela de **5 dias** (ontem + hoje + 3 dias seguintes) —
-   diferente do calendário que já existe no Header (semana inteira Dom-Sáb,
-   sessão 061/D039). É uma exibição nova, não reaproveita a atual direto.
-   Ele mesmo ofereceu mandar uma imagem de referência — **pedir antes de
-   implementar essa página.**
-3. **"Partida" nas probabilidades por tempo (Fase 6):** a tabela de % por
-   duração (1-5min / 6-20min / 25-50min / 1h) presume partidas que podem
-   durar até 1 hora. O modo Rush dura só alguns minutos (30s + bônus); Zen
-   não tem timer e pode durar mais. **Precisa decidir o que conta como
-   "partida" pra essa contagem** antes de codar a Fase 6.
+1. **XP Dobrado — CONFIRMADO remover de verdade.** Inclusive da tabela de
+   drop de power-ups (Fase 6) e da categorização da Mochila (Fase 3). Não
+   é resíduo de rascunho — é pra sumir do jogo inteiro.
+2. **Calendário de 5 dias na página 4 do resumo (Fase 7) — CONFIRMADO
+   que é diferente** do calendário semanal do Header. Davi vai mandar a
+   imagem de referência **quando chegar a vez dessa fase** — não bloqueia
+   nada antes disso.
+3. **"Partida" nas probabilidades por tempo (Fase 6) — RESOLVIDO.** Davi
+   lembrou um detalhe que muda a implementação: o Rush tem bônus de tempo
+   por combo (`bonusTime`, +3s por acerto) — um jogador craque emendando
+   combos pode esticar uma única partida bem além dos "30s base". Ou seja,
+   **não dá pra assumir a duração pelo modo** (ex.: "Rush = sempre curto").
+   A regra tem que usar a **duração REAL da partida que acabou de
+   terminar** (do início ao fim, incluindo todo o tempo ganho por combo),
+   não uma suposição por modo de jogo. Implementação: medir o tempo
+   decorrido de verdade em `GamePage`/`handleGameEnd` (o cronômetro já
+   existe pro HUD) e usar esse valor pra escolher a faixa da tabela
+   (1-5min / 6-20min / 25-50min / ~1h) na hora de rolar os drops.
 
 ---
 
@@ -59,64 +56,58 @@ Regra geral pra toda a fase (pedido explícito): sempre que o novo ícone
 existir, troca e **apaga o arquivo antigo** — não deixa duplicado. Não
 mexe em mais nada da tela além do ícone.
 
-### 1.1 — Power-ups (substituir + apagar o antigo)
-- [ ] **Vidas** — `novo_icone_vidas.png` → substitui `vidas.png`.
-      Usado em: Header (contador), painel de vidas, Loja (Vida Extra)
-- [ ] **Vida Extra** (power-up) — usa o MESMO ícone de vidas acima
-- [ ] **Congelar Missão** — `novo_icone_congelar_missao.png` → substitui
-      `pu-congelar.png`
-- [ ] **Largada Turbo** — `novo_icone_largada_turbo.png` → substitui
-      `pu-largada.png`
-- [ ] **Escudo** — (verificar se tem arquivo novo — não vi um explícito
-      no download; se não tiver, mantém o atual `pu-escudo.png` e
-      sinalizar ao Davi)
-- [ ] **+60s no relógio** — `novo_icone_+60_segundos.png` → substitui
-      `pu-tempo.png`
-- [ ] **Ofensiva** — `novo_icone_ofensiva.png` chegou também; conferir se
-      é substituto do `ofensiva.png`/`ofensiva-congelada.png` atuais
-      (sessão 061) ou se é pra outro uso — **perguntar se ficou ambíguo**
+### 1.1 — Power-ups (substituir + apagar o antigo) ✅ CONCLUÍDA (sessão 065)
+- [x] **Vidas** — trocado (`vidas.png`)
+- [x] **Vida Extra** (power-up) — **não usa o mesmo ícone de vidas**: o
+      Davi baixou um arquivo dedicado (`pu-vida-extra`, coração+cruz),
+      mais específico que a instrução escrita. Usado o dedicado —
+      **confirmar com ele se foi a escolha certa** (ver D043/sessao-065)
+- [x] **Congelar Missão** — trocado (`pu-congelar.png`)
+- [x] **Largada Turbo** — trocado (`pu-largada.png`)
+- [x] **Escudo** — sem arquivo novo nesta leva, mantido `pu-escudo.png`
+- [x] **+60s no relógio** — trocado (`pu-tempo.png`)
+- [x] **Ofensiva** — trocado o estado "acesa" (`ofensiva.png`); a
+      "congelada" não teve arquivo novo desta vez, mantida (sessão 061)
 
 ### 1.2 — Ícones de categoria de missão
-- [ ] **Missões mensais** — `novo_icone_missao_mensal.png` (calendário)
-- [ ] **Missões diárias** — `novo_icone_missão_diaria.png` (sol)
-- [ ] **Ícone "Controle"** — missões de partidas/jogos (ex.: "Jogue 5
-      partidas hoje") — localizar arquivo entre os baixados
-- [ ] **Ícone "Alvo"** — missões de acerto/precisão/desempenho (ex.: "90%+
-      de acertos") — localizar arquivo entre os baixados
-- [ ] Demais ícones de missão — mapear cada um pelo objetivo da missão em
-      `MissionsPage.jsx`/`utils/missions.js` (ver quais tipos de missão
-      existem hoje antes de decidir o mapeamento completo)
+- [x] **Missões mensais** — calendário, trocado (`missao-mensal`)
+- [x] **Missões diárias** — sol, trocado (`missao-diaria`)
+- [ ] **Ícone "Controle"** — missões de partidas/jogos — não localizado
+      nesta leva de downloads, fica pra próxima
+- [ ] **Ícone "Alvo"** — missões de acerto/precisão — não localizado nesta
+      leva, fica pra próxima
+- [ ] Demais ícones de missão individuais — pendente, precisa mais
+      inventário de tipos de missão antes de mapear
 
-### 1.3 — Ícones de telas novas (preparar pra Fases 3/4/6/7, sem construir a tela ainda)
-- [ ] Registrar no `GameIcon.jsx`: `icone_da_mochila.png` (Mochila)
-- [ ] Registrar: `icone_das_pocoes.png` (Poções — conferir se é folha com
-      as 3 variações x1.5/x2/x3 ou um ícone genérico)
-- [ ] Registrar: `novo_icone_baus_classificações.png` (conferir contra o
-      `podio.png`/`bau-moedas.png` atuais — pode ser substituto)
-- [ ] Registrar: `icone_de_acertos-missões-tela_resumo_da_tarefa.png`
-      (usar na Fase 7, página 1 do resumo)
+### 1.3 — Ícones de telas novas ✅ REGISTRADOS (sessão 065, telas ainda não existem)
+- [x] `mochila` registrado em `GameIcon.jsx`
+- [x] `pocao-xp-1/2/3` registrados — fatiados de uma folha vertical sem
+      diferenciação de cor entre tiers; mapeados por FORMATO (tubo=x1,5,
+      erlenmeyer=x2, redonda=x3) — **suposição minha, não confirmada**
+- [x] `bau-madeira/ferro/ouro/mistico` registrados — ordem da folha bateu
+      com os 4 tiers da Fase 6 (madeira→místico)
+- [ ] `icone_de_acertos-missões-tela_resumo_da_tarefa.png` — ainda não
+      processado, fica pra quando a Fase 7 começar
 
-**Antes de fechar a Fase 1:** varrer o projeto por qualquer emoji ou ícone
-antigo que ainda represente essas mesmas funções (mesmo padrão da sessão
-060 — "varredura completa") pra garantir que não sobrou nada duplicado.
+**Varredura de duplicado:** feita durante a Fase 2 (ícone "Congelar" nos
+botões de missão também trocado de `Snowflake`/lucide pra mesma arte da
+Loja — consistência entre os dois lugares).
 
 ---
 
-## FASE 2 — Remoções e correção de regra
+## FASE 2 — Remoções e correção de regra ✅ CONCLUÍDA (sessão 065)
 
-- [ ] **Remover XP Dobrado por completo**: `SHOP_ITEMS` (`constants/shop.js`),
-      qualquer referência em `powerups.xp2`, `GamePage.jsx`, toasts,
-      `RARITIES`/lógica de compra — varrer o projeto inteiro por
-      `xp2`/`XP Dobrado`, não só a Loja (ver conflito #1 acima —
-      confirmar com o Davi antes)
-- [ ] **Regra nova do botão Congelar Missão**: hoje (conferir em
-      `MissionsPage.jsx`) o botão mostra preço e parece comprável direto
-      ali. Nova regra: o botão **só aparece se `powerups.missionFreeze > 0`**
-      (já tem o item na mochila) — sem preço nenhum mostrado nele. Se não
-      tiver o item, não aparece nada ali (o jogador consegue o item na Loja
-      ou achando em partida, ver Fases 5/6)
-- [ ] Confirmar que "congelar" continua valendo pra desafios **mensais já
-      aceitos** (ele confirmou que essa regra não muda)
+- [x] **XP Dobrado removido por completo** — `SHOP_ITEMS`, cálculo de XP
+      em `App.jsx`, badge do HUD (`GamePage.jsx`), banner/label do
+      `ResultsPage.jsx`. Confirmado 0 ocorrências de `xp2`/`XP Dobrado`
+      sobrando fora de comentários explicativos
+- [x] **Regra nova do botão Congelar Missão**: antes o botão mostrava preço
+      e tinha fallback de comprar na hora por moeda. Agora **só aparece se
+      `powerups.missionFreeze > 0`** — sem preço nenhum mostrado nele. Sem
+      o item, não aparece nada (o jogador consegue o item na Loja ou
+      achando em partida, ver Fases 5/6). Testado nos dois sentidos.
+- [x] Confirmado: "congelar" continua valendo pra desafios **mensais já
+      aceitos** (mesma regra, dois lugares — diária e mensal aceito)
 
 ---
 

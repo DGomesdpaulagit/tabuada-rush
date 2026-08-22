@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-17
-**Versão:** 6.0.13 (Tabuada Rush 6.0 completo + cards da Loja unificados + guia Duolingo — sessao-063.md)
+**Versão:** 6.0.14 (Tabuada Rush 6.0 completo + Fases 1-2 do backlog (ícones + XP Dobrado removido) — sessao-065.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.14]** Fases 1-2 do `PLANO_ACAO.md`: 16 ícones novos (vidas, vida extra —
+ícone DEDICADO coração+cruz, diferente do genérico, apesar da instrução escrita
+dizer "mesmo ícone" — arquivo mais específico venceu; congelar/largada/+60s/
+ofensiva trocados; missões diárias/mensais; mochila/poções/baús registrados pras
+Fases 3/4/6 futuras). **XP Dobrado removido do jogo inteiro** (Loja, cálculo de
+XP, HUD, resumo — substituído pelas Poções de XP ainda não implementadas). Regra
+nova: botão "Congelar Missão" só aparece com o item já em estoque, sem fallback
+de comprar na hora. Ver `sessao-065.md` e D043.
 **[v6.0.13]** Cards da Loja unificados (o Épico aparecia branco no tema escuro —
 `bg-purple-50` era a única raridade sem override; agora todo card usa
 `bg-surface`/`border-border`, raridade só na etiqueta). + Guia de estilo Duolingo
@@ -338,32 +346,33 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — SEGUIR O `PLANO_ACAO.md` (backlog grande, por fases)
+## 🎯 PRÓXIMA SESSÃO — FASE 3 DO `PLANO_ACAO.md` (Mochila)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` (raiz do projeto
 — é a fonte viva do que fazer, atualizada a cada sessão) →
-`sessions/sessao-064.md` (a mais recente) → `sessions/sessao-063.md` →
-`DECISIONS.md` D020-D042.
+`sessions/sessao-065.md` (a mais recente) → `DECISIONS.md` D020-D043.
 
-**Por que existe um arquivo de plano separado (pedido explícito do Davi,
-sessão 064):** ele trouxe um backlog grande de uma vez (ícones, remoção do
-XP Dobrado, Mochila, Poções, loja rotativa, baús, páginas de resumo
-pós-partida) e pediu um plano de ação vivo — não pra implementar tudo de
-uma vez, mas pra "ir selecionando e fazendo" por fases, com cada fase
-aprovada antes de começar. **`PLANO_ACAO.md` é a lista de verdade; não
-duplicar o backlog aqui.**
+**Fases 0, 1 e 2 concluídas** (sessões 064-065): registro corrigido,
+16 ícones novos trocados/registrados, XP Dobrado removido do jogo inteiro,
+regra nova do botão Congelar Missão (só aparece com item em estoque).
+**`PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.**
 
-**Ordem de fases combinada com ele:** Fase 0 (higiene de registro — feita
-na 064) → Fase 1 (troca de ícones simples) → Fase 2 (remoção do XP Dobrado
-+ regra nova do botão Congelar Missão) → Fase 3 (Mochila) → Fase 4
-(Poções de XP) → Fase 5 (loja rotativa diária) → Fase 6 (baús/recompensas
-por tempo de jogo) → Fase 7 (páginas de resumo pós-partida) → **depois
-disso, o painel central da Arena** (ele pediu pra NÃO mexer nele antes de
-fechar o resto).
+**Próxima: Fase 3 (Mochila) → Fase 4 (Poções de XP) → Fase 5 (loja
+rotativa diária) → Fase 6 (baús/recompensas por tempo de jogo) → Fase 7
+(páginas de resumo pós-partida) → depois disso, o painel central da
+Arena** (ele pediu pra NÃO mexer nele antes de fechar o resto).
 
 **Ideias soltas que aparecerem no meio do caminho (ex.: animação nas telas
-finais) vão pra `PENDENCIAS.md`, não pro meio da fase atual** — é
-exatamente o que o Davi pediu pra não perder o fio da fase em andamento.
+finais) vão pra `PENDENCIAS.md`, não pro meio da fase atual.**
+
+**Duas escolhas minhas da sessão 065 que precisam de confirmação do Davi
+(ver D043) antes de seguir muito mais fundo no backpack/poções:**
+- Ícone do power-up Vida Extra: usei o coração-com-cruz dedicado
+  (`pu-vida-extra`) em vez do coração genérico, porque o arquivo baixado
+  era mais específico que a instrução escrita.
+- Mapeamento dos 3 tiers de Poção de XP por FORMATO do frasco (tubo=x1,5,
+  erlenmeyer=x2, redonda=x3) — a folha não diferencia por cor, é
+  suposição minha.
 
 **Em aberto, ainda sem resposta do Davi:**
 - Ícone de ofensiva usado também em "Melhor Sequência" (D038) — confunde?
@@ -374,11 +383,13 @@ exatamente o que o Davi pediu pra não perder o fio da fase em andamento.
   guarda de escopo do projeto (mecânica de "vício" desconectada do
   aprendizado) quando chegar a vez de implementar.
 
-**Lições de método que valem pra arte (D037/D039-D041):** conferir PNG com
-transparência SEMPRE composto sobre o fundo escuro real do app — arquivo
-solto no visualizador engana (branco sobre branco).
+**Lições de método que valem pra arte (D037/D039-D041/D043):** conferir
+PNG com transparência SEMPRE composto sobre o fundo escuro real do app —
+arquivo solto no visualizador engana (branco sobre branco). E: arquivo
+mais específico que a instrução escrita do Davi tende a vencer (ele edita
+o pedido conforme baixa a arte) — sinalizar a escolha, não travar nela.
 
-**Checagem de processo nova (D042):** antes de encerrar qualquer sessão,
+**Checagem de processo (D042):** antes de encerrar qualquer sessão,
 conferir que a `Versão` no topo deste arquivo bate com a última entrada do
 `CHANGELOG.md`. Se não bater, a rotina de fim de bloco (`CLAUDE.md`) não
 foi cumprida — voltar e completar antes de seguir.
@@ -471,8 +482,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-064.md` — última sessão → `sessions/sessao-063.md` → `sessions/sessao-062.md`
-6. `DECISIONS.md` D020-D042 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-065.md` — última sessão → `sessions/sessao-064.md` → `sessions/sessao-063.md`
+6. `DECISIONS.md` D020-D043 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

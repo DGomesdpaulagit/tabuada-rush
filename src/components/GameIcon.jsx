@@ -20,14 +20,25 @@ import puLargada from '../assets/icons/pu-largada.png';
 import puEscudo from '../assets/icons/pu-escudo.png';
 import puCongelar from '../assets/icons/pu-congelar.png';
 import puTempo from '../assets/icons/pu-tempo.png';
+import puVidaExtra from '../assets/icons/pu-vida-extra.png';
 import moedas from '../assets/icons/moedas.png';
 import vidas from '../assets/icons/vidas.png';
 import xp from '../assets/icons/xp.png';
 import arena from '../assets/icons/arena.png';
 import liga from '../assets/icons/liga.png';
 import missoes from '../assets/icons/missoes.png';
+import missaoMensal from '../assets/icons/missao-mensal.png';
+import missaoDiaria from '../assets/icons/missao-diaria.png';
 import loja from '../assets/icons/loja.png';
 import podio from '../assets/icons/podio.png';
+import mochila from '../assets/icons/mochila.png';
+import pocaoXp1 from '../assets/icons/pocao-xp-1.png';
+import pocaoXp2 from '../assets/icons/pocao-xp-2.png';
+import pocaoXp3 from '../assets/icons/pocao-xp-3.png';
+import bauMadeira from '../assets/icons/bau-madeira.png';
+import bauFerro from '../assets/icons/bau-ferro.png';
+import bauOuro from '../assets/icons/bau-ouro.png';
+import bauMistico from '../assets/icons/bau-mistico.png';
 import bauMoedas from '../assets/icons/bau-moedas.png';
 import divisaoBloqueada from '../assets/icons/divisao-bloqueada.png';
 import missaoTravada from '../assets/icons/missao-travada.png';
@@ -54,9 +65,19 @@ export const ICONS = {
   arena,
   liga,
   missoes,
+  'missao-mensal': missaoMensal,
+  'missao-diaria': missaoDiaria,
   loja,
   podio,
+  mochila,
   'bau-moedas': bauMoedas,
+  'bau-madeira': bauMadeira,
+  'bau-ferro': bauFerro,
+  'bau-ouro': bauOuro,
+  'bau-mistico': bauMistico,
+  'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
+  'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer
+  'pocao-xp-3': pocaoXp3, // x3 — frasco redondo (maior multiplicador, menor duração)
   'divisao-bloqueada': divisaoBloqueada,
   'missao-travada': missaoTravada,
   // Power-ups da loja (ver constants/shop.js, campo `art`)
@@ -64,6 +85,7 @@ export const ICONS = {
   'pu-escudo': puEscudo,
   'pu-congelar': puCongelar,
   'pu-tempo': puTempo,
+  'pu-vida-extra': puVidaExtra,
 };
 
 // Medalhas de 1º/2º/3º da classificação (RankingPage). Índice 0-based:

@@ -66,7 +66,12 @@ export const SHOP_ITEMS = [
     id: 'powerup_life',
     category: 'powerup',
     powerupKey: 'life',
-    art: 'vidas',
+    // Ícone dedicado (coração + cruz) — o Davi baixou um arquivo separado
+    // do ícone genérico de vidas especificamente pra este power-up, apesar
+    // de ter escrito "usar o mesmo ícone de vidas" — o arquivo à parte
+    // (mais específico pro "revive 1 vida") tem prioridade sobre a
+    // instrução escrita. Sinalizado a ele pra confirmar.
+    art: 'pu-vida-extra',
     name: 'Vida Extra',
     emoji: '❤️‍🔥',
     desc: 'Restaura 1 vida quando você perder a última. Não deixa o jogo acabar!',
@@ -83,17 +88,6 @@ export const SHOP_ITEMS = [
     desc: 'Adiciona 60 segundos ao cronômetro durante a partida. Use quando o tempo apertar!',
     price: 120,
     rarity: 'rare',
-  },
-  {
-    id: 'powerup_xp2',
-    category: 'powerup',
-    powerupKey: 'xp2',
-    art: 'xp',
-    name: 'XP Dobrado',
-    emoji: '⚡',
-    desc: 'Dobra o XP ganho na sua próxima partida completada.',
-    price: 200,
-    rarity: 'epic',
   },
   {
     id: 'powerup_shield',

@@ -638,19 +638,6 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                 </motion.div>
               )}
             </AnimatePresence>
-            {/* Badge XP Dobrado ativo */}
-            <AnimatePresence>
-              {(powerups.xp2 || 0) > 0 && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  className="flex items-center gap-1 bg-violet-100 text-violet-700 px-2.5 py-1 rounded-full text-xs font-black"
-                >
-                  ⚡ XP ×2
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
           <span className={`text-xs font-bold ${isZen ? 'text-teal-500' : diffColors[diffLevel]}`}>
             {isZen ? 'Sem pressão 🌿' : isReview ? '📚 Revisão' : diffLabels[diffLevel]}

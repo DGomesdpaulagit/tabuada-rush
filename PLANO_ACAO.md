@@ -118,22 +118,24 @@ Loja — consistência entre os dois lugares).
 
 ---
 
-## FASE 3 — Mochila (tela nova)
+## FASE 3 — Mochila (tela nova) ✅ CONCLUÍDA (sessão 067)
 
-- [ ] Nova tela/painel "Mochila" — acesso a definir (Sidebar? dentro do
-      Perfil? Vale perguntar ao Davi se não estiver óbvio quando chegar a
-      vez)
-- [ ] Mostra os recursos que o jogador tem AGORA (comprados + achados),
-      divididos em:
-  - **Power-ups**, agrupados por categoria:
-    - Arena: +60s no relógio, Escudo, Largada Turbo *(XP Dobrado removido
-      na Fase 2 — não entra aqui)*
+- [x] Nova tela "Mochila" — acesso pelo **menu lateral** (confirmado pelo
+      Davi), entre Loja e Perfil
+- [x] Mostra os recursos que o jogador tem AGORA (`data.powerups`),
+      agrupados por categoria via campo `group` novo em `SHOP_ITEMS`:
+    - Arena: +60s no relógio, Escudo, Largada Turbo
     - Vida: Vida Extra
     - Ofensiva: Seguro de Ofensiva
     - Missões: Congelar Missão
-  - **Poções** (categoria separada, ver Fase 4)
-- [ ] Cada item mostra a quantidade em estoque (mesmo padrão de contador
-      que já existe na Loja)
+  - **Poções**: seção só aparece quando existir alguma no estoque —
+    `data.potions` ainda não existe de verdade (Fase 4), fica pronta pra
+    quando existir
+- [x] Cada item mostra a quantidade em estoque (mesmo padrão de badge
+      arredondado da Loja); item com estoque 0 **não aparece** (mochila é
+      inventário do que você tem, não catálogo do que existe)
+- [x] Estado vazio ("Sua mochila está vazia") quando não tem nada de
+      nenhum grupo
 
 ---
 

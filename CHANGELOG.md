@@ -4,6 +4,19 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.16] — 2026-08-22 — Mochila (Fase 3 do backlog)
+
+**Detalhes em `sessions/sessao-067.md` e `DECISIONS.md` (D045).**
+
+### Adicionado
+- Tela nova **Mochila**, acessível pelo menu lateral (entre Loja e
+  Perfil) — mostra os power-ups que o jogador tem agora, agrupados em
+  Arena / Vida / Ofensiva / Missões, com contador de estoque
+- Estado vazio quando a mochila não tem nada
+- Seção de Poções pronta pra Fase 4 (só aparece quando o recurso existir)
+
+---
+
 ## [6.0.15] — 2026-08-22 — Ícones por tipo de missão
 
 **Detalhes em `sessions/sessao-066.md` e `DECISIONS.md` (D044).**

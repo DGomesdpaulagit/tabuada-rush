@@ -1525,6 +1525,54 @@ halter. 0 imagens quebradas, 0 erros no console, build limpo.
 
 ---
 
+## D045 — Fase 3: tela da Mochila
+
+**Data:** 2026-08-22 · sessao-067
+
+Davi confirmou o acesso pelo **menu lateral** e mandou começar a Fase 3.
+
+**Implementação:**
+1. **`SHOP_ITEMS` ganhou o campo `group`** (`constants/shop.js`) —
+   categoria de exibição na Mochila (Arena/Vida/Ofensiva/Missões),
+   deliberadamente separado do `category` existente (que é a aba dentro
+   da própria Loja, hoje só `'powerup'`). Misturar os dois campos criaria
+   acoplamento entre duas telas que evoluem por razões diferentes.
+2. **`MochilaPage.jsx` nova** — só mostra o que o jogador TEM
+   (`data.powerups[key] > 0`), agrupado, com contador `×N` no mesmo
+   padrão visual da Loja. **Sem preço, sem botão de comprar** — é
+   inventário, não vitrine (a Loja continua sendo o lugar de comprar).
+   Item com estoque 0 não aparece — decisão de design: "mochila" é o que
+   você tem, não um catálogo do que existe.
+3. **Poções (Fase 4) preparadas mas não forçadas** — a seção só renderiza
+   se `data.potions` tiver alguma entrada com contagem > 0. Como esse
+   campo não existe no storage ainda, a seção fica invisível até a Fase 4
+   implementar de verdade — não é placeholder fake, é ausência honesta.
+4. **Estado vazio** — mochila sem nada de nenhum grupo mostra uma mensagem
+   ("Sua mochila está vazia... compre na Loja ou ache jogando") em vez de
+   uma tela em branco.
+5. **Sidebar** — item novo entre Loja e Perfil (ordem: Arena → Ligas →
+   Missões → Loja → Mochila → Perfil — "ganhar → competir → objetivo →
+   comprar → guardar → perfil").
+
+**Verificado:** com estoque variado forçado (`streakInsurance:2,
+missionFreeze:1, life:3, time:0, shield:1, headstart:2`) — os 4 grupos
+aparecem na ordem certa, os 5 itens com estoque>0 aparecem com contador
+batendo exatamente, e `time:0` ("+60s no relógio") **não aparece** (prova
+que o filtro de estoque funciona). Com `powerups: {}`, mostra o estado
+vazio. Item "Mochila" na Sidebar com ícone, destaque ativo quando na tela,
+0 imagens quebradas, 0 sobra horizontal, build limpo.
+
+**Navegação real (clique) não testada de ponta a ponta** — mesma
+limitação de compositing do Browser pane já documentada (D034):
+`document.hidden === true` trava a transição `AnimatePresence
+mode="wait"`. Confirmei por outro caminho que o roteamento funciona (o
+clique real na Sidebar mudou a classe ativa do botão pra "Mochila"
+corretamente, só a animação de entrada da tela nova que não completa
+neste ambiente) e usei o atalho `?screen=mochila` (só em DEV, D034) pra
+testar o conteúdo da tela de verdade.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

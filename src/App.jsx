@@ -25,6 +25,7 @@ import MissionsPage from './pages/MissionsPage';
 import SeasonsPage from './pages/SeasonsPage';
 import RewardsPage from './pages/RewardsPage';
 import PerfilPage from './pages/PerfilPage';
+import MochilaPage from './pages/MochilaPage';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { calcSeasonXp } from './constants/seasons';
@@ -1002,6 +1003,9 @@ export default function App() {
           )}
           {screen === 'missions' && (
             <MissionsPage key="missions" onBack={() => setScreen('menu')} />
+          )}
+          {screen === 'mochila' && (
+            <MochilaPage key="mochila" onBack={() => setScreen('menu')} />
           )}
           {screen === 'seasons' && (
             <SeasonsPage key="seasons" onBack={() => setScreen('menu')} />

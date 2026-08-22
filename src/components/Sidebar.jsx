@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { id: 'ranking', label: 'Ligas', art: 'liga' },
   { id: 'missions', label: 'Missões', art: 'missoes' },
   { id: 'shop', label: 'Loja', art: 'loja' },
+  { id: 'mochila', label: 'Mochila', art: 'mochila' },
   { id: 'perfil', label: 'Perfil', icon: User },
 ];
 

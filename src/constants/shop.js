@@ -30,6 +30,11 @@ export const RARITIES = {
 // v5.0 · Bloco 1: a loja deixou de vender cosméticos (moldura/card/tema de jogo)
 // — só power-ups (consumíveis que afetam o gameplay) continuam existindo.
 // powerupKey: chave em data.powerups. Comprar incrementa o contador, usar decrementa.
+//
+// `group`: [Fase 3, sessão 067] categoria de exibição na Mochila (não
+// confundir com `category`, que é a aba dentro da própria Loja — hoje só
+// existe 'powerup' ali). Grupos exatos que o Davi definiu no PLANO_ACAO.md:
+// Arena / Vida / Ofensiva / Missões.
 
 export const SHOP_ITEMS = [
 
@@ -38,6 +43,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_streak_insurance',
     category: 'powerup',
     powerupKey: 'streakInsurance',
+    group: 'ofensiva',
     art: 'ofensiva-congelada',
     name: 'Seguro de Ofensiva',
     emoji: '🛡️',
@@ -49,6 +55,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_mission_freeze',
     category: 'powerup',
     powerupKey: 'missionFreeze',
+    group: 'missoes',
     art: 'pu-congelar',
     name: 'Congelar Missão',
     emoji: '❄️',
@@ -66,6 +73,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_life',
     category: 'powerup',
     powerupKey: 'life',
+    group: 'vida',
     // Ícone dedicado (coração + cruz) — o Davi baixou um arquivo separado
     // do ícone genérico de vidas especificamente pra este power-up, apesar
     // de ter escrito "usar o mesmo ícone de vidas" — o arquivo à parte
@@ -82,6 +90,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_time',
     category: 'powerup',
     powerupKey: 'time',
+    group: 'arena',
     art: 'pu-tempo',
     name: '+60s no relógio',
     emoji: '⏱️',
@@ -93,6 +102,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_shield',
     category: 'powerup',
     powerupKey: 'shield',
+    group: 'arena',
     art: 'pu-escudo',
     name: 'Escudo',
     emoji: '🛡️',
@@ -104,6 +114,7 @@ export const SHOP_ITEMS = [
     id: 'powerup_headstart',
     category: 'powerup',
     powerupKey: 'headstart',
+    group: 'arena',
     art: 'pu-largada',
     name: 'Largada Turbo',
     emoji: '🚀',
@@ -120,4 +131,13 @@ export const SHOP_ITEM_MAP = Object.fromEntries(SHOP_ITEMS.map((i) => [i.id, i])
 // adicionar categorias novas de power-up no futuro sem mexer na UI)
 export const SHOP_CATEGORIES = [
   { id: 'powerup', label: 'Poder', emoji: '⚡' },
+];
+
+// Grupos da Mochila (Fase 3, sessão 067) — ordem e ícone de cada seção.
+// `art` usa ícones já existentes (não tem um dedicado por categoria ainda).
+export const MOCHILA_GROUPS = [
+  { id: 'arena', label: 'Arena', art: 'arena' },
+  { id: 'vida', label: 'Vida', art: 'vidas' },
+  { id: 'ofensiva', label: 'Ofensiva', art: 'ofensiva' },
+  { id: 'missoes', label: 'Missões', art: 'missoes' },
 ];

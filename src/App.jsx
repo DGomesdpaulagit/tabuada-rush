@@ -4,6 +4,7 @@ import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
+import { getActiveXpMultiplier } from './utils/potions';
 import { LEAGUE_MAP } from './constants/leagues';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
 import { prefs } from './lib/prefs';
@@ -505,12 +506,13 @@ export default function App() {
         // estado ANTES desta partida (prev).
         const DIAMOND_PODIUM_BONUS = 1.25;
         const diamondBonusActive = !!prev.diamondPodiumActive;
-        // [D043] Power-up XP Dobrado (multiplicador fixo por 1 partida) foi
-        // removido — substituído pelas Poções de XP (multiplicador por
-        // TEMPO, não por partida, ver PLANO_ACAO.md Fase 4). Quando a Fase 4
-        // for implementada, o multiplicador da poção ativa entra aqui.
+        // [D046] Poção de XP — multiplicador por TEMPO (checa se ainda está
+        // dentro da janela `potionActiveUntil`), diferente do antigo XP
+        // Dobrado que valia por 1 partida (removido na Fase 2, D043).
+        const potionMultiplier = getActiveXpMultiplier(prev);
         const gameXp = Math.round(
           Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) *
+            potionMultiplier *
             (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1)
         );
         const xp = (prev.xp || 0) + gameXp;
@@ -778,7 +780,12 @@ export default function App() {
         );
       });
 
-      setLastResult({ ...result, betResult, betPayout, betAmount: activeBet?.amount });
+      // Mesmo padrão que o antigo xp2Used usava (D043): lido do `data` de
+      // componente (estado ANTES desta partida), não de dentro do
+      // `update()` acima — é o mesmo valor, só mais simples de expor aqui
+      // pro ResultsPage sem precisar anexar campo transiente no storage.
+      const potionMultiplier = getActiveXpMultiplier(data);
+      setLastResult({ ...result, potionMultiplier, betResult, betPayout, betAmount: activeBet?.amount });
       setScreen('results');
     },
     [data, update, showAchievement]

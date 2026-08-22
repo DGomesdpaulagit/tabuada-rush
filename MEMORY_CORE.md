@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.16 (Tabuada Rush 6.0 completo + Mochila (Fase 3) — sessao-067.md)
+**Versão:** 6.0.17 (Tabuada Rush 6.0 completo + Poções de XP (Fase 4) — sessao-068.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,15 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.17]** Fase 4 do backlog: recurso **Poções de XP** (`data.potions`,
+separado de `powerups`) — 3 variações (x1,5/40min/100moedas,
+x2/25min/250moedas, x3/15min/450moedas) que multiplicam o XP ganho
+enquanto o timer estiver ativo (por TEMPO, não por 1 partida como o
+antigo XP Dobrado). Timer persistente (`potionActiveUntil`, sobrevive
+fechar o app), compra na Loja, ativação pela Mochila com overlay roxo de
+confirmação. **Decisão sinalizada:** só 1 poção ativa por vez (bloqueia
+ativar outra, não substitui/acumula) — não especificado no plano, pedir
+confirmação do Davi. Ver `sessao-068.md` e D046.
 **[v6.0.16]** Fase 3 do backlog: tela **Mochila** nova (menu lateral, entre Loja e
 Perfil) — mostra os power-ups que o jogador TEM agora (`SHOP_ITEMS` ganhou campo
 `group`: Arena/Vida/Ofensiva/Missões), sem preço nem botão de comprar (é
@@ -359,28 +368,31 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 4 DO `PLANO_ACAO.md` (Poções de XP)
+## 🎯 PRÓXIMA SESSÃO — FASE 5 DO `PLANO_ACAO.md` (Loja rotativa)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-067.md` (a mais recente) → `DECISIONS.md` D020-D045.
+`sessions/sessao-068.md` (a mais recente) → `DECISIONS.md` D020-D046.
 
-**Fases 0-3 concluídas** (sessões 064-067). `PLANO_ACAO.md` é a lista de
+**Fases 0-4 concluídas** (sessões 064-068). `PLANO_ACAO.md` é a lista de
 verdade; não duplicar o backlog aqui.
 
-**Próxima: Fase 4 (Poções de XP)** — campo `potions` novo no storage
-(separado de `powerups`), 3 variações com multiplicador+duração+preço
-(x1,5/40min/100moedas, x2/25min/250moedas, x3/15min/450moedas), timer
-persistente (`potionActiveUntil`, sobrevive fechar o app), tela de
-ativação nas cores roxas que o Davi mostrou de referência. Depois: Fase 5
-(loja rotativa) → Fase 6 (baús) → Fase 7 (resumo pós-partida) → painel da
-Arena (NÃO mexer antes de fechar o resto).
+**Próxima: Fase 5 (loja com estoque rotativo diário)** — sorteio de 1-3
+itens por dia, atualiza à meia-noite local (reaproveitar `localDateStr()`,
+NÃO usar `toISOString()`, D040), "Recuperar vidas" sempre garantido fora
+do sorteio. Depois: Fase 6 (baús) → Fase 7 (resumo pós-partida) → painel
+da Arena (NÃO mexer antes de fechar o resto).
 
 **Ideias soltas no meio do caminho (ex.: animação nas telas finais) vão
 pra `PENDENCIAS.md`, não pro meio da fase atual.**
 
+**Pendente de confirmação do Davi (D046):** regra de só 1 poção de XP
+ativa por vez (bloqueia ativar outra em vez de substituir/acumular) —
+decisão minha não especificada no plano original.
+
 **Pendente de olhada do Davi:** se o layout/agrupamento da Mochila (sessão
-067) ficou do jeito que ele imaginou — nunca vista rodando de verdade
-neste ambiente (mesma limitação de sempre, D034).
+067) e a tela de ativação de poção (sessão 068) ficaram do jeito que ele
+imaginou — nunca vistas rodando de verdade neste ambiente (mesma
+limitação de sempre, D034).
 
 **Pendente de confirmação (D044):** ícone do halter pra `correct_*`
 (acertos acumulados nas missões) — única escolha da leva de ícones sem
@@ -492,8 +504,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-067.md` — última sessão → `sessions/sessao-066.md` → `sessions/sessao-065.md`
-6. `DECISIONS.md` D020-D045 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-068.md` — última sessão → `sessions/sessao-067.md` → `sessions/sessao-066.md`
+6. `DECISIONS.md` D020-D046 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

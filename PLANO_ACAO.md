@@ -139,10 +139,10 @@ Loja — consistência entre os dois lugares).
 
 ---
 
-## FASE 4 — Poções de XP (recurso novo)
+## FASE 4 — Poções de XP (recurso novo) ✅ CONCLUÍDA (sessão 068)
 
-- [ ] Novo tipo de recurso `potions` no storage (separado de `powerups`)
-- [ ] 3 variações, com multiplicador + duração MÁXIMA + preço mínimo na loja:
+- [x] Novo tipo de recurso `potions` no storage (separado de `powerups`)
+- [x] 3 variações, com multiplicador + duração MÁXIMA + preço mínimo na loja:
 
 | Variação | Multiplicador | Duração máxima | Preço mínimo na loja |
 |---|---|---|---|
@@ -150,14 +150,25 @@ Loja — consistência entre os dois lugares).
 | x2 | ×2 XP | 25 min | 250 moedas |
 | x3 | ×3 XP | 15 min | 450 moedas |
 
-- [ ] Efeito: multiplica o XP ganho enquanto o timer da poção estiver
+- [x] Efeito: multiplica o XP ganho enquanto o timer da poção estiver
       ativo (diferente do antigo XP Dobrado, que valia só pra 1 partida —
       poção é por TEMPO, pode cobrir várias partidas ou nenhuma, dependendo
       de quanto o jogador joga naquela janela)
-- [ ] Precisa de um timer/expiração persistente (guardar `potionActiveUntil`
+- [x] Precisa de um timer/expiração persistente (guardar `potionActiveUntil`
       + qual variação, sobrevive a fechar o app)
-- [ ] Tela de ativação nas cores roxas que ele mostrou de referência
+- [x] Tela de ativação nas cores roxas que ele mostrou de referência
       (cards "x2 / x3 / x1,5" com botão "Continuar")
+
+**Acesso/compra:** como as Fases 5 (loja rotativa) e 6 (baús) ainda não
+existem, as 3 poções entraram na `ShopPage.jsx` atual pelo preço mínimo
+fixo — não antecipa o design da Fase 5, só dá um caminho de aquisição
+real e testável agora. Ativação é sempre pela Mochila, nunca pela Loja.
+
+**Decisão sinalizada pro Davi confirmar:** só 1 poção ativa por vez —
+ativar uma nova enquanto já tem outra rodando é **bloqueado** (botão
+"Ativar" desabilitado), não some/substitui. Não foi especificado no
+plano; das 3 opções (bloquear/acumular/substituir), bloquear foi a única
+que não inventa regra de balanceamento nenhuma. Ver D046.
 
 ---
 

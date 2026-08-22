@@ -1573,6 +1573,79 @@ testar o conteúdo da tela de verdade.
 
 ---
 
+## D046 — Fase 4: Poções de XP
+
+**Data:** 2026-08-22 · sessao-068
+
+Davi disse "bora pra mais" após a Mochila, autorizando começar a Fase 4
+direto sem esperar revisão visual dela primeiro.
+
+**Implementação:**
+1. **`data.potions`** — campo novo no storage, separado de `data.powerups`
+   (pedido explícito do Davi no `PLANO_ACAO.md`). Formato
+   `{ 'pocao-xp-1': N, 'pocao-xp-2': N, 'pocao-xp-3': N }` — estoque, igual
+   ao padrão de `powerups`.
+2. **`data.potionActiveId` + `data.potionActiveUntil`** — timestamp (ms) de
+   expiração persistente no storage, sobrevive fechar o app. Sem
+   `setInterval`/polling: `getActivePotion(data)` (novo `utils/potions.js`)
+   sempre checa `Date.now() >= potionActiveUntil` na hora da leitura —
+   trata como inativo mesmo se os campos ficarem com valor velho no
+   storage. Leitura preguiçosa em vez de expiração proativa.
+3. **`POTIONS`/`POTION_MAP`** em `constants/shop.js` — as 3 variações com
+   multiplicador, `durationMin` e `price` exatamente como a tabela do
+   plano (x1,5/40min/100, x2/25min/250, x3/15min/450).
+4. **Efeito por TEMPO, não por partida** — diferente do antigo XP Dobrado
+   (D043, valia só pra 1 partida): `getActiveXpMultiplier(data)` é
+   aplicado no `handleGameEnd` de `App.jsx` sempre que uma partida termina
+   dentro da janela ativa. Pode cobrir várias partidas ou nenhuma,
+   dependendo de quanto o jogador joga no tempo da poção.
+5. **Compra na `ShopPage.jsx`** — preço fixo (o "mínimo" da tabela), já que
+   a Fase 5 (loja rotativa) ainda não existe. Não antecipa o design dela;
+   só dá um caminho de aquisição real pra poder testar/usar agora.
+6. **Ativação na `MochilaPage.jsx`** — botão "Ativar" por poção em estoque,
+   overlay de tela cheia nas cores roxas (gradiente violeta→roxo) que o
+   Davi mostrou de referência, com "Poção ativada!", multiplicador,
+   duração e horário de expiração, botão "Continuar" pra fechar.
+7. **Banner + label no `ResultsPage.jsx`** — mesmo espírito do banner do
+   antigo XP Dobrado: mostra XP base → XP final com o multiplicador, só
+   quando `potionMultiplier > 1`.
+
+**Decisão de design não especificada — sinalizada pro Davi confirmar:**
+só **1 poção ativa por vez**. O plano não dizia o que acontece se o
+jogador tentar ativar uma 2ª enquanto a 1ª ainda está rodando — as 3
+saídas possíveis (bloquear / acumular multiplicadores / substituir a
+ativa) são todas invenções de regra de balanceamento. Escolhi **bloquear**
+(botão "Ativar" fica desabilitado enquanto há uma ativa) por ser a única
+opção que não inventa comportamento não pedido — não descarta o estoque
+do jogador (a poção continua guardada, só não pode ativar agora) e não
+cria uma regra de stacking que ninguém pediu.
+
+**Verificado** (via `?screen=` DEV + injeção direta de `localStorage`,
+mesma limitação de Browser pane de sempre, D034):
+- Loja mostra as 3 poções com nome/preço/ícone corretos, 0 imagem quebrada
+- Comprar "Poção de XP ×3" descontou exatamente 450 moedas e setou
+  `potions['pocao-xp-3']: 1` — **achei e corrigi um bug no meu próprio
+  script de teste** nesse passo: o seletor de DOM subia níveis demais e
+  pegava o botão do card errado (comprou x1,5 em vez de x3 na 1ª
+  tentativa); corrigido subindo só até o wrapper real do card, reexecutado
+  com sucesso
+- Mochila mostra a seção "Poções" com os itens em estoque e botão "Ativar"
+  — 2º bug de teste (não do app): checagem de `innerText.includes('Poções')`
+  falhava por causa da classe CSS `uppercase` (`innerText` retorna o texto
+  visual "POÇÕES", não o texto como foi escrito no JSX); corrigido com
+  regex case-insensitive
+- Ativar a poção x3: setou `potionActiveId`/`potionActiveUntil` (15 min à
+  frente), decrementou o estoque de 1→0, mostrou o overlay de ativação
+- Com a x3 ativa, o botão "Ativar" da x1,5 restante em estoque ficou
+  **desabilitado** — confirma a regra de bloqueio
+- Simulação isolada da fórmula de XP (mesma lógica de
+  `getActiveXpMultiplier`) contra o storage real: poção x3 ativa → 20 XP
+  base vira 60 XP (×3), confirmando a wiring em `App.jsx`
+  (`handleGameEnd`) e `ResultsPage.jsx` sem precisar completar uma
+  partida inteira neste ambiente
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

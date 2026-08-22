@@ -36,6 +36,9 @@ export const DEFAULTS = {
   diamondPodiumActive: false,   // pódio (top 3) da liga Diamante dá bônus de XP enquanto durar — ver App.jsx handleGameEnd
   createdAt: null,       // [v6.0 · Bloco 6] data do primeiro load — "no jogo desde..." no Perfil (setado uma vez em AppContext)
   powerups: {},              // { life: N, time: N, shield: N, headstart: N, streakInsurance: N, missionFreeze: N } — consumíveis da loja (xp2/XP Dobrado removido — ver D043, substituído pelas Poções de XP)
+  potions: {},               // [Fase 4, D046] { 'pocao-xp-1': N, 'pocao-xp-2': N, 'pocao-xp-3': N } — estoque de poções, separado de `powerups` (mesmo pedido explícito do Davi no PLANO_ACAO.md)
+  potionActiveId: null,      // id da poção ativa agora (uma de cada vez) ou null
+  potionActiveUntil: null,   // timestamp (ms) de quando a poção ativa expira — ver utils/potions.js getActivePotion
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
   equippedItems: {},         // { frame, card } → id do item equipado em cada slot
   missionsData: null,        // { daily, monthly } — v6.0 · Bloco 5: semanais removidas, controlado por utils/missions.js

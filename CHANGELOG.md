@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.17] — 2026-08-22 — Poções de XP (Fase 4 do backlog)
+
+**Detalhes em `sessions/sessao-068.md` e `DECISIONS.md` (D046).**
+
+### Adicionado
+- Recurso novo **Poções de XP** (`data.potions`, separado de `powerups`):
+  3 variações — x1,5 (40 min, 100 moedas), x2 (25 min, 250 moedas),
+  x3 (15 min, 450 moedas)
+- Multiplica o XP ganho enquanto o timer da poção estiver ativo (por
+  TEMPO, não por 1 partida como o antigo XP Dobrado) — timer persistente
+  (`potionActiveUntil`) sobrevive fechar o app
+- Compra na Loja, ativação pela Mochila (overlay roxo de confirmação)
+- Banner de XP multiplicado no resumo pós-partida
+
+### Decisão sinalizada pro Davi
+- Só 1 poção ativa por vez — ativar outra enquanto já tem uma rodando é
+  **bloqueado**, não substitui nem acumula (não especificado no plano)
+
+---
+
 ## [6.0.16] — 2026-08-22 — Mochila (Fase 3 do backlog)
 
 **Detalhes em `sessions/sessao-067.md` e `DECISIONS.md` (D045).**

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import GameIcon from '../components/GameIcon';
-import { SHOP_ITEMS, RARITIES } from '../constants/shop';
+import { SHOP_ITEMS, RARITIES, POTIONS } from '../constants/shop';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
 
@@ -15,6 +15,7 @@ export default function ShopPage({ onBack, embedded = false }) {
 
   const coins    = data.coins    || 0;
   const powerups = data.powerups || {};
+  const potions  = data.potions  || {};
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -32,6 +33,22 @@ export default function ShopPage({ onBack, embedded = false }) {
       },
     }));
     showToast(`${item.emoji} ${item.name} adquirido!`);
+  };
+
+  // [Fase 4, D046] Preço fixo por enquanto — "preço mínimo" do
+  // PLANO_ACAO.md só passa a variar quando a Fase 5 (loja rotativa) trocar
+  // esta tela por um sorteio diário.
+  const buyPotion = (potion) => {
+    if (coins < potion.price) return;
+    update((prev) => ({
+      ...prev,
+      coins: (prev.coins || 0) - potion.price,
+      potions: {
+        ...(prev.potions || {}),
+        [potion.id]: ((prev.potions || {})[potion.id] || 0) + 1,
+      },
+    }));
+    showToast(`${potion.name} adquirida! Ative pela Mochila.`);
   };
 
   return (
@@ -139,6 +156,56 @@ export default function ShopPage({ onBack, embedded = false }) {
             </motion.div>
           );
         })}
+      </div>
+
+      {/* Poções de XP [Fase 4, D046] */}
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-black text-fg-muted uppercase tracking-wide px-1">Poções de XP</p>
+        <div className="flex flex-col gap-3">
+          {POTIONS.map((potion) => {
+            const count = potions[potion.id] || 0;
+            const canAfford = coins >= potion.price;
+            return (
+              <motion.div
+                key={potion.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-3 p-4 rounded-2xl border-2 bg-surface border-border"
+              >
+                <div className="relative shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-surface-2 border-2 border-border flex items-center justify-center">
+                    <GameIcon name={potion.art} size={30} />
+                  </div>
+                  {count > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-macaw text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow">
+                      {count}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-black text-fg leading-tight">{potion.name}</p>
+                  <p className="text-xs text-fg-muted font-semibold leading-snug">
+                    Dura até {potion.durationMin} min — ative pela Mochila quando quiser
+                  </p>
+                </div>
+                <div className="shrink-0">
+                  <button
+                    onClick={() => buyPotion(potion)}
+                    disabled={!canAfford}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
+                      canAfford
+                        ? 'bg-bee/20 text-bee-dark hover:bg-bee/30 border-2 border-bee/40'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed border-2 border-gray-200'
+                    }`}
+                  >
+                    <GameIcon name="moedas" size={14} className={canAfford ? '' : 'grayscale opacity-50'} />
+                    {potion.price.toLocaleString('pt-BR')}
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Como ganhar moedas */}

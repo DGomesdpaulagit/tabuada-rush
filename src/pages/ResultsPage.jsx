@@ -3,9 +3,11 @@ import { Home, RotateCcw, Trophy, Target, X, Flame, Clock, Share2 } from 'lucide
 import { MODES, LEVELS } from '../constants';
 import { getLevelIdx, getAccuracy, getRank, formatTime } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
+import { POTIONS } from '../constants/shop';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import { shareCard } from '../lib/shareCard';
+import GameIcon from '../components/GameIcon';
 
 export default function ResultsPage({ result, onReplay, onHome }) {
   const { data } = useApp();
@@ -18,7 +20,11 @@ export default function ResultsPage({ result, onReplay, onHome }) {
 
   // XP ganho nesta partida (mesmo cálculo de App.jsx)
   const MODE_XP_MULT = { rush: 0.12, survival: 0.20, speed: 0.16, daily: 0.28, zen: 0.10, review: 0.16, hard: 0.22, personal: 0.18, weekly: 0.30, inverse: 0.20, combined: 0.25 };
-  const xpEarned = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
+  const xpBase = Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20));
+  // [D046] Poção de XP ativa durante a partida — `potionMultiplier` vem de
+  // App.jsx handleGameEnd (mesmo padrão que o antigo `xp2Used`, D043).
+  const potionMultiplier = result.potionMultiplier || 1;
+  const xpEarned = Math.round(xpBase * potionMultiplier);
 
   const stats = [
     {
@@ -71,7 +77,7 @@ export default function ResultsPage({ result, onReplay, onHome }) {
     ...(xpEarned > 0
       ? [{
           icon: Trophy,
-          label: 'XP Ganho',
+          label: potionMultiplier > 1 ? `XP Ganho ×${potionMultiplier}` : 'XP Ganho',
           value: `+${xpEarned} XP`,
           color: 'bg-amber-100 text-amber-600',
         }]
@@ -134,6 +140,25 @@ export default function ResultsPage({ result, onReplay, onHome }) {
           </div>
         </motion.div>
       </div>
+
+      {/* [D046] Banner da Poção de XP ativa — mesmo espírito do banner do
+          antigo XP Dobrado (D043), agora genérico pro multiplicador real */}
+      {potionMultiplier > 1 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 260, damping: 20 }}
+          className="flex items-center gap-3 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl px-4 py-3 text-white shadow-lg shadow-violet-200"
+        >
+          <GameIcon name={POTIONS.find((p) => p.multiplier === potionMultiplier)?.art} size={32} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-black leading-tight">Poção de XP ativa!</p>
+            <p className="text-xs font-semibold text-white/75">
+              {xpBase} XP base → <span className="font-black text-white">+{xpEarned} XP</span> (×{potionMultiplier})
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Level info */}
       <motion.div

@@ -141,3 +141,40 @@ export const MOCHILA_GROUPS = [
   { id: 'ofensiva', label: 'Ofensiva', art: 'ofensiva' },
   { id: 'missoes', label: 'Missões', art: 'missoes' },
 ];
+
+// ── POÇÕES DE XP [Fase 4, sessão 068, D046] ──────────────────────────────────
+// Diferente do antigo XP Dobrado (valia por 1 PARTIDA, removido na Fase 2):
+// a poção multiplica o XP por um período de TEMPO (`potionActiveUntil` em
+// storage.js) — pode cobrir várias partidas ou nenhuma, dependendo de quanto
+// o jogador joga naquela janela. Números exatos que o Davi deu no
+// PLANO_ACAO.md (duração é o MÁXIMO — a poção não "acumula" tempo não usado).
+// `art` reaproveita os 3 ícones fatiados na sessão 065 (tubo=x1,5,
+// erlenmeyer=x2, redonda=x3 — mapeamento por formato, confirmado por ele).
+export const POTIONS = [
+  {
+    id: 'pocao-xp-1',
+    art: 'pocao-xp-1',
+    name: 'Poção de XP ×1,5',
+    multiplier: 1.5,
+    durationMin: 40,
+    price: 100,
+  },
+  {
+    id: 'pocao-xp-2',
+    art: 'pocao-xp-2',
+    name: 'Poção de XP ×2',
+    multiplier: 2,
+    durationMin: 25,
+    price: 250,
+  },
+  {
+    id: 'pocao-xp-3',
+    art: 'pocao-xp-3',
+    name: 'Poção de XP ×3',
+    multiplier: 3,
+    durationMin: 15,
+    price: 450,
+  },
+];
+
+export const POTION_MAP = Object.fromEntries(POTIONS.map((p) => [p.id, p]));

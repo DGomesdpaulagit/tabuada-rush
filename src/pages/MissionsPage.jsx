@@ -14,6 +14,26 @@ const TABS = [
   { id: 'monthly', label: 'Mensais', art: 'missao-mensal' },
 ];
 
+// Ícone por TIPO de missão (constants/missions.js campo `type`) — arte do
+// Davi, sessão 066. `streak`/`streak_month` ficam sem entrada de propósito:
+// sem ícone novo pra "sequência" ainda, o emoji 🔥 do pool continua valendo.
+const TYPE_ICON = {
+  play: 'missao-tipo-partidas',
+  accuracy: 'missao-tipo-precisao',
+  correct_single: 'missao-tipo-acertos',
+  correct_day: 'missao-tipo-acertos',
+  correct_month: 'missao-tipo-acertos',
+  score: 'missao-tipo-pontuacao',
+};
+
+// Emoji do pool é reserva pros tipos sem arte ainda (streak/streak_month).
+function MissionIcon({ type, emoji, size = 24 }) {
+  const art = TYPE_ICON[type];
+  return art
+    ? <GameIcon name={art} size={size} className="shrink-0" />
+    : <span className="text-2xl mt-0.5 shrink-0">{emoji}</span>;
+}
+
 function resetLabel(tab) {
   const now = new Date();
   if (tab === 'daily') {
@@ -186,7 +206,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl mt-0.5 shrink-0">{mission.emoji}</span>
+                  <MissionIcon type={mission.type} emoji={mission.emoji} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <p className="text-sm font-black text-fg leading-tight">{mission.title}</p>
@@ -255,7 +275,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                     className="p-4 rounded-2xl border-2 bg-surface border-border"
                   >
                     <div className="flex items-start gap-3">
-                      <span className="text-2xl mt-0.5 shrink-0">{c.emoji}</span>
+                      <MissionIcon type={c.type} emoji={c.emoji} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-0.5">
                           <p className="text-sm font-black text-fg leading-tight">{c.title}</p>
@@ -314,7 +334,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                   className="p-4 rounded-2xl border-2 border-dashed border-border bg-surface-2"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl mt-0.5 shrink-0">{c.emoji}</span>
+                    <MissionIcon type={c.type} emoji={c.emoji} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-black text-fg leading-tight">{c.title}</p>
                       <p className="text-xs text-fg-muted font-semibold mb-1">{c.desc}</p>

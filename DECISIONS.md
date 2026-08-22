@@ -1485,6 +1485,46 @@ como partida" que o Davi esclareceu), sem precisar instrumentar nada novo.
 
 ---
 
+## D044 — Ícones por tipo de missão + confirmações da sessão 065
+
+**Data:** 2026-08-22 · sessao-066
+
+Davi confirmou as duas escolhas em aberto da D043 (ícone dedicado do Vida
+Extra; mapeamento das poções por formato do frasco) e mandou uma folha
+nova: `icocones_para_missoes.png` (4 ícones — controle/gamepad, alvo/mira,
+halter, selo "100"), fundo quase-preto (1,1,1), mesmo pipeline de
+flood-fill das sessões anteriores.
+
+**Mapeamento por `type` de missão** (`constants/missions.js`), não por
+missão individual — mais robusto, se aplica automaticamente pra qualquer
+missão nova que reusar um `type` já existente:
+- `play` (jogue N partidas) → gamepad — match direto com o pedido original
+  do Davi ("Controle" = missões de partidas)
+- `accuracy` (precisão %) → mira — match direto ("Alvo" = missões de
+  precisão), e coincide com o emoji 🎯 que já era usado
+- `score` (pontuação) → selo "100" — coincide com o emoji 💯 já usado
+- `correct_single`/`correct_day`/`correct_month` (acertos acumulados) →
+  halter — **este eu decidi por eliminação**, o Davi não nomeou esse ícone
+  explicitamente; sobrava um tipo sem correspondência óbvia e um ícone sem
+  destino óbvio. Pedir confirmação.
+- `streak`/`streak_month` (sequência de acertos / dias de ofensiva no mês)
+  — **sem ícone novo, continua com 🔥** — nenhum dos 4 ícones da folha
+  combinava, e não é o mesmo conceito da chama da barra superior (D039,
+  que só muda ali por decisão explícita do Davi).
+
+Implementado como `TYPE_ICON` (mapa `type` → nome do ícone) +
+`MissionIcon` (componente que usa a arte quando existe, cai pro emoji do
+pool quando não existe) — os 3 lugares que mostravam `mission.emoji`/
+`c.emoji` cru (diária, desafio mensal aceito, desafio mensal disponível
+pra aceitar) passam pelo mesmo componente, então não tem como esquecer um
+dos três.
+
+**Verificado:** diária "20 Acertos" → halter; "Precisão de 90%" → mira;
+"Cem Pontos" → selo 100; mensal "80 Partidas" → gamepad, "1.500 Acertos" →
+halter. 0 imagens quebradas, 0 erros no console, build limpo.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

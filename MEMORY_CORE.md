@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-17
-**Versão:** 6.0.14 (Tabuada Rush 6.0 completo + Fases 1-2 do backlog (ícones + XP Dobrado removido) — sessao-065.md)
+**Data:** 2026-08-22
+**Versão:** 6.0.15 (Tabuada Rush 6.0 completo + ícones por tipo de missão — sessao-066.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.15]** Ícones por TIPO de missão (não por missão individual): gamepad
+(`play`), mira (`accuracy`), selo "100" (`score`) — os 3 batem exatamente com o
+que o Davi já tinha nomeado ("Controle"/"Alvo") ou com o emoji já usado. Halter
+foi decisão minha por eliminação pra `correct_*` (acertos acumulados) — pedir
+confirmação. `streak`/`streak_month` seguem com 🔥, sem ícone novo. Confirmadas
+as 2 escolhas em aberto da sessão 065 (Vida Extra dedicado; poções por formato).
+Ver `sessao-066.md` e D044.
 **[v6.0.14]** Fases 1-2 do `PLANO_ACAO.md`: 16 ícones novos (vidas, vida extra —
 ícone DEDICADO coração+cruz, diferente do genérico, apesar da instrução escrita
 dizer "mesmo ícone" — arquivo mais específico venceu; congelar/largada/+60s/
@@ -349,30 +356,29 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — FASE 3 DO `PLANO_ACAO.md` (Mochila)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` (raiz do projeto
-— é a fonte viva do que fazer, atualizada a cada sessão) →
-`sessions/sessao-065.md` (a mais recente) → `DECISIONS.md` D020-D043.
+— é a fonte viva do que fazer) → `sessions/sessao-066.md` (a mais recente)
+→ `DECISIONS.md` D020-D044.
 
-**Fases 0, 1 e 2 concluídas** (sessões 064-065): registro corrigido,
-16 ícones novos trocados/registrados, XP Dobrado removido do jogo inteiro,
-regra nova do botão Congelar Missão (só aparece com item em estoque).
-**`PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.**
+**Fases 0, 1 e 2 concluídas** (sessões 064-066): registro corrigido, todos
+os ícones de power-up/missão trocados ou registrados, XP Dobrado removido,
+regra nova do Congelar Missão. **`PLANO_ACAO.md` é a lista de verdade; não
+duplicar o backlog aqui.**
 
 **Próxima: Fase 3 (Mochila) → Fase 4 (Poções de XP) → Fase 5 (loja
 rotativa diária) → Fase 6 (baús/recompensas por tempo de jogo) → Fase 7
 (páginas de resumo pós-partida) → depois disso, o painel central da
 Arena** (ele pediu pra NÃO mexer nele antes de fechar o resto).
 
+**Antes de começar a Fase 3, perguntar ao Davi:** onde a Mochila fica
+acessível no app (Sidebar? dentro do Perfil? outro lugar?) — não está
+óbvio pelo texto original dele.
+
 **Ideias soltas que aparecerem no meio do caminho (ex.: animação nas telas
 finais) vão pra `PENDENCIAS.md`, não pro meio da fase atual.**
 
-**Duas escolhas minhas da sessão 065 que precisam de confirmação do Davi
-(ver D043) antes de seguir muito mais fundo no backpack/poções:**
-- Ícone do power-up Vida Extra: usei o coração-com-cruz dedicado
-  (`pu-vida-extra`) em vez do coração genérico, porque o arquivo baixado
-  era mais específico que a instrução escrita.
-- Mapeamento dos 3 tiers de Poção de XP por FORMATO do frasco (tubo=x1,5,
-  erlenmeyer=x2, redonda=x3) — a folha não diferencia por cor, é
-  suposição minha.
+**Pendente de confirmação (D044):** ícone do halter pra `correct_single`/
+`correct_day`/`correct_month` (acertos acumulados) — única escolha da
+leva de ícones de missão que não veio de um nome explícito do Davi.
 
 **Em aberto, ainda sem resposta do Davi:**
 - Ícone de ofensiva usado também em "Melhor Sequência" (D038) — confunde?
@@ -383,11 +389,12 @@ finais) vão pra `PENDENCIAS.md`, não pro meio da fase atual.**
   guarda de escopo do projeto (mecânica de "vício" desconectada do
   aprendizado) quando chegar a vez de implementar.
 
-**Lições de método que valem pra arte (D037/D039-D041/D043):** conferir
-PNG com transparência SEMPRE composto sobre o fundo escuro real do app —
-arquivo solto no visualizador engana (branco sobre branco). E: arquivo
-mais específico que a instrução escrita do Davi tende a vencer (ele edita
-o pedido conforme baixa a arte) — sinalizar a escolha, não travar nela.
+**Lições de método que valem pra arte (D037/D039-D041/D043-D044):**
+conferir PNG com transparência SEMPRE composto sobre o fundo escuro real
+do app — arquivo solto no visualizador engana (branco sobre branco).
+Mapear por CAMPO/TIPO em vez de por item individual sempre que o dado
+já tiver essa estrutura (`type` em missões) — generaliza sozinho pra itens
+novos do mesmo tipo.
 
 **Checagem de processo (D042):** antes de encerrar qualquer sessão,
 conferir que a `Versão` no topo deste arquivo bate com a última entrada do
@@ -482,8 +489,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-065.md` — última sessão → `sessions/sessao-064.md` → `sessions/sessao-063.md`
-6. `DECISIONS.md` D020-D043 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-066.md` — última sessão → `sessions/sessao-065.md` → `sessions/sessao-064.md`
+6. `DECISIONS.md` D020-D044 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

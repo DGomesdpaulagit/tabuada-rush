@@ -60,8 +60,8 @@ mexe em mais nada da tela além do ícone.
 - [x] **Vidas** — trocado (`vidas.png`)
 - [x] **Vida Extra** (power-up) — **não usa o mesmo ícone de vidas**: o
       Davi baixou um arquivo dedicado (`pu-vida-extra`, coração+cruz),
-      mais específico que a instrução escrita. Usado o dedicado —
-      **confirmar com ele se foi a escolha certa** (ver D043/sessao-065)
+      mais específico que a instrução escrita. **Confirmado por ele** na
+      sessão 066 (ver D043/sessao-065)
 - [x] **Congelar Missão** — trocado (`pu-congelar.png`)
 - [x] **Largada Turbo** — trocado (`pu-largada.png`)
 - [x] **Escudo** — sem arquivo novo nesta leva, mantido `pu-escudo.png`
@@ -69,21 +69,28 @@ mexe em mais nada da tela além do ícone.
 - [x] **Ofensiva** — trocado o estado "acesa" (`ofensiva.png`); a
       "congelada" não teve arquivo novo desta vez, mantida (sessão 061)
 
-### 1.2 — Ícones de categoria de missão
+### 1.2 — Ícones de categoria de missão ✅ CONCLUÍDA (sessão 066)
 - [x] **Missões mensais** — calendário, trocado (`missao-mensal`)
 - [x] **Missões diárias** — sol, trocado (`missao-diaria`)
-- [ ] **Ícone "Controle"** — missões de partidas/jogos — não localizado
-      nesta leva de downloads, fica pra próxima
-- [ ] **Ícone "Alvo"** — missões de acerto/precisão — não localizado nesta
-      leva, fica pra próxima
-- [ ] Demais ícones de missão individuais — pendente, precisa mais
-      inventário de tipos de missão antes de mapear
+- [x] **Ícone "Controle"** (gamepad) — `type: 'play'` (jogue N partidas) —
+      trocado (sessão 066)
+- [x] **Ícone "Alvo"** (mira) — `type: 'accuracy'` (precisão %) — trocado
+      (sessão 066)
+- [x] **Ícone do halter** — mapeado pra `type: 'correct_single/day/month'`
+      (acertos acumulados) — não foi nomeado explicitamente pelo Davi,
+      escolha minha por eliminação (era o tipo que sobrava sem ícone
+      correspondente óbvio) — **confirmar se combina**
+- [x] **Ícone "100"** — `type: 'score'` (pontuação) — trocado, match direto
+      com o emoji 💯 que já era usado (sessão 066)
+- [ ] **`type: 'streak'`/`'streak_month'`** (sequência de acertos / dias de
+      ofensiva no mês) — sem ícone novo ainda, continua com 🔥. Fica pra
+      quando/se o Davi mandar um
 
 ### 1.3 — Ícones de telas novas ✅ REGISTRADOS (sessão 065, telas ainda não existem)
 - [x] `mochila` registrado em `GameIcon.jsx`
 - [x] `pocao-xp-1/2/3` registrados — fatiados de uma folha vertical sem
       diferenciação de cor entre tiers; mapeados por FORMATO (tubo=x1,5,
-      erlenmeyer=x2, redonda=x3) — **suposição minha, não confirmada**
+      erlenmeyer=x2, redonda=x3) — **confirmado por ele** na sessão 066
 - [x] `bau-madeira/ferro/ouro/mistico` registrados — ordem da folha bateu
       com os 4 tiers da Fase 6 (madeira→místico)
 - [ ] `icone_de_acertos-missões-tela_resumo_da_tarefa.png` — ainda não

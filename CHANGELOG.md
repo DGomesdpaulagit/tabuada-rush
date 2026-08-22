@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.15] — 2026-08-22 — Ícones por tipo de missão
+
+**Detalhes em `sessions/sessao-066.md` e `DECISIONS.md` (D044).**
+
+### Adicionado
+- 4 ícones novos (controle, alvo, halter, "100"), mapeados por `type` de
+  missão em vez de missão individual — diária, mensal aceita e mensal
+  disponível pra aceitar usam o mesmo componente, todas atualizadas junto
+
+### Confirmado (D043)
+- Ícone dedicado do power-up Vida Extra (coração+cruz)
+- Mapeamento das 3 Poções de XP por formato do frasco (tubo=x1,5,
+  erlenmeyer=x2, redonda=x3)
+
+---
+
 ## [6.0.14] — 2026-08-17 — Fases 1 e 2 do backlog: ícones novos + XP Dobrado removido
 
 **Detalhes em `sessions/sessao-065.md` e `DECISIONS.md` (D043).**

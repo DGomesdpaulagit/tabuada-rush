@@ -1646,6 +1646,82 @@ mesma limitação de Browser pane de sempre, D034):
 
 ---
 
+## D047 — Ícones novos (power-ups, controle, alvo verde, mochila) + remoção do halter
+
+**Data:** 2026-08-23 · sessao-069
+
+Davi tentou primeiro melhorar a nitidez dos 3 ícones antigos (Congelar/Vida
+Extra/+60s) via upscale pelo Higgsfield recém-configurado, mas a conta
+estava com **0 créditos** (plano free) — sem solução por aqui, é ação
+financeira que só ele pode fazer. Em vez de esperar, ele baixou versões
+novas e mais nítidas dos mesmos 3 ícones (arte pronta, já em alta
+resolução), mais um ícone de controle de videogame novo e um ícone de
+mochila alternativo "pra testar", e pediu pra reaproveitar o alvo verde
+(que já existia, usado em `accuracy`) nas missões de sequência e acertos.
+
+**Implementação:**
+1. **3 power-ups mais nítidos** — `novo_icone para power ups.png` veio
+   como uma folha única (fundo preto, 1422×1106) com os 3 ícones lado a
+   lado. Removi o fundo por flood fill (BFS a partir da borda, tolerância
+   25) e separei os 3 por detecção de componente conexo (mesma técnica de
+   "ilhas" de sessões anteriores), redimensionando cada um pro mesmo teto
+   de ~200px do resto do set de ícones. Substituíram `pu-congelar.png`,
+   `pu-vida-extra.png`, `pu-tempo.png` (mesmo nome de arquivo — sem
+   duplicata, sem precisar editar imports).
+2. **Ícone de controle novo** — substituiu `missao-tipo-partidas.png`
+   (usado no `type: 'play'` das missões). Mantive o fundo quadrado roxo
+   que veio na arte (removi só o branco ao redor, não o roxo) porque esse
+   ícone específico é renderizado sem nenhum container/chip ao redor no
+   `MissionsPage.jsx` — segue o mesmo padrão que o ícone antigo já tinha
+   (era um badge preto arredondado, também autocontido).
+3. **Alvo verde reaproveitado** — `TYPE_ICON` em `MissionsPage.jsx` ganhou
+   entradas novas: `streak`, `streak_month`, `correct_single`,
+   `correct_day`, `correct_month` agora apontam pra
+   `'missao-tipo-precisao'` (o mesmo alvo verde de `accuracy`), em vez de
+   inventar/baixar ícone dedicado pra sequência. Isso **substitui** o
+   halter que só cobria `correct_*` — não é uma decisão de arte, é
+   reaproveitamento de asset por pedido direto dele.
+4. **Halter removido por completo** — como `missao-tipo-acertos.png`
+   ficou sem nenhum uso depois do passo 3 (grep confirmou: só aparecia no
+   import do `GameIcon.jsx` e nas 3 entradas do `TYPE_ICON` que acabaram
+   de ser remapeadas), apaguei o arquivo e o import/registro — mesma regra
+   de sempre, não deixar arte órfã no repo.
+5. **Ícone de mochila trocado** — `mochila.png` substituído pela arte nova
+   (`novo_icone_da_mochila.png`), mesmo tratamento de flood fill +
+   recorte. Único do lote que o próprio Davi chamou de "teste" — ver nota
+   de confirmação abaixo.
+
+**Decisão sinalizada — não confirmada por ele:** "colocar onde está alguns
+ícones de controle de videogame" (plural) tem outra ocorrência no código
+além da missão — o botão "Escolher Modo" do `MenuPage.jsx` usa o ícone
+`Gamepad2` (lucide, vetorial) dentro de um chip com fundo próprio
+(`bg-white/20`). **Não troquei esse aqui** — a nova arte já vem com um
+fundo roxo embutido, e colocá-la dentro do chip existente criaria um
+efeito "caixa dentro de caixa" que não foi pedido. Entendi a frase como
+"em toda parte que hoje mostra o ícone de controle" no sentido de
+_instâncias_ repetidas do mesmo ícone de missão (aparece em cada missão
+tipo `play`, diária e mensal) — não como "todo ícone de jogo/controle do
+app". Se for esse o pedido, avisar que também mexe no `MenuPage.jsx`.
+
+**Pendente de confirmação:** o ícone de mochila é explicitamente "pra
+testar" segundo o Davi — troquei já que ele pediu pra fazer as alterações
+e "continuar o plano", mas não é tratado como decisão final igual aos
+outros 4 ícones desta leva.
+
+**Verificado** (via `?screen=` DEV + inspeção de DOM, mesma limitação de
+Browser pane de sempre — D034):
+- `npm run build` limpo, sem erro de import quebrado após remover o halter
+- Loja: os 3 power-ups carregam com a resolução nova (191×200, 200×192,
+  173×200), 0 imagem quebrada
+- Missões (diárias): mission `type: 'play'` ("Três Partidas") mostra o
+  controle novo (64×53); mission com `correct_single` ("20 Acertos") já
+  mostra o alvo verde em vez do halter
+- Missões (mensais): 0 imagem quebrada nos desafios do mês
+- Mochila: ícone novo carrega (182×200) no grupo Arena com estoque
+  forçado, 0 imagem quebrada
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

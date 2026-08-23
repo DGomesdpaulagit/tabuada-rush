@@ -31,7 +31,6 @@ import missaoMensal from '../assets/icons/missao-mensal.png';
 import missaoDiaria from '../assets/icons/missao-diaria.png';
 import missaoTipoPartidas from '../assets/icons/missao-tipo-partidas.png';
 import missaoTipoPrecisao from '../assets/icons/missao-tipo-precisao.png';
-import missaoTipoAcertos from '../assets/icons/missao-tipo-acertos.png';
 import missaoTipoPontuacao from '../assets/icons/missao-tipo-pontuacao.png';
 import loja from '../assets/icons/loja.png';
 import podio from '../assets/icons/podio.png';
@@ -72,12 +71,12 @@ export const ICONS = {
   'missao-mensal': missaoMensal,
   'missao-diaria': missaoDiaria,
   // Ícone por TIPO de missão (ver constants/missions.js campo `type` e o
-  // mapa TYPE_ICON em MissionsPage.jsx) — "Controle" (partidas), "Alvo"
-  // (precisão %), halter (acertos acumulados), "100" (pontuação). Sequência
-  // (`streak`/`streak_month`) não tem arte nova ainda, segue com 🔥.
+  // mapa TYPE_ICON em MissionsPage.jsx) — "Controle" (partidas), "100"
+  // (pontuação). O alvo verde (`precisao`) cobre `accuracy` E, desde a
+  // sessão 068, também `streak`/`streak_month`/`correct_*` (substituiu o
+  // halter, que foi removido — não sobra arte órfã).
   'missao-tipo-partidas': missaoTipoPartidas,
   'missao-tipo-precisao': missaoTipoPrecisao,
-  'missao-tipo-acertos': missaoTipoAcertos,
   'missao-tipo-pontuacao': missaoTipoPontuacao,
   loja,
   podio,

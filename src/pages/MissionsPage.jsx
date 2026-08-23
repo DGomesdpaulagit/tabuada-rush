@@ -15,18 +15,22 @@ const TABS = [
 ];
 
 // Ícone por TIPO de missão (constants/missions.js campo `type`) — arte do
-// Davi, sessão 066. `streak`/`streak_month` ficam sem entrada de propósito:
-// sem ícone novo pra "sequência" ainda, o emoji 🔥 do pool continua valendo.
+// Davi, sessões 066/068. `streak`/`streak_month` (sequência) e `correct_*`
+// (acertos) reaproveitam o mesmo alvo verde de `accuracy` — pedido explícito
+// dele (sessão 068), substitui o halter que existia só pra `correct_*`.
 const TYPE_ICON = {
   play: 'missao-tipo-partidas',
   accuracy: 'missao-tipo-precisao',
-  correct_single: 'missao-tipo-acertos',
-  correct_day: 'missao-tipo-acertos',
-  correct_month: 'missao-tipo-acertos',
+  streak: 'missao-tipo-precisao',
+  streak_month: 'missao-tipo-precisao',
+  correct_single: 'missao-tipo-precisao',
+  correct_day: 'missao-tipo-precisao',
+  correct_month: 'missao-tipo-precisao',
   score: 'missao-tipo-pontuacao',
 };
 
-// Emoji do pool é reserva pros tipos sem arte ainda (streak/streak_month).
+// Emoji do pool fica como reserva só pra um `type` novo que ainda não tenha
+// entrada em TYPE_ICON — hoje todos os 7 tipos já têm arte.
 function MissionIcon({ type, emoji, size = 24 }) {
   const art = TYPE_ICON[type];
   return art

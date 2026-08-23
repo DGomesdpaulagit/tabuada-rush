@@ -4,6 +4,24 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.18] — 2026-08-23 — Ícones novos + alvo verde nas missões
+
+**Detalhes em `sessions/sessao-069.md` e `DECISIONS.md` (D047).**
+
+### Alterado
+- 3 ícones de power-up mais nítidos (Congelar Missão, Vida Extra, +60s no
+  Relógio) — versões novas em resolução maior, mesmo nome de arquivo
+- Ícone de "Controle" (missões tipo `play`) trocado por um novo
+- Ícone da Mochila trocado (**versão de teste**, pendente de confirmação)
+- Alvo verde (já usado em precisão) agora também aparece nas missões de
+  sequência (`streak`/`streak_month`) e de acertos (`correct_*`)
+
+### Removido
+- Ícone de halter (`missao-tipo-acertos.png`) — ficou órfão depois da
+  mudança acima, apagado (sem duplicata)
+
+---
+
 ## [6.0.17] — 2026-08-22 — Poções de XP (Fase 4 do backlog)
 
 **Detalhes em `sessions/sessao-068.md` e `DECISIONS.md` (D046).**

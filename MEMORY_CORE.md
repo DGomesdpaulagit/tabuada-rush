@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.19 (Tabuada Rush 6.0 completo + Loja rotativa (Fase 5) — sessao-070.md)
+**Versão:** 6.0.20 (Tabuada Rush 6.0 completo + Baús/recompensas (Fase 6) — sessao-071.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,18 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.20]** Fase 6 do backlog: sistema de recompensas ao fim de cada
+partida — 4 baús + 7 power-ups + 3 poções podem cair, chance ponderada
+por raridade × duração REAL da partida (`utils/loot.js`,
+`rollMatchLoot`). **Bug de verdade corrigido no caminho:** `timePlayed`
+sempre mostrava a duração BASE do modo (cronômetro sempre termina em 0),
+ignorando o bônus de tempo por combo do Rush e o +10s da Largada Turbo —
+trocado por medição de relógio de parede (`Date.now()`), conserta de
+graça o stat "Tempo" do resumo pós-partida também. Zen excluído do
+sorteio (sem timer, virava farm parado). Card "Recompensas encontradas"
+provisório no `ResultsPage.jsx` até a Fase 7 ter página própria.
+**Confirmado pelo Davi:** ícone da Mochila definitivo; ícone de controle
+do Menu fica pro redesenho da Arena. Ver `sessao-071.md` e D049.
 **[v6.0.19]** Fase 5 do backlog: Loja deixou de mostrar sempre os mesmos 7
 power-ups + 3 poções fixos — agora sorteia 1-3 itens por dia
 (`utils/shop.js`, `getDailyShopStock`), determinístico pela data local
@@ -385,27 +397,30 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 6 DO `PLANO_ACAO.md` (Baús e recompensas)
+## 🎯 PRÓXIMA SESSÃO — FASE 7 DO `PLANO_ACAO.md` (Resumo pós-partida)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-070.md` (a mais recente) → `DECISIONS.md` D020-D048.
+`sessions/sessao-071.md` (a mais recente) → `DECISIONS.md` D020-D049.
 
-**Fases 0-5 concluídas** (sessões 064-070; sessão 069 foi um ajuste de
+**Fases 0-6 concluídas** (sessões 064-071; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
 direto do Davi). `PLANO_ACAO.md` é a lista de verdade; não duplicar o
 backlog aqui.
 
-**Próxima: Fase 6 (baús e recompensas por partida)** — antes de codar,
-resolver o conflito #3 já registrado no `PLANO_ACAO.md`: "1 partida" pra
-frequência de drop tem que usar a duração REAL da partida (do início ao
-fim, incluindo o tempo ganho por combo no Rush), não uma suposição por
-modo. Checar se `result.timePlayed` (já calculado e mostrado no
-`ResultsPage.jsx`) serve como essa fonte de duração real.
+**Próxima: Fase 7 (páginas de resumo pós-partida)** — 6 páginas em
+sequência + 2 ocasionais (meta de ofensiva batida, mudança de faixa de
+tabuada), substituindo/estendendo o `ResultsPage.jsx` atual. O Davi já
+se ofereceu pra mandar imagens de referência quando chegar a vez —
+especialmente o calendário de **5 dias** da página de ofensiva
+(DIFERENTE do calendário semanal do Header, confirmado desde a sessão
+065). Depende da Fase 6 (loot) pra página 6 ter o que mostrar — já
+pronta.
 
-**Pendente de confirmação do Davi (sessão 069/D047):** ícone de mochila
-(ele mesmo chamou de "teste"); se "ícones de controle de videogame"
-também deveria trocar o `Gamepad2` do botão "Escolher Modo" no
-`MenuPage.jsx` (não mexido — ver raciocínio no D047).
+**Pendente de confirmação em ambiente real (D049):** o loot da Fase 6 foi
+verificado por simulação em Node + revisão de código, mas não por
+playthrough de ponta a ponta neste ambiente (Browser pane não completa a
+transição pro GamePage, D034) — pedir ao Davi pra jogar uma partida de
+verdade e conferir se as recompensas aparecem certas no resumo.
 
 **Próxima: Fase 5 (loja com estoque rotativo diário)** — sorteio de 1-3
 itens por dia, atualiza à meia-noite local (reaproveitar `localDateStr()`,
@@ -535,8 +550,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-070.md` — última sessão → `sessions/sessao-069.md` → `sessions/sessao-068.md`
-6. `DECISIONS.md` D020-D048 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-071.md` — última sessão → `sessions/sessao-070.md` → `sessions/sessao-069.md`
+6. `DECISIONS.md` D020-D049 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

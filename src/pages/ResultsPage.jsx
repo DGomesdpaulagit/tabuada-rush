@@ -3,7 +3,8 @@ import { Home, RotateCcw, Trophy, Target, X, Flame, Clock, Share2 } from 'lucide
 import { MODES, LEVELS } from '../constants';
 import { getLevelIdx, getAccuracy, getRank, formatTime } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
-import { POTIONS } from '../constants/shop';
+import { POTIONS, SHOP_ITEM_MAP, POTION_MAP } from '../constants/shop';
+import { CHESTS } from '../constants/loot';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import { shareCard } from '../lib/shareCard';
@@ -25,6 +26,14 @@ export default function ResultsPage({ result, onReplay, onHome }) {
   // App.jsx handleGameEnd (mesmo padrão que o antigo `xp2Used`, D043).
   const potionMultiplier = result.potionMultiplier || 1;
   const xpEarned = Math.round(xpBase * potionMultiplier);
+
+  // [Fase 6, sessão 071] Loot achado nesta partida (baús/power-ups/poções) —
+  // vem pronto de App.jsx handleGameEnd (`rollMatchLoot`). Mostrado aqui como
+  // um resumo simples; a Fase 7 (páginas de resumo pós-partida) vai substituir
+  // isso por uma página dedicada quando existir.
+  const loot = result.loot || { chests: [], powerupIds: [], potionIds: [] };
+  const lootCoins = loot.chests.reduce((sum, c) => sum + c.coins, 0);
+  const hasLoot = loot.chests.length > 0 || loot.powerupIds.length > 0 || loot.potionIds.length > 0;
 
   const stats = [
     {
@@ -157,6 +166,55 @@ export default function ResultsPage({ result, onReplay, onHome }) {
               {xpBase} XP base → <span className="font-black text-white">+{xpEarned} XP</span> (×{potionMultiplier})
             </p>
           </div>
+        </motion.div>
+      )}
+
+      {/* [Fase 6, sessão 071] Recompensas achadas na partida — resumo simples,
+          página dedicada fica pra Fase 7 */}
+      {hasLoot && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4"
+        >
+          <p className="text-xs font-black text-amber-700 uppercase tracking-wide mb-2">
+            Recompensas encontradas!
+          </p>
+          <div className="flex flex-col gap-2">
+            {loot.chests.map((c, i) => {
+              const chest = CHESTS.find((ch) => ch.id === c.id);
+              return (
+                <div key={`chest-${i}`} className="flex items-center gap-2.5">
+                  <GameIcon name={chest?.art} size={28} />
+                  <p className="text-sm font-bold text-amber-900">
+                    {chest?.name} <span className="text-amber-600">+{c.coins} moedas</span>
+                  </p>
+                </div>
+              );
+            })}
+            {loot.powerupIds.map((id, i) => {
+              const item = SHOP_ITEM_MAP[id];
+              return (
+                <div key={`pu-${i}`} className="flex items-center gap-2.5">
+                  <GameIcon name={item?.art} size={28} />
+                  <p className="text-sm font-bold text-amber-900">{item?.name}</p>
+                </div>
+              );
+            })}
+            {loot.potionIds.map((id, i) => {
+              const potion = POTION_MAP[id];
+              return (
+                <div key={`pot-${i}`} className="flex items-center gap-2.5">
+                  <GameIcon name={potion?.art} size={28} />
+                  <p className="text-sm font-bold text-amber-900">{potion?.name}</p>
+                </div>
+              );
+            })}
+          </div>
+          {lootCoins > 0 && loot.chests.length > 1 && (
+            <p className="text-[11px] font-bold text-amber-600 mt-2">Total: +{lootCoins} moedas em baús</p>
+          )}
         </motion.div>
       )}
 

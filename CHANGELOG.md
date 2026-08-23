@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.20] — 2026-08-23 — Baús e recompensas por partida (Fase 6 do backlog)
+
+**Detalhes em `sessions/sessao-071.md` e `DECISIONS.md` (D049).**
+
+### Corrigido
+- **Bug de verdade:** `timePlayed` sempre mostrava a duração BASE do modo,
+  ignorando o bônus de tempo por combo do Rush e o +10s da Largada Turbo
+  (o cronômetro sempre termina em 0, então `cfg.timer - state.time`
+  nunca captava o tempo extra). Agora mede relógio de parede de verdade
+  — corrige também o stat "Tempo" do resumo pós-partida
+
+### Adicionado
+- Sistema de recompensas ao fim de cada partida: 4 baús (Madeira/Ferro/
+  Ouro/Místico), os 7 power-ups e as 3 poções podem cair, com chance
+  ponderada pela raridade e multiplicada pela duração REAL da partida
+- Card "Recompensas encontradas" no resumo pós-partida (provisório —
+  vira página dedicada na Fase 7)
+
+### Confirmado (Davi)
+- Ícone da Mochila (sessão 069) — definitivo
+- Ícone de controle do Menu ("Escolher Modo") — fica pro redesenho da
+  Arena (Fase 8), não mexer agora
+
+---
+
 ## [6.0.19] — 2026-08-23 — Loja rotativa (Fase 5 do backlog)
 
 **Detalhes em `sessions/sessao-070.md` e `DECISIONS.md` (D048).**

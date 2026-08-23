@@ -192,10 +192,13 @@ muda, o resultado muda sozinho. Ver `sessions/sessao-070.md` e D048.
 
 ---
 
-## FASE 6 — Baús e recompensas por partida (loot ao terminar de jogar)
+## FASE 6 — Baús e recompensas por partida (loot ao terminar de jogar) ✅ CONCLUÍDA (sessão 071)
 
-⚠️ Ver conflito #3 acima antes de começar — precisa decidir o que conta
-como "1 partida" pra essa contagem de frequência.
+⚠️ Ver conflito #3 acima — RESOLVIDO: duração real medida por relógio de
+parede (`matchStartRef`/`Date.now()` no `GamePage.jsx`), não mais
+`cfg.timer - state.time` (que ignorava bônus de tempo por combo/Largada
+Turbo — bug real corrigido nesta sessão, de quebra também acertou o stat
+"Tempo" do ResultsPage que tinha o mesmo problema).
 
 ### Baús (moedas de graça)
 | Baú | Intervalo médio | Recompensa |
@@ -232,12 +235,19 @@ como "1 partida" pra essa contagem de frequência.
 | 25-50 min | 80% | 100% | 95% |
 | ~1 hora | 100% | +100% (garantido, pode ser múltiplo?) | +100% |
 
-- [ ] Definir o que conta como "partida" pra essa tabela (conflito #3)
-- [ ] Implementar RNG ponderado (intervalo médio → chance por partida,
+- [x] Definir o que conta como "partida" pra essa tabela (conflito #3)
+- [x] Implementar RNG ponderado (intervalo médio → chance por partida,
       não um contador fixo — "essas probabilidades são uma média", ele foi
       explícito que pode vir na 1ª partida do dia por sorte, raro mas
       possível)
-- [ ] Guardar o que foi achado numa partida pra mostrar na Fase 7 (página 6)
+- [x] Guardar o que foi achado numa partida pra mostrar na Fase 7 (página 6)
+      — por enquanto exibido direto no `ResultsPage.jsx` atual (card
+      "Recompensas encontradas"), já que a Fase 7 ainda não existe
+
+**Implementação e decisões sinalizadas:** ver `sessions/sessao-071.md` e
+D049 — RNG por peso (1/intervalo médio), leitura do "garantido, pode ser
+múltiplo" pro topo da tabela de tempo, e exclusão do modo Zen do sorteio
+(sem timer, dava pra farmar loot só deixando rodando parado).
 
 ---
 

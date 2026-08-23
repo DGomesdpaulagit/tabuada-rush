@@ -217,6 +217,15 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   const responseTimes = useRef([]);
   // Registro por questão (Catálogo de Precisão)
   const questionLog = useRef([]);
+  // [Fase 6, sessão 071] Duração REAL da partida, em relógio de parede —
+  // `cfg.timer - state.time` dava sempre a duração BASE do modo (o
+  // cronômetro sempre termina em 0), ignorando totalmente o bônus de tempo
+  // por combo do Rush (`bonusTime`) e o +10s da Largada Turbo — um jogador
+  // craque emendando combos podia esticar a partida bem além da duração
+  // "oficial" sem isso aparecer em lugar nenhum. Necessário pra Fase 6
+  // (probabilidade de loot por tempo de jogo real) e corrige de graça o
+  // stat "Tempo" do ResultsPage, que tinha o mesmo problema.
+  const matchStartRef = useRef(Date.now());
 
   // Resume audio context on first interaction
   useEffect(() => { audio.resume(); }, []);
@@ -274,7 +283,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
     if (state.phase === 'ended') {
       clearInterval(timerRef.current);
 
-      const timePlayed = cfg.timer ? cfg.timer - state.time : state.time;
+      const timePlayed = Math.round((Date.now() - matchStartRef.current) / 1000);
       const times = responseTimes.current;
       const avgMs = times.length
         ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)

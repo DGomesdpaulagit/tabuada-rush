@@ -5,7 +5,9 @@ import { useAuth } from './contexts/AuthContext';
 import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
 import { getActiveXpMultiplier } from './utils/potions';
+import { rollMatchLoot } from './utils/loot';
 import { LEAGUE_MAP } from './constants/leagues';
+import { SHOP_ITEM_MAP } from './constants/shop';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
@@ -441,6 +443,23 @@ export default function App() {
       // aplicar os toasts (mesmo padrão do bet* acima).
       let challengeResolutions = [];
 
+      // [Fase 6, sessão 071] Loot da partida (baús/power-ups/poções) — sorteado
+      // UMA VEZ aqui fora, com base na duração REAL da partida (`result.timePlayed`,
+      // corrigido no GamePage.jsx pra medir relógio de parede de verdade). Mesmo
+      // valor é usado dentro do update() (pra aplicar no storage) e depois no
+      // lastResult (pra exibir) — nunca rolado 2x, senão o que aplica e o que
+      // aparece na tela podiam divergir (mesmo cuidado do `potionMultiplier`).
+      //
+      // Zen fica de fora — não tem timer (`cfg.timer === null`), então dava pra
+      // deixar rodando parado por 1h só pra cair na faixa "garantido, múltiplo"
+      // sem nem jogar de verdade. Mesmo espírito de "Zen não gera moeda nenhuma"
+      // (já valia pra `coinsEarned`, linha abaixo) — decisão não escrita no
+      // PLANO_ACAO.md, sinalizada em D049.
+      const loot = result.mode === 'zen'
+        ? { chests: [], powerupIds: [], potionIds: [] }
+        : rollMatchLoot(result.timePlayed || 0);
+      const lootCoins = loot.chests.reduce((sum, c) => sum + c.coins, 0);
+
       const newData = update((prev) => {
         const isNewRecord =
           !prev.records?.[result.mode] || result.score > prev.records[result.mode];
@@ -625,11 +644,23 @@ export default function App() {
             ...prev.records,
             ...(isNewRecord ? { [result.mode]: result.score } : {}),
           },
-          coins: (prev.coins || 0) + coinsEarned + betPayout + challengeCoinDelta,
+          coins: (prev.coins || 0) + coinsEarned + betPayout + challengeCoinDelta + lootCoins,
           activeBet: null,
           seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
-          powerups: prev.powerups || {},
+          // [Fase 6] +1 por power-up achado — `SHOP_ITEM_MAP[id].powerupKey`
+          // traduz o id do drop pra chave de estoque (mesma usada na Loja).
+          powerups: loot.powerupIds.reduce(
+            (acc, id) => {
+              const key = SHOP_ITEM_MAP[id]?.powerupKey;
+              return key ? { ...acc, [key]: (acc[key] || 0) + 1 } : acc;
+            },
+            prev.powerups || {}
+          ),
+          potions: loot.potionIds.reduce(
+            (acc, id) => ({ ...acc, [id]: (acc[id] || 0) + 1 }),
+            prev.potions || {}
+          ),
         };
 
         // Registro de evolução: anexa os novos marcos atingidos nesta partida.
@@ -785,7 +816,7 @@ export default function App() {
       // `update()` acima — é o mesmo valor, só mais simples de expor aqui
       // pro ResultsPage sem precisar anexar campo transiente no storage.
       const potionMultiplier = getActiveXpMultiplier(data);
-      setLastResult({ ...result, potionMultiplier, betResult, betPayout, betAmount: activeBet?.amount });
+      setLastResult({ ...result, potionMultiplier, betResult, betPayout, betAmount: activeBet?.amount, loot });
       setScreen('results');
     },
     [data, update, showAchievement]

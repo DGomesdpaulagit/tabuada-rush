@@ -1778,6 +1778,95 @@ um item esquecido do checklist.
 
 ---
 
+## D049 — Fase 6: Baús e recompensas por partida
+
+**Data:** 2026-08-23 · sessao-071
+
+Davi confirmou os dois pontos pendentes da sessão 069 (ícone da mochila
+definitivo; ícone de controle do Menu fica pro dia da Arena) e pediu pra
+seguir direto pra Fase 6, oferecendo mandar imagens de referência pras
+páginas de resumo (isso é Fase 7, ainda não chegou a vez).
+
+**Bug encontrado e corrigido ANTES de implementar o loot:** `timePlayed`
+(`GamePage.jsx`) era calculado como `cfg.timer - state.time`. Como o
+cronômetro SEMPRE termina em 0 (é a condição de fim de partida), essa
+conta sempre devolvia a duração BASE do modo — o bônus de tempo por combo
+do Rush (`bonusTime`, +3s por acerto) e o +10s da Largada Turbo, que
+somam direto em `state.time`, nunca apareciam no resultado. Um jogador
+craque emendando combos por 20 minutos teria `timePlayed` mostrando os
+mesmos ~30s de sempre. Troquei por medição de relógio de parede de
+verdade: `matchStartRef = useRef(Date.now())` setado uma vez no mount,
+`timePlayed = Math.round((Date.now() - matchStartRef.current) / 1000)`
+no fim da partida. Conserta de graça o stat "Tempo" do `ResultsPage.jsx`
+(que tinha o mesmo problema, não só a Fase 6) e resolve o conflito #3 do
+`PLANO_ACAO.md` (duração real, não suposição por modo).
+
+**Implementação do loot:**
+1. **`constants/loot.js`** — `CHESTS` (4 baús), `LOOT_POWERUPS` (6,
+   reaproveitando os ids de `SHOP_ITEMS`), `LOOT_POTIONS` (3, reaproveitando
+   os ids de `POTIONS`), cada um com `intervalMin`/`intervalMax` ("intervalo
+   médio de partidas" do plano). `TIME_TIERS` — a tabela de % por
+   categoria/duração real, direto dos números do Davi.
+2. **`utils/loot.js`** — `rollMatchLoot(realSeconds)`:
+   - **RNG por peso, não contador:** cada item tem peso `1/intervalo
+     médio` dentro da própria categoria — quem cai com mais frequência
+     (intervalo menor) pesa mais no sorteio (`weightedPick`). Descartei de
+     propósito um sistema de "contador até garantir o Nº-ésimo": o Davi
+     foi explícito que o drop tem que poder vir na 1ª partida por sorte,
+     o que só faz sentido com rolagem independente a cada partida.
+   - **`rollCount(pct)`** — decide QUANTAS unidades de uma categoria caem:
+     `floor(pct/100)` garantidas + 1 rolagem extra com o resto
+     `(pct % 100)`%. É a leitura mais literal que dá pra fazer da célula
+     "+100% (garantido, pode ser múltiplo)" que o próprio `PLANO_ACAO.md`
+     já registrava com uma interrogação — nunca foi resolvida nem pelo
+     Davi antes desta sessão. Generaliza pra qualquer % (30% → 30% chance
+     de 1; 100% → sempre exatamente 1; 200% → sempre exatamente 2).
+   - Faixas de tempo 21-24min e 51+min não tinham número exato na tabela
+     original — tratadas como parte da faixa vizinha mais próxima (o
+     próprio Davi chamou essas porcentagens de "uma média").
+3. **`App.jsx` `handleGameEnd`** — `loot` sorteado UMA VEZ fora do
+   `update()` (mesmo cuidado do `potionMultiplier`: nunca rolar 2x, senão
+   o que é aplicado no storage e o que aparece na tela podem divergir).
+   Aplica moedas dos baús + incrementa `powerups`/`potions` com o que foi
+   achado. **Zen excluído do sorteio** — não tem timer (`cfg.timer ===
+   null`), então dava pra deixar rodando parado por 1h só pra cair na
+   faixa "garantido, múltiplo" sem jogar de verdade; mesmo espírito de
+   "Zen não gera moeda nenhuma" que já existia pro `coinsEarned`. Decisão
+   não escrita no plano original, sinalizada aqui.
+4. **`ResultsPage.jsx`** — card "Recompensas encontradas" mostrando os
+   baús/power-ups/poções achados, só aparece se algo caiu. É um resumo
+   simples — a página dedicada (página 6 do fluxo pós-partida) é da Fase
+   7, que ainda não existe.
+
+**Verificado:**
+- `npm run build` limpo
+- Simulação em Node de `rollMatchLoot` (20.000 partidas por faixa de
+  duração): médias de baú/power-up/poção por partida batem com as % da
+  tabela em cada faixa (30/60/50 → 50/90/70 → 80/100/95 → 100/200/195),
+  incluindo o caso "0 drops possível" (13,9% das partidas curtas saem sem
+  nada) baixando pra 0% nas partidas longas — confirma o comportamento
+  que o Davi pediu explicitamente
+- Distribuição por item dentro do power-up (50.000 sorteios): os 3
+  "Comuns" (Congelar/Largada/Vida Extra) saíram mais que os 3 "Raros"
+  (Seguro de Ofensiva/+60s/Escudo) — os intervalos que o Davi deu batem
+  com a raridade que já existia na Loja, sem eu precisar inventar nada
+- **Não verificado neste ambiente:** playthrough real de ponta a ponta
+  (iniciar partida → jogar → terminar → ver o card de recompensas) — o
+  clique em "Rush" na tela de Modos não completa a transição de tela
+  (mesma limitação de compositing do Browser pane, D034: AnimatePresence
+  trava com `document.hidden === true`). Testado via simulação da lógica
+  pura + revisão de código da integração; pedir ao Davi pra confirmar
+  numa partida de verdade no dispositivo dele.
+
+**Confirmações da sessão anterior (069), registradas aqui por completude:**
+- Ícone da Mochila (`novo_icone_da_mochila.png`) — **definitivo**, Davi
+  confirmou.
+- Ícone de controle do `MenuPage.jsx` (botão "Escolher Modo",
+  `Gamepad2` da lucide) — **não mexer agora**, fica pro dia do redesenho
+  do painel da Arena (Fase 8).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

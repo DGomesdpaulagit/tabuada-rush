@@ -172,20 +172,23 @@ que não inventa regra de balanceamento nenhuma. Ver D046.
 
 ---
 
-## FASE 5 — Loja com estoque rotativo diário
+## FASE 5 — Loja com estoque rotativo diário ✅ CONCLUÍDA (sessão 070)
 
-- [ ] Loja deixa de mostrar sempre os mesmos itens fixos — vira um sorteio
+- [x] Loja deixa de mostrar sempre os mesmos itens fixos — vira um sorteio
       diário: 1, 2 ou 3 itens (power-ups/poções), sem ordem fixa
-- [ ] Atualiza à **meia-noite local** — reaproveitar `localDateStr()` /
-      `getCycleDaysRemaining()`-style (D040, já resolve fuso horário
-      corretamente, não usar `toISOString()` de novo)
-- [ ] **Regra fixa, nunca sorteada:** "Recuperar vidas" (o refil do pote
-      diário que já existe, `LIFE_REFILL_PRICE`) sempre disponível — pra
-      o jogador sempre poder continuar jogando pagando moeda, mesmo que os
-      outros itens não tenham saído no sorteio do dia
-- [ ] Recursos que não saíram no sorteio do dia só ficam acessíveis achando
-      em partida (Fase 6) — **essa é a mudança de fundo**: a Loja deixa de
-      ser a única fonte de todo item
+- [x] Atualiza à **meia-noite local** — reaproveitou `todayStr()`
+      (`utils/index.js`, D040, já resolve fuso horário corretamente, não
+      usa `toISOString()`)
+- [x] **Regra fixa, nunca sorteada:** "Recuperar vidas" (o refil do pote
+      diário que já existe, `LIFE_REFILL_PRICE`) sempre disponível — já
+      era assim (mecanismo do Header, fora da Loja), regra já satisfeita
+      sem precisar duplicar nada
+- [x] Recursos que não saíram no sorteio do dia só ficam acessíveis achando
+      em partida (Fase 6) — Loja deixou de ser a única fonte de todo item
+
+**Implementação:** sorteio 100% determinístico por data (mesmo padrão LCG
+das missões), sem precisar guardar nada novo no storage — `todayStr()`
+muda, o resultado muda sozinho. Ver `sessions/sessao-070.md` e D048.
 
 ---
 

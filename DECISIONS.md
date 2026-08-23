@@ -1722,6 +1722,62 @@ Browser pane de sempre — D034):
 
 ---
 
+## D048 — Fase 5: Loja com estoque rotativo diário
+
+**Data:** 2026-08-23 · sessao-070
+
+Depois do ajuste de ícones (D047), Davi pediu explicitamente pra continuar
+o `PLANO_ACAO.md` — próximo item era a Fase 5.
+
+**Implementação:**
+1. **`utils/shop.js` novo** — `getDailyShopStock(date = todayStr())`
+   sorteia 1-3 itens do dia a partir de um pool combinado dos 7 power-ups
+   (`SHOP_ITEMS`) + 3 poções (`POTIONS`), 10 entradas no total. Mesmo
+   padrão de `utils/missions.js` (LCG semeado por uma soma dos caracteres
+   da data) — mas **sem precisar persistir nada no storage**: como o
+   sorteio é puramente uma função da data, ele já dá sempre o mesmo
+   resultado pro mesmo dia e muda sozinho quando `todayStr()` muda (vira à
+   meia-noite local, D040 — sem `toISOString()`). É mais simples que o
+   padrão das missões porque missões precisam de progresso persistido;
+   aqui não existe "progresso" nenhum pra guardar, só o resultado do
+   sorteio em si, que é recalculável a qualquer momento.
+2. **A quantidade também é sorteada** (1, 2 ou 3), não fixa — usei o
+   próprio LCG pra decidir o count antes de escolher os itens, mesma fonte
+   de aleatoriedade determinística.
+3. **`ShopPage.jsx`** — trocou `SHOP_ITEMS.map(...)`/`POTIONS.map(...)`
+   fixos por `shopItemsToday`/`potionsToday` (filtrados pelo sorteio do
+   dia via `SHOP_ITEM_MAP`/`POTION_MAP`). Seção "Poções de XP" só
+   renderiza se `potionsToday.length > 0` (dias sem poção no sorteio não
+   mostram a seção vazia). Cabeçalho novo "Estoque de hoje" com contagem
+   regressiva até a meia-noite (`resetLabel()`, cópia local do mesmo
+   helper do `MissionsPage.jsx` — 2 usos não justificam compartilhar).
+
+**"Recuperar vidas" — decisão sinalizada, não é mudança de código:** o
+plano pede que fique "sempre disponível, nunca sorteado". Fui verificar:
+esse mecanismo (`LIFE_REFILL_PRICE`, refil do pote diário) **nunca foi um
+item da `ShopPage`** — sempre viveu só no painel do Header, acessível de
+qualquer tela, sem depender da Loja em nenhum momento. Ou seja, a regra já
+estava satisfeita ANTES da Fase 5 existir; não precisei adicionar nada
+pra ele continuar "sempre disponível". Documentando aqui pra não parecer
+um item esquecido do checklist.
+
+**Verificado:**
+- Simulação em Node do algoritmo (10 dias seguidos): quantidade variando
+  entre 1-3, dias com 0 poção no sorteio (confirma que a seção
+  condicional tem casos reais pra cobrir), itens variando dia a dia
+- Data de hoje (2026-08-23) sorteou exatamente `[pocao-xp-1, shield,
+  headstart]` tanto na simulação quanto na página real renderizada —
+  bate 100%
+- `npm run build` limpo
+- Compra funcionando com a lista sorteada: Escudo (100 moedas, estoque
+  1→2) e Poção ×1,5 (100 moedas, estoque 1→2) — ambas descontaram o valor
+  certo e incrementaram o storage certo
+- Os 4 power-ups que NÃO saíram no sorteio de hoje (seguro de ofensiva,
+  congelar missão, vida extra, +60s) **não aparecem** na tela — confirma
+  que o filtro funciona de verdade, não é só decoração
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

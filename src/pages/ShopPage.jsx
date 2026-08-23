@@ -2,13 +2,37 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import GameIcon from '../components/GameIcon';
-import { SHOP_ITEMS, RARITIES, POTIONS } from '../constants/shop';
+import { RARITIES, SHOP_ITEM_MAP, POTION_MAP } from '../constants/shop';
+import { getDailyShopStock } from '../utils/shop';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
+
+// [Fase 5, sessão 070] Renova à meia-noite LOCAL — mesmo padrão de
+// `resetLabel` do MissionsPage.jsx, cópia local de propósito (mesma
+// convenção já usada lá, não vale a pena compartilhar por 2 usos).
+function resetLabel() {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  const ms = tomorrow - now;
+  const h  = Math.floor(ms / 3_600_000);
+  const m  = Math.floor((ms % 3_600_000) / 60_000);
+  return `Renova em ${h}h ${m}m`;
+}
 
 // v5.0 · Bloco 1: loja só vende power-ups agora — cosméticos (moldura/card/
 // tema de jogo) foram removidos. A economia de moedas vai ser repensada num
 // bloco à parte antes de qualquer coisa nova entrar aqui.
+//
+// [Fase 5, sessão 070] Estoque deixou de ser fixo: `getDailyShopStock()`
+// sorteia 1-3 itens (power-up OU poção) por dia, determinístico pela data
+// local — sem precisar guardar nada no storage, o resultado já é sempre o
+// mesmo pro mesmo dia. Itens fora do sorteio de hoje só voltam a ficar
+// compráveis quando saírem de novo (ou, no futuro, forem achados em
+// partida — Fase 6). "Recuperar vidas" (Header, `LIFE_REFILL_PRICE`) não
+// faz parte desse sorteio — já é sempre visível por fora da Loja, regra
+// fixa do plano já satisfeita sem precisar duplicar aqui.
 export default function ShopPage({ onBack, embedded = false }) {
   const { data, update } = useApp();
   const [toastMsg, setToastMsg] = useState(null);
@@ -16,6 +40,10 @@ export default function ShopPage({ onBack, embedded = false }) {
   const coins    = data.coins    || 0;
   const powerups = data.powerups || {};
   const potions  = data.potions  || {};
+
+  const stock = getDailyShopStock();
+  const shopItemsToday = stock.filter((s) => s.kind === 'powerup').map((s) => SHOP_ITEM_MAP[s.id]);
+  const potionsToday   = stock.filter((s) => s.kind === 'potion').map((s) => POTION_MAP[s.id]);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -87,9 +115,15 @@ export default function ShopPage({ onBack, embedded = false }) {
         </p>
       </div>
 
+      {/* Estoque de hoje [Fase 5] — sorteio diário, muda à meia-noite local */}
+      <div className="flex items-center justify-between gap-2 px-1">
+        <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Estoque de hoje</p>
+        <p className="text-[11px] font-bold text-fg-muted">{resetLabel()}</p>
+      </div>
+
       {/* Items list */}
       <div className="flex flex-col gap-3">
-        {SHOP_ITEMS.map((item) => {
+        {shopItemsToday.map((item) => {
           const rarity    = RARITIES[item.rarity];
           const count     = powerups[item.powerupKey] || 0;
           const canAfford = coins >= item.price;
@@ -158,11 +192,12 @@ export default function ShopPage({ onBack, embedded = false }) {
         })}
       </div>
 
-      {/* Poções de XP [Fase 4, D046] */}
+      {/* Poções de XP [Fase 4, D046] — só aparece se saiu no sorteio de hoje [Fase 5] */}
+      {potionsToday.length > 0 && (
       <div className="flex flex-col gap-2">
         <p className="text-xs font-black text-fg-muted uppercase tracking-wide px-1">Poções de XP</p>
         <div className="flex flex-col gap-3">
-          {POTIONS.map((potion) => {
+          {potionsToday.map((potion) => {
             const count = potions[potion.id] || 0;
             const canAfford = coins >= potion.price;
             return (
@@ -207,6 +242,7 @@ export default function ShopPage({ onBack, embedded = false }) {
           })}
         </div>
       </div>
+      )}
 
       {/* Como ganhar moedas */}
       <div className="bg-bee/10 border-2 border-bee/20 rounded-2xl p-4">

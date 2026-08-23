@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.18 (Tabuada Rush 6.0 completo + Poções de XP (Fase 4) + ícones novos — sessao-069.md)
+**Versão:** 6.0.19 (Tabuada Rush 6.0 completo + Loja rotativa (Fase 5) — sessao-070.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.19]** Fase 5 do backlog: Loja deixou de mostrar sempre os mesmos 7
+power-ups + 3 poções fixos — agora sorteia 1-3 itens por dia
+(`utils/shop.js`, `getDailyShopStock`), determinístico pela data local
+(mesmo LCG das missões), **sem precisar guardar nada no storage** — o
+sorteio já muda sozinho na virada de dia. "Recuperar vidas" já era sempre
+disponível fora da Loja (Header) desde sempre — nada a mudar ali. Ver
+`sessao-070.md` e D048.
 **[v6.0.18]** Higgsfield CLI configurado (npm global + login + skills), mas
 a conta do Davi estava com **0 créditos** (plano free) — upscale via IA
 bloqueado, ação financeira que só ele resolve. Ele baixou versões mais
@@ -378,15 +385,22 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 5 DO `PLANO_ACAO.md` (Loja rotativa)
+## 🎯 PRÓXIMA SESSÃO — FASE 6 DO `PLANO_ACAO.md` (Baús e recompensas)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-069.md` (a mais recente) → `DECISIONS.md` D020-D047.
+`sessions/sessao-070.md` (a mais recente) → `DECISIONS.md` D020-D048.
 
-**Fases 0-4 concluídas** (sessões 064-068). Sessão 069 foi um ajuste de
-arte fora da sequência das Fases (ícones + alvo verde nas missões), pedido
-direto do Davi. `PLANO_ACAO.md` é a lista de verdade; não duplicar o
+**Fases 0-5 concluídas** (sessões 064-070; sessão 069 foi um ajuste de
+arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
+direto do Davi). `PLANO_ACAO.md` é a lista de verdade; não duplicar o
 backlog aqui.
+
+**Próxima: Fase 6 (baús e recompensas por partida)** — antes de codar,
+resolver o conflito #3 já registrado no `PLANO_ACAO.md`: "1 partida" pra
+frequência de drop tem que usar a duração REAL da partida (do início ao
+fim, incluindo o tempo ganho por combo no Rush), não uma suposição por
+modo. Checar se `result.timePlayed` (já calculado e mostrado no
+`ResultsPage.jsx`) serve como essa fonte de duração real.
 
 **Pendente de confirmação do Davi (sessão 069/D047):** ícone de mochila
 (ele mesmo chamou de "teste"); se "ícones de controle de videogame"
@@ -521,8 +535,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-069.md` — última sessão → `sessions/sessao-068.md` → `sessions/sessao-067.md`
-6. `DECISIONS.md` D020-D047 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-070.md` — última sessão → `sessions/sessao-069.md` → `sessions/sessao-068.md`
+6. `DECISIONS.md` D020-D048 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

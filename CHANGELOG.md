@@ -4,6 +4,23 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.19] — 2026-08-23 — Loja rotativa (Fase 5 do backlog)
+
+**Detalhes em `sessions/sessao-070.md` e `DECISIONS.md` (D048).**
+
+### Adicionado
+- Loja deixa de mostrar sempre os mesmos itens fixos — sorteio diário de
+  1-3 itens (power-ups e/ou poções), determinístico pela data local,
+  muda sozinho à meia-noite
+- Cabeçalho "Estoque de hoje" com contagem regressiva até a virada
+- Seção "Poções de XP" só aparece em dias que saiu alguma no sorteio
+
+### Confirmado
+- "Recuperar vidas" já era sempre disponível fora da Loja (Header) — regra
+  do plano já estava satisfeita, sem precisar de código novo
+
+---
+
 ## [6.0.18] — 2026-08-23 — Ícones novos + alvo verde nas missões
 
 **Detalhes em `sessions/sessao-069.md` e `DECISIONS.md` (D047).**

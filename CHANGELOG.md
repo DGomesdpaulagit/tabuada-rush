@@ -4,6 +4,20 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.26] — 2026-08-24 — Ícones combo em resolução maior
+
+**Detalhes em `sessions/sessao-077.md` e `DECISIONS.md` (D055).**
+
+### Alterado
+- Os 8 ícones combo válidos (tudo menos Seguro de Ofensiva) substituídos
+  por uma versão de resolução bem maior, mesma classificação de baú
+
+### Pendente
+- Seguro de Ofensiva errou de novo numa 2ª geração independente — ainda
+  no fallback (ícone + Baú de Ouro)
+
+---
+
 ## [6.0.25] — 2026-08-24 — Conjunto completo de ícones combo por classificação
 
 **Detalhes em `sessions/sessao-076.md` e `DECISIONS.md` (D054).**

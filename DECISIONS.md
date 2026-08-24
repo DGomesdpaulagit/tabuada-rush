@@ -2287,6 +2287,46 @@ Ouro, mesmo estilo dos outros 8) pra fechar o conjunto dos 9.
 
 ---
 
+## D055 — Ícones combo, 2ª geração (resolução maior, mesma peça faltando)
+
+**Data:** 2026-08-24 · sessao-077
+
+Davi gerou de novo (arquivo `ChatGPT Image 24 de ago. de 2026,
+16_58_05.png`, 1254×1254 — bem maior que o `Design sem nome.png` de
+524×524 da geração anterior, D054). Comparei os dois arquivos
+(tamanhos diferentes — confirma que são 2 gerações INDEPENDENTES, não o
+mesmo arquivo salvo de novo): os 8 recursos que já tinham saído certos
+continuam certos, com a MESMA classificação de baú (Madeira/Ferro/Ouro/
+Místico) e o mesmo estilo visual — só a resolução mudou, pra melhor.
+
+**Seguro de Ofensiva errou de novo, exatamente do mesmo jeito** — a
+célula da grade voltou a mostrar o cristal azul reciclado (a "parte3"
+antiga) em vez de escudo+baú de ouro. Duas gerações independentes
+caindo no mesmo erro pro mesmo item é sinal de que o problema não é
+acaso — provavelmente falta uma referência clara do ícone do Seguro de
+Ofensiva no material que ele está anexando (ou o cristal azul está
+"contaminando" o prompt/referências de alguma forma). Sinalizado pra ele
+tentar de novo com atenção especial nessa peça, se quiser.
+
+**Implementação:** reprocessados os mesmos 8 arquivos (`combo-congelar/
+vida-extra/largada/pocao-1/tempo/escudo/pocao-2/pocao-3`), agora a partir
+da imagem de maior resolução — recorte em 260px de lado maior (era 220),
+nitidez visivelmente melhor. Nenhuma mudança de código necessária (mesmo
+nome de arquivo, `REWARD_COMBO`/`FALLBACK_CHEST` do D054 continuam
+válidos como estão).
+
+**Verificado:**
+- `npm run build` limpo
+- `combo-vida-extra` carrega sem erro na página de recompensa
+  (`?screen=results&full=1&page=8`), 0 imagem quebrada
+- Comparação visual dos 8 icons novos com os da D054 — mesma
+  classificação, mesmo estilo, só mais nítidos
+
+**Pendente:** ainda falta o Seguro de Ofensiva — 2 tentativas seguidas
+não geraram essa peça.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

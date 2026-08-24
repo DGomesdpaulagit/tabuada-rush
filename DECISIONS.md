@@ -2202,6 +2202,91 @@ item sem arte).
 
 ---
 
+## D054 — Conjunto completo de ícones combo (Madeira/Ferro/Ouro/Místico)
+
+**Data:** 2026-08-24 · sessao-076
+
+Depois do D053 (teste com baú sempre dourado), Davi pediu pra eu montar
+um PROMPT pra ele gerar a versão de verdade, com o baú variando por
+classificação. Ele ditou a classificação por voz (transcrição bem
+confusa, com autocorreções no meio) — pedi confirmação num formato de
+tabela antes de escrever o prompt, ele não corrigiu, então segui:
+
+- **Madeira:** Congelar Missão, Vida Extra
+- **Ferro:** Largada Turbo, Poção ×1,5
+- **Ouro:** Seguro de Ofensiva, +60s no Relógio, Escudo, Poção ×2
+- **Místico:** Poção ×3 (sozinha — o recurso mais raro, precisa se
+  destacar dos outros 8)
+
+Essa classificação é uma tabela PRÓPRIA só pra este efeito visual — não é
+mais o Comum/Raro/Épico que a Loja usa pros badges (ex.: Seguro de
+Ofensiva mostra "Raro" na Loja mas vai pro Baú de OURO aqui, que é o
+tier mais alto dos "normais"). São sistemas paralelos, o do baú não
+substitui nem altera o rótulo da Loja.
+
+Escrevi o prompt especificando: 1 imagem só com os 9 recursos numa
+grade, cada um já fundido com o baú certo (não peças separadas), usando
+os ícones combo antigos (baú dourado uniforme) como referência de ESTILO
+apenas, mais os ícones soltos de Vida Extra e Seguro de Ofensiva como
+referência de forma (esses dois eu já tinha visto que precisavam de
+referência extra — Vida Extra já tinha combo mas num baú diferente do
+que ele ia pedir agora, e Seguro de Ofensiva nunca teve combo nenhum).
+
+**Resultado da geração (`Design sem nome.png`, Downloads):** 8 de 9
+saíram exatamente como pedido, com diferenciação visual real e
+consistente entre os 4 tiers (conferido inclusive por amostragem de cor
+de pixel, não só visualmente):
+- Madeira: corpo de madeira, ferragem em bronze fosco
+- Ferro: corpo inteiro cinza metálico
+- Ouro: corpo de madeira, ferragem dourada BEM mais viva/grossa que o
+  bronze da Madeira (diferença sutil mas real — não é o mesmo baú)
+- Místico: baú roxo inteiro, com gemas brilhantes — claramente o mais
+  especial dos 9, como pedido
+
+**1 de 9 saiu errado:** o quadrado do Seguro de Ofensiva não gerou nada
+novo — a IA reaproveitou uma imagem antiga (o cristal azul da sessão 073,
+"parte3", que o próprio Davi já tinha notado como inconsistente) em vez
+de desenhar escudo+baú de ouro. Fica pendente até ele gerar essa peça
+específica.
+
+**Implementação:**
+1. Processados os 8 recortes válidos (flood fill + recorte, mesmo
+   pipeline de sempre) — 7 SUBSTITUÍRAM os ícones combo antigos do D053
+   (mesmo nome de arquivo: `combo-vida-extra/tempo/escudo/largada/
+   pocao-1/2/3`, agora com o baú certo em vez de sempre dourado) e 1 é
+   NOVO (`combo-congelar`, Congelar Missão nunca tinha tido combo).
+2. `REWARD_COMBO` (`PostGameSummary.jsx`) ganhou a entrada de
+   `powerup_mission_freeze`.
+3. `RARITY_CHEST`/`POTION_CHEST` (o sistema de fallback por raridade do
+   D052) foram REMOVIDOS — não fazem mais sentido, já que a classificação
+   agora é por item específico, não por Comum/Raro/Épico calculado.
+   Substituídos por `FALLBACK_CHEST`, um mapa direto com UMA entrada só
+   (`powerup_streak_insurance: 'bau-ouro'`, a classificação real dele)
+   — o único item que ainda depende de fallback.
+4. Cenário de teste (`App.jsx`, `?full=1`) ampliado pra cobrir mais casos:
+   antes só testava `powerup_life`/`pocao-xp-1`; agora também
+   `powerup_mission_freeze`, `powerup_streak_insurance` (o fallback) e
+   `pocao-xp-3` (o Místico).
+
+**Verificado** (6 páginas de recompensa conferidas uma por uma via
+`?screen=results&full=1&page=N`, D034 sempre a mesma limitação de
+playthrough real):
+- Baú Místico (baú-com-moeda, não mexido): renderiza normal
+- Vida Extra → `combo-vida-extra` (Madeira) — 0 imagem quebrada
+- Congelar Missão → `combo-congelar` (Madeira, NOVO) — 0 imagem quebrada
+- Seguro de Ofensiva → cai certo no fallback (ícone do recurso +
+  `bau-ouro` direto) — 0 imagem quebrada, confirma que o item sem combo
+  não quebra nada
+- Poção ×1,5 → `combo-pocao-1` (Ferro) — 0 imagem quebrada
+- Poção ×3 → `combo-pocao-3` (Místico) — 0 imagem quebrada, última página
+  mostra as 3 ações finais corretamente
+- `npm run build` limpo
+
+**Pendente:** Davi gerar a peça que faltou (Seguro de Ofensiva + Baú de
+Ouro, mesmo estilo dos outros 8) pra fechar o conjunto dos 9.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

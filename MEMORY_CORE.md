@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.24 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-075.md)
+**Versão:** 6.0.25 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-076.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.25]** Conjunto completo de ícones combo (D054) — Davi gerou a
+versão com o baú variando por classificação própria (não mais Comum/
+Raro/Épico da Loja): Madeira (Congelar Missão, Vida Extra), Ferro
+(Largada Turbo, Poção ×1,5), Ouro (Seguro de Ofensiva, +60s, Escudo,
+Poção ×2), Místico (Poção ×3, sozinha). 8 de 9 saíram certos — **Seguro
+de Ofensiva não gerou** (repetiu arte antiga), continua no fallback
+(`FALLBACK_CHEST`, novo, substitui o `RARITY_CHEST`/`POTION_CHEST` do
+D052 que foi removido). Ver `sessao-076.md` e D054.
 **[v6.0.24]** Ícones COMBO recurso+baú (D053) — TESTE, pendente de
 aprovação visual do Davi. Ele baixou arte de verdade com o recurso e o
 baú já fundidos numa imagem só (Vida Extra, +60s, Escudo, Largada Turbo,
@@ -441,27 +449,24 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — FASE 8 DO `PLANO_ACAO.md` (Painel da Arena)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-075.md` (a mais recente) → `DECISIONS.md` D020-D053.
+`sessions/sessao-076.md` (a mais recente) → `DECISIONS.md` D020-D054.
 
-**Fases 0-7 concluídas** (sessões 064-075; sessão 069 foi um ajuste de
+**Fases 0-7 concluídas** (sessões 064-076; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
-direto do Davi; sessões 073-075 foram ajustes sobre a Fase 7, não fase
+direto do Davi; sessões 073-076 foram ajustes sobre a Fase 7, não fase
 nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.
 
-**Bloqueado antes de ir pra Fase 8 (sessão 075):** os ícones COMBO
-recurso+baú (D053) são um TESTE — Davi ainda não aprovou visualmente. Se
-ele pedir ajuste, mexer antes de seguir. Se aprovar, ele vai gerar o
-conjunto completo (recurso+baú variando por raridade nativo na arte) —
-quando isso vier, trocar `REWARD_COMBO` (`PostGameSummary.jsx`) pelos
-arquivos novos e o `RARITY_CHEST`/`POTION_CHEST` do D052 pode ser
-removido de vez (só existe hoje como fallback pros itens sem combo).
+**Ícones combo (D053→D054): 8 de 9 fechados.** Davi gerou o conjunto
+completo com baú por classificação própria (Madeira/Ferro/Ouro/Místico,
+ver D054) — só falta **Seguro de Ofensiva**, cuja geração saiu errada
+(repetiu uma arte antiga em vez de escudo+baú de ouro). Continua
+funcionando no fallback (`FALLBACK_CHEST`) até ele gerar a peça certa —
+não é bloqueio, só uma peça faltando.
 
 **Ainda em aberto (não é bloqueio, é pendência leve):**
 - Davi mencionou "vou mencionar todas as conquistas" (sessão 073,
   provavelmente ícones específicos por conquista) mas a lista não chegou
   a vir na mensagem — perguntar se ele ainda quer mandar
-- Seguro de Ofensiva e Congelar Missão ainda sem ícone combo (D053) —
-  ficam no fallback de raridade até ele gerar a arte deles também
 - Linha divisória do box "Desempenho" (página 1 do resumo pós-partida)
   não foi removida — só a do "Resumo do dia" foi, por pedido específico
   dele (sessão 074); perguntar se quer o mesmo ali
@@ -608,8 +613,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-075.md` — última sessão → `sessions/sessao-074.md` → `sessions/sessao-073.md`
-6. `DECISIONS.md` D020-D053 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-076.md` — última sessão → `sessions/sessao-075.md` → `sessions/sessao-074.md`
+6. `DECISIONS.md` D020-D054 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

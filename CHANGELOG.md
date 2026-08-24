@@ -4,6 +4,28 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.25] — 2026-08-24 — Conjunto completo de ícones combo por classificação
+
+**Detalhes em `sessions/sessao-076.md` e `DECISIONS.md` (D054).**
+
+### Adicionado
+- Ícones combo recurso+baú com o TIPO de baú variando de verdade:
+  Madeira (Congelar Missão, Vida Extra), Ferro (Largada Turbo, Poção
+  ×1,5), Ouro (Seguro de Ofensiva, +60s, Escudo, Poção ×2), Místico
+  (Poção ×3, sozinha)
+- `combo-congelar` novo (Congelar Missão nunca tinha tido ícone combo)
+
+### Removido
+- `RARITY_CHEST`/`POTION_CHEST` (sistema de fallback por raridade
+  Comum/Raro/Épico) — substituído por `FALLBACK_CHEST`, direto por item
+
+### Pendente
+- Geração do Seguro de Ofensiva saiu errada (repetiu arte antiga) — esse
+  item continua no fallback (ícone + Baú de Ouro) até o Davi gerar a
+  peça certa
+
+---
+
 ## [6.0.24] — 2026-08-24 — Ícones combo recurso+baú (teste, pendente de aprovação)
 
 **Detalhes em `sessions/sessao-075.md` e `DECISIONS.md` (D053).**

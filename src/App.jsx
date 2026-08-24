@@ -404,8 +404,11 @@ export default function App() {
       loot: full
         ? {
             chests: [{ id: 'bau-mistico', coins: 1000 }],
-            powerupIds: ['powerup_life'],
-            potionIds: ['pocao-xp-1'],
+            // Cobre os 2 casos que importam testar: item COM ícone combo
+            // (life) e o único item ainda SEM combo, no fallback
+            // (streak_insurance) — ver D054.
+            powerupIds: ['powerup_life', 'powerup_mission_freeze', 'powerup_streak_insurance'],
+            potionIds: ['pocao-xp-1', 'pocao-xp-3'],
           }
         : { chests: [], powerupIds: [], potionIds: [] },
     };

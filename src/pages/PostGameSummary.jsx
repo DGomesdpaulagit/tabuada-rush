@@ -51,26 +51,24 @@ const LOOT_GENDER = {
 const POTION_RARITY = { 1.5: 'Comum', 2: 'Raro', 3: 'Épico' };
 const CHEST_RARITY = { 'bau-madeira': 'Comum', 'bau-ferro': 'Raro', 'bau-ouro': 'Épico', 'bau-mistico': 'Lendário' };
 
-// [Fase 6, sessão 074, D052] Baú como EMBALAGEM de recurso — o tier do
-// baú que aparece na página de recompensa agora bate com a raridade do
-// recurso, não é mais genérico. Davi deu 1 exemplo (Poção ×3, a mais rara
-// das 3, tem que vir num Baú Místico) — dessa âncora derivei o resto:
-// Comum→Madeira, Raro→Ferro, Épico→Místico. Baú de OURO fica de fora de
-// propósito: só existem 3 níveis de raridade pros recursos hoje (contra 4
-// tiers de baú), e Místico já é a âncora confirmada pro topo — Ouro
-// continua exclusivo do baú-COM-MOEDA da Fase 6. Mapeamento sinalizado,
-// não formalmente confirmado por ele (só o exemplo do topo foi dado).
-const RARITY_CHEST = { common: 'bau-madeira', rare: 'bau-ferro', epic: 'bau-mistico' };
-const POTION_CHEST = { 1.5: 'bau-madeira', 2: 'bau-ferro', 3: 'bau-mistico' };
+// [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem ÚNICA já
+// pronta, com o TIPO de baú escolhido pelo Davi por item (não é mais
+// Comum/Raro/Épico da Loja — é uma classificação própria dele só pra
+// isto): Madeira (Congelar Missão, Vida Extra), Ferro (Largada Turbo,
+// Poção ×1,5), Ouro (Seguro de Ofensiva, +60s, Escudo, Poção ×2),
+// Místico (Poção ×3, sozinha — o recurso mais raro). Onde existe entrada
+// aqui, usa ISSO como ícone principal da página de recompensa em vez de
+// recurso+baú separados.
+//
+// `FALLBACK_CHEST` só existe pro item que NÃO tem combo ainda: a geração
+// do Seguro de Ofensiva saiu errada (repetiu uma arte antiga em vez de
+// escudo+baú de ouro) — usa o ícone do recurso sozinho + `bau-ouro`
+// direto (a classificação real dele, não mais um cálculo por raridade)
+// até o Davi mandar a arte certa.
+const FALLBACK_CHEST = { powerup_streak_insurance: 'bau-ouro' };
 
-// [Fase 7, sessão 075, D053] Ícones COMBO recurso+baú — imagem ÚNICA já
-// pronta (arte de teste do Davi, baú sempre dourado por enquanto). Onde
-// existe entrada aqui, usa ISSO como ícone principal da página de
-// recompensa em vez de recurso+baú separados (RARITY_CHEST/POTION_CHEST
-// viram fallback só pros itens sem combo ainda: Seguro de Ofensiva e
-// Congelar Missão). Se aprovado, o Davi mesmo vai gerar a versão com o
-// baú variando por raridade — por enquanto é só teste de layout.
 const REWARD_COMBO = {
+  powerup_mission_freeze: 'combo-congelar',
   powerup_life: 'combo-vida-extra',
   powerup_time: 'combo-tempo',
   powerup_shield: 'combo-escudo',
@@ -652,7 +650,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           desc: shopItem.desc,
           rarityLabel: RARITIES[shopItem.rarity]?.label || 'Comum',
           comboArt: REWARD_COMBO[id] || null,
-          chestArt: REWARD_COMBO[id] ? null : (RARITY_CHEST[shopItem.rarity] || 'bau-madeira'),
+          chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },
       });
     });
@@ -668,7 +666,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           desc: `Multiplica seu XP por ${String(potion.multiplier).replace('.', ',')}× por até ${potion.durationMin} minutos.`,
           rarityLabel: POTION_RARITY[potion.multiplier] || 'Especial',
           comboArt: REWARD_COMBO[id] || null,
-          chestArt: REWARD_COMBO[id] ? null : (POTION_CHEST[potion.multiplier] || 'bau-madeira'),
+          chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },
       });
     });

@@ -50,13 +50,14 @@ import bauMoedas from '../assets/icons/bau-moedas.png';
 // em PostGameSummary.jsx).
 import bauRecurso from '../assets/icons/bau-recurso.png';
 import resumoAcertos from '../assets/icons/resumo-acertos.png';
-// [Fase 7, sessão 075, D053] Ícones COMBO recurso+baú — imagem única já
-// pronta (não é mais ícone do recurso + baú escolhido por raridade
-// separados). Arte de teste do Davi, chest sempre dourado por enquanto —
-// se aprovado, ele mesmo vai gerar a versão final com o baú variando por
-// classificação do recurso. Faltam Seguro de Ofensiva e Congelar Missão
-// (sem arte combo ainda) — esses 2 continuam no fallback antigo
-// (RARITY_CHEST/POTION_CHEST + ícone do recurso separado).
+// [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem única já
+// pronta, com o TIPO de baú batendo com a classificação que o Davi deu
+// (Madeira/Ferro/Ouro/Místico, não é mais Comum/Raro/Épico do sistema de
+// raridade da Loja — ver PostGameSummary.jsx REWARD_COMBO). Falta só
+// Seguro de Ofensiva (a geração dele saiu errada — repetiu uma arte
+// antiga em vez de gerar escudo+baú de ouro) — esse continua com ícone
+// do recurso separado + `bau-ouro` até ele mandar a arte certa.
+import comboCongelar from '../assets/icons/combo-congelar.png';
 import comboVidaExtra from '../assets/icons/combo-vida-extra.png';
 import comboTempo from '../assets/icons/combo-tempo.png';
 import comboEscudo from '../assets/icons/combo-escudo.png';
@@ -108,6 +109,7 @@ export const ICONS = {
   'bau-ouro': bauOuro,
   'bau-mistico': bauMistico,
   'bau-recurso': bauRecurso,
+  'combo-congelar': comboCongelar,
   'combo-vida-extra': comboVidaExtra,
   'combo-tempo': comboTempo,
   'combo-escudo': comboEscudo,

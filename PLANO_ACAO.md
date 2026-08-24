@@ -249,37 +249,26 @@ D049 — RNG por peso (1/intervalo médio), leitura do "garantido, pode ser
 múltiplo" pro topo da tabela de tempo, e exclusão do modo Zen do sorteio
 (sem timer, dava pra farmar loot só deixando rodando parado).
 
-### ⚠️ PENDENTE — Baú como EMBALAGEM de recurso (sessão 073, D051, discutir antes de mexer)
+### ✅ Baú como EMBALAGEM de recurso — IMPLEMENTADO (sessão 074, D052)
 
 Davi esclareceu (sessão 073) que a tabela de frequência de baús acima
-**vale só pra baú COM MOEDA** — o baú tem dois usos diferentes e eu tratei
-os dois como um só até aqui:
+**vale só pra baú COM MOEDA** — o baú tem dois usos diferentes:
 
-1. **Baú com moeda** — já implementado certo: 4 tiers, cada um com sua
-   própria frequência e faixa de moedas (`CHESTS` em `constants/loot.js`).
-2. **Baú como embalagem de um recurso** (power-up ou poção) — o baú aqui
-   **não tem frequência própria**. Quem é sorteado é o RECURSO (via
-   `LOOT_POWERUPS`/`LOOT_POTIONS`, isso já está certo); o baú que aparece
-   "por baixo" dele na página de recompensas (Fase 7, página 6) é só
-   decoração/empacotamento — e essa decoração precisa **bater com a
-   patente/raridade do recurso**, não ser aleatória nem sempre a mesma.
-   Exemplo do próprio Davi: uma Poção ×3 (a mais rara das 3) tem que
-   aparecer num Baú Místico, nunca num Baú de Madeira.
+1. **Baú com moeda** — 4 tiers, cada um com sua própria frequência e
+   faixa de moedas (`CHESTS` em `constants/loot.js`).
+2. **Baú como embalagem de um recurso** (power-up ou poção) — sem
+   frequência própria (quem é sorteado é o RECURSO); o baú que aparece
+   "por baixo" dele na página de recompensas (Fase 7, página 6) precisa
+   **bater com a patente/raridade do recurso**. Exemplo do Davi: Poção ×3
+   (a mais rara) → Baú Místico, nunca Madeira.
 
-**Implementado por enquanto (provisório, sessão 073):** ícone genérico
-`bau-recurso` (arte nova do Davi) embaixo de qualquer recurso não-baú,
-sem ligação nenhuma com a raridade — é só um placeholder até isto ser
-estruturado direito.
-
-**Falta decidir (conversar com o Davi antes de implementar):**
-- Mapeamento explícito raridade do recurso → tier do baú-embalagem (ex.:
-  Comum→Madeira, Raro→Ferro, Épico→Ouro, e a poção ×3/itens mais raros →
-  Místico?) — precisa alinhar os 4 tiers de baú contra as raridades que
-  já existem (`RARITIES` em `constants/shop.js`: Comum/Raro/Épico) e as
-  3 poções (que não têm raridade própria hoje, ver `POTION_RARITY` em
-  `PostGameSummary.jsx`)
-- Se esse mapeamento é fixo por item ou calculado dinamicamente a partir
-  de algum campo de raridade que precisa ser adicionado
+**Implementado (sessão 074):** `RARITY_CHEST`/`POTION_CHEST` em
+`PostGameSummary.jsx` — Comum→Madeira, Raro→Ferro, Épico→Místico (Baú de
+Ouro ficou de fora do mapeamento, de propósito — só 3 níveis de raridade
+existem hoje contra 4 tiers de baú, e o único exemplo dado foi
+topo-com-topo; Ouro continua exclusivo do baú-com-moeda). **Sinalizado,
+não formalmente confirmado** — só o ponto do topo veio dele de verdade,
+o resto (Comum→Madeira, Raro→Ferro) foi inferência minha. Ver D052.
 
 ---
 

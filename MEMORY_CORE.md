@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.22 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-073.md)
+**Versão:** 6.0.23 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-074.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.23]** Baú-embalagem de recurso implementado (D052) — o baú que
+"embala" um power-up/poção achado na página de recompensas agora bate
+com a raridade do item (Comum→Madeira, Raro→Ferro, Épico→Místico; Ouro
+fica de fora de propósito, exclusivo do baú-com-moeda), substituindo o
+`bau-recurso` genérico da sessão anterior. Legenda "Encontrado em um
+baú" removida. Ajuste visual: linha divisória da caixa "Resumo do dia"
+(página de Missões) removida, ícones maiores. Ver `sessao-074.md` e D052.
 **[v6.0.22]** Ajustes na Fase 7 a partir do feedback do Davi (D050→D051):
 páginas 1/2/3/5/6 do resumo pós-partida agora aparecem em TODA partida
 (antes a de XP pulava com 0, a de recompensa só existia com loot —
@@ -425,28 +432,31 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — FASE 8 DO `PLANO_ACAO.md` (Painel da Arena)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-073.md` (a mais recente) → `DECISIONS.md` D020-D051.
+`sessions/sessao-074.md` (a mais recente) → `DECISIONS.md` D020-D052.
 
-**Fases 0-7 concluídas** (sessões 064-073; sessão 069 foi um ajuste de
+**Fases 0-7 concluídas** (sessões 064-074; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
-direto do Davi; sessão 073 foi ajuste sobre a Fase 7, não fase nova).
-`PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.
+direto do Davi; sessões 073-074 foram ajustes sobre a Fase 7, não fase
+nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.
 
 **Próxima: Fase 8 (painel central da Arena)** — Davi pediu explicitamente
 pra **começar perguntando o que ele quer**, não propor design pronto
-(mesma lição das sessões 055-058 com a tela de Ligas). Ele mesmo disse
-"vamos resolver essas 4 coisas antes de ir pra 8" (sessão 073) — as 4
-foram resolvidas (3 implementadas, 1 registrada como pendência formal,
-ver Fase 6 do `PLANO_ACAO.md`), então tecnicamente já pode começar.
+(mesma lição das sessões 055-058 com a tela de Ligas). As 4 coisas que
+ele pediu pra resolver antes (sessão 073) já foram, incluindo o
+baú-embalagem (sessão 074, D052) — pode começar a Fase 8.
 
 **Ainda em aberto (não é bloqueio, é pendência leve):**
 - Davi mencionou "vou mencionar todas as conquistas" (sessão 073,
   provavelmente ícones específicos por conquista) mas a lista não chegou
   a vir na mensagem — perguntar se ele ainda quer mandar antes de mexer
   em ícones de conquista
-- Mapeamento raridade do recurso → tier do baú-embalagem (D051) — ele
-  quer conversar/estruturar antes de implementar, não é pra propor
-  sozinho
+- Mapeamento raridade→baú (D052) foi implementado, mas só o ponto do
+  topo (Poção ×3→Místico) veio confirmado do Davi de verdade — o resto
+  (Comum→Madeira, Raro→Ferro, Ouro fora do mapeamento) foi inferência
+  minha, sinalizada, não confirmada
+- Linha divisória do box "Desempenho" (página 1 do resumo pós-partida)
+  não foi removida — só a do "Resumo do dia" foi, por pedido específico
+  dele (sessão 074); perguntar se quer o mesmo ali
 
 **Pendente de verificação real (D034, sempre a mesma limitação):** Fase 7
 inteira só foi testada via ferramentas de DEV (`?screen=results&full=1`),
@@ -585,8 +595,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-073.md` — última sessão → `sessions/sessao-072.md` → `sessions/sessao-071.md`
-6. `DECISIONS.md` D020-D051 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-074.md` — última sessão → `sessions/sessao-073.md` → `sessions/sessao-072.md`
+6. `DECISIONS.md` D020-D052 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

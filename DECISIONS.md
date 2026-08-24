@@ -2086,6 +2086,57 @@ reconstruir XP histórico de sessões antigas.
 
 ---
 
+## D052 — Baú como embalagem de recurso (implementado) + ajustes visuais
+
+**Data:** 2026-08-24 · sessao-074
+
+Depois de registrar a pendência no D051, Davi olhou o resultado da sessão
+073 rodando e pediu 2 ajustes visuais pontuais, e liberou a implementação
+do baú-embalagem que tinha ficado só no plano.
+
+**1. Ajuste visual — "Resumo do dia".** A linha divisória vertical entre
+Acertos e XP Ganho saiu (era `<div className="w-px h-8 bg-border" />`),
+e os dois ícones (`resumo-acertos`, `Zap`) foram de 22px pra 32px. **Não
+mexi** no box "Desempenho" da página 1 (Acertos/Erros), que tem o mesmo
+padrão de linha — só a caixa que ele mostrou no print foi ajustada;
+sinalizando aqui caso ele queira a mesma coisa lá.
+
+**2. Baú-embalagem de recurso — implementado.** O tier do baú que aparece
+na página de recompensa agora bate com a raridade do item, em vez do
+`bau-recurso` genérico de antes:
+- `RARITY_CHEST = { common: 'bau-madeira', rare: 'bau-ferro', epic:
+  'bau-mistico' }` — usa a `rarity` que `SHOP_ITEMS` já tem
+- `POTION_CHEST = { 1.5: 'bau-madeira', 2: 'bau-ferro', 3: 'bau-mistico'
+  }` — poções não têm campo de raridade próprio, mapeado direto pelo
+  multiplicador
+- **Baú de OURO ficou de fora do mapeamento, de propósito.** Só existem 3
+  níveis de raridade pros recursos hoje (Comum/Raro/Épico), contra 4
+  tiers de baú — e o único exemplo concreto que o Davi deu foi "Poção ×3
+  (a mais rara) → Baú Místico", ou seja, o TOPO da raridade bate com o
+  TOPO do baú. Isso deixa Ouro sem par — decidi mantê-lo exclusivo do
+  baú-COM-MOEDA da Fase 6, em vez de inventar uma 4ª faixa de raridade
+  que ninguém pediu. **Sinalizado, não formalmente confirmado** — só o
+  ponto do topo (×3→Místico) veio dele de verdade.
+- A legenda "Encontrado em um baú" foi removida a pedido dele — o ícone
+  do baú certo já comunica sozinho.
+- `bau-recurso` (o ícone genérico da sessão 073) não ficou órfão: agora é
+  usado só na página "Nada desta vez" (partida sem loot).
+
+**Verificado:**
+- `npm run build` limpo
+- "Resumo do dia" sem linha divisória, ícones maiores (confirmado via
+  `?screen=results&page=2`)
+- Vida Extra (Comum) → `bau-madeira`; Poção ×1,5 (Comum) → `bau-madeira`
+  — confirmado via `?screen=results&full=1&page=8/9`, 0 imagem quebrada,
+  sem legenda de texto
+- Mapeamento completo (Comum/Raro/Épico × 3 tiers de baú) confirmado por
+  simulação isolada da tabela — bate exatamente com o pedido (topo→topo)
+- **Não verificado ao vivo:** power-up Raro/Épico e poção ×2/×3 rendendo
+  Ferro/Místico numa tela real (o cenário de teste só tem itens Comuns) —
+  a tabela em si já foi conferida por fora, risco baixo
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

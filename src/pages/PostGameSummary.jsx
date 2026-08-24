@@ -51,6 +51,18 @@ const LOOT_GENDER = {
 const POTION_RARITY = { 1.5: 'Comum', 2: 'Raro', 3: 'Épico' };
 const CHEST_RARITY = { 'bau-madeira': 'Comum', 'bau-ferro': 'Raro', 'bau-ouro': 'Épico', 'bau-mistico': 'Lendário' };
 
+// [Fase 6, sessão 074, D052] Baú como EMBALAGEM de recurso — o tier do
+// baú que aparece na página de recompensa agora bate com a raridade do
+// recurso, não é mais genérico. Davi deu 1 exemplo (Poção ×3, a mais rara
+// das 3, tem que vir num Baú Místico) — dessa âncora derivei o resto:
+// Comum→Madeira, Raro→Ferro, Épico→Místico. Baú de OURO fica de fora de
+// propósito: só existem 3 níveis de raridade pros recursos hoje (contra 4
+// tiers de baú), e Místico já é a âncora confirmada pro topo — Ouro
+// continua exclusivo do baú-COM-MOEDA da Fase 6. Mapeamento sinalizado,
+// não formalmente confirmado por ele (só o exemplo do topo foi dado).
+const RARITY_CHEST = { common: 'bau-madeira', rare: 'bau-ferro', epic: 'bau-mistico' };
+const POTION_CHEST = { 1.5: 'bau-madeira', 2: 'bau-ferro', 3: 'bau-mistico' };
+
 function Confetti() {
   const dots = [
     { x: -70, y: -10, color: 'bg-coin', shape: 'rounded-full', rotate: 0 },
@@ -250,17 +262,16 @@ function MissionsProgressPage({ footer }) {
         })}
       </div>
       <StatBox label="Resumo do dia">
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-8">
           <div className="flex items-center gap-2">
-            <GameIcon name="resumo-acertos" size={22} />
+            <GameIcon name="resumo-acertos" size={32} />
             <div className="text-left">
               <p className="text-xl font-black text-accent leading-none">{todayCorrect}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">Acertos</p>
             </div>
           </div>
-          <div className="w-px h-8 bg-border" />
           <div className="flex items-center gap-2">
-            <Zap size={22} className="text-coin" fill="currentColor" />
+            <Zap size={32} className="text-coin" fill="currentColor" />
             <div className="text-left">
               <p className="text-xl font-black text-coin leading-none">{todayXp}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">XP ganho</p>
@@ -507,12 +518,12 @@ function RewardPage({ item, footer }) {
       <StatBox label="Classificação">
         <p className="text-lg font-black text-coin text-center">{item.rarityLabel}</p>
       </StatBox>
-      {item.showChestBadge && (
-        <div className="flex items-center justify-center gap-2 opacity-70">
-          {/* [D051] Baú GENÉRICO de decoração — ainda não amarrado à
-              raridade do recurso, ver pendência no PLANO_ACAO.md */}
-          <GameIcon name="bau-recurso" size={26} />
-          <span className="text-xs font-bold text-fg-muted">Encontrado em um baú</span>
+      {/* [Fase 6, sessão 074, D052] Baú-embalagem — o TIER bate com a
+          raridade do recurso (RARITY_CHEST/POTION_CHEST), sem legenda —
+          o ícone certo já comunica sozinho de onde veio. */}
+      {item.chestArt && (
+        <div className="flex items-center justify-center">
+          <GameIcon name={item.chestArt} size={48} />
         </div>
       )}
     </SummaryShell>
@@ -602,7 +613,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: chest?.name || 'Baú',
           desc: `Continha ${c.coins} moedas!`,
           rarityLabel: CHEST_RARITY[c.id] || 'Especial',
-          showChestBadge: false,
+          chestArt: null, // já É o baú, não embala outro
         },
       });
     });
@@ -617,7 +628,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: shopItem.name,
           desc: shopItem.desc,
           rarityLabel: RARITIES[shopItem.rarity]?.label || 'Comum',
-          showChestBadge: true,
+          chestArt: RARITY_CHEST[shopItem.rarity] || 'bau-madeira',
         },
       });
     });
@@ -632,7 +643,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: potion.name,
           desc: `Multiplica seu XP por ${String(potion.multiplier).replace('.', ',')}× por até ${potion.durationMin} minutos.`,
           rarityLabel: POTION_RARITY[potion.multiplier] || 'Especial',
-          showChestBadge: true,
+          chestArt: POTION_CHEST[potion.multiplier] || 'bau-madeira',
         },
       });
     });

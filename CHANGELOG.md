@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.23] — 2026-08-24 — Baú-embalagem por raridade + ajustes visuais
+
+**Detalhes em `sessions/sessao-074.md` e `DECISIONS.md` (D052).**
+
+### Adicionado
+- Baú que "embala" um power-up/poção achado agora bate com a raridade
+  do item (Comum→Madeira, Raro→Ferro, Épico→Místico) — antes era um
+  ícone genérico sem relação nenhuma com o item
+- Legenda "Encontrado em um baú" removida — o ícone certo já comunica
+
+### Alterado
+- Caixa "Resumo do dia" (página de Missões): linha divisória removida,
+  ícones maiores
+
+---
+
 ## [6.0.22] — 2026-08-24 — Ajustes na Fase 7 (feedback do Davi)
 
 **Detalhes em `sessions/sessao-073.md` e `DECISIONS.md` (D051).**

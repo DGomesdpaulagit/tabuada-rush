@@ -43,11 +43,11 @@ import bauFerro from '../assets/icons/bau-ferro.png';
 import bauOuro from '../assets/icons/bau-ouro.png';
 import bauMistico from '../assets/icons/bau-mistico.png';
 import bauMoedas from '../assets/icons/bau-moedas.png';
-// [Fase 7, sessão 073] `bau-recurso`: baú GENÉRICO usado só como decoração
-// embaixo de recompensas que NÃO são baú (power-up/poção) no resumo
-// pós-partida — diferente de bau-madeira/ferro/ouro/mistico, que são os
-// baús de MOEDA sorteados pela Fase 6 (ver D050/D051, ainda não amarrado
-// à raridade do recurso — pendência registrada no PLANO_ACAO.md).
+// [Fase 7, sessão 073] `bau-recurso`: baú GENÉRICO — desde a sessão 074
+// (D052) só usado na página "Nada desta vez" (partida sem loot nenhum);
+// a decoração de recompensa achada agora usa bau-madeira/ferro/mistico de
+// verdade, escolhido pela raridade do recurso (RARITY_CHEST/POTION_CHEST
+// em PostGameSummary.jsx).
 import bauRecurso from '../assets/icons/bau-recurso.png';
 import resumoAcertos from '../assets/icons/resumo-acertos.png';
 import divisaoBloqueada from '../assets/icons/divisao-bloqueada.png';

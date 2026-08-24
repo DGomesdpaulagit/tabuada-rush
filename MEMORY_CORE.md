@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.23 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-074.md)
+**Versão:** 6.0.24 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-075.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,15 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.24]** Ícones COMBO recurso+baú (D053) — TESTE, pendente de
+aprovação visual do Davi. Ele baixou arte de verdade com o recurso e o
+baú já fundidos numa imagem só (Vida Extra, +60s, Escudo, Largada Turbo,
+Poção ×1,5/×2/×3, todos em baú DOURADO) e pediu pra testar o layout antes
+de gerar o conjunto completo. Onde existe ícone combo, a página de
+recompensa usa ele como imagem principal, substituindo o
+recurso+baú-por-raridade separados do D052 (que vira fallback só pros 2
+power-ups sem combo ainda: Seguro de Ofensiva, Congelar Missão). Ver
+`sessao-075.md` e D053.
 **[v6.0.23]** Baú-embalagem de recurso implementado (D052) — o baú que
 "embala" um power-up/poção achado na página de recompensas agora bate
 com a raridade do item (Comum→Madeira, Raro→Ferro, Épico→Místico; Ouro
@@ -432,31 +441,35 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — FASE 8 DO `PLANO_ACAO.md` (Painel da Arena)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-074.md` (a mais recente) → `DECISIONS.md` D020-D052.
+`sessions/sessao-075.md` (a mais recente) → `DECISIONS.md` D020-D053.
 
-**Fases 0-7 concluídas** (sessões 064-074; sessão 069 foi um ajuste de
+**Fases 0-7 concluídas** (sessões 064-075; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
-direto do Davi; sessões 073-074 foram ajustes sobre a Fase 7, não fase
+direto do Davi; sessões 073-075 foram ajustes sobre a Fase 7, não fase
 nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.
 
-**Próxima: Fase 8 (painel central da Arena)** — Davi pediu explicitamente
-pra **começar perguntando o que ele quer**, não propor design pronto
-(mesma lição das sessões 055-058 com a tela de Ligas). As 4 coisas que
-ele pediu pra resolver antes (sessão 073) já foram, incluindo o
-baú-embalagem (sessão 074, D052) — pode começar a Fase 8.
+**Bloqueado antes de ir pra Fase 8 (sessão 075):** os ícones COMBO
+recurso+baú (D053) são um TESTE — Davi ainda não aprovou visualmente. Se
+ele pedir ajuste, mexer antes de seguir. Se aprovar, ele vai gerar o
+conjunto completo (recurso+baú variando por raridade nativo na arte) —
+quando isso vier, trocar `REWARD_COMBO` (`PostGameSummary.jsx`) pelos
+arquivos novos e o `RARITY_CHEST`/`POTION_CHEST` do D052 pode ser
+removido de vez (só existe hoje como fallback pros itens sem combo).
 
 **Ainda em aberto (não é bloqueio, é pendência leve):**
 - Davi mencionou "vou mencionar todas as conquistas" (sessão 073,
   provavelmente ícones específicos por conquista) mas a lista não chegou
-  a vir na mensagem — perguntar se ele ainda quer mandar antes de mexer
-  em ícones de conquista
-- Mapeamento raridade→baú (D052) foi implementado, mas só o ponto do
-  topo (Poção ×3→Místico) veio confirmado do Davi de verdade — o resto
-  (Comum→Madeira, Raro→Ferro, Ouro fora do mapeamento) foi inferência
-  minha, sinalizada, não confirmada
+  a vir na mensagem — perguntar se ele ainda quer mandar
+- Seguro de Ofensiva e Congelar Missão ainda sem ícone combo (D053) —
+  ficam no fallback de raridade até ele gerar a arte deles também
 - Linha divisória do box "Desempenho" (página 1 do resumo pós-partida)
   não foi removida — só a do "Resumo do dia" foi, por pedido específico
   dele (sessão 074); perguntar se quer o mesmo ali
+
+**Próxima (depois do acima resolvido): Fase 8 (painel central da
+Arena)** — Davi pediu explicitamente pra **começar perguntando o que ele
+quer**, não propor design pronto (mesma lição das sessões 055-058 com a
+tela de Ligas).
 
 **Pendente de verificação real (D034, sempre a mesma limitação):** Fase 7
 inteira só foi testada via ferramentas de DEV (`?screen=results&full=1`),
@@ -595,8 +608,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-074.md` — última sessão → `sessions/sessao-073.md` → `sessions/sessao-072.md`
-6. `DECISIONS.md` D020-D052 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-075.md` — última sessão → `sessions/sessao-074.md` → `sessions/sessao-073.md`
+6. `DECISIONS.md` D020-D053 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

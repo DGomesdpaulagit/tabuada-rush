@@ -50,6 +50,20 @@ import bauMoedas from '../assets/icons/bau-moedas.png';
 // em PostGameSummary.jsx).
 import bauRecurso from '../assets/icons/bau-recurso.png';
 import resumoAcertos from '../assets/icons/resumo-acertos.png';
+// [Fase 7, sessão 075, D053] Ícones COMBO recurso+baú — imagem única já
+// pronta (não é mais ícone do recurso + baú escolhido por raridade
+// separados). Arte de teste do Davi, chest sempre dourado por enquanto —
+// se aprovado, ele mesmo vai gerar a versão final com o baú variando por
+// classificação do recurso. Faltam Seguro de Ofensiva e Congelar Missão
+// (sem arte combo ainda) — esses 2 continuam no fallback antigo
+// (RARITY_CHEST/POTION_CHEST + ícone do recurso separado).
+import comboVidaExtra from '../assets/icons/combo-vida-extra.png';
+import comboTempo from '../assets/icons/combo-tempo.png';
+import comboEscudo from '../assets/icons/combo-escudo.png';
+import comboLargada from '../assets/icons/combo-largada.png';
+import comboPocao1 from '../assets/icons/combo-pocao-1.png';
+import comboPocao2 from '../assets/icons/combo-pocao-2.png';
+import comboPocao3 from '../assets/icons/combo-pocao-3.png';
 import divisaoBloqueada from '../assets/icons/divisao-bloqueada.png';
 import missaoTravada from '../assets/icons/missao-travada.png';
 import ligaBronze from '../assets/icons/liga-bronze.png';
@@ -94,6 +108,13 @@ export const ICONS = {
   'bau-ouro': bauOuro,
   'bau-mistico': bauMistico,
   'bau-recurso': bauRecurso,
+  'combo-vida-extra': comboVidaExtra,
+  'combo-tempo': comboTempo,
+  'combo-escudo': comboEscudo,
+  'combo-largada': comboLargada,
+  'combo-pocao-1': comboPocao1,
+  'combo-pocao-2': comboPocao2,
+  'combo-pocao-3': comboPocao3,
   'resumo-acertos': resumoAcertos,
   'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
   'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer

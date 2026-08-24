@@ -2137,6 +2137,71 @@ na página de recompensa agora bate com a raridade do item, em vez do
 
 ---
 
+## D053 — Ícones COMBO recurso+baú (teste, pendente de aprovação visual)
+
+**Data:** 2026-08-24 · sessao-075
+
+Davi mandou 3 imagens de referência (grade de 6 + Vida Extra sozinha +
+o ícone de "parte3" já usado antes) e explicou que baixou arquivos de
+verdade com o recurso e o baú **já fundidos numa imagem só** (não é mais
+ícone do recurso + baú escolhido por raridade, separados como o D052
+tinha feito). Ele mesmo notou que a "parte 3" (o `bau-recurso` genérico
+que eu já tinha usado) está com um estilo de baú DIFERENTE (madeira) do
+resto (dourado) — inconsistência que ele já sabia e quer resolver depois
+de validar o layout.
+
+**Pedido dele, seguido à risca:** botar esses ícones prontos pra TESTAR o
+layout; se aprovar, ele mesmo gera a versão completa e definitiva (com o
+baú variando por classificação — o que o D052 tentou fazer via código,
+mas ele quer fazer via ARTE de verdade, gerada por IA, não por regra de
+código escolhendo entre 4 baús genéricos).
+
+**Implementação:**
+1. Reescaneei o Downloads, achei `icones_para_a_pagina_de_recompensas_parte1.png`
+   (Vida Extra sozinha) e `parte2.png` (grade 3×2: +60s, Escudo, Largada
+   Turbo, Poção ×1,5/×2/×3). Processados com o mesmo pipeline de sempre
+   (flood fill + recorte) — a grade foi fatiada em 6 células por posição
+   fixa (2 colunas × 3 linhas), conferido visualmente que nenhuma
+   ficou cortada errado.
+2. Registrados 7 ícones novos: `combo-vida-extra`, `combo-tempo`,
+   `combo-escudo`, `combo-largada`, `combo-pocao-1/2/3`.
+3. `REWARD_COMBO` (`PostGameSummary.jsx`) — mapa id→ícone combo. Onde
+   existe entrada, `RewardPage` usa ESSA imagem como ícone principal
+   (maior, 168px, sem o círculo colorido de fundo — a imagem já é o
+   "cartão" inteiro) e não mostra mais o baú separado do D052 nem
+   legenda nenhuma.
+4. **Faltam 2:** Seguro de Ofensiva e Congelar Missão não têm ícone combo
+   ainda (não vieram no material que ele mandou) — continuam no fallback
+   do D052 (ícone do recurso sozinho + baú escolhido por
+   `RARITY_CHEST`/`POTION_CHEST`) até ele gerar a arte deles também.
+
+**Isto é um TESTE, não uma decisão fechada** — o próprio Davi enquadrou
+assim ("quero que vc coloque esse ícone pra testar, se der certo faço a
+geração"). Se ele aprovar o layout, o próximo passo é ele gerar o
+conjunto completo com o baú variando por raridade nativamente na arte —
+nesse caso o mapeamento por código do D052 (`RARITY_CHEST`/`POTION_CHEST`)
+deixa de ser necessário pra sempre (só sobra como fallback teórico pra
+item sem arte).
+
+**Verificado:**
+- `npm run build` limpo
+- Os 7 recortes da folha conferidos visualmente antes de registrar — sem
+  corte errado, fundo transparente, nenhum vazamento de sparkle entre
+  células
+- `combo-vida-extra` e `combo-pocao-1` carregam sem erro na página de
+  recompensa (`?screen=results&full=1&page=8/9`), 0 imagem quebrada, sem
+  legenda de texto sobrando
+- Ícone renderiza em 168×168 via `object-contain` (mesmo componente
+  `GameIcon` de sempre) — preserva proporção, sem esticar, só sobra
+  espaço nas laterais por a imagem não ser quadrada (comportamento já
+  existente do componente, não é bug novo)
+- **Não verificado:** aprovação visual do próprio Davi (o objetivo desta
+  sessão é justamente ele ver e decidir se aprova antes de investir em
+  gerar o conjunto completo) — e os 2 power-ups sem combo (fallback do
+  D052, não re-testado nesta sessão).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

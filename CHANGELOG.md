@@ -4,6 +4,24 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.24] — 2026-08-24 — Ícones combo recurso+baú (teste, pendente de aprovação)
+
+**Detalhes em `sessions/sessao-075.md` e `DECISIONS.md` (D053).**
+
+### Adicionado
+- 7 ícones novos onde recurso+baú já vêm fundidos numa imagem só (arte
+  do Davi): Vida Extra, +60s, Escudo, Largada Turbo, Poção ×1,5/×2/×3
+- Página de recompensa usa esses ícones combo quando disponíveis, no
+  lugar do recurso+baú separados por código (D052)
+
+### Pendente
+- Aprovação visual do Davi — é um teste de layout antes de ele gerar o
+  conjunto completo com o baú variando por raridade
+- Seguro de Ofensiva e Congelar Missão ainda sem ícone combo — continuam
+  no fallback do D052
+
+---
+
 ## [6.0.23] — 2026-08-24 — Baú-embalagem por raridade + ajustes visuais
 
 **Detalhes em `sessions/sessao-074.md` e `DECISIONS.md` (D052).**

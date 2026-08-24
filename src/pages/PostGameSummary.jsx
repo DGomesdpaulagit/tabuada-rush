@@ -63,6 +63,23 @@ const CHEST_RARITY = { 'bau-madeira': 'Comum', 'bau-ferro': 'Raro', 'bau-ouro': 
 const RARITY_CHEST = { common: 'bau-madeira', rare: 'bau-ferro', epic: 'bau-mistico' };
 const POTION_CHEST = { 1.5: 'bau-madeira', 2: 'bau-ferro', 3: 'bau-mistico' };
 
+// [Fase 7, sessão 075, D053] Ícones COMBO recurso+baú — imagem ÚNICA já
+// pronta (arte de teste do Davi, baú sempre dourado por enquanto). Onde
+// existe entrada aqui, usa ISSO como ícone principal da página de
+// recompensa em vez de recurso+baú separados (RARITY_CHEST/POTION_CHEST
+// viram fallback só pros itens sem combo ainda: Seguro de Ofensiva e
+// Congelar Missão). Se aprovado, o Davi mesmo vai gerar a versão com o
+// baú variando por raridade — por enquanto é só teste de layout.
+const REWARD_COMBO = {
+  powerup_life: 'combo-vida-extra',
+  powerup_time: 'combo-tempo',
+  powerup_shield: 'combo-escudo',
+  powerup_headstart: 'combo-largada',
+  'pocao-xp-1': 'combo-pocao-1',
+  'pocao-xp-2': 'combo-pocao-2',
+  'pocao-xp-3': 'combo-pocao-3',
+};
+
 function Confetti() {
   const dots = [
     { x: -70, y: -10, color: 'bg-coin', shape: 'rounded-full', rotate: 0 },
@@ -85,7 +102,7 @@ function Confetti() {
 }
 
 // ── CASCA COMUM DE TODA PÁGINA ────────────────────────────────────────────────
-function SummaryShell({ icon, iconBg, title, subtitle, children, footer }) {
+function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', title, subtitle, children, footer }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 24 }}
@@ -96,7 +113,7 @@ function SummaryShell({ icon, iconBg, title, subtitle, children, footer }) {
     >
       <div className="flex-1 flex flex-col items-center text-center gap-3">
         <Confetti />
-        <div className={`w-24 h-24 rounded-full flex items-center justify-center shrink-0 ${iconBg}`}>
+        <div className={`flex items-center justify-center shrink-0 ${iconWrapClass} ${iconBg}`}>
           {icon}
         </div>
         <h1 className="text-3xl font-black text-coin leading-tight px-4">{title}</h1>
@@ -506,11 +523,17 @@ function AchievementsPage({ footer }) {
 function RewardPage({ item, footer }) {
   const gender = LOOT_GENDER[item.id] || 'm';
   const article = gender === 'f' ? 'uma' : 'um';
+  // [Fase 7, sessão 075, D053] Com ícone combo (recurso+baú numa imagem só),
+  // não faz sentido o círculo colorido por trás — a imagem já é o "cartão"
+  // inteiro. Sem combo (só os 2 power-ups que ainda não têm arte), mantém o
+  // círculo com o ícone do recurso sozinho, igual antes.
+  const hasCombo = !!item.comboArt;
 
   return (
     <SummaryShell
-      icon={<GameIcon name={item.art} size={72} />}
-      iconBg="bg-coin/20"
+      icon={<GameIcon name={hasCombo ? item.comboArt : item.art} size={hasCombo ? 168 : 72} />}
+      iconBg={hasCombo ? '' : 'bg-coin/20'}
+      iconWrapClass={hasCombo ? 'w-auto h-auto' : 'w-24 h-24 rounded-full'}
       title={`Você ganhou ${article} ${item.name}!`}
       subtitle={item.desc}
       footer={footer}
@@ -518,10 +541,9 @@ function RewardPage({ item, footer }) {
       <StatBox label="Classificação">
         <p className="text-lg font-black text-coin text-center">{item.rarityLabel}</p>
       </StatBox>
-      {/* [Fase 6, sessão 074, D052] Baú-embalagem — o TIER bate com a
-          raridade do recurso (RARITY_CHEST/POTION_CHEST), sem legenda —
-          o ícone certo já comunica sozinho de onde veio. */}
-      {item.chestArt && (
+      {/* [Fase 6, sessão 074, D052] Fallback pros 2 power-ups sem ícone
+          combo ainda — baú separado, TIER bate com a raridade do recurso. */}
+      {!hasCombo && item.chestArt && (
         <div className="flex items-center justify-center">
           <GameIcon name={item.chestArt} size={48} />
         </div>
@@ -613,6 +635,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: chest?.name || 'Baú',
           desc: `Continha ${c.coins} moedas!`,
           rarityLabel: CHEST_RARITY[c.id] || 'Especial',
+          comboArt: null,
           chestArt: null, // já É o baú, não embala outro
         },
       });
@@ -628,7 +651,8 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: shopItem.name,
           desc: shopItem.desc,
           rarityLabel: RARITIES[shopItem.rarity]?.label || 'Comum',
-          chestArt: RARITY_CHEST[shopItem.rarity] || 'bau-madeira',
+          comboArt: REWARD_COMBO[id] || null,
+          chestArt: REWARD_COMBO[id] ? null : (RARITY_CHEST[shopItem.rarity] || 'bau-madeira'),
         },
       });
     });
@@ -643,7 +667,8 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: potion.name,
           desc: `Multiplica seu XP por ${String(potion.multiplier).replace('.', ',')}× por até ${potion.durationMin} minutos.`,
           rarityLabel: POTION_RARITY[potion.multiplier] || 'Especial',
-          chestArt: POTION_CHEST[potion.multiplier] || 'bau-madeira',
+          comboArt: REWARD_COMBO[id] || null,
+          chestArt: REWARD_COMBO[id] ? null : (POTION_CHEST[potion.multiplier] || 'bau-madeira'),
         },
       });
     });

@@ -3,6 +3,12 @@
 // é o "intervalo médio de partidas" de cada item — usado por utils/loot.js
 // pra derivar tanto a chance individual (1/média) quanto o peso relativo
 // dentro da própria categoria (baú/power-up/poção).
+//
+// ⚠️ CHECKLIST AO ADICIONAR ITEM DE LOOT NOVO AQUI (pedido explícito do
+// Davi, sessão 073, D051): também adicionar o `id` na tabela `LOOT_GENDER`
+// de `pages/PostGameSummary.jsx` (gênero gramatical da frase "Você ganhou
+// um(a) [nome]" da página de recompensas) — sem isso cai no masculino por
+// padrão, pode sair errado.
 
 export const CHESTS = [
   { id: 'bau-madeira', art: 'bau-madeira', name: 'Baú de Madeira',  intervalMin: 3,  intervalMax: 10, coinMin: 10,  coinMax: 100 },

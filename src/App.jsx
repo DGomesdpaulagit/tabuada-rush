@@ -621,6 +621,14 @@ export default function App() {
           wrong: result.wrong,
           avgMs: result.avgMs || 0, // tempo médio de resposta da partida (ms)
           date: new Date().toISOString(),
+          // [Fase 7, sessão 073] `date` acima é UTC (D040) — não dá pra
+          // filtrar "sessões de hoje" com ele sem herdar o mesmo bug de
+          // fuso. `localDate` é aditivo (não mexe em quem já lê `date`),
+          // usado pelo "resumo do dia" da página de Missões do resumo
+          // pós-partida. `xp` também é novo — sessions antigas não têm
+          // (fica `undefined`, tratado como 0 na soma).
+          localDate: today,
+          xp: gameXp,
         };
         const sessions = [...(prev.sessions || []), session].slice(-100);
 

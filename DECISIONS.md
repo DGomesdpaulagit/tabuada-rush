@@ -2007,6 +2007,85 @@ D034, nunca foi possível clicar "Rush" de verdade neste ambiente):
 
 ---
 
+## D051 — Ajustes na Fase 7 a partir do feedback do Davi sobre o D050
+
+**Data:** 2026-08-24 · sessao-073
+
+Davi respondeu às 4 decisões sinalizadas no D050, um por um.
+
+**1. Baú como embalagem de recurso.** Ele esclareceu uma regra de design
+que eu não tinha entendido: o baú tem DOIS usos — baú COM MOEDA (a
+tabela de frequência da Fase 6, `CHESTS`, já certa) e baú como
+EMBALAGEM de um power-up/poção (decoração da página 6, sem frequência
+própria — quem é sorteado é o recurso, o baú só "veste" ele). Nesse 2º
+caso, o TIER do baú-embalagem precisa bater com a raridade do recurso
+(ex.: Poção ×3 → Baú Místico, nunca Madeira) — isso ainda **não está
+implementado** (o ícone `bau-recurso` usado agora é genérico, sem ligação
+com raridade nenhuma) e o próprio Davi pediu pra **não implementar ainda**
+("temos que estruturar melhor... resolver e conversar depois") — só
+registrar no `PLANO_ACAO.md` como pendência formal (feito, ver seção nova
+dentro da Fase 6 no plano).
+
+**2. Gênero gramatical — virou padrão de projeto.** Davi pediu
+explicitamente pra não deixar ele esquecer de atualizar `LOOT_GENDER`
+quando um recurso novo for adicionado. Adicionei o aviso ⚠️ em 3 lugares:
+o topo de `SHOP_ITEMS` e de `POTIONS` (`constants/shop.js`), o topo de
+`CHESTS` (`constants/loot.js`), e reforcei o comentário da própria
+`LOOT_GENDER` (`PostGameSummary.jsx`) — qualquer um desses 4 pontos que
+eu (ou uma sessão futura) olhar ao adicionar item novo já avisa.
+
+**3. Usar os PNGs baixados de verdade.** Davi confirmou que o restante
+dos ícones (além dos 4 novos já usados na sessão 069) estava mesmo só no
+Downloads — reescaneei a pasta, achei de novo os únicos 2 arquivos
+relevantes que sobravam sem uso: `icone_de_acertos-missões-tela_resumo_da_tarefa.png`
+(alvo verde) e `icones_para_a_pagina_de_recompensas_parte3.png` (baú de
+madeira com item emergindo). Processados (flood fill + recorte, mesmo
+pipeline de sempre) e registrados como `resumo-acertos` (usado nas
+páginas 1/2 no lugar do `Target` da lucide) e `bau-recurso` (usado como
+decoração genérica na página 6 no lugar do `bau-madeira` emprestado).
+**Não havia arquivo novo pro ícone de "Erros"** — continua lucide `X`
+vermelho, não tem PNG baixado equivalente.
+
+**Clarificação da ordem das páginas:** Davi confirmou que as páginas
+1/2/3/5/6 aparecem em TODA partida, mesmo sem conteúdo — não é "só
+mostra se tiver algo". Troquei a condição da página de XP (antes só
+aparecia se `gameXp > 0`, agora sempre aparece, mostrando 0 no Zen) e
+criei uma página nova "Nada desta vez" (`RewardEmptyPage`) que substitui
+a ausência de páginas de recompensa quando a partida não deu loot nenhum
+— antes essa página simplesmente não existia nesse cenário.
+
+Ele também mencionou "vou mencionar todas as conquistas" pretendendo
+listar algo (provavelmente ícones específicos por conquista), mas a lista
+não veio na mensagem — fica pendente até ele mandar.
+
+**4. Resumo do dia — implementado.** Precisava de um agregado diário que
+não existia. Adicionei 2 campos NOVOS e aditivos ao objeto `session`
+(`App.jsx`, dentro do array `data.sessions`): `localDate` (data local,
+`todayStr()` — evita o mesmo bug de fuso do `date` em ISO/UTC, D040) e
+`xp` (o `gameXp` real da partida). Não mexi no campo `date` existente
+(ISO/UTC) pra não quebrar quem já lê ele em outras telas (Catálogo de
+Precisão, Estatísticas, etc.) — é puramente aditivo. A página de Missões
+agora filtra `data.sessions` por `localDate === todayStr()` e soma
+`correct`/`xp`. **Limitação assumida:** sessões salvas ANTES desta sessão
+não têm esses 2 campos (`undefined` vira 0 na soma) — o resumo do dia só
+fica completo pra partidas jogadas a partir de agora, não dá pra
+reconstruir XP histórico de sessões antigas.
+
+**Verificado:**
+- `npm run build` limpo
+- `resumo-acertos`/`bau-recurso` carregam sem erro nas páginas 1/2/6
+  (`?screen=results&full=1&page=1` e `page=8`)
+- Cenário sem `?full=1` (mínimo): 5 páginas agora (score, xp, missões,
+  conquistas, "Nada desta vez") — a última mostra as 3 ações finais
+  corretamente
+- "Resumo do dia" aparece na página de Missões com 0/0 (esperado — este
+  browser de teste não tem sessões com os campos novos ainda)
+- **Não verificado:** o mapeamento raridade→baú (pendência formal, não
+  implementado por pedido dele) e uma partida real registrando
+  `localDate`/`xp` de verdade numa sessão nova (D034, mesma limitação).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

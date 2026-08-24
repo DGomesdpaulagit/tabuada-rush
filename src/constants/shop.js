@@ -35,6 +35,12 @@ export const RARITIES = {
 // confundir com `category`, que é a aba dentro da própria Loja — hoje só
 // existe 'powerup' ali). Grupos exatos que o Davi definiu no PLANO_ACAO.md:
 // Arena / Vida / Ofensiva / Missões.
+//
+// ⚠️ CHECKLIST AO ADICIONAR ITEM NOVO AQUI (pedido explícito do Davi,
+// sessão 073, D051): também adicionar o `id` na tabela `LOOT_GENDER` de
+// `pages/PostGameSummary.jsx` (gênero gramatical pra frase "Você ganhou
+// um(a) [nome]" da página de recompensas) — sem isso o item cai no
+// masculino por padrão, pode sair errado.
 
 export const SHOP_ITEMS = [
 
@@ -151,6 +157,8 @@ export const MOCHILA_GROUPS = [
 // `art` reaproveita os 3 ícones fatiados na sessão 065 (tubo=x1,5,
 // erlenmeyer=x2, redonda=x3 — mapeamento por formato, confirmado por ele).
 // Preços TRIPLICADOS a pedido do Davi (sessão 072) — eram 100/250/450.
+// ⚠️ Poção nova aqui → adicionar também em `LOOT_GENDER`
+// (`pages/PostGameSummary.jsx`), mesmo checklist do topo do arquivo (D051).
 export const POTIONS = [
   {
     id: 'pocao-xp-1',

@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.22] — 2026-08-24 — Ajustes na Fase 7 (feedback do Davi)
+
+**Detalhes em `sessions/sessao-073.md` e `DECISIONS.md` (D051).**
+
+### Adicionado
+- "Resumo do dia" na página de Missões (acertos + XP de hoje) — campos
+  novos `localDate`/`xp` em cada sessão salva
+- Páginas 1, 2, 3, 5 e 6 do resumo pós-partida agora aparecem em TODA
+  partida (antes a de XP pulava se fosse 0, e a de recompensa só existia
+  se tivesse achado algo) — página nova "Nada desta vez" quando não caiu
+  loot
+- Ícones da arte do Davi (`resumo-acertos`, `bau-recurso`) no lugar dos
+  equivalentes da lucide/ícones emprestados
+
+### Confirmado (Davi) — vira padrão do projeto
+- Ao adicionar um item de loot novo, sempre atualizar `LOOT_GENDER`
+  (`PostGameSummary.jsx`) — aviso adicionado nos 3 arquivos onde um item
+  novo é criado (`constants/shop.js`, `constants/loot.js`)
+
+### Registrado no plano (não implementado ainda, por pedido do Davi)
+- Baú-embalagem de recurso (página 6) precisa bater com a raridade do
+  item, não ser genérico — ver Fase 6 do `PLANO_ACAO.md`
+
+---
+
 ## [6.0.21] — 2026-08-24 — Resumo pós-partida (Fase 7) + limpeza geral
 
 **Detalhes em `sessions/sessao-072.md` e `DECISIONS.md` (D050).**

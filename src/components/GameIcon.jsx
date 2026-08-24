@@ -43,6 +43,13 @@ import bauFerro from '../assets/icons/bau-ferro.png';
 import bauOuro from '../assets/icons/bau-ouro.png';
 import bauMistico from '../assets/icons/bau-mistico.png';
 import bauMoedas from '../assets/icons/bau-moedas.png';
+// [Fase 7, sessão 073] `bau-recurso`: baú GENÉRICO usado só como decoração
+// embaixo de recompensas que NÃO são baú (power-up/poção) no resumo
+// pós-partida — diferente de bau-madeira/ferro/ouro/mistico, que são os
+// baús de MOEDA sorteados pela Fase 6 (ver D050/D051, ainda não amarrado
+// à raridade do recurso — pendência registrada no PLANO_ACAO.md).
+import bauRecurso from '../assets/icons/bau-recurso.png';
+import resumoAcertos from '../assets/icons/resumo-acertos.png';
 import divisaoBloqueada from '../assets/icons/divisao-bloqueada.png';
 import missaoTravada from '../assets/icons/missao-travada.png';
 import ligaBronze from '../assets/icons/liga-bronze.png';
@@ -86,6 +93,8 @@ export const ICONS = {
   'bau-ferro': bauFerro,
   'bau-ouro': bauOuro,
   'bau-mistico': bauMistico,
+  'bau-recurso': bauRecurso,
+  'resumo-acertos': resumoAcertos,
   'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
   'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer
   'pocao-xp-3': pocaoXp3, // x3 — frasco redondo (maior multiplicador, menor duração)

@@ -249,20 +249,59 @@ D049 — RNG por peso (1/intervalo médio), leitura do "garantido, pode ser
 múltiplo" pro topo da tabela de tempo, e exclusão do modo Zen do sorteio
 (sem timer, dava pra farmar loot só deixando rodando parado).
 
+### ⚠️ PENDENTE — Baú como EMBALAGEM de recurso (sessão 073, D051, discutir antes de mexer)
+
+Davi esclareceu (sessão 073) que a tabela de frequência de baús acima
+**vale só pra baú COM MOEDA** — o baú tem dois usos diferentes e eu tratei
+os dois como um só até aqui:
+
+1. **Baú com moeda** — já implementado certo: 4 tiers, cada um com sua
+   própria frequência e faixa de moedas (`CHESTS` em `constants/loot.js`).
+2. **Baú como embalagem de um recurso** (power-up ou poção) — o baú aqui
+   **não tem frequência própria**. Quem é sorteado é o RECURSO (via
+   `LOOT_POWERUPS`/`LOOT_POTIONS`, isso já está certo); o baú que aparece
+   "por baixo" dele na página de recompensas (Fase 7, página 6) é só
+   decoração/empacotamento — e essa decoração precisa **bater com a
+   patente/raridade do recurso**, não ser aleatória nem sempre a mesma.
+   Exemplo do próprio Davi: uma Poção ×3 (a mais rara das 3) tem que
+   aparecer num Baú Místico, nunca num Baú de Madeira.
+
+**Implementado por enquanto (provisório, sessão 073):** ícone genérico
+`bau-recurso` (arte nova do Davi) embaixo de qualquer recurso não-baú,
+sem ligação nenhuma com a raridade — é só um placeholder até isto ser
+estruturado direito.
+
+**Falta decidir (conversar com o Davi antes de implementar):**
+- Mapeamento explícito raridade do recurso → tier do baú-embalagem (ex.:
+  Comum→Madeira, Raro→Ferro, Épico→Ouro, e a poção ×3/itens mais raros →
+  Místico?) — precisa alinhar os 4 tiers de baú contra as raridades que
+  já existem (`RARITIES` em `constants/shop.js`: Comum/Raro/Épico) e as
+  3 poções (que não têm raridade própria hoje, ver `POTION_RARITY` em
+  `PostGameSummary.jsx`)
+- Se esse mapeamento é fixo por item ou calculado dinamicamente a partir
+  de algum campo de raridade que precisa ser adicionado
+
 ---
 
-## FASE 7 — Páginas de resumo pós-partida (fluxo novo no fim de cada tarefa) ✅ CONCLUÍDA (sessão 072)
+## FASE 7 — Páginas de resumo pós-partida (fluxo novo no fim de cada tarefa) ✅ CONCLUÍDA (sessão 072, ajustada na 073)
 
 Substituiu a `ResultsPage.jsx` (removida) por `PostGameSummary.jsx`, um
-fluxo de várias telas em sequência:
+fluxo de várias telas em sequência.
 
-- [x] **Página 1** — Pontuação + Acertos e Erros
+**Regra confirmada (sessão 073):** páginas 1/2/3/5/6 aparecem em TODA
+partida, mesmo sem conteúdo (XP=0 no Zen mostra "0 XP"; sem recompensa
+mostra uma página "Nada desta vez") — só a página 4 (Ofensiva) e as 2
+ocasionais são de verdade condicionais.
+
+- [x] **Página 1** — Pontuação + Acertos e Erros (ícone `resumo-acertos`,
+      arte do Davi, sessão 073)
 - [x] **Página 2** — Total de XP ganho na partida + % de acerto da partida
 - [x] **Página 3** — Progresso de missões diárias/mensais. Mensais: só as
-      que o jogador já aceitou. **Não incluído:** a caixa "resumo do dia"
-      (acertos/XP agregados do dia) que aparecia na imagem de
-      referência — precisaria de um agregado diário que não existe hoje,
-      sinalizado como pendência real (D050)
+      que o jogador já aceitou. **"Resumo do dia" adicionado na sessão
+      073** — soma as sessões de hoje (`session.localDate`, campo novo
+      que evita o bug de fuso do D040); só fica completo pra partidas
+      jogadas a partir de agora, sessões salvas antes não tinham esse
+      campo
 - [x] **Página 4** — Ofensiva: ícone + calendário de 5 dias (ontem, hoje,
       +3 seguintes), só aparece na 1ª partida do dia
 - [x] **Página ocasional 1** — meta de ofensiva batida + sugestão de nova
@@ -273,13 +312,20 @@ fluxo de várias telas em sequência:
       numa liga X" não têm progresso numérico, só bloqueada/desbloqueada)
 - [x] **Página 6** — 1 página POR item de recompensa achado (baú/
       power-up/poção), não agrupado — ícone+nome("Você ganhou um(a)...")+
-      descrição+classificação
+      descrição+classificação. **Aparece mesmo sem loot** (sessão 073) —
+      página "Nada desta vez" quando não achou nada na partida
+
+**Ícones da arte do Davi usados desde a sessão 073:** `resumo-acertos`
+(alvo verde, páginas 1/2/3) e `bau-recurso` (baú genérico de decoração,
+página 6) — substituíram os equivalentes da lucide/ícone existente que a
+sessão 072 tinha usado por não ter achado os arquivos certos no Downloads.
 
 **Verificado só via ferramentas de DEV** (`?screen=results&full=1&page=N`)
 — nunca visto rodando numa partida real neste ambiente (D034). Ver
-`sessions/sessao-072.md` e D050 pras decisões sinalizadas (baú decorativo
-sob recompensa não-baú; gênero gramatical; ícones equivalentes em vez dos
-PNGs baixados).
+`sessions/sessao-072.md`/`sessao-073.md` e D050/D051 pras decisões
+sinalizadas (baú decorativo sob recompensa não-baú, ainda sem raridade —
+ver pendência na Fase 6 acima; gênero gramatical, ver checklist em
+`constants/shop.js`/`constants/loot.js`).
 
 ---
 

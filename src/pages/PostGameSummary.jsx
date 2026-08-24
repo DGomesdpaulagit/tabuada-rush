@@ -4,7 +4,7 @@ import { Trophy, Target, X, Zap, Flame, Lock, Check, Share2 } from 'lucide-react
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS } from '../constants';
 import { SHOP_ITEM_MAP, POTION_MAP, RARITIES } from '../constants/shop';
 import { CHESTS } from '../constants/loot';
-import { getAccuracy, getAchievementProgress } from '../utils';
+import { getAccuracy, getAchievementProgress, todayStr } from '../utils';
 import { getActiveMissions } from '../utils/missions';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
@@ -25,6 +25,12 @@ const DOW_LABEL = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
 // Gênero de cada item de loot pra frase "Você ganhou um(a) ..." — lista fixa
 // e pequena, mais seguro que tentar inferir automaticamente.
+//
+// ⚠️ PADRÃO DE ADIÇÃO DE RECURSO (pedido explícito do Davi, sessão 073,
+// D051): TODO item novo em `SHOP_ITEMS`/`POTIONS` (constants/shop.js) ou
+// `CHESTS` (constants/loot.js) precisa de uma entrada aqui também. Sem
+// entrada, cai no masculino (`|| 'm'` em `RewardPage`) — pode sair errado
+// ("um Vida Extra" em vez de "uma Vida Extra").
 const LOOT_GENDER = {
   powerup_streak_insurance: 'm',
   powerup_mission_freeze: 'm',
@@ -130,7 +136,7 @@ function ScorePage({ result, footer }) {
         <div className="flex items-center justify-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
-              <Target size={22} className="text-accent" />
+              <GameIcon name="resumo-acertos" size={26} />
             </div>
             <div className="text-left">
               <p className="text-2xl font-black text-accent leading-none">{result.correct}</p>
@@ -174,7 +180,7 @@ function XpPage({ result, footer }) {
       </StatBox>
       <StatBox label="Porcentagem de acerto" labelClassName="text-graphite bg-accent -m-4 mb-3 p-3 rounded-t-2xl">
         <div className="flex items-center justify-center gap-2">
-          <Target size={24} className="text-accent" />
+          <GameIcon name="resumo-acertos" size={28} />
           <span className="text-3xl font-black text-accent">{accuracy}%</span>
         </div>
         <p className="text-xs font-black text-fg-muted text-center mt-1">{accLabel}</p>
@@ -190,6 +196,15 @@ function MissionsProgressPage({ footer }) {
   const active = useMemo(() => getActiveMissions(data.missionsData), [data.missionsData]);
   const monthlyAccepted = active.monthly.accepted.filter((c) => !c.resolved);
   const list = tab === 'daily' ? active.daily.missions : monthlyAccepted;
+
+  // [D051] "Resumo do dia" — soma as sessões de HOJE (`localDate`, sessão
+  // 073, evita o bug de fuso do `date` em ISO/UTC — D040). Sessions
+  // salvas ANTES desta sessão não têm `localDate`/`xp` (undefined vira 0
+  // na soma) — o resumo só fica completo pra partidas jogadas a partir de
+  // agora, não é possível reconstruir XP de sessões antigas.
+  const todaySessions = (data.sessions || []).filter((s) => s.localDate === todayStr());
+  const todayCorrect = todaySessions.reduce((sum, s) => sum + (s.correct || 0), 0);
+  const todayXp = todaySessions.reduce((sum, s) => sum + (s.xp || 0), 0);
 
   return (
     <SummaryShell
@@ -234,6 +249,25 @@ function MissionsProgressPage({ footer }) {
           );
         })}
       </div>
+      <StatBox label="Resumo do dia">
+        <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center gap-2">
+            <GameIcon name="resumo-acertos" size={22} />
+            <div className="text-left">
+              <p className="text-xl font-black text-accent leading-none">{todayCorrect}</p>
+              <p className="text-[10px] font-black text-fg-muted uppercase">Acertos</p>
+            </div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="flex items-center gap-2">
+            <Zap size={22} className="text-coin" fill="currentColor" />
+            <div className="text-left">
+              <p className="text-xl font-black text-coin leading-none">{todayXp}</p>
+              <p className="text-[10px] font-black text-fg-muted uppercase">XP ganho</p>
+            </div>
+          </div>
+        </div>
+      </StatBox>
     </SummaryShell>
   );
 }
@@ -475,11 +509,26 @@ function RewardPage({ item, footer }) {
       </StatBox>
       {item.showChestBadge && (
         <div className="flex items-center justify-center gap-2 opacity-70">
-          <GameIcon name="bau-madeira" size={22} />
+          {/* [D051] Baú GENÉRICO de decoração — ainda não amarrado à
+              raridade do recurso, ver pendência no PLANO_ACAO.md */}
+          <GameIcon name="bau-recurso" size={26} />
           <span className="text-xs font-bold text-fg-muted">Encontrado em um baú</span>
         </div>
       )}
     </SummaryShell>
+  );
+}
+
+// ── PÁGINA 6 (sem nada achado) — aparece mesmo sem loot [D051] ────────────────
+function RewardEmptyPage({ footer }) {
+  return (
+    <SummaryShell
+      icon={<GameIcon name="bau-recurso" size={56} />}
+      iconBg="bg-surface-2"
+      title="Nada desta vez"
+      subtitle="Baús e power-ups são sorteados a cada partida — continue jogando pra achar algo!"
+      footer={footer}
+    />
   );
 }
 
@@ -530,15 +579,19 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
   });
 
   const pages = useMemo(() => {
-    const list = [{ type: 'score' }];
-    if ((result.gameXp || 0) > 0) list.push({ type: 'xp' });
-    list.push({ type: 'missions' });
+    // [D051] Pedido explícito do Davi: páginas 1/2/3/5/6 aparecem em TODA
+    // partida, mesmo sem conteúdo pra mostrar (XP=0 no Zen; sem recompensa
+    // nenhuma) — não são condicionais ao resultado. Só a Ofensiva (4) e as
+    // 2 ocasionais são de verdade condicionais.
+    const list = [{ type: 'score' }, { type: 'xp' }, { type: 'missions' }];
     if (result.firstMatchToday) list.push({ type: 'streak' });
     if (result.metaHit) list.push({ type: 'streakGoal' });
     if (result.tierChanged) list.push({ type: 'tier' });
     list.push({ type: 'achievements' });
 
     const loot = result.loot || { chests: [], powerupIds: [], potionIds: [] };
+    const hasLoot = loot.chests.length > 0 || loot.powerupIds.length > 0 || loot.potionIds.length > 0;
+    if (!hasLoot) list.push({ type: 'reward-empty' });
     loot.chests.forEach((c) => {
       const chest = CHESTS.find((ch) => ch.id === c.id);
       list.push({
@@ -608,6 +661,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
       {page.type === 'tier' && <TierPage key={idx} result={result} footer={footer} />}
       {page.type === 'achievements' && <AchievementsPage key={idx} footer={footer} />}
       {page.type === 'reward' && <RewardPage key={idx} item={page.item} footer={footer} />}
+      {page.type === 'reward-empty' && <RewardEmptyPage key={idx} footer={footer} />}
     </AnimatePresence>
   );
 }

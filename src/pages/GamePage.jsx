@@ -7,7 +7,6 @@ import { getDiffLevel, calcPoints, formatTime, generateQuestion, getTierRange } 
 import { Button, Progress } from '../components/ui';
 import { audio } from '../lib/audioManager';
 import { useApp } from '../contexts/AppContext';
-import Mascot, { TUCA_POSES, VUPT_POSES, MASCOTS } from '../components/Mascot';
 import GameIcon from '../components/GameIcon';
 
 // ── REDUCER ────────────────────────────────────────────────────────────────
@@ -174,37 +173,9 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   const [showCombo, setShowCombo] = useState(false);
   const [isInsane, setIsInsane] = useState(false);
   const [shake, setShake] = useState(false);
-  // { character: 'tuca'|'vupt', pose } | null — null = nenhum mascote na tela.
-  const [mascotShow, setMascotShow] = useState(null);
   // Power-up: vida extra no Survival
   const [showLifePrompt, setShowLifePrompt] = useState(false);
   const pendingEndRef = useRef(null); // callback de onEnd adiado
-
-  // Frequência do mascote: em modos com tempo (Rush) no máximo 2 aparições
-  // por partida NO TOTAL (some qual mascote for) — pouco tempo pra
-  // distrair. Em Zen/Revisão não tem teto, pode aparecer o quanto o treino
-  // durar. Tuca e Vupt convivem no mesmo pote — não é mais travado por
-  // modo (ver Mascot.jsx) — quem aparece depende do EVENTO: acerto/combo
-  // puxa a Tuca, erro/sequência de erros puxa a Vupt, e "demorou pra
-  // responder" sorteia entre os dois. Em eventos de destaque (combo,
-  // sequência de erros) a chance é quase certeza (0.95) — nos demais,
-  // sorteio normal, pra não ficar repetitivo nem sempre nas primeiras
-  // oportunidades.
-  const mascotShowCountRef = useRef(0);
-  const mascotCap = cfg.timer !== null ? 2 : Infinity;
-  // Sequência de erros seguidos (não entra no reducer — só serve pro
-  // gatilho do mascote, reseta a cada acerto).
-  const wrongStreakRef = useRef(0);
-
-  const randomPose = (poses) => poses[Math.floor(Math.random() * poses.length)].id;
-
-  const maybeMascot = useCallback((character, pose, chance = 0.35) => {
-    if (mascotShowCountRef.current >= mascotCap) return false;
-    if (Math.random() > chance) return false;
-    mascotShowCountRef.current += 1;
-    setMascotShow({ character, pose });
-    return true;
-  }, [mascotCap]);
 
   const inputRef = useRef(null);
   const inputRefB = useRef(null);
@@ -263,20 +234,6 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
       audio.timerWarning();
     }
   }, [state.time, cfg.timer, state.phase]);
-
-  // Cutuca do mascote: se demorar mais de 3s na mesma pergunta, dá um
-  // empurrão. Evento neutro — sorteia entre Tuca e Vupt (50/50). Some
-  // sozinho assim que a próxima pergunta aparece.
-  useEffect(() => {
-    if (state.phase !== 'playing') return;
-    const t = setTimeout(() => {
-      if (phaseRef.current === 'playing') {
-        const character = Math.random() < 0.5 ? 'tuca' : 'vupt';
-        maybeMascot(character, randomPose(MASCOTS[character]), 0.4);
-      }
-    }, 3000);
-    return () => clearTimeout(t);
-  }, [state.question, state.phase, maybeMascot]);
 
   // Handle game end
   useEffect(() => {
@@ -363,7 +320,6 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
 
     if (isCorrect) {
       setInputState('correct');
-      wrongStreakRef.current = 0;
       dispatch({
         type: 'CORRECT',
         modeId: mode,
@@ -373,16 +329,12 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
       });
 
       const newStreak = state.streak + 1;
-      let mascotFired = false;
 
       // ── INSANE COMBO (≥ 10) ou COMBO normal (múltiplo de 5) ──────────
-      // Tuca comemora com o jogador — em combo é quase certeza (0.95) de
-      // aparecer, sempre na pose de joia.
       if (newStreak >= 10 && newStreak % 5 === 0) {
         audio.combo();
         setIsInsane(true);
         setShowCombo(true);
-        mascotFired = maybeMascot('tuca', 'cheer', 0.95);
         // Screen shake
         setShake(true);
         setTimeout(() => setShake(false), 500);
@@ -391,20 +343,15 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         audio.combo();
         setIsInsane(false);
         setShowCombo(true);
-        mascotFired = maybeMascot('tuca', 'cheer', 0.95);
         setTimeout(() => setShowCombo(false), 900);
       } else {
         audio.correct();
-        mascotFired = maybeMascot('tuca', randomPose(TUCA_POSES), 0.35);
       }
       setTimeout(() => {
         dispatch({ type: 'NEXT' });
-        if (mascotFired) setMascotShow(null);
       }, 420);
     } else {
       setInputState('wrong');
-      wrongStreakRef.current += 1;
-      let mascotFired = false;
       // Power-up Escudo: se tiver em estoque, se ativa sozinho e protege a
       // vida dessa vez (só funciona em modos com vidas, ex. Rush).
       const hasShield = cfg.lives !== null && (data.powerups?.shield || 0) > 0;
@@ -412,7 +359,6 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         audio.wrong();
         onUsePowerup?.('shield');
         dispatch({ type: 'WRONG_SHIELDED' });
-        mascotFired = maybeMascot('tuca', randomPose(TUCA_POSES), 0.5);
       } else {
         audio.wrong();
         dispatch({ type: 'WRONG' });
@@ -420,18 +366,12 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         // pote diário global — independente do sistema de vidas por
         // partida (cfg.lives) que já existia. Escudo protege dos dois.
         onWrongAnswer?.();
-        // Sequência de erros: Vupt torce contra — a cada 3 erros seguidos
-        // (espelha o combo de acerto, que refaz a cada 5) é quase certeza
-        // (0.95) de aparecer; erro avulso é sorteio normal.
-        const isErrorStreak = wrongStreakRef.current >= 3 && wrongStreakRef.current % 3 === 0;
-        mascotFired = maybeMascot('vupt', randomPose(VUPT_POSES), isErrorStreak ? 0.95 : 0.35);
       }
       setTimeout(() => {
         dispatch({ type: 'NEXT' });
-        if (mascotFired) setMascotShow(null);
       }, 950);
     }
-  }, [state.phase, state.question, state.streak, inputVal, inputValB, mode, cfg.inverse, cfg.lives, data.powerups, onUsePowerup, onWrongAnswer, maybeMascot]);
+  }, [state.phase, state.question, state.streak, inputVal, inputValB, mode, cfg.inverse, cfg.lives, data.powerups, onUsePowerup, onWrongAnswer]);
 
   const handleKey = useCallback(
     (e) => { if (e.key === 'Enter') handleSubmit(); },
@@ -514,7 +454,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               transition={{ type: 'spring', stiffness: 300, damping: 24 }}
               className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center"
             >
-              <p className="text-5xl mb-3">❤️‍🔥</p>
+              <div className="flex justify-center mb-3"><GameIcon name="pu-vida-extra" size={56} /></div>
               <p className="text-xl font-black text-gray-900 mb-1">Perdeu a última vida!</p>
               <p className="text-sm text-gray-500 font-semibold mb-4">
                 Estoque: <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span>
@@ -527,7 +467,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                     onClick={handleUseLive}
                     className="w-full py-3 rounded-2xl bg-violet-600 text-white font-black text-sm hover:bg-violet-700 active:scale-[0.98] transition-all"
                   >
-                    ❤️ Usar Vida do Estoque
+                    <GameIcon name="pu-vida-extra" size={16} className="inline-block align-text-bottom" /> Usar Vida do Estoque
                   </button>
                 )}
                 {(data.coins || 0) >= 80 && (
@@ -628,9 +568,8 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                   <motion.span
                     key={i}
                     animate={{ scale: i >= (state.lives ?? 3) ? 0.7 : 1, opacity: i >= (state.lives ?? 3) ? 0.3 : 1 }}
-                    className="text-xl"
                   >
-                    ❤️
+                    <GameIcon name="vidas" size={20} />
                   </motion.span>
                 ))}
               </div>
@@ -653,8 +592,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
           </span>
         </div>
 
-        {/* Question card — usa tema equipado se houver. relative pro mascote
-            aparecer ancorado no canto, interagindo com o card. */}
+        {/* Question card — usa tema equipado se houver. */}
         <div className={`relative bg-gradient-to-br ${questionGradient} rounded-3xl p-8 border ${questionBorder}`}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -744,12 +682,6 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Mascote — Tuca (tartaruga) torce a favor, Vupt (lebre) torce
-              contra; quem aparece depende do evento (acerto/erro/combo/
-              demora), não mais do modo. Ancorado no canto do card, brota
-              da lateral quando tem algo a dizer. */}
-          <Mascot character={mascotShow?.character} pose={mascotShow?.pose} />
         </div>
 
         {/* Answer input(s) */}

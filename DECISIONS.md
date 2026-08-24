@@ -1867,6 +1867,146 @@ no fim da partida. Conserta de graça o stat "Tempo" do `ResultsPage.jsx`
 
 ---
 
+## D050 — Fase 7 (resumo pós-partida) + limpeza (mascotes, preço das poções, ícone de vida)
+
+**Data:** 2026-08-24 · sessao-072
+
+Davi confirmou os 2 pendentes da sessão 069 (mochila definitiva; controle do
+Menu fica pra Arena) e pediu, numa mensagem só: triplicar o preço das
+poções, construir a Fase 7 inteira (com 4 imagens de referência + texto
+detalhado por página), reorganizar ícones baixados pra página de
+recompensas, remover o sistema de mascotes por completo, e trocar o emoji
+de vida dentro da partida pelo ícone oficial.
+
+**1. Preço das poções triplicado** — `constants/shop.js`: 100→300,
+250→750, 450→1350. Só o número — não mexe em duração/multiplicador.
+
+**2. Mascotes (Tuca/Vupt) removidos por completo** — `components/Mascot.jsx`
+apagado, `assets/mascots/` (8 arquivos) apagado, e em `GamePage.jsx`
+removidos: import, estado (`mascotShow`, `mascotShowCountRef`, `mascotCap`,
+`wrongStreakRef`), funções (`randomPose`, `maybeMascot`), o efeito de
+"cutuca" (3s sem responder), todo `mascotFired`/chamada de `maybeMascot`
+dentro do `handleSubmit` (acerto/combo/erro/escudo), e a renderização
+`<Mascot />`. Zero referência restante (`grep` confirmou). Bundle de
+produção perdeu ~2MB de webp que não eram mais usados em lugar nenhum.
+
+**3. Ícone de vida dentro da partida** — `GamePage.jsx` tinha 3 emojis de
+coração: o HUD de vidas (❤️ × contador) virou `GameIcon name="vidas"`
+(mesmo ícone do pote diário do Header); o modal "perdeu a última vida" e o
+botão "Usar Vida do Estoque" viraram `GameIcon name="pu-vida-extra"`
+(ícone dedicado desse power-up específico, não o genérico — mesmo critério
+já usado em outros lugares do app).
+
+**4. Fase 7 — fluxo de resumo pós-partida** — `ResultsPage.jsx` (tela
+única) **removido por completo**, substituído por `PostGameSummary.jsx`
+novo: uma sequência de páginas, uma de cada vez, avançando no botão
+"Continuar", seguindo o estilo visual das 4 imagens de referência do Davi
+(fundo escuro, título amarelo, caixas com borda, botão amarelo chapado) —
+mas usando os TOKENS DE COR JÁ EXISTENTES do app (`bg-coin`≈amarelo,
+`bg-accent`≈verde, `text-graphite` pra texto escuro em fundo claro,
+`bg-background`/`border-border` pro resto) em vez de cores novas
+hardcoded, pra não abrir uma paleta paralela.
+
+Ordem implementada: Pontuação+Acertos/Erros → XP+% acerto (pula se XP=0,
+ex. Zen) → Progresso de Missões (abas Diária/Mensal, mensal só mostra
+desafios ACEITOS) → [Ofensiva, só na 1ª partida do dia] → [Meta de
+ofensiva batida, ocasional] → [Faixa de tabuada mudou, ocasional] →
+Conquistas → 1 página POR item de recompensa achada (Fase 6: baú, cada
+power-up, cada poção, cada um numa página própria — pedido explícito dele
+de não agrupar tudo numa página só).
+
+**Dados novos expostos por `App.jsx handleGameEnd`** pro resumo conseguir
+montar as páginas ocasionais sem duplicar lógica: `firstMatchToday`
+(comparação `data.lastPlayDate` ANTES do update — só é true na 1ª
+partida do dia), `metaHit` (inferido comparando `streakGoal` antes/depois:
+só fica `null` quando a meta acabou de ser batida, não precisei reexpor a
+variável local), `hitGoal` (o valor da meta antes, pra mostrar qual foi
+batida), `tierChanged`/`prevLevelIdx`/`newLevelIdx` (mesma comparação que
+já disparava o toast de level-up, só também exposta pro resumo).
+
+**Bug real encontrado e corrigido no caminho:** o `ResultsPage.jsx` antigo
+recalculava o XP exibido com um `MODE_XP_MULT` PRÓPRIO e desatualizado
+(`rush: 0.12`, mais vários modos mortos de antes da redução pra 3 modos:
+survival/speed/daily/hard/personal/weekly/inverse/combined) — **divergia**
+do multiplicador de verdade usado em `App.jsx` (`rush: 0.20`). O XP
+mostrado na tela podia não bater com o XP realmente creditado no storage.
+Corrigido eliminando a segunda fonte de verdade: `gameXp` (já calculado
+dentro do `update()` de `handleGameEnd`) agora é exposto direto no
+resultado, sem recálculo nenhum no componente de exibição.
+
+**Progresso de conquistas sem reescrever `ACHIEVEMENTS`:** `getAchievementProgress`
+(`utils/index.js`) extrai campo+meta numérica direto do CÓDIGO de cada
+`check(s) => ...` via regex (`.toString()` + padrão `s.campo >= N` /
+`(s.campo || 0) >= N` / `(s.campo || []).length >= N`) — cobre 25 das 26
+entradas atuais sem tocar em nenhuma definição existente. As 9 conquistas
+de "chegar numa liga X" (comparação de índice, não numérica) não batem no
+padrão e retornam `null` — tratadas como "sem barra de progresso, só
+bloqueada/desbloqueada". Se no futuro quiser progresso pra ESSAS também,
+aí sim precisa de um campo `progress`/`target` explícito por conquista —
+solução leve escolhida aqui não cobre 100% por design, é uma troca
+deliberada (rapidez agora vs. cobertura total).
+
+**Decisões sinalizadas, não confirmadas pelo Davi:**
+1. **"Baú embaixo de cada recompensa"** — texto dele tinha uma
+   contradição aparente com a imagem de referência (que mostra poção/
+   vida-extra/baú lado a lado, SEM baú extra sob os 2 primeiros). Interpretei
+   como: recompensas que JÁ SÃO um baú não ganham decoração extra (seria
+   baú-dentro-de-baú); recompensas que NÃO são baú (power-up/poção) ganham
+   um ícone pequeno de baú + "Encontrado em um baú" embaixo, reforçando de
+   onde vieram. Implementado assim — se não for o que ele quis dizer, é
+   fácil de trocar.
+2. **Gênero gramatical** ("Você ganhou um(a) [nome]") — tabela fixa
+   `LOOT_GENDER` com os 14 itens de loot existentes (power-ups + poções +
+   baús), decidido item por item na mão (ex.: "uma Vida Extra", "um Baú
+   Místico"). Generaliza mal pra item novo sem entrada na tabela (cai no
+   masculino por padrão) — avisar se adicionar item de loot novo.
+3. **Não usei os ícones específicos que o Davi baixou** pra Acertos (alvo
+   verde) e pro "baú com item raro" da página de recompensas —
+   `ScorePage`/`XpPage` usam o ícone `Target` da lucide com a cor
+   `accent` (verde), visualmente equivalente ao PNG baixado, e a
+   decoração de baú usa a arte `bau-madeira` que já existe no projeto. Não
+   processei os arquivos novos do Downloads porque o resultado visual já
+   ficou equivalente sem precisar — se ele preferir literalmente os PNGs
+   dele, é só pedir que eu processo.
+4. **Resumo do dia na página de Missões** (caixa extra "32 acertos / 30 XP
+   ganho hoje" que aparece na imagem de referência) — **não implementado**,
+   precisaria agregar sessões do dia que hoje não têm um agregado pronto.
+   Sinalizando como pendência, não como "feito simplificado".
+
+**Ferramentas de verificação adicionadas (só DEV, zero rodapé em
+produção, mesmo espírito do `?screen=` já existente — D034):**
+- `?screen=results` sozinho já não bastava (precisa de `lastResult`
+  preenchido, que só existe depois de uma partida de verdade, impossível
+  de simular neste ambiente) — agora também sintetiza um resultado de
+  teste quando pedido em DEV.
+- `?full=1` liga as páginas ocasionais + loot de teste (caso raro);
+  sem o parâmetro simula o caso comum (sem ocasionais, sem loot).
+- `?page=N` pula direto pra página N da sequência — "Continuar" depende
+  da transição do `AnimatePresence` completar, que trava neste ambiente
+  (mesma causa raiz do D034, agora também dentro do componente novo).
+
+**Verificado** (via as 3 ferramentas acima, mesma limitação de sempre —
+D034, nunca foi possível clicar "Rush" de verdade neste ambiente):
+- `npm run build` limpo em cada etapa
+- Todas as 10 páginas do cenário completo (`?full=1`) renderizam com o
+  texto/números certos: pontuação, XP com o `gameXp` real, % de acerto,
+  missões diárias com progresso real do storage, calendário de 5 dias
+  com letra de dia da semana e rótulos ONTEM/HOJE/AMANHÃ corretos, meta de
+  ofensiva batida com sugestões de meta nova, mudança de faixa (Tabuada
+  30×40 → 40×50), conquistas com progresso real (0/1, 0/100 etc.), e as 3
+  páginas de recompensa (baú/power-up/poção) com gênero gramatical
+  correto e 0 imagem quebrada
+- Cenário comum (sem `?full=1`, 4 páginas): última página (Conquistas)
+  mostra corretamente as 3 ações finais (Compartilhar/Menu/Jogar
+  novamente) — confirma o bug que eu mesmo peguei ANTES de commitar (só a
+  página de recompensa tinha essas ações; se ela fosse "Conquistas" por
+  não ter loot, o jogador ficava sem replay/compartilhar)
+- **Não verificado:** uma partida jogada de ponta a ponta de verdade
+  (D034) — pedir ao Davi pra jogar uma partida e conferir o fluxo real
+  no dispositivo dele, especialmente a ordem/transição entre páginas.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

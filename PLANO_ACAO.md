@@ -241,8 +241,8 @@ Turbo — bug real corrigido nesta sessão, de quebra também acertou o stat
       explícito que pode vir na 1ª partida do dia por sorte, raro mas
       possível)
 - [x] Guardar o que foi achado numa partida pra mostrar na Fase 7 (página 6)
-      — por enquanto exibido direto no `ResultsPage.jsx` atual (card
-      "Recompensas encontradas"), já que a Fase 7 ainda não existe
+      — implementado como página dedicada (uma por item achado) desde que
+      a Fase 7 saiu, sessão 072
 
 **Implementação e decisões sinalizadas:** ver `sessions/sessao-071.md` e
 D049 — RNG por peso (1/intervalo médio), leitura do "garantido, pode ser
@@ -251,28 +251,35 @@ múltiplo" pro topo da tabela de tempo, e exclusão do modo Zen do sorteio
 
 ---
 
-## FASE 7 — Páginas de resumo pós-partida (fluxo novo no fim de cada tarefa)
+## FASE 7 — Páginas de resumo pós-partida (fluxo novo no fim de cada tarefa) ✅ CONCLUÍDA (sessão 072)
 
-Substitui/estende a `ResultsPage.jsx` atual por um fluxo de várias telas
-em sequência:
+Substituiu a `ResultsPage.jsx` (removida) por `PostGameSummary.jsx`, um
+fluxo de várias telas em sequência:
 
-- [ ] **Página 1** — Pontuação + Acertos e Erros (ícones já baixados)
-- [ ] **Página 2** — Total de XP ganho na partida + % de acerto da partida
-- [ ] **Página 3** — Progresso de missões diárias/mensais. Mostrar
-      progresso mesmo sem ter concluído (ex.: "12/20 acertos"). Mensais:
-      só as que o jogador **já aceitou**
-- [ ] **Página 4** — Ofensiva: ícone + calendário de **5 dias** (ontem,
-      hoje, +3 seguintes) — ⚠️ diferente do calendário semanal do Header
-      (ver conflito #2, pedir imagem de referência antes de construir)
-- [ ] **Página ocasional 1** — só aparece se bateu a meta de ofensiva:
-      celebração + sugestão de nova meta
-- [ ] **Página ocasional 2** — só aparece ao mudar de faixa de tabuada:
-      celebração de transição
-- [ ] **Página 5** — Conquistas: progresso mesmo sem ter concluído ainda
-- [ ] **Página 6** — Recompensas achadas na partida (baús/power-ups/poções
-      da Fase 6)
+- [x] **Página 1** — Pontuação + Acertos e Erros
+- [x] **Página 2** — Total de XP ganho na partida + % de acerto da partida
+- [x] **Página 3** — Progresso de missões diárias/mensais. Mensais: só as
+      que o jogador já aceitou. **Não incluído:** a caixa "resumo do dia"
+      (acertos/XP agregados do dia) que aparecia na imagem de
+      referência — precisaria de um agregado diário que não existe hoje,
+      sinalizado como pendência real (D050)
+- [x] **Página 4** — Ofensiva: ícone + calendário de 5 dias (ontem, hoje,
+      +3 seguintes), só aparece na 1ª partida do dia
+- [x] **Página ocasional 1** — meta de ofensiva batida + sugestão de nova
+      meta (usa `STREAK_GOALS` de verdade, não os números da imagem)
+- [x] **Página ocasional 2** — mudança de faixa de tabuada
+- [x] **Página 5** — Conquistas: progresso numérico extraído do próprio
+      `check()` de cada conquista via regex — cobre 25/26 (as 9 de "chegar
+      numa liga X" não têm progresso numérico, só bloqueada/desbloqueada)
+- [x] **Página 6** — 1 página POR item de recompensa achado (baú/
+      power-up/poção), não agrupado — ícone+nome("Você ganhou um(a)...")+
+      descrição+classificação
 
-**Depende da Fase 6 estar pronta** pra página 6 ter o que mostrar.
+**Verificado só via ferramentas de DEV** (`?screen=results&full=1&page=N`)
+— nunca visto rodando numa partida real neste ambiente (D034). Ver
+`sessions/sessao-072.md` e D050 pras decisões sinalizadas (baú decorativo
+sob recompensa não-baú; gênero gramatical; ícones equivalentes em vez dos
+PNGs baixados).
 
 ---
 

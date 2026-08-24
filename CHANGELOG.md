@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.21] — 2026-08-24 — Resumo pós-partida (Fase 7) + limpeza geral
+
+**Detalhes em `sessions/sessao-072.md` e `DECISIONS.md` (D050).**
+
+### Adicionado
+- Fluxo novo de resumo pós-partida (`PostGameSummary.jsx`, substitui a
+  `ResultsPage.jsx` removida): Pontuação → XP → Missões → [Ofensiva, 1ª
+  partida do dia] → [Meta de ofensiva batida] → [Faixa de tabuada mudou]
+  → Conquistas → 1 página por recompensa achada, no estilo visual das
+  referências do Davi
+
+### Corrigido
+- **Bug real:** XP exibido no resumo podia divergir do XP realmente
+  creditado — a tela antiga recalculava com um multiplicador próprio
+  desatualizado (tinha modos que não existem mais). Agora usa o mesmo
+  valor calculado e aplicado no storage, sem segunda fonte de verdade
+- Ícone de vida dentro da partida trocado (era emoji ❤️, agora usa os
+  ícones oficiais do jogo)
+
+### Removido
+- Sistema de mascotes (Tuca/Vupt) por completo — componente, assets (~2MB)
+  e toda a lógica de exibição no `GamePage.jsx`
+
+### Alterado
+- Preço das 3 Poções de XP triplicado (100/250/450 → 300/750/1350)
+
+---
+
 ## [6.0.20] — 2026-08-23 — Baús e recompensas por partida (Fase 6 do backlog)
 
 **Detalhes em `sessions/sessao-071.md` e `DECISIONS.md` (D049).**

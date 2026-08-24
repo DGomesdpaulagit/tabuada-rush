@@ -31,7 +31,9 @@ const TYPE_ICON = {
 
 // Emoji do pool fica como reserva só pra um `type` novo que ainda não tenha
 // entrada em TYPE_ICON — hoje todos os 7 tipos já têm arte.
-function MissionIcon({ type, emoji, size = 24 }) {
+// Exportado — reaproveitado pela página de Missões do resumo pós-partida
+// (Fase 7, sessão 072) pra não duplicar o mapeamento tipo→ícone.
+export function MissionIcon({ type, emoji, size = 24 }) {
   const art = TYPE_ICON[type];
   return art
     ? <GameIcon name={art} size={size} className="shrink-0" />
@@ -52,7 +54,7 @@ function resetLabel(tab) {
   return 'Novos desafios no 1º dia do mês';
 }
 
-function progressLabel(mission) {
+export function progressLabel(mission) {
   const { progress: p, target: t } = mission;
   switch (mission.type) {
     case 'play':          return `${p}/${t} partidas`;

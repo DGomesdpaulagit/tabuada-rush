@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 6.0.20 (Reset completo + Poções de XP (Fase 4) + Loja rotativa (Fase 5) + Baús/recompensas (Fase 6) · sessao-071; backlog grande em andamento, ver `PLANO_ACAO.md`)  
+**Versão:** 6.0.21 (Reset completo + Poções de XP (Fase 4) + Loja rotativa (Fase 5) + Baús/recompensas (Fase 6) + Resumo pós-partida (Fase 7) · sessao-072; backlog grande em andamento, ver `PLANO_ACAO.md`)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  
@@ -62,12 +62,10 @@ supabase/functions/send-streak-reminders/ — [v2.10] Edge Function: lembrete de
   contexts/AppContext.jsx — estado global (data + update)
   components/ui/index.jsx — Button, Card, Badge, Progress, StatCard, EmptyState
   components/Sidebar.jsx — [v5.0] nav lateral, só em telas largas (hidden lg:flex)
-  components/Mascot.jsx  — [v5.0] Tuca/Vupt — poses por humor, portal fixo na borda direita, sem balão/voz (desligados)
-  assets/mascots/*.webp  — [v5.0] poses animadas (vupt-cocky, vupt-peek-villain, vupt-thumbsup, tuca-idle, tuca-glasses, tuca-reading)
   pages/
     MenuPage.jsx         — [v5.0] Menu QI-first (card muda de cor por tier), 3 destinos primários
-    GamePage.jsx         — Gameplay com useReducer (TICK/CORRECT/WRONG/WRONG_SHIELDED/NEXT/END/ADD_TIME); [v5.0] gatilho "slow" (3s) + maybeMascot (frequência controlada)
-    ResultsPage.jsx      — Tela de resultados pós-partida
+    GamePage.jsx         — Gameplay com useReducer (TICK/CORRECT/WRONG/WRONG_SHIELDED/NEXT/END/ADD_TIME)
+    PostGameSummary.jsx  — [v6.0.21 · Fase 7] Sequência de páginas de resumo pós-partida (substitui ResultsPage.jsx, removida — e com ela o sistema de mascotes Tuca/Vupt, removido por completo na mesma sessão)
     RewardsPage.jsx      — [v5.0] hub com abas Missões/Loja/Temporada (substitui 3 botões separados no Menu)
     StatsPage.jsx        — [v5.0] Dashboard estatísticas + LineChart Recharts; absorveu Catálogo/Precisão/Acertos/Erros/Recordes/Conquistas como view-switcher interno (reorganização real ainda pendente — ver MEMORY_CORE)
     RankingPage.jsx      — [v2.4] Ranking de QI Matemático (hero + lista por categoria); [v5.0] 52 personagens (era 104)
@@ -411,7 +409,12 @@ NÃO é IA real — interpreta dados reais e gera textos automáticos.
 
 ---
 
-## 🐢🐇 MASCOTES — TUCA E VUPT (v5.0 — sessao-043)
+## 🐢🐇 MASCOTES — TUCA E VUPT (v5.0 — sessao-043) — ⚠️ REMOVIDO NA v6.0.21 (sessao-072)
+
+> **Removido por completo a pedido do Davi na sessão 072** (D050) —
+> componente, os ~2MB de assets webp e toda a lógica de exibição em
+> `GamePage.jsx` foram apagados. Seção mantida abaixo só como registro
+> histórico de como o sistema funcionava; nada disto existe mais no código.
 
 Inspirados na fábula de Esopo (domínio público — ver DECISIONS.md D018).
 

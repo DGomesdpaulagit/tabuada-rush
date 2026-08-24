@@ -718,6 +718,27 @@ export function checkNewAchievements(savedData) {
   return unlocked;
 }
 
+// [Fase 7, sessão 072] Progresso numérico de UMA conquista (current/target),
+// pra mostrar barra de progresso mesmo sem ter concluído ainda. `ACHIEVEMENTS`
+// não guarda current/target como dado — só um `check(s) => boolean` — então
+// em vez de reescrever ~25 entradas, extrai o campo e o número direto do
+// CÓDIGO da própria função via regex (`.toString()`). Cobre o padrão real de
+// todo achievement hoje: `s.campo >= N`, `(s.campo || 0) >= N` ou
+// `(s.campo || []).length >= N`. Retorna `null` pra qualquer achievement que
+// não bata nesse padrão (nenhum existe hoje, mas não quebra se aparecer um
+// no futuro com lógica composta) — a tela de conquistas trata `null` como
+// "sem progresso pra mostrar, só o estado concluído/bloqueado".
+export function getAchievementProgress(achievement, stats) {
+  const src = achievement.check.toString();
+  const m = src.match(/\(?s\.(\w+)(?:\s*\|\|\s*(?:0|\[\]))?\)?(\.length)?\s*>=\s*(\d+(?:\.\d+)?)/);
+  if (!m) return null;
+  const [, field, isLength, targetStr] = m;
+  const target = Number(targetStr);
+  let current = stats[field];
+  current = isLength ? (current || []).length : (current || 0);
+  return { current: Math.min(current, target), target };
+}
+
 // ── DATE HELPERS ──────────────────────────────────────────────────────────
 
 // [correção 2026-08-17 · D040] Data no fuso LOCAL (YYYY-MM-DD).

@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.20 (Tabuada Rush 6.0 completo + Baús/recompensas (Fase 6) — sessao-071.md)
+**Versão:** 6.0.21 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-072.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,19 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.21]** Fase 7 do backlog: `ResultsPage.jsx` removida, substituída
+por `PostGameSummary.jsx` — sequência de páginas (Pontuação → XP →
+Missões → [Ofensiva, 1ª partida do dia] → [Meta batida] → [Faixa mudou]
+→ Conquistas → 1 página por recompensa) no estilo das referências do
+Davi, usando os tokens de cor já existentes do app. **Bug real corrigido
+no caminho:** o XP exibido podia divergir do XP creditado (a tela antiga
+recalculava com um multiplicador próprio desatualizado) — corrigido
+expondo o valor único já calculado em `App.jsx`. Progresso de conquistas
+extraído do próprio código de cada `check()` via regex, sem reescrever
+`ACHIEVEMENTS` (cobre 25/26). Além disso: preço das 3 Poções de XP
+triplicado, sistema de mascotes (Tuca/Vupt) removido por completo
+(componente + ~2MB de assets), ícone de vida dentro da partida trocado
+(emoji → ícone oficial). Ver `sessao-072.md` e D050.
 **[v6.0.20]** Fase 6 do backlog: sistema de recompensas ao fim de cada
 partida — 4 baús + 7 power-ups + 3 poções podem cair, chance ponderada
 por raridade × duração REAL da partida (`utils/loot.js`,
@@ -397,24 +410,33 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 7 DO `PLANO_ACAO.md` (Resumo pós-partida)
+## 🎯 PRÓXIMA SESSÃO — FASE 8 DO `PLANO_ACAO.md` (Painel da Arena)
 
 **Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-071.md` (a mais recente) → `DECISIONS.md` D020-D049.
+`sessions/sessao-072.md` (a mais recente) → `DECISIONS.md` D020-D050.
 
-**Fases 0-6 concluídas** (sessões 064-071; sessão 069 foi um ajuste de
+**Fases 0-7 concluídas** (sessões 064-072; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
 direto do Davi). `PLANO_ACAO.md` é a lista de verdade; não duplicar o
 backlog aqui.
 
-**Próxima: Fase 7 (páginas de resumo pós-partida)** — 6 páginas em
-sequência + 2 ocasionais (meta de ofensiva batida, mudança de faixa de
-tabuada), substituindo/estendendo o `ResultsPage.jsx` atual. O Davi já
-se ofereceu pra mandar imagens de referência quando chegar a vez —
-especialmente o calendário de **5 dias** da página de ofensiva
-(DIFERENTE do calendário semanal do Header, confirmado desde a sessão
-065). Depende da Fase 6 (loot) pra página 6 ter o que mostrar — já
-pronta.
+**Próxima: Fase 8 (painel central da Arena)** — Davi pediu explicitamente
+pra **começar perguntando o que ele quer**, não propor design pronto
+(mesma lição das sessões 055-058 com a tela de Ligas).
+
+**Pendente de confirmação do Davi (sessão 072/D050)** — 4 decisões
+sinalizadas na Fase 7 que podem precisar de ajuste:
+1. "Baú embaixo de cada recompensa" — interpretação minha do texto dele
+   (baú só decora recompensa que NÃO é baú)
+2. Gênero gramatical ("um(a) [item]") — tabela fixa, pode errar item novo
+3. Não usei os PNGs específicos que ele baixou pro alvo de Acertos nem
+   pro baú com item raro — usei ícone equivalente já existente
+4. "Resumo do dia" da página de Missões (imagem de referência) — não
+   implementado, precisa de agregado diário que não existe ainda
+
+**Pendente de verificação real (D034, sempre a mesma limitação):** Fase 7
+inteira só foi testada via ferramentas de DEV (`?screen=results&full=1`),
+nunca numa partida jogada de verdade — pedir ao Davi pra jogar e conferir.
 
 **Pendente de confirmação em ambiente real (D049):** o loot da Fase 6 foi
 verificado por simulação em Node + revisão de código, mas não por
@@ -521,8 +543,7 @@ História (narrativa infinita) — ver D018.
 | `src/constants/leagues.js` | [v6.0 · Bloco 4] 10 ligas + 100 personagens |
 | `src/utils/leagues.js` | [v6.0 · Bloco 4] Motor da competição (XP simulado, standings, promoção/rebaixamento) |
 | `src/pages/RankingPage.jsx` | [v6.0 · Bloco 4] Página "Ligas" — reescrita, usa `utils/leagues.js` |
-| `src/components/Mascot.jsx` | [v5.0] Sistema de mascote — Tuca/Vupt, poses por humor, frequência controlada em `GamePage` |
-| `src/assets/mascots/*.webp` | [v5.0] Poses animadas (geradas por IA + pipeline Python de remoção de fundo — ver D019) |
+| `src/pages/PostGameSummary.jsx` | [v6.0.21 · Fase 7] Sequência de páginas de resumo pós-partida — substitui `ResultsPage.jsx` (removida) |
 | `src/constants/shop.js` | Itens da loja — só `powerup` desde a 5.0 |
 | `src/constants/missions.js` | Pools de missões por período |
 | `src/constants/seasons.js` | Temporadas, calcSeasonXp |
@@ -550,8 +571,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-071.md` — última sessão → `sessions/sessao-070.md` → `sessions/sessao-069.md`
-6. `DECISIONS.md` D020-D049 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-072.md` — última sessão → `sessions/sessao-071.md` → `sessions/sessao-070.md`
+6. `DECISIONS.md` D020-D050 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.

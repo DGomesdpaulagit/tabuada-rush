@@ -150,6 +150,7 @@ export const MOCHILA_GROUPS = [
 // PLANO_ACAO.md (duração é o MÁXIMO — a poção não "acumula" tempo não usado).
 // `art` reaproveita os 3 ícones fatiados na sessão 065 (tubo=x1,5,
 // erlenmeyer=x2, redonda=x3 — mapeamento por formato, confirmado por ele).
+// Preços TRIPLICADOS a pedido do Davi (sessão 072) — eram 100/250/450.
 export const POTIONS = [
   {
     id: 'pocao-xp-1',
@@ -157,7 +158,7 @@ export const POTIONS = [
     name: 'Poção de XP ×1,5',
     multiplier: 1.5,
     durationMin: 40,
-    price: 100,
+    price: 300,
   },
   {
     id: 'pocao-xp-2',
@@ -165,7 +166,7 @@ export const POTIONS = [
     name: 'Poção de XP ×2',
     multiplier: 2,
     durationMin: 25,
-    price: 250,
+    price: 750,
   },
   {
     id: 'pocao-xp-3',
@@ -173,7 +174,7 @@ export const POTIONS = [
     name: 'Poção de XP ×3',
     multiplier: 3,
     durationMin: 15,
-    price: 450,
+    price: 1350,
   },
 ];
 

@@ -18,7 +18,7 @@ import MenuPage from './pages/MenuPage';
 import ModesPage from './pages/ModesPage';
 import FlashcardPage from './pages/FlashcardPage';
 import GamePage from './pages/GamePage';
-import ResultsPage from './pages/ResultsPage';
+import PostGameSummary from './pages/PostGameSummary';
 import StatsPage from './pages/StatsPage';
 import RankingPage from './pages/RankingPage';
 import SettingsPage from './pages/SettingsPage';
@@ -372,7 +372,44 @@ export default function App() {
     return requested && requested !== 'game' ? requested : 'menu';
   });
   const [activeMode, setActiveMode] = useState(null);
-  const [lastResult, setLastResult] = useState(null);
+  // [ferramenta de verificação, só em DEV, sessão 072] `?screen=results` sozinho
+  // não bastava pro resumo pós-partida — a tela só renderiza com `lastResult`
+  // preenchido, e não dá pra jogar uma partida de verdade nesse ambiente (D034).
+  // Um resultado fake (com loot dos 3 tipos, pra exercitar toda página da
+  // Fase 7) só existe quando `?screen=results` é pedido em DEV. Sem footprint
+  // em produção pelo mesmo motivo do atalho de `screen` acima.
+  const [lastResult, setLastResult] = useState(() => {
+    if (!import.meta.env.DEV) return null;
+    const qs = new URLSearchParams(window.location.search);
+    if (qs.get('screen') !== 'results') return null;
+    // `?full=1` liga as páginas ocasionais + loot de teste; por padrão
+    // (sem o parâmetro) simula o caso mais comum: nenhuma ocasional, sem loot.
+    const full = qs.get('full') === '1';
+    return {
+      mode: 'rush',
+      score: 1250,
+      correct: 48,
+      wrong: 3,
+      bestStreak: 12,
+      timePlayed: 185,
+      avgMs: 1800,
+      gameXp: 30,
+      potionMultiplier: 1,
+      firstMatchToday: full,
+      metaHit: full,
+      hitGoal: 14,
+      tierChanged: full,
+      prevLevelIdx: 3,
+      newLevelIdx: 4,
+      loot: full
+        ? {
+            chests: [{ id: 'bau-mistico', coins: 1000 }],
+            powerupIds: ['powerup_life'],
+            potionIds: ['pocao-xp-1'],
+          }
+        : { chests: [], powerupIds: [], potionIds: [] },
+    };
+  });
   const [achievementQueue, setAchievementQueue] = useState([]);
   const [goalModalManual, setGoalModalManual] = useState(false);
   const [customQuestions, setCustomQuestions] = useState(null);
@@ -421,6 +458,10 @@ export default function App() {
   const handleGameEnd = useCallback(
     (result) => {
       const today = todayStr();
+      // [Fase 7, sessão 072] 1ª partida do dia? (ofensiva acende JÁ nesta
+      // partida). Precisa ser lido do `data` de ANTES do update — depois
+      // dele `lastPlayDate` já vira `today` incondicionalmente.
+      const firstMatchToday = data.lastPlayDate !== today;
 
       // Resolução da aposta ativa (calculada com base no estado ANTES do update):
       //   - Se o jogador apostou nesse modo e bateu o recorde do modo → +3× moedas
@@ -442,6 +483,16 @@ export default function App() {
       // passou) — preenchido dentro do update() abaixo, lido depois pra
       // aplicar os toasts (mesmo padrão do bet* acima).
       let challengeResolutions = [];
+
+      // [Fase 7, sessão 072] XP real desta partida — preenchido dentro do
+      // update() abaixo, exposto pro resumo pós-partida em vez de recalcular
+      // por fora com um dicionário próprio. `ResultsPage.jsx` (removido nesta
+      // sessão) tinha um `MODE_XP_MULT` local desatualizado (rush: 0.12, mais
+      // vários modos mortos de antes da redução pra 3 modos) que DIVERGIA do
+      // valor de verdade calculado aqui (rush: 0.20) — o XP mostrado na tela
+      // podia não bater com o XP realmente creditado. Corrigido expondo o
+      // valor único calculado aqui, sem segunda fonte de verdade.
+      let gameXp = 0;
 
       // [Fase 6, sessão 071] Loot da partida (baús/power-ups/poções) — sorteado
       // UMA VEZ aqui fora, com base na duração REAL da partida (`result.timePlayed`,
@@ -529,7 +580,7 @@ export default function App() {
         // dentro da janela `potionActiveUntil`), diferente do antigo XP
         // Dobrado que valia por 1 partida (removido na Fase 2, D043).
         const potionMultiplier = getActiveXpMultiplier(prev);
-        const gameXp = Math.round(
+        gameXp = Math.round(
           Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) *
             potionMultiplier *
             (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1)
@@ -814,9 +865,31 @@ export default function App() {
       // Mesmo padrão que o antigo xp2Used usava (D043): lido do `data` de
       // componente (estado ANTES desta partida), não de dentro do
       // `update()` acima — é o mesmo valor, só mais simples de expor aqui
-      // pro ResultsPage sem precisar anexar campo transiente no storage.
+      // pro resumo pós-partida sem precisar anexar campo transiente no storage.
       const potionMultiplier = getActiveXpMultiplier(data);
-      setLastResult({ ...result, potionMultiplier, betResult, betPayout, betAmount: activeBet?.amount, loot });
+      // [Fase 7, sessão 072] Sinalizadores pras páginas ocasionais do resumo
+      // pós-partida — derivados comparando `data` (ANTES) com `newData`
+      // (DEPOIS), sem precisar duplicar a lógica que já roda dentro do
+      // update() acima. `metaHit`: a única forma de `streakGoal` virar null
+      // é essa condição (ver `nextStreakGoal` no update()), então dá pra
+      // inferir de fora sem reexpor a variável local.
+      const metaHit = data.streakGoal != null && newData.streakGoal == null;
+      const tierChanged = newLevelIdx > prevLevelIdx;
+      setLastResult({
+        ...result,
+        potionMultiplier,
+        betResult,
+        betPayout,
+        betAmount: activeBet?.amount,
+        loot,
+        gameXp,
+        firstMatchToday,
+        metaHit,
+        hitGoal: data.streakGoal, // valor da meta ANTES (a que acabou de bater)
+        tierChanged,
+        prevLevelIdx,
+        newLevelIdx,
+      });
       setScreen('results');
     },
     [data, update, showAchievement]
@@ -1013,11 +1086,12 @@ export default function App() {
             />
           )}
           {screen === 'results' && lastResult && (
-            <ResultsPage
+            <PostGameSummary
               key="results"
               result={lastResult}
               onReplay={handleReplay}
               onHome={() => setScreen('menu')}
+              onSelectStreakGoal={chooseGoal}
             />
           )}
           {screen === 'stats' && (

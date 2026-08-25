@@ -2483,6 +2483,43 @@ existem de verdade.
 
 ---
 
+## D060 — O "baú genérico" era o combo do Seguro no tier errado
+
+**Data:** 2026-08-25 · sessao-082
+
+O Davi apontou três coisas sobre os baús e as três se confirmaram nos
+arquivos:
+
+1. **Os 4 baús "fechados" estão abertos e cheios de moeda.** O nome
+   `bau-madeira` etc. sempre prometeu "fechado" e a arte nunca foi isso.
+   Ele vai gerar (`baus-fechados-4-tiers.png`).
+2. **O `bau-recurso` não era um baú genérico.** Era o exemplo que ele
+   gerou pro combo do **Seguro de Ofensiva** (cristal de gelo + baú), no
+   tier errado. Eu peguei a versão errada, usei como decoração genérica,
+   e deixei a versão certa (em ouro) de fora — que era justamente a peça
+   que eu vinha registrando como "faltando" desde a sessão 076 (D056).
+   **Não faltava arte nenhuma: faltou eu olhar a folha inteira.**
+3. **O combo Poção ×3 + Místico tem brilho em volta** que suja o ícone
+   na página. Ele vai regerar.
+
+**O que mudou por isso:** `combo-seguro-ofensiva` recortado da folha e
+ligado; `bau-recurso` apagado; `FALLBACK_CHEST` e `chestArt` removidos
+(não existe mais recurso sem combo).
+
+**Decisão minha, sinalizada:** a página "Nada desta vez" ficou sem ícone
+quando o `bau-recurso` saiu. Coloquei o baú de madeira em cinza e apagado
+(`grayscale opacity-40`) em vez de um baú normal — mostrar baú cheio de
+moedas numa página que diz "você não achou nada" é contraditório. É
+temporário: quando a arte FECHADA substituir o `bau-madeira`, a página
+fica certa sozinha.
+
+**Lição de processo:** quando o Davi manda uma FOLHA com vários ícones,
+conferir tile por tile antes de recortar — inclusive os que parecem
+repetidos. A peça que faltou por 3 sessões estava dentro de uma folha que
+eu já tinha em mãos, com o fundo levemente diferente dos vizinhos.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

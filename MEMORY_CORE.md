@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-25
-**Versão:** 6.0.30 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) — sessao-081.md)
+**Versão:** 6.0.31 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + combo do Seguro corrigido — sessao-082.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,16 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.31]** Correção de arte (D060) — o "baú genérico" (`bau-recurso`)
+era, na verdade, o combo do Seguro de Ofensiva no tier errado; a versão
+certa (cristal de gelo + baú de OURO) já existia dentro da folha
+`combo-grade-completa-v2.png` desde a sessão 076 e nunca tinha sido
+usada. Recortada, ligada (`combo-seguro-ofensiva`), `bau-recurso`
+apagado, `FALLBACK_CHEST`/`chestArt` removidos — os 9 recursos têm combo
+próprio agora. Confirmado também que os 4 baús "fechados" estão todos
+ABERTOS com moeda (o Davi vai gerar os fechados). Fila de arte e o
+pedido de ícones de pontuação POR FAIXA (100/200/500/1000) estão em
+`PENDENCIAS.md`. Ver `sessao-082.md`.
 **[v6.0.30]** FASE 7.2 fechada (D059) — o catálogo de ícones que estava
 só planejado desde a sessão 079 foi implementado: `ICONES.md` (61 ícones
 COM IMAGEM, organizados por aba/página) + página visual publicada

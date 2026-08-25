@@ -70,7 +70,6 @@ GRUPOS = [
         ('bau-ouro-aberto', 'Ouro — aberto', 'página de recompensa'),
         ('bau-mistico-aberto', 'Místico — aberto', 'página de recompensa'),
         ('bau-moedas', 'Baú com moedas', 'reserva, sem uso hoje'),
-        ('bau-recurso', 'Baú genérico', 'página "Nada desta vez"'),
     ]),
     ('Combo recurso + baú', 'resumo pós-partida, página 6', [
         ('combo-congelar', 'Congelar + Madeira', 'recompensa'),
@@ -81,13 +80,15 @@ GRUPOS = [
         ('combo-escudo', 'Escudo + Ouro', 'recompensa'),
         ('combo-pocao-2', 'Poção ×2 + Ouro', 'recompensa'),
         ('combo-pocao-3', 'Poção ×3 + Místico', 'recompensa'),
+        ('combo-seguro-ofensiva', 'Seguro de Ofensiva + Ouro', 'recompensa'),
     ]),
 ]
 
 FALTANDO = [
     ('Ícone de Erro', 'Resumo pós-partida, página 1', 'hoje é o X vermelho da lucide'),
     ('Troféu', 'Resumo pós-partida, páginas 1 e 5', 'baixar como icone-de-trofeu.png'),
-    ('Combo do Seguro de Ofensiva', 'Resumo pós-partida, página 6', 'chama azul + baú de ouro'),
+    ('4 baús FECHADOS, sem moedas', 'Mochila, decoração, página "nada desta vez"', 'os atuais estão todos abertos'),
+    ('Combo Poção ×3 + Místico sem brilho', 'Resumo pós-partida, página 6', 'os enfeites em volta ficam ruins'),
 ]
 
 
@@ -324,7 +325,7 @@ HTML = """<title>Ícones do Tabuada Rush</title>
     <span><b>__TOTAL__</b> ícones no jogo</span>
     <span><b>__GRUPOS__</b> telas cobertas</span>
     <span><b>__REFS__</b> arquivos de referência guardados</span>
-    <span><b>3</b> peças ainda faltando</span>
+    <span><b>4</b> peças ainda faltando</span>
   </div>
 </header>
 

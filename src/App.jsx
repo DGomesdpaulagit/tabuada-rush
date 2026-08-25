@@ -404,9 +404,9 @@ export default function App() {
       loot: full
         ? {
             chests: [{ id: 'bau-mistico', coins: 1000 }],
-            // Cobre os 2 casos que importam testar: item COM ícone combo
-            // (life) e o único item ainda SEM combo, no fallback
-            // (streak_insurance) — ver D054.
+            // Cobre um item de cada tipo. Desde a sessão 082 todos têm
+            // ícone combo próprio — `streak_insurance` continua na lista
+            // porque foi o último a ganhar arte (combo-seguro-ofensiva).
             powerupIds: ['powerup_life', 'powerup_mission_freeze', 'powerup_streak_insurance'],
             potionIds: ['pocao-xp-1', 'pocao-xp-3'],
           }

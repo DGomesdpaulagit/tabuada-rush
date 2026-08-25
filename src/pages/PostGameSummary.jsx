@@ -59,14 +59,13 @@ const LOOT_GENDER = {
 // aqui, usa ISSO como ícone principal da página de recompensa em vez de
 // recurso+baú separados.
 //
-// `FALLBACK_CHEST` só existe pro item que NÃO tem combo ainda: a geração
-// do Seguro de Ofensiva saiu errada (repetiu uma arte antiga em vez de
-// escudo+baú de ouro) — usa o ícone do recurso sozinho + `bau-ouro`
-// direto (a classificação real dele, não mais um cálculo por raridade)
-// até o Davi mandar a arte certa.
-const FALLBACK_CHEST = { powerup_streak_insurance: 'bau-ouro' };
-
+// [sessão 082] O `FALLBACK_CHEST` (recurso + baú separados) sumiu: os 9
+// recursos têm combo próprio agora. O do Seguro de Ofensiva estava pronto
+// desde a sessão 076 dentro da folha `combo-grade-completa-v2.png` — eu
+// tinha usado a versão ERRADA dela (baú de madeira, que virou o
+// `bau-recurso` "genérico") e deixado a certa, em ouro, de fora.
 const REWARD_COMBO = {
+  powerup_streak_insurance: 'combo-seguro-ofensiva',
   powerup_mission_freeze: 'combo-congelar',
   powerup_life: 'combo-vida-extra',
   powerup_time: 'combo-tempo',
@@ -534,15 +533,9 @@ function RewardPage({ item, footer }) {
       subtitle={item.desc}
       footer={footer}
     >
-      {/* Caixa "Classificação" removida na 7.1 — nenhuma página de
-          recompensa mostra mais rótulo de raridade. */}
-      {/* [Fase 6, sessão 074, D052] Fallback pros 2 power-ups sem ícone
-          combo ainda — baú separado, TIER bate com a raridade do recurso. */}
-      {!hasCombo && item.chestArt && (
-        <div className="flex items-center justify-center">
-          <GameIcon name={item.chestArt} size={48} />
-        </div>
-      )}
+      {/* Sem filhos: a caixa "Classificação" saiu na 7.1 e o baú separado
+          (fallback de recurso sem combo) saiu na sessão 082 — todo recurso
+          tem combo próprio agora. A página é só ícone + título + descrição. */}
     </SummaryShell>
   );
 }
@@ -550,8 +543,12 @@ function RewardPage({ item, footer }) {
 // ── PÁGINA 6 (sem nada achado) — aparece mesmo sem loot [D051] ────────────────
 function RewardEmptyPage({ footer }) {
   return (
+    // [sessão 082] `bau-recurso` foi removido do projeto. Enquanto a arte de
+    // baú FECHADO (sem moedas) não chega, esta página usa o de madeira
+    // apagado e sem cor — mostrar baú cheio de moedas numa página que diz
+    // "não achou nada" seria contraditório.
     <SummaryShell
-      icon={<GameIcon name="bau-recurso" size={56} />}
+      icon={<GameIcon name="bau-madeira" size={56} className="grayscale opacity-40" />}
       iconBg="bg-surface-2"
       title="Nada desta vez"
       subtitle="Baús e power-ups são sorteados a cada partida — continue jogando pra achar algo!"
@@ -632,7 +629,6 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           desc: 'As moedas já foram direto pra sua carteira!',
           coins: c.coins,
           comboArt: null,
-          chestArt: null, // já É o baú, não embala outro
         },
       });
     });
@@ -647,7 +643,6 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: shopItem.name,
           desc: shopItem.desc,
           comboArt: REWARD_COMBO[id] || null,
-          chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },
       });
     });
@@ -662,7 +657,6 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           name: potion.name,
           desc: `Multiplica seu XP por ${String(potion.multiplier).replace('.', ',')}× por até ${potion.durationMin} minutos.`,
           comboArt: REWARD_COMBO[id] || null,
-          chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },
       });
     });

@@ -51,20 +51,20 @@ import bauMadeiraAberto from '../assets/icons/bau-madeira-aberto.png';
 import bauFerroAberto from '../assets/icons/bau-ferro-aberto.png';
 import bauOuroAberto from '../assets/icons/bau-ouro-aberto.png';
 import bauMisticoAberto from '../assets/icons/bau-mistico-aberto.png';
-// [Fase 7, sessão 073] `bau-recurso`: baú GENÉRICO — desde a sessão 074
-// (D052) só usado na página "Nada desta vez" (partida sem loot nenhum);
-// a decoração de recompensa achada agora usa bau-madeira/ferro/mistico de
-// verdade, escolhido pela raridade do recurso (RARITY_CHEST/POTION_CHEST
-// em PostGameSummary.jsx).
-import bauRecurso from '../assets/icons/bau-recurso.png';
+// [Fase 7.1, sessão 082] O `bau-recurso` (baú GENÉRICO) foi REMOVIDO do
+// projeto a pedido do Davi. Ele nunca foi um baú genérico de verdade: era
+// o EXEMPLO que ele gerou pro combo do Seguro de Ofensiva (cristal de gelo
+// + baú), só que no tier errado — madeira em vez de ouro. Eu não usei a
+// versão em ouro que ele gerou depois e reaproveitei essa como decoração,
+// o que embaralhou as duas coisas. A versão certa agora é
+// `combo-seguro-ofensiva` (logo abaixo).
 import resumoAcertos from '../assets/icons/resumo-acertos.png';
 // [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem única já
 // pronta, com o TIPO de baú batendo com a classificação que o Davi deu
 // (Madeira/Ferro/Ouro/Místico, não é mais Comum/Raro/Épico do sistema de
-// raridade da Loja — ver PostGameSummary.jsx REWARD_COMBO). Falta só
-// Seguro de Ofensiva (a geração dele saiu errada — repetiu uma arte
-// antiga em vez de gerar escudo+baú de ouro) — esse continua com ícone
-// do recurso separado + `bau-ouro` até ele mandar a arte certa.
+// raridade da Loja — ver PostGameSummary.jsx REWARD_COMBO). Desde a
+// sessão 082 os 9 recursos têm combo próprio, incluindo o Seguro de
+// Ofensiva — não existe mais fallback de recurso+baú separados.
 import comboCongelar from '../assets/icons/combo-congelar.png';
 import comboVidaExtra from '../assets/icons/combo-vida-extra.png';
 import comboTempo from '../assets/icons/combo-tempo.png';
@@ -73,6 +73,11 @@ import comboLargada from '../assets/icons/combo-largada.png';
 import comboPocao1 from '../assets/icons/combo-pocao-1.png';
 import comboPocao2 from '../assets/icons/combo-pocao-2.png';
 import comboPocao3 from '../assets/icons/combo-pocao-3.png';
+// [sessão 082] Combo do Seguro de Ofensiva — cristal de gelo + baú de OURO.
+// Recortado da folha `combo-grade-completa-v2.png` (o Davi tinha gerado essa
+// peça e ela nunca chegou a ser usada). Resolução menor que a das outras
+// (só existe dentro da folha) — se ficar mole na tela, ele regera solta.
+import comboSeguroOfensiva from '../assets/icons/combo-seguro-ofensiva.png';
 import divisaoBloqueada from '../assets/icons/divisao-bloqueada.png';
 import missaoTravada from '../assets/icons/missao-travada.png';
 import ligaBronze from '../assets/icons/liga-bronze.png';
@@ -120,7 +125,6 @@ export const ICONS = {
   'bau-ferro-aberto': bauFerroAberto,
   'bau-ouro-aberto': bauOuroAberto,
   'bau-mistico-aberto': bauMisticoAberto,
-  'bau-recurso': bauRecurso,
   'combo-congelar': comboCongelar,
   'combo-vida-extra': comboVidaExtra,
   'combo-tempo': comboTempo,
@@ -129,6 +133,7 @@ export const ICONS = {
   'combo-pocao-1': comboPocao1,
   'combo-pocao-2': comboPocao2,
   'combo-pocao-3': comboPocao3,
+  'combo-seguro-ofensiva': comboSeguroOfensiva,
   'resumo-acertos': resumoAcertos,
   'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
   'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer

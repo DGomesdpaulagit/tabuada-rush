@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.31] — 2026-08-25 — Combo do Seguro de Ofensiva + fim do "baú genérico"
+
+**Detalhes em `sessions/sessao-082.md` e `DECISIONS.md` (D060).**
+
+### Adicionado
+- `combo-seguro-ofensiva` — cristal de gelo + baú de OURO, a peça que
+  faltava pro último recurso sem combo. **Não foi gerada agora**: já
+  existia desde a sessão 076 enxertada dentro da folha
+  `combo-grade-completa-v2.png` e nunca tinha sido usada
+
+### Removido
+- `bau-recurso` (o "baú genérico") — apagado do projeto. Nunca foi
+  genérico: era o exemplo do combo do Seguro de Ofensiva no tier errado
+  (madeira em vez de ouro), que eu tinha reaproveitado como decoração
+- `FALLBACK_CHEST` e o campo `chestArt` das recompensas — com os 9
+  recursos tendo combo próprio, o caso "recurso + baú separados" deixou
+  de existir
+
+### Alterado
+- Página "Nada desta vez" usa o baú de madeira em cinza e apagado
+  (`grayscale opacity-40`) — temporário até a arte de baú FECHADO chegar
+- `ICONES.md` e página visual regenerados (61 ícones, saiu 1 e entrou 1)
+- `PENDENCIAS.md` ganhou a fila de arte a gerar (com nome de arquivo
+  definido pra cada peça) e o pedido de **ícones de pontuação por faixa
+  numérica** (100/200/500/1000), que hoje usam todos o mesmo ícone "100"
+
+---
+
 ## [6.0.30] — 2026-08-25 — FASE 7.2: catálogo de ícones + Downloads organizado
 
 **Detalhes em `sessions/sessao-081.md` e `DECISIONS.md` (D059). Nenhuma

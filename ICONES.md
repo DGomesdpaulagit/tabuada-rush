@@ -125,8 +125,7 @@
 | ![\|48](src/assets/icons/bau-ferro-aberto.png) | `bau-ferro-aberto` | Baú de Ferro ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
 | ![\|48](src/assets/icons/bau-ouro-aberto.png) | `bau-ouro-aberto` | Baú de Ouro ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
 | ![\|48](src/assets/icons/bau-mistico-aberto.png) | `bau-mistico-aberto` | Baú Místico ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
-| ![\|48](src/assets/icons/bau-moedas.png) | `bau-moedas` | Baú genérico com moedas | Reserva — sem uso ativo hoje |
-| ![\|48](src/assets/icons/bau-recurso.png) | `bau-recurso` | Baú genérico de decoração | Página "Nada desta vez" |
+| ![\|48](src/assets/icons/bau-moedas.png) | `bau-moedas` | Baú com moedas | Reserva — sem uso ativo hoje |
 
 ---
 
@@ -146,13 +145,18 @@ que você definiu (D054), não a raridade da Loja.
 | ![\|48](src/assets/icons/combo-escudo.png) | `combo-escudo` | Escudo + Baú de Ouro | Página 6 (recompensa) |
 | ![\|48](src/assets/icons/combo-pocao-2.png) | `combo-pocao-2` | Poção ×2 + Baú de Ouro | Página 6 (recompensa) |
 | ![\|48](src/assets/icons/combo-pocao-3.png) | `combo-pocao-3` | Poção ×3 + Baú Místico | Página 6 (recompensa) |
+| ![\|48](src/assets/icons/combo-seguro-ofensiva.png) | `combo-seguro-ofensiva` | Seguro de Ofensiva (cristal de gelo) + Baú de Ouro | Página 6 (recompensa) |
 | ![\|48](src/assets/icons/resumo-acertos.png) | `resumo-acertos` | Alvo verde com flecha — acertos | Páginas 1, 2 e 3 |
 
-**Falta o combo do Seguro de Ofensiva** (`powerup_streak_insurance`) — as
-duas gerações saíram erradas porque meu prompt pedia "escudo azul". O
-certo é **ofensiva congelada (chama azul) + Baú de Ouro** (ver D056).
-Enquanto não existir, a página usa `ofensiva-congelada` + `bau-ouro`
-separados.
+**Os 9 recursos têm combo próprio desde a sessão 082.** O do Seguro de
+Ofensiva estava pronto o tempo todo dentro da folha
+`combo-grade-completa-v2.png` — eu tinha usado a versão errada (baú de
+madeira, que virou o extinto "baú genérico") e deixado a certa, em ouro,
+de fora. Ele é o único recortado de dentro de uma folha, então tem
+resolução menor que os outros (240 px contra ~260).
+
+**O `bau-recurso` ("baú genérico") foi REMOVIDO na sessão 082** — nunca
+foi genérico de verdade, era o exemplo do combo do Seguro no tier errado.
 
 
 ---
@@ -161,6 +165,8 @@ separados.
 
 | O que | Onde | Situação |
 |---|---|---|
+| **4 baús FECHADOS**, sem moedas dentro | Mochila, decoração, página "Nada desta vez" | ⏳ os 4 atuais estão todos ABERTOS — nome do arquivo: `baus-fechados-4-tiers.png` |
+| **Combo Poção ×3 + Místico sem enfeite** | Resumo pós-partida, página 6 | ⏳ a versão atual tem brilho/partículas em volta — nome do arquivo: `combo-pocao-3-sem-brilho.png` |
 | **Ícone de Erro** (`X` vermelho da lucide) | Resumo pós-partida, página 1 | ⏳ você vai gerar |
 | **Troféu** (`Trophy` da lucide) | Resumo pós-partida, páginas 1 e 5 · Conquistas | ⏳ você vai baixar como `icone-de-trofeu.png` |
 | Ícones das 26 conquistas | Aba Conquistas | Emoji — sem plano de troca ainda |

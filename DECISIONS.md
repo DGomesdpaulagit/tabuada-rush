@@ -2448,6 +2448,41 @@ sessão 078. Recortei os 4 baús de lá (fundo branco removido) e criei
 
 ---
 
+## D059 — Catálogo de ícones: como ficou (FASE 7.2 implementada)
+
+**Data:** 2026-08-25 · sessao-081
+
+O Davi tinha deixado em aberto (D057) se o catálogo seria um ARQUIVO, uma
+PASTA física, ou os dois. Perguntei antes de fazer e ele respondeu: **os
+dois**, com os arquivos do Downloads **movidos** pra dentro do projeto.
+
+**Como ficou:**
+- `ICONES.md` (raiz/vault) — organizado por ABA/PÁGINA, com a imagem de
+  cada ícone renderizando no Obsidian e no GitHub
+- Página visual publicada — mesma informação em grade grande, com busca e
+  clique-pra-copiar; ícones embutidos em base64, funciona offline
+- `referencias/icones/<categoria>/` — os ORIGINAIS baixados por ele,
+  agora versionados no Git em 9 categorias
+
+**Decisão minha, sinalizada:** escrevi **geradores** (`scripts/gerar-*.py`)
+em vez de manter o catálogo à mão. Um catálogo de 61 linhas mantido
+manualmente desatualiza na terceira sessão; o gerador confere que todo
+ícone citado existe de verdade na pasta e que nenhum arquivo ficou fora
+(hoje: 61 = 61, zero divergência nos dois sentidos).
+
+**Critério de classificação do Downloads:** movi só o que era
+identificável como material do jogo. Arquivo de nome ambíguo eu não
+adivinhei — montei uma folha de contato com todos lado a lado e olhei.
+Documentos, fotos, planilhas e instaladores não foram tocados (149 → 96
+arquivos no Downloads).
+
+**Sobre a observação dele do Explorer** (Este Computador vs Acesso Rápido
+mostrando coisas diferentes): confirmado que não era problema meu — meu
+scan foi direto no caminho real da pasta e pegou os 149 arquivos que
+existem de verdade.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

@@ -361,7 +361,7 @@ facilitar localizar depois.
 
 ---
 
-## FASE 7.2 — Catálogo único de ícones + organização do Downloads (sessão 079, PENDENTE)
+## FASE 7.2 — Catálogo único de ícones + organização do Downloads ✅ CONCLUÍDA (sessão 081)
 
 Pedido novo do Davi: um documento/organização própria só pra ÍCONES —
 **diferente do `RECURSOS.md`** (que cataloga por TIPO de recurso — baú/
@@ -375,15 +375,17 @@ saber de bater o olho quais ícones cada tela usa, sem precisar caçar em
 ícones já vão sendo guardados/catalogados conforme entram no jogo, fácil
 de visualizar e de continuar adicionando.
 
-**A decidir na hora de implementar (ele deixou em aberto, pode ser um ou
-outro, ou os dois):**
-- Um arquivo/documento (tipo o `RECURSOS.md`, mas organizado por
-  página/aba em vez de por tipo) listando cada ícone com preview ou
-  descrição + onde é usado — "fica mais fácil visualizar", segundo ele
-- E/ou uma pasta física organizada (por página/aba) dentro do projeto,
-  pra onde os PNGs de referência do Downloads vão sendo movidos/copiados
-  conforme processados — em vez de ficarem soltos misturados com anos de
-  outros downloads
+**RESOLVIDO na sessão 081 — ele escolheu OS DOIS (ver D059):**
+- [x] `ICONES.md` (raiz/vault) — os 61 ícones com IMAGEM, organizados por
+      aba/página, mais o fluxo de como adicionar um ícone novo
+- [x] Página visual publicada (grade + busca + clique-pra-copiar):
+      https://claude.ai/code/artifact/698e1a4e-0a05-4532-a4dc-6739303d01b5
+- [x] `referencias/icones/<categoria>/` — 53 arquivos MOVIDOS do Downloads,
+      renomeados, em 9 categorias (Downloads foi de 149 pra 96 arquivos;
+      nada que não fosse do jogo foi tocado)
+- [x] `scripts/gerar-icones-md.py` + `scripts/gerar-catalogo-icones.py` —
+      regeneram os dois catálogos, conferindo que nenhum ícone ficou de
+      fora nem sobrou citado sem existir
 
 **Observação do Davi sobre o Explorer do Windows:** ele notou que
 "Este Computador → Downloads" às vezes mostra arquivo que não aparece em

@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-25
-**Versão:** 6.0.29 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) + revisão visual bloco 1 (Fase 7.1) — sessao-080.md)
+**Versão:** 6.0.30 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) — sessao-081.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.30]** FASE 7.2 fechada (D059) — o catálogo de ícones que estava
+só planejado desde a sessão 079 foi implementado: `ICONES.md` (61 ícones
+COM IMAGEM, organizados por aba/página) + página visual publicada
+(grade/busca/copiar) + `referencias/icones/` com 53 arquivos movidos do
+Downloads em 9 categorias + 2 scripts que regeneram tudo e conferem que
+nenhum ícone ficou de fora. Downloads foi de 149 pra 96 arquivos; nada
+fora do jogo foi tocado. Próximo: bloco 2 da 7.1 (baú por missão).
+Ver `sessao-081.md`.
 **[v6.0.29]** Fase 7.1, bloco 1 (D058) — revisão visual do resumo
 pós-partida, tudo que não dependia de arte nova do Davi: confete
 removido de TODAS as páginas (ele confirmou que é geral), ícones reais

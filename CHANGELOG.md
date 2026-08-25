@@ -4,6 +4,28 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.30] — 2026-08-25 — FASE 7.2: catálogo de ícones + Downloads organizado
+
+**Detalhes em `sessions/sessao-081.md` e `DECISIONS.md` (D059). Nenhuma
+mudança no jogo — só organização e documentação.**
+
+### Adicionado
+- `ICONES.md` — catálogo único de TODOS os 61 ícones, com a imagem de
+  cada um, organizado pela aba/página onde aparece (complementar ao
+  `RECURSOS.md`, que organiza por tipo de recurso)
+- Página visual publicada com os 61 ícones em grade, busca e
+  clique-pra-copiar: https://claude.ai/code/artifact/698e1a4e-0a05-4532-a4dc-6739303d01b5
+- `referencias/icones/<categoria>/` — 53 arquivos de referência movidos do
+  Downloads, com nome limpo, em 9 categorias
+- `scripts/gerar-icones-md.py` e `scripts/gerar-catalogo-icones.py` —
+  regeneram o catálogo (texto e página) quando entra ícone novo
+
+### Alterado
+- `.gitignore` passa a ignorar o HTML gerado do catálogo (2,3 MB,
+  regenerável a qualquer momento pelo script)
+
+---
+
 ## [6.0.29] — 2026-08-25 — Fase 7.1 (bloco 1): revisão visual do resumo pós-partida
 
 **Detalhes em `sessions/sessao-080.md` e `DECISIONS.md` (D058).**

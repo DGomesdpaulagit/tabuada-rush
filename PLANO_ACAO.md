@@ -350,9 +350,47 @@ uma feature visual depender de referência ambígua, pedir ao Davi pra
 baixar uma imagem "base" — e **Claude nomeia o arquivo**, não ele, pra
 facilitar localizar depois.
 
-**Pendência de organização:** criar uma pasta e organizar as dezenas de
-imagens de referência acumuladas no Downloads ao longo das sessões —
-sem prazo, fazer quando a poeira da revisão assentar.
+---
+
+## FASE 7.2 — Catálogo único de ícones + organização do Downloads (sessão 079, PENDENTE)
+
+Pedido novo do Davi: um documento/organização própria só pra ÍCONES —
+**diferente do `RECURSOS.md`** (que cataloga por TIPO de recurso — baú/
+power-up/poção). Este aqui organiza por **ABA/PÁGINA do app** (Menu,
+Loja, Missões, Ligas, Perfil, Mochila, resumo pós-partida, etc.) — pra
+saber de bater o olho quais ícones cada tela usa, sem precisar caçar em
+`GameIcon.jsx` toda vez.
+
+**Objetivo prático dele:** parar de precisar baixar o mesmo tipo de
+ícone do zero toda vez — ter um lugar único (arquivo e/ou pasta) onde os
+ícones já vão sendo guardados/catalogados conforme entram no jogo, fácil
+de visualizar e de continuar adicionando.
+
+**A decidir na hora de implementar (ele deixou em aberto, pode ser um ou
+outro, ou os dois):**
+- Um arquivo/documento (tipo o `RECURSOS.md`, mas organizado por
+  página/aba em vez de por tipo) listando cada ícone com preview ou
+  descrição + onde é usado — "fica mais fácil visualizar", segundo ele
+- E/ou uma pasta física organizada (por página/aba) dentro do projeto,
+  pra onde os PNGs de referência do Downloads vão sendo movidos/copiados
+  conforme processados — em vez de ficarem soltos misturados com anos de
+  outros downloads
+
+**Observação do Davi sobre o Explorer do Windows:** ele notou que
+"Este Computador → Downloads" às vezes mostra arquivo que não aparece em
+"Acesso Rápido → Downloads" (são visões diferentes da mesma pasta no
+Explorer — Acesso Rápido é atalho/lista fixada, pode ficar dessincronizado).
+**Não é um problema que eu preciso resolver no Windows** — meus scans já
+vão direto no caminho real da pasta (`C:/Users/HP/Downloads`), então
+pegam todo arquivo que existe de verdade, independente do que uma
+visão específica do Explorer mostra. Só registrando aqui pra não
+esquecer o contexto de por que ele mencionou isso.
+
+**Ordem:** Davi quer isso feito **antes** das próximas inovações que ele
+tem em mente pra Fase 8 (Arena) — ele mencionou que vai ter "algumas
+inovações" ligadas a ícones que dependem dessa organização estar pronta
+primeiro. Não implementar a Fase 8 sem essa organização passar por aqui
+antes.
 
 ---
 

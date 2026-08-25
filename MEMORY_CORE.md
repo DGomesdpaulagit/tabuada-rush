@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.27 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-078.md)
+**Versão:** 6.0.28 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-079.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.28]** Novo item de plano, sem código (D057) — Davi pediu um
+catálogo único de ÍCONES organizado por PÁGINA/ABA do app (diferente do
+`RECURSOS.md`, que organiza por tipo de recurso) — objetivo é parar de
+rebaixar o mesmo tipo de ícone toda vez. Registrado como FASE 7.2 no
+`PLANO_ACAO.md`, sem implementação ainda (arquivo vs. pasta física, ou
+os dois, fica pra decidir na hora). Ordem: antes da Fase 8. Ver
+`sessao-079.md` e D057.
 **[v6.0.27]** Sessão só de documentação (D056) — Davi mandou uma revisão
 visual extensa de toda a Fase 7 e avisou que o contexto da conversa
 estava acabando; pediu pra documentar tudo antes de qualquer código
@@ -467,11 +474,12 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 ## 🎯 PRÓXIMA SESSÃO — FASE 7.1 DO `PLANO_ACAO.md` (Revisão visual da Fase 7)
 
 **Ler antes de tocar em qualquer código, NESTA ORDEM:**
-1. `sessions/sessao-078.md` (a mais recente — lista COMPLETA de
-   pendências, página por página, não implementada ainda)
-2. `RECURSOS.md` (catálogo de recursos, criado na sessão 078)
-3. `PLANO_ACAO.md` → seção "FASE 7.1" (resumo, aponta pra sessao-078.md)
-4. `DECISIONS.md` D056 (a mais recente)
+1. `sessions/sessao-078.md` (lista COMPLETA de pendências da Fase 7.1,
+   página por página, não implementada ainda)
+2. `RECURSOS.md` (catálogo de recursos por TIPO, criado na sessão 078)
+3. `PLANO_ACAO.md` → seções "FASE 7.1" e "FASE 7.2" (a 7.2 é nova,
+   sessão 079 — catálogo de ícones por PÁGINA, ainda não implementado)
+4. `DECISIONS.md` D056-D057 (as mais recentes)
 
 **A sessão 078 foi só documentação** (Davi mandou uma revisão visual
 extensa de toda a Fase 7 e o contexto da conversa acabou no meio — ele
@@ -492,13 +500,19 @@ pedir ao Davi pra baixar uma imagem "base", e Claude nomeia o arquivo
 (`<Confetti />`) é só nas 4 páginas que ele mencionou ou em todas as
 páginas do resumo pós-partida (ver `sessao-078.md`).
 
-**Fases 0-7 concluídas** (sessões 064-078; sessão 069 foi um ajuste de
+**Fases 0-7 concluídas** (sessões 064-079; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
-direto do Davi; sessões 073-078 foram ajustes/revisão sobre a Fase 7, não
+direto do Davi; sessões 073-079 foram ajustes/revisão sobre a Fase 7, não
 fase nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog
 aqui.
 
-**Depois da Fase 7.1 resolvida: Fase 8 (painel central da Arena)** —
+**Depois da Fase 7.1: Fase 7.2** (catálogo único de ícones por página/
+aba do app, complementar ao `RECURSOS.md` — arquivo e/ou pasta física
+organizada, decisão de implementação em aberto) — Davi quer isso pronto
+antes de ir pra Fase 8, porque tem "algumas inovações" ligadas a ícones
+pra Arena que dependem dessa organização vir primeiro.
+
+**Depois da Fase 7.2 resolvida: Fase 8 (painel central da Arena)** —
 Davi pediu explicitamente pra **começar perguntando o que ele quer**, não
 propor design pronto (mesma lição das sessões 055-058 com a tela de
 Ligas).
@@ -643,8 +657,8 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-078.md` — última sessão (lista de pendências da Fase 7.1, não implementada) → `sessions/sessao-077.md` → `sessions/sessao-076.md`
-6. `DECISIONS.md` D020-D056 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+5. `sessions/sessao-079.md` — última sessão → `sessions/sessao-078.md` (lista de pendências da Fase 7.1, não implementada) → `sessions/sessao-077.md`
+6. `DECISIONS.md` D020-D057 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
 7. `RECURSOS.md` — catálogo de recursos (baús/power-ups/poções), criado sessão 078
 8. `BUGS.md` — problemas ativos
 

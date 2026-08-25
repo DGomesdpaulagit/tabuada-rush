@@ -4,6 +4,18 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.28] — 2026-08-25 — Documentação: novo item de plano (catálogo de ícones)
+
+**Detalhes em `sessions/sessao-079.md` e `DECISIONS.md` (D057). Sem
+mudança de código — só plano.**
+
+### Adicionado
+- FASE 7.2 no `PLANO_ACAO.md`: catálogo único de ícones organizado por
+  página/aba do app (complementar ao `RECURSOS.md`, que organiza por
+  tipo de recurso) — a implementar antes da Fase 8
+
+---
+
 ## [6.0.27] — 2026-08-25 — Documentação: revisão visual da Fase 7 (handoff)
 
 **Detalhes em `sessions/sessao-078.md` e `DECISIONS.md` (D056). Sem

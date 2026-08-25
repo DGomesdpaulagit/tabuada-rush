@@ -2376,6 +2376,39 @@ contexto acabando).
 
 ---
 
+## D057 — Catálogo único de ícones por página (novo item de plano)
+
+**Data:** 2026-08-25 · sessao-079
+
+Davi pediu mais um documento/organização, **diferente do `RECURSOS.md`**
+(que cataloga por TIPO de recurso — baú/power-up/poção): este é por
+**ABA/PÁGINA do app**, pra saber de bater o olho quais ícones cada tela
+usa. Objetivo prático: parar de precisar baixar/redigitar o mesmo tipo
+de ícone do zero toda vez — ter um lugar único (arquivo e/ou pasta) onde
+os ícones vão sendo catalogados conforme entram no jogo.
+
+Ele deixou em aberto se isso vira um arquivo (tipo o `RECURSOS.md`, só
+que organizado por página), uma pasta física de assets organizada por
+página, ou os dois — decisão pra quando for implementar de verdade, não
+agora. Registrado só como item de plano (`PLANO_ACAO.md`, FASE 7.2),
+**sem implementação nesta sessão** — mesmo espírito do D056 (documentar
+antes de codar).
+
+**Observação dele sobre o Explorer do Windows** ("Este Computador" vs
+"Acesso Rápido" mostrando arquivos diferentes do Downloads): não é algo
+que eu preciso resolver — meus scans já vão direto no caminho real da
+pasta, então pegam todo arquivo que existe de verdade independente de
+qual visão do Explorer ele está olhando. Anotado só pra manter o
+contexto de por que ele mencionou.
+
+**Ordem:** ele quer essa organização pronta **antes** de mexer na Fase 8
+(Arena) — mencionou "algumas inovações" ligadas a ícones que dependem
+disso vir primeiro, sem detalhar ainda quais.
+
+**Nenhum código alterado** — só `PLANO_ACAO.md` (FASE 7.2 nova).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

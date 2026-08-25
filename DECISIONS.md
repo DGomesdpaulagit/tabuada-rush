@@ -2409,6 +2409,45 @@ disso vir primeiro, sem detalhar ainda quais.
 
 ---
 
+## D058 — Fase 7.1 bloco 1: o que decidi sem perguntar (e por quê)
+
+**Data:** 2026-08-25 · sessao-080
+
+Três coisas do bloco 1 da revisão visual não estavam escritas na lista do
+Davi e eu resolvi na hora — ficam sinalizadas aqui pra ele reprovar se
+quiser:
+
+1. **Tirei o círculo vermelho atrás do ícone de Erros também.** Ele pediu
+   só a remoção do círculo VERDE (Acertos). Deixar um lado com bolha
+   colorida e o outro sem ficaria visivelmente torto — os dois estão lado
+   a lado na mesma caixa. O ícone de erro em si continua o `X` da lucide,
+   esperando a arte que ele vai gerar.
+
+2. **Calendário da página de Ofensiva: usei os marcadores que já existem.**
+   Ele ia baixar uma imagem de referência do "estilo do painel do Header".
+   Não precisou: esse painel já está implementado e usa a arte
+   `dia-feito` (círculo laranja com check) / `dia-vazio` (círculo cinza) —
+   exatamente o que ele descreveu ("círculos sem cor por padrão; quando
+   concluído, laranja com check"). Reaproveitei em vez de pedir arte nova.
+
+3. **Corrigi o dado do calendário, não só o visual.** O "concluído" de
+   cada dia era assumido pelo índice (`i <= 0`), ou seja: ONTEM sempre
+   aparecia feito, mesmo pra quem jogou pela primeira vez hoje. Como eu ia
+   reescrever esse trecho de qualquer jeito, passei a ler das sessões
+   reais pela data local (`localDate`, mesma conta do Header — evita o bug
+   de fuso do D040). Mostrar dia feito que não foi jogado é mentira na
+   tela de um jogo cuja mecânica principal é justamente a ofensiva.
+
+**Sobre o baú de moeda aberto:** não é decisão minha — ele apontou o
+arquivo `novo_icone_baus_classificações.png` como boa referência na
+sessão 078. Recortei os 4 baús de lá (fundo branco removido) e criei
+`bau-*-aberto`. A versão fechada continua existindo e em uso.
+
+**Confirmado por ele antes de codar:** confete sai de TODAS as páginas
+(não só das 4 citadas), e o baú por missão fica pro bloco seguinte.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

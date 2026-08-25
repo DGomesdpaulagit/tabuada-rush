@@ -43,6 +43,14 @@ import bauFerro from '../assets/icons/bau-ferro.png';
 import bauOuro from '../assets/icons/bau-ouro.png';
 import bauMistico from '../assets/icons/bau-mistico.png';
 import bauMoedas from '../assets/icons/bau-moedas.png';
+// [Fase 7.1, sessão 080] Versão ABERTA (com moedas à vista) dos 4 baús —
+// recortada de `novo_icone_baus_classificações.png` (arte do Davi). Usada
+// na página de recompensa de baú de moeda do resumo pós-partida; a versão
+// fechada continua valendo pra decoração/estoque.
+import bauMadeiraAberto from '../assets/icons/bau-madeira-aberto.png';
+import bauFerroAberto from '../assets/icons/bau-ferro-aberto.png';
+import bauOuroAberto from '../assets/icons/bau-ouro-aberto.png';
+import bauMisticoAberto from '../assets/icons/bau-mistico-aberto.png';
 // [Fase 7, sessão 073] `bau-recurso`: baú GENÉRICO — desde a sessão 074
 // (D052) só usado na página "Nada desta vez" (partida sem loot nenhum);
 // a decoração de recompensa achada agora usa bau-madeira/ferro/mistico de
@@ -108,6 +116,10 @@ export const ICONS = {
   'bau-ferro': bauFerro,
   'bau-ouro': bauOuro,
   'bau-mistico': bauMistico,
+  'bau-madeira-aberto': bauMadeiraAberto,
+  'bau-ferro-aberto': bauFerroAberto,
+  'bau-ouro-aberto': bauOuroAberto,
+  'bau-mistico-aberto': bauMisticoAberto,
   'bau-recurso': bauRecurso,
   'combo-congelar': comboCongelar,
   'combo-vida-extra': comboVidaExtra,

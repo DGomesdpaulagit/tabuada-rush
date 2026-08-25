@@ -15,14 +15,14 @@ de partida, Fase 6). `intervalMédio` = média de partidas até aparecer
 como drop — é uma média estatística, não um contador (pode vir na 1ª
 partida por sorte, raro mas possível). Ver `utils/loot.js`.
 
-| Recurso | O que faz | Preço na Loja | Raridade (Loja) | Intervalo médio de drop | Ícone padrão |
-|---|---|---:|---|---:|---|
-| **Seguro de Ofensiva** | Salva sua ofensiva se você quebrá-la — restaura automaticamente em até 24h | 100 moedas | Raro 🔵 | 1-15 partidas | `ofensiva-congelada` (chama azul congelada — **NÃO é um escudo**, apesar do emoji 🛡️ do item) |
-| **Congelar Missão** | Estende em 10 dias o prazo de um desafio mensal aceito | 50 moedas | Comum ⚪ | 1-5 partidas | `pu-congelar` |
-| **Vida Extra** | Restaura 1 vida quando você perder a última — não deixa o jogo acabar | 80 moedas | Comum ⚪ | 1-7 partidas | `pu-vida-extra` (coração+cruz, ícone dedicado — não é o genérico de vidas) |
-| **+60s no relógio** | Adiciona 60 segundos ao cronômetro durante a partida | 120 moedas | Raro 🔵 | 1-10 partidas | `pu-tempo` |
-| **Escudo** | Protege do próximo erro — a vida não é descontada dessa vez. Ativa sozinho | 100 moedas | Raro 🔵 | 1-10 partidas | `pu-escudo` |
-| **Largada Turbo** | Começa a próxima partida de Rush já com +10s no relógio | 90 moedas | Comum ⚪ | 1-6 partidas | `pu-largada` |
+| Recurso                | O que faz                                                                  | Preço na Loja | Raridade (Loja) | Intervalo médio de drop | Ícone padrão                                                                                   |
+| ---------------------- | -------------------------------------------------------------------------- | ------------: | --------------- | ----------------------: | ---------------------------------------------------------------------------------------------- |
+| **Seguro de Ofensiva** | Salva sua ofensiva se você quebrá-la — restaura automaticamente em até 24h |    100 moedas | Raro 🔵         |           1-15 partidas | `ofensiva-congelada` (chama azul congelada — **NÃO é um escudo**, apesar do emoji 🛡️ do item) |
+| **Congelar Missão**    | Estende em 10 dias o prazo de um desafio mensal aceito                     |     50 moedas | Comum ⚪         |            1-5 partidas | `pu-congelar`                                                                                  |
+| **Vida Extra**         | Restaura 1 vida quando você perder a última — não deixa o jogo acabar      |     80 moedas | Comum ⚪         |            1-7 partidas | `pu-vida-extra` (coração+cruz, ícone dedicado — não é o genérico de vidas)                     |
+| **+60s no relógio**    | Adiciona 60 segundos ao cronômetro durante a partida                       |    120 moedas | Raro 🔵         |           1-10 partidas | `pu-tempo`                                                                                     |
+| **Escudo**             | Protege do próximo erro — a vida não é descontada dessa vez. Ativa sozinho |    100 moedas | Raro 🔵         |           1-10 partidas | `pu-escudo`                                                                                    |
+| **Largada Turbo**      | Começa a próxima partida de Rush já com +10s no relógio                    |     90 moedas | Comum ⚪         |            1-6 partidas | `pu-largada`                                                                                   |
 
 **Baú-embalagem (D054, quando achado por loot, não comprado):** cada
 power-up tem uma classificação PRÓPRIA de baú (diferente da Raridade da
@@ -51,15 +51,19 @@ erlenmeyer=×2, redonda=×3.
 
 ## 💰 Baús (moeda)
 
+**Arte (sessão 080):** cada baú tem DUAS versões — `bau-<tier>`
+(fechado, usado na Mochila/decoração) e `bau-<tier>-aberto` (aberto, com
+as moedas à vista), usado na página de recompensa do resumo pós-partida.
+
 4 tiers. **Só valem pra baú COM MOEDA** — a Loja não vende baú (não tem
 preço, não se compra). Só aparecem como loot de partida.
 
-| Baú | Intervalo médio de drop | Moedas | Ícone |
-|---|---:|---:|---|
-| **Madeira** | 3-10 partidas | 10-100 (aleatório) | `bau-madeira` |
-| **Ferro** | 1-25 partidas | 200-400 (aleatório) | `bau-ferro` |
-| **Ouro** | 1-40 partidas | 500-800 (aleatório) | `bau-ouro` |
-| **Místico** | 1-50 partidas | 1.000 (fixo) | `bau-mistico` |
+| Baú         | Intervalo médio de drop |              Moedas | Ícone         |
+| ----------- | ----------------------: | ------------------: | ------------- |
+| **Madeira** |           3-10 partidas |  10-100 (aleatório) | `bau-madeira` |
+| **Ferro**   |           1-25 partidas | 200-400 (aleatório) | `bau-ferro`   |
+| **Ouro**    |           1-40 partidas | 500-800 (aleatório) | `bau-ouro`    |
+| **Místico** |           1-50 partidas |        1.000 (fixo) | `bau-mistico` |
 
 ---
 

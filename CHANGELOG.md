@@ -4,6 +4,48 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.29] — 2026-08-25 — Fase 7.1 (bloco 1): revisão visual do resumo pós-partida
+
+**Detalhes em `sessions/sessao-080.md` e `DECISIONS.md` (D058).**
+
+### Adicionado
+- 4 ícones de baú ABERTO (`bau-madeira-aberto`, `bau-ferro-aberto`,
+  `bau-ouro-aberto`, `bau-mistico-aberto`) — recortados da arte do Davi
+  e registrados em `GameIcon.jsx`
+- Página de recompensa de baú: total de moedas ganho (`+N`) com o ícone
+  de moeda ACIMA do baú, sem caixa/badge decorativo
+
+### Alterado
+- Ícone de XP real (`xp`) no lugar do raio da lucide — página de XP
+  (principal + caixa) e no "Resumo do dia" da página de Missões
+- Ícone de ofensiva real (`ofensiva`) no lugar da chama customizada —
+  página de Ofensiva e página ocasional "meta batida" (inclusive o
+  emoji 🔥 da linha "Meta alcançada!")
+- Calendário de 5 dias (Ofensiva): marcadores redondos `dia-feito`/
+  `dia-vazio`, iguais aos do painel do Header — só a letra do dia, sem
+  número, sem caixa quadrada
+- Baú de moeda na página de recompensa agora aparece ABERTO
+- Dias concluídos do calendário passaram a vir das sessões reais
+  (`localDate`) em vez de assumidos pelo índice do dia
+
+### Removido
+- `<Confetti />` de TODAS as páginas do resumo pós-partida (confirmado
+  pelo Davi que é geral, não só nas 4 páginas que ele citou)
+- Círculo colorido atrás dos ícones de Acertos e de Erros (página 1)
+- Caixa "Como funciona?" da página de Ofensiva (legenda curta mantida)
+- Caixa "Classificação" de todas as páginas de recompensa — junto com as
+  tabelas `POTION_RARITY`/`CHEST_RARITY` e o import de `RARITIES`
+
+### Corrigido
+- **Bug da "linha" no ícone de Acertos**: o arquivo `resumo-acertos.png`
+  tinha uma faixa branca opaca de 3px na borda direita (resíduo do
+  recorte original), que em fundo escuro virava uma barra dentro da
+  caixa. PNG reprocessado (fundo removido por flood-fill das bordas,
+  anéis brancos internos preservados) e recortado no conteúdo real.
+  Varredura nos outros 55 ícones: nenhum outro tinha o defeito
+
+---
+
 ## [6.0.28] — 2026-08-25 — Documentação: novo item de plano (catálogo de ícones)
 
 **Detalhes em `sessions/sessao-079.md` e `DECISIONS.md` (D057). Sem

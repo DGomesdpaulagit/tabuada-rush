@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabuada Rush</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: #E5E3DC;
+    --text: #1A1916;
+    --muted: #8A8880;
+    --accent: #1A1916;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --red: #9B1C1C;
+    --red-bg: #FEE2E2;
+    --amber: #92400E;
+    --amber-bg: #FEF3C7;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ── LOGO ── */
+  .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .logo-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── HOME ── */
+  .home-tagline {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .home-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .modes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .mode-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-card:hover { border-color: var(--text); }
+  .mode-card.selected {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+  .mode-card.selected .mode-sub { color: rgba(247,246,243,0.6); }
+  .mode-icon { font-size: 20px; margin-bottom: 6px; display: block; }
+  .mode-name { font-size: 13px; font-weight: 600; display: block; }
+  .mode-sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-ghost {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+
+  /* ── GAME ── */
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+  .timer-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .timer-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .timer {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text);
+    transition: color 0.3s;
+  }
+  .timer.urgent { color: #DC2626; }
+
+  .score-wrap {
+    text-align: right;
+  }
+  .score-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 500;
+  }
+  .score-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--text);
+    border-radius: 2px;
+    transition: width 1s linear;
+  }
+  .progress-fill.urgent { background: #DC2626; }
+
+  /* streak badge */
+  .streak-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    min-height: 24px;
+  }
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--amber-bg);
+    color: var(--amber);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .streak-badge.hidden { opacity: 0; }
+
+  /* question */
+  .question-area {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .difficulty-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .question {
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+    transition: all 0.1s;
+  }
+  .question.pop {
+    animation: pop 0.15s ease-out;
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  .question.shake {
+    animation: shake 0.3s ease-out;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* answer input */
+  .answer-wrap {
+    display: flex;
+    gap: 8px;
+  }
+  #answer-input {
+    flex: 1;
+    height: 52px;
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    -moz-appearance: textfield;
+  }
+  #answer-input::-webkit-outer-spin-button,
+  #answer-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  #answer-input:focus { border-color: var(--text); }
+  #answer-input.correct { border-color: var(--green); background: var(--green-bg); }
+  #answer-input.wrong { border-color: var(--red); background: var(--red-bg); }
+
+  #submit-btn {
+    height: 52px;
+    padding: 0 20px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  #submit-btn:hover { opacity: 0.8; }
+  #submit-btn:active { transform: scale(0.97); }
+
+  .feedback-msg {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 20px;
+    margin-top: 10px;
+    color: var(--muted);
+  }
+  .feedback-msg.ok { color: var(--green); }
+  .feedback-msg.err { color: var(--red); }
+
+  /* xp bar */
+  .xp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1.25rem;
+  }
+  .xp-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .xp-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    background: var(--text);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .xp-level {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  /* combo popup */
+  #combo-pop {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    padding: 12px 28px;
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 100;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  #combo-pop.show {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* ── RESULT ── */
+  .result-big {
+    font-family: var(--mono);
+    font-size: 56px;
+    font-weight: 500;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .result-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+  .result-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .result-stat {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .result-stat-val {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .result-stat-lbl {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* level up toast */
+  #levelup-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 40px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+  }
+  #levelup-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* rank badge */
+  .rank-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  /* ── RECORDS ── */
+  .records-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .records-row:last-child { border-bottom: none; }
+  .records-row .rec-val {
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <span class="logo-title">Tabuada Rush</span>
+  </div>
+
+  <!-- ── HOME ── -->
+  <div class="screen active card" id="screen-home">
+    <div class="home-tagline">Memorize a tabuada.<br>5 minutos por dia.</div>
+    <div class="home-sub">Jogue, acerte, evolua.</div>
+
+    <div class="modes-grid">
+      <div class="mode-card selected" data-mode="rush" onclick="selectMode(this,'rush')">
+        <span class="mode-icon">⚡</span>
+        <span class="mode-name">Rush</span>
+        <span class="mode-sub">5 min + bônus</span>
+      </div>
+      <div class="mode-card" data-mode="sobrevivencia" onclick="selectMode(this,'sobrevivencia')">
+        <span class="mode-icon">❤️</span>
+        <span class="mode-name">Sobrevivência</span>
+        <span class="mode-sub">3 erros = fim</span>
+      </div>
+      <div class="mode-card" data-mode="velocidade" onclick="selectMode(this,'velocidade')">
+        <span class="mode-icon">⏱</span>
+        <span class="mode-name">Velocidade</span>
+        <span class="mode-sub">60s, sem bônus</span>
+      </div>
+      <div class="mode-card" data-mode="diario" onclick="selectMode(this,'diario')">
+        <span class="mode-icon">📅</span>
+        <span class="mode-name">Desafio Diário</span>
+        <span class="mode-sub">Sequência fixa</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">Começar</button>
+    <button class="btn-ghost" onclick="showRecords()">Ver recordes</button>
+  </div>
+
+  <!-- ── GAME ── -->
+  <div class="screen card" id="screen-game">
+    <div class="game-header">
+      <div class="timer-wrap">
+        <span class="timer-label" id="timer-label">Tempo</span>
+        <span class="timer" id="timer-display">5:00</span>
+      </div>
+      <div class="score-wrap">
+        <div class="score-num" id="score-display">0</div>
+        <div class="score-label">pontos</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:100%"></div>
+    </div>
+
+    <div class="streak-row">
+      <div class="streak-badge hidden" id="streak-badge">🔥 <span id="streak-num">0</span></div>
+      <span id="lives-display" style="font-size:18px;"></span>
+    </div>
+
+    <div class="question-area">
+      <div class="difficulty-tag" id="diff-tag">Nível 1</div>
+      <div class="question" id="question-text">2 × 3 =</div>
+    </div>
+
+    <div class="answer-wrap">
+      <input type="number" id="answer-input" placeholder="?" autocomplete="off" inputmode="numeric" />
+      <button id="submit-btn" onclick="checkAnswer()">OK</button>
+    </div>
+    <div class="feedback-msg" id="feedback-msg"></div>
+
+    <div class="xp-row">
+      <span class="xp-label" id="xp-level-label">Lv 1</span>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+      <span class="xp-level" id="xp-next">0 xp</span>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div class="screen card" id="screen-result">
+    <div class="rank-badge" id="result-rank">Iniciante</div>
+    <div class="result-big" id="result-score">0</div>
+    <div class="result-label" id="result-mode-label">pontos no modo Rush</div>
+    <div class="result-stats">
+      <div class="result-stat"><div class="result-stat-val" id="res-acertos">0</div><div class="result-stat-lbl">acertos</div></div>
+      <div class="result-stat"><div class="result-stat-val" id="res-erros">0</div><div class="result-stat-lbl">erros</div></div>
+      <div class="result-stat"><div class="result-stat-val" id="res-streak">0</div><div class="result-stat-lbl">melhor sequência</div></div>
+      <div class="result-stat"><div class="result-stat-val" id="res-xp">+0</div><div class="result-stat-lbl">XP ganho</div></div>
+    </div>
+    <button class="btn-primary" onclick="startGame()">Jogar de novo</button>
+    <button class="btn-ghost" onclick="showScreen('screen-home')">Menu</button>
+  </div>
+
+  <!-- ── RECORDS ── -->
+  <div class="screen card" id="screen-records">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <span style="font-weight:600;font-size:16px;">Seus recordes</span>
+      <span class="rank-badge" id="records-rank">Iniciante</span>
+    </div>
+    <div class="records-row"><span>Rush (pontos)</span><span class="rec-val" id="rec-rush">—</span></div>
+    <div class="records-row"><span>Sobrevivência</span><span class="rec-val" id="rec-sobrevivencia">—</span></div>
+    <div class="records-row"><span>Velocidade</span><span class="rec-val" id="rec-velocidade">—</span></div>
+    <div class="records-row"><span>Melhor sequência</span><span class="rec-val" id="rec-streak">—</span></div>
+    <div class="records-row"><span>Total de acertos</span><span class="rec-val" id="rec-total">0</span></div>
+    <div class="records-row"><span>Nível atual</span><span class="rec-val" id="rec-nivel">1</span></div>
+    <div class="records-row"><span>XP total</span><span class="rec-val" id="rec-xp">0</span></div>
+    <button class="btn-ghost" style="margin-top:1rem;" onclick="showScreen('screen-home')">Voltar</button>
+  </div>
+</div>
+
+<div id="combo-pop">COMBO!</div>
+<div id="levelup-toast">⬆️ Subiu para Nível 2!</div>
+
+<script>
+// ── STATE ──
+const LEVELS = [
+  { name: 'Iniciante',     xp: 0 },
+  { name: 'Aprendiz',      xp: 100 },
+  { name: 'Calculador',    xp: 300 },
+  { name: 'Ágil',          xp: 600 },
+  { name: 'Expert',        xp: 1000 },
+  { name: 'Mestre',        xp: 1500 },
+  { name: 'Lenda',         xp: 2500 },
+];
+
+let save = JSON.parse(localStorage.getItem('tabuada_rush') || '{}');
+save.xp = save.xp || 0;
+save.totalAcertos = save.totalAcertos || 0;
+save.bestStreak = save.bestStreak || 0;
+save.records = save.records || {};
+
+function persist() { localStorage.setItem('tabuada_rush', JSON.stringify(save)); }
+
+let selectedMode = 'rush';
+let timer = null;
+let timeLeft = 0;
+let score = 0;
+let acertos = 0;
+let erros = 0;
+let streak = 0;
+let bestStreakSession = 0;
+let lives = 3;
+let xpGained = 0;
+let currentQ = null;
+let locked = false;
+let diffLevel = 1;
+let questionsAnswered = 0;
+
+// ── DIFFICULTY TABLES ──
+// Level 1: 2–5, Level 2: 2–7, Level 3: 2–10
+function getPool() {
+  if (diffLevel === 1) return [2,3,4,5];
+  if (diffLevel === 2) return [2,3,4,5,6,7];
+  return [2,3,4,5,6,7,8,9,10];
+}
+
+function genQuestion() {
+  const pool = getPool();
+  const a = pool[Math.floor(Math.random() * pool.length)];
+  const b = Math.floor(Math.random() * 10) + 1;
+  return { a, b, ans: a * b };
+}
+
+function updateDifficulty() {
+  const prev = diffLevel;
+  if (questionsAnswered >= 30) diffLevel = 3;
+  else if (questionsAnswered >= 15) diffLevel = 2;
+  else diffLevel = 1;
+  if (diffLevel !== prev) {
+    const tag = document.getElementById('diff-tag');
+    tag.textContent = diffLevel === 1 ? 'Nível 1' : diffLevel === 2 ? 'Nível 2' : 'Nível 3';
+    tag.style.color = diffLevel === 3 ? '#DC2626' : diffLevel === 2 ? '#92400E' : '';
+  }
+}
+
+// ── SCREENS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectMode(el, mode) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMode = mode;
+}
+
+// ── START ──
+function startGame() {
+  clearInterval(timer);
+  score = 0; acertos = 0; erros = 0; streak = 0;
+  bestStreakSession = 0; lives = 3; xpGained = 0;
+  questionsAnswered = 0; diffLevel = 1; locked = false;
+
+  document.getElementById('score-display').textContent = '0';
+  document.getElementById('diff-tag').textContent = 'Nível 1';
+  document.getElementById('diff-tag').style.color = '';
+  document.getElementById('feedback-msg').textContent = '';
+  document.getElementById('feedback-msg').className = 'feedback-msg';
+  document.getElementById('answer-input').className = '';
+  document.getElementById('answer-input').value = '';
+
+  if (selectedMode === 'rush') {
+    timeLeft = 300;
+    document.getElementById('timer-label').textContent = 'Tempo';
+    document.getElementById('lives-display').textContent = '';
+  } else if (selectedMode === 'velocidade') {
+    timeLeft = 60;
+    document.getElementById('timer-label').textContent = 'Tempo';
+    document.getElementById('lives-display').textContent = '';
+  } else if (selectedMode === 'sobrevivencia') {
+    timeLeft = 0;
+    document.getElementById('timer-label').textContent = 'Modo';
+    document.getElementById('timer-display').textContent = '❤️×3';
+    document.getElementById('lives-display').textContent = '❤️❤️❤️';
+  } else if (selectedMode === 'diario') {
+    timeLeft = 300;
+    document.getElementById('timer-label').textContent = 'Diário';
+    document.getElementById('lives-display').textContent = '';
+  }
+
+  updateXpBar();
+  showStreak();
+  showScreen('screen-game');
+  nextQuestion();
+
+  if (selectedMode !== 'sobrevivencia') {
+    updateTimerDisplay();
+    timer = setInterval(tick, 1000);
+  }
+
+  document.getElementById('answer-input').focus();
+}
+
+function tick() {
+  timeLeft--;
+  updateTimerDisplay();
+  if (timeLeft <= 0) endGame();
+}
+
+function updateTimerDisplay() {
+  if (selectedMode === 'sobrevivencia') return;
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const disp = `${m}:${s.toString().padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  el.textContent = disp;
+
+  const maxTime = selectedMode === 'velocidade' ? 60 : 300;
+  const pct = (timeLeft / maxTime) * 100;
+  const fill = document.getElementById('progress-fill');
+  fill.style.width = pct + '%';
+
+  if (timeLeft <= 30) {
+    el.classList.add('urgent');
+    fill.classList.add('urgent');
+  } else {
+    el.classList.remove('urgent');
+    fill.classList.remove('urgent');
+  }
+}
+
+// ── QUESTION ──
+function nextQuestion() {
+  currentQ = genQuestion();
+  const el = document.getElementById('question-text');
+  el.textContent = `${currentQ.a} × ${currentQ.b} =`;
+  el.classList.remove('pop','shake');
+  void el.offsetWidth;
+  el.classList.add('pop');
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').className = '';
+  document.getElementById('answer-input').focus();
+  document.getElementById('feedback-msg').textContent = '';
+  document.getElementById('feedback-msg').className = 'feedback-msg';
+  locked = false;
+}
+
+// ── CHECK ──
+function checkAnswer() {
+  if (locked) return;
+  const inp = document.getElementById('answer-input');
+  const val = parseInt(inp.value);
+  if (isNaN(val) || inp.value.trim() === '') return;
+
+  locked = true;
+  questionsAnswered++;
+  updateDifficulty();
+
+  const fb = document.getElementById('feedback-msg');
+
+  if (val === currentQ.ans) {
+    // CORRECT
+    acertos++;
+    streak++;
+    if (streak > bestStreakSession) bestStreakSession = streak;
+    if (streak > save.bestStreak) save.bestStreak = streak;
+
+    const pts = 10 + (diffLevel - 1) * 5 + (streak >= 5 ? 5 : 0);
+    score += pts;
+    xpGained += pts;
+    save.xp += pts;
+    save.totalAcertos++;
+    persist();
+
+    if (selectedMode === 'rush') {
+      timeLeft = Math.min(timeLeft + 1, 600);
+      updateTimerDisplay();
+    }
+
+    inp.className = 'correct';
+    const msgs = ['Certo!','Isso!','Ótimo!','Perfeito!','Sim!'];
+    fb.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    fb.className = 'feedback-msg ok';
+    document.getElementById('score-display').textContent = score;
+
+    showStreak();
+    checkLevelUp();
+    updateXpBar();
+
+    if (streak > 0 && streak % 5 === 0) showComboPop();
+
+    setTimeout(nextQuestion, 400);
+
+  } else {
+    // WRONG
+    erros++;
+    streak = 0;
+    showStreak();
+
+    const q = document.getElementById('question-text');
+    q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake');
+    inp.className = 'wrong';
+    fb.textContent = `Não! ${currentQ.a} × ${currentQ.b} = ${currentQ.ans}`;
+    fb.className = 'feedback-msg err';
+
+    if (selectedMode === 'sobrevivencia') {
+      lives--;
+      const livesEl = document.getElementById('lives-display');
+      livesEl.textContent = '❤️'.repeat(Math.max(lives, 0));
+      document.getElementById('timer-display').textContent = `❤️×${lives}`;
+      if (lives <= 0) { setTimeout(endGame, 800); return; }
+    }
+
+    setTimeout(nextQuestion, 1000);
+  }
+}
+
+function showStreak() {
+  const badge = document.getElementById('streak-badge');
+  document.getElementById('streak-num').textContent = streak;
+  if (streak >= 3) {
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+function showComboPop() {
+  const el = document.getElementById('combo-pop');
+  el.textContent = streak >= 10 ? `🔥 COMBO ×${streak}!` : `COMBO ×${streak}`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 700);
+}
+
+// ── XP & LEVELS ──
+function getLevelIdx() {
+  let idx = 0;
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (save.xp >= LEVELS[i].xp) { idx = i; break; }
+  }
+  return idx;
+}
+
+function updateXpBar() {
+  const idx = getLevelIdx();
+  const current = LEVELS[idx];
+  const next = LEVELS[idx + 1];
+  const lbl = document.getElementById('xp-level-label');
+  lbl.textContent = `Lv ${idx + 1}`;
+  if (!next) {
+    document.getElementById('xp-bar').style.width = '100%';
+    document.getElementById('xp-next').textContent = 'MAX';
+    return;
+  }
+  const pct = ((save.xp - current.xp) / (next.xp - current.xp)) * 100;
+  document.getElementById('xp-bar').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('xp-next').textContent = `${next.xp - save.xp} xp`;
+}
+
+let lastLevelIdx = null;
+function checkLevelUp() {
+  const idx = getLevelIdx();
+  if (lastLevelIdx === null) { lastLevelIdx = idx; return; }
+  if (idx > lastLevelIdx) {
+    lastLevelIdx = idx;
+    const toast = document.getElementById('levelup-toast');
+    toast.textContent = `⬆️ Nível ${idx + 1} — ${LEVELS[idx].name}!`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+}
+
+// ── END GAME ──
+function endGame() {
+  clearInterval(timer);
+
+  // save records
+  const modeKey = selectedMode;
+  if (!save.records[modeKey] || score > save.records[modeKey]) {
+    save.records[modeKey] = score;
+  }
+  persist();
+
+  // populate result screen
+  const rankName = LEVELS[getLevelIdx()].name;
+  document.getElementById('result-rank').textContent = rankName;
+  document.getElementById('result-score').textContent = score;
+  const modeLabels = { rush: 'pontos no modo Rush', sobrevivencia: 'pontos em Sobrevivência', velocidade: 'pontos em Velocidade', diario: 'pontos no Desafio Diário' };
+  document.getElementById('result-mode-label').textContent = modeLabels[selectedMode] || 'pontos';
+  document.getElementById('res-acertos').textContent = acertos;
+  document.getElementById('res-erros').textContent = erros;
+  document.getElementById('res-streak').textContent = bestStreakSession;
+  document.getElementById('res-xp').textContent = '+' + xpGained;
+
+  showScreen('screen-result');
+}
+
+// ── RECORDS ──
+function showRecords() {
+  const idx = getLevelIdx();
+  document.getElementById('records-rank').textContent = LEVELS[idx].name;
+  document.getElementById('rec-rush').textContent = save.records['rush'] || '—';
+  document.getElementById('rec-sobrevivencia').textContent = save.records['sobrevivencia'] || '—';
+  document.getElementById('rec-velocidade').textContent = save.records['velocidade'] || '—';
+  document.getElementById('rec-streak').textContent = save.bestStreak || '—';
+  document.getElementById('rec-total').textContent = save.totalAcertos || 0;
+  document.getElementById('rec-nivel').textContent = idx + 1;
+  document.getElementById('rec-xp').textContent = save.xp || 0;
+  showScreen('screen-records');
+}
+
+// ── KEYBOARD ──
+document.getElementById('answer-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswer();
+});
+
+// init level idx
+lastLevelIdx = getLevelIdx();
+</script>
+</body>
+</html>

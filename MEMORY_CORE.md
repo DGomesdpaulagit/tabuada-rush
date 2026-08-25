@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-22
-**Versão:** 6.0.28 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-079.md)
+**Data:** 2026-08-25
+**Versão:** 6.0.29 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) + revisão visual bloco 1 (Fase 7.1) — sessao-080.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,17 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.29]** Fase 7.1, bloco 1 (D058) — revisão visual do resumo
+pós-partida, tudo que não dependia de arte nova do Davi: confete
+removido de TODAS as páginas (ele confirmou que é geral), ícones reais
+de XP e de ofensiva no lugar dos da lucide, calendário de 5 dias com os
+marcadores redondos do Header (`dia-feito`/`dia-vazio`, só a letra, sem
+número), caixa "Como funciona?" e caixa "Classificação" removidas, baú
+de moeda agora ABERTO com o total de moedas em cima sem badge. Achado o
+motivo do "bug da linha": faixa branca de 3px no próprio arquivo
+`resumo-acertos.png` (resíduo de recorte) — PNG reprocessado, nenhum
+outro ícone tinha o defeito. **Falta:** baú por missão (bloco 2, escolha
+dele), ícone de erro e troféu (arte dele). Ver `sessao-080.md`.
 **[v6.0.28]** Novo item de plano, sem código (D057) — Davi pediu um
 catálogo único de ÍCONES organizado por PÁGINA/ABA do app (diferente do
 `RECURSOS.md`, que organiza por tipo de recurso) — objetivo é parar de

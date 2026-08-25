@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Completo — Tabuada Rush</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: #E5E3DC;
+    --text: #1A1916;
+    --muted: #8A8880;
+    --accent: #1A1916;
+    --green: #2D6A4F;
+    --green-bg: #D8F3DC;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem 1rem 4rem;
+    line-height: 1.7;
+  }
+  .page { max-width: 700px; margin: 0 auto; }
+
+  /* CAPA */
+  .cover {
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .cover-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .cover-title {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .cover-sub {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ÍNDICE */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .toc-item:last-child { border-bottom: none; }
+  .toc-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 24px;
+  }
+
+  /* SEÇÃO */
+  .section {
+    margin-bottom: 2.5rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    min-width: 28px;
+    padding-top: 3px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  /* PASSO */
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 1.25rem;
+    align-items: flex-start;
+  }
+  .step-badge {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .step-text {
+    font-size: 14px;
+    color: #3A3835;
+    line-height: 1.65;
+  }
+
+  /* IMAGEM SIMULADA / DESTAQUE */
+  .highlight-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+  .highlight-box.tip {
+    border-left: 3px solid var(--green);
+    background: var(--green-bg);
+  }
+  .highlight-box.warn {
+    border-left: 3px solid #D97706;
+    background: #FEF3C7;
+  }
+  .highlight-box.code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: #1A1916;
+    color: #F7F6F3;
+    border: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .hl-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    color: var(--green);
+  }
+  .warn .hl-label { color: #92400E; }
+
+  /* SCREEN MOCKUP */
+  .screen-mock {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+  .screen-mock-bar {
+    background: var(--surface2);
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #FCA5A5; }
+  .dot.y { background: #FCD34D; }
+  .dot.g { background: #6EE7B7; }
+  .screen-mock-body {
+    background: var(--surface);
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 0.75rem 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  /* RODAPÉ */
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  @media print {
+    body { background: white; }
+    .highlight-box.code { background: #eee; color: #111; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- CAPA -->
+  <div class="cover">
+    <div class="cover-tag">Guia Completo de Instalação e Uso</div>
+    <div class="cover-title">Tabuada Rush</div>
+    <div class="cover-sub">Passo a passo para usar diariamente no computador, celular ou tablet — sem travar, sem perder progresso.</div>
+  </div>
+
+  <!-- ÍNDICE -->
+  <div class="toc">
+    <div class="toc-title">O que você vai aprender</div>
+    <div class="toc-item"><span class="toc-num">01</span> O que você precisa (requisitos)</div>
+    <div class="toc-item"><span class="toc-num">02</span> Baixar o arquivo do jogo</div>
+    <div class="toc-item"><span class="toc-num">03</span> Abrir e jogar no computador</div>
+    <div class="toc-item"><span class="toc-num">04</span> Usar no celular (Android e iPhone)</div>
+    <div class="toc-item"><span class="toc-num">05</span> Criar atalho na tela inicial (celular)</div>
+    <div class="toc-item"><span class="toc-num">06</span> Criar atalho na área de trabalho (PC)</div>
+    <div class="toc-item"><span class="toc-num">07</span> Como o progresso é salvo</div>
+    <div class="toc-item"><span class="toc-num">08</span> Solução de problemas comuns</div>
+    <div class="toc-item"><span class="toc-num">09</span> Como jogar — guia dos modos</div>
+    <div class="toc-item"><span class="toc-num">10</span> Rotina diária recomendada</div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div>
+        <div class="section-title">O que você precisa</div>
+        <div class="section-desc">Nenhum programa especial. Só isso aqui abaixo.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">✓</div>
+      <div class="step-content">
+        <div class="step-title">Um navegador de internet</div>
+        <div class="step-text">Chrome, Firefox, Edge, Safari — qualquer um funciona. O jogo é um arquivo HTML puro, ele roda direto no navegador, sem precisar de internet depois de baixado.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-badge">✓</div>
+      <div class="step-content">
+        <div class="step-title">O arquivo do jogo (tabuada-rush.html)</div>
+        <div class="step-text">Você já tem ou vai baixar agora. É só 1 arquivo. Não precisa instalar nada, não precisa de servidor, não precisa de internet.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box tip">
+      <div class="hl-label">Dica importante</div>
+      O jogo funciona 100% offline. Depois de baixar, você nunca mais precisa de internet para jogar. Seu progresso (XP, recordes, nível) fica salvo automaticamente no navegador.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div>
+        <div class="section-title">Baixar o arquivo do jogo</div>
+        <div class="section-desc">Você recebeu o arquivo tabuada-rush.html aqui no chat.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">1</div>
+      <div class="step-content">
+        <div class="step-title">Encontre o arquivo no chat</div>
+        <div class="step-text">Role a conversa para cima e procure a mensagem onde aparece o link <strong>tabuada-rush</strong> (com ícone de arquivo).</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">2</div>
+      <div class="step-content">
+        <div class="step-title">Clique no arquivo para baixar</div>
+        <div class="step-text">Clique no nome do arquivo ou no botão de download. O navegador vai baixar o arquivo <strong>tabuada-rush.html</strong> para a sua pasta de Downloads.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">3</div>
+      <div class="step-content">
+        <div class="step-title">Mova para uma pasta que não vai deletar</div>
+        <div class="step-text">Importante: a pasta Downloads é limpa às vezes. Crie uma pasta segura para o arquivo não sumir. Veja abaixo:</div>
+        <div class="highlight-box code">📁 Documentos
+  └── 📁 Meus Jogos
+        └── tabuada-rush.html   ← coloque aqui</div>
+      </div>
+    </div>
+
+    <div class="highlight-box warn">
+      <div class="hl-label">Atenção</div>
+      Não renomeie o arquivo. Não mova ele depois de criar o atalho. Se mover, o atalho para de funcionar. Deixe na pasta definitiva antes de criar o atalho.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div>
+        <div class="section-title">Abrir e jogar no computador</div>
+        <div class="section-desc">Windows, Mac ou Linux — funciona em todos.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">1</div>
+      <div class="step-content">
+        <div class="step-title">Abra o Explorador de Arquivos</div>
+        <div class="step-text">No Windows: pressione as teclas <strong>Windows + E</strong> ao mesmo tempo. No Mac: clique no ícone do Finder na dock.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">2</div>
+      <div class="step-content">
+        <div class="step-title">Navegue até a pasta onde salvou o arquivo</div>
+        <div class="step-text">Por exemplo: Documentos → Meus Jogos → tabuada-rush.html</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">3</div>
+      <div class="step-content">
+        <div class="step-title">Dê dois cliques no arquivo</div>
+        <div class="step-text">O arquivo vai abrir automaticamente no seu navegador padrão. Pronto — o jogo já está rodando!</div>
+      </div>
+    </div>
+
+    <div class="screen-mock">
+      <div class="screen-mock-bar">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span>tabuada-rush.html — Seu navegador</span>
+      </div>
+      <div class="screen-mock-body">
+        A barra de endereço vai mostrar algo como:<br>
+        <strong>file:///C:/Users/VoceMesmo/Documentos/Meus Jogos/tabuada-rush.html</strong><br><br>
+        Isso é normal. O <strong>file:///</strong> significa que está abrindo um arquivo local do seu computador. O jogo vai funcionar perfeitamente assim.
+      </div>
+    </div>
+
+    <div class="highlight-box tip">
+      <div class="hl-label">Dica</div>
+      Para abrir mais rápido na próxima vez, use o atalho na área de trabalho. Veja o passo 06.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div>
+        <div class="section-title">Usar no celular</div>
+        <div class="section-desc">Android e iPhone — sem instalar app nenhum.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">1</div>
+      <div class="step-content">
+        <div class="step-title">Envie o arquivo para o seu celular</div>
+        <div class="step-text">Você tem 3 opções fáceis:</div>
+        <ul style="margin-top:8px;padding-left:0;list-style:none;font-size:14px;">
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);">📧 <strong>Email:</strong> mande o arquivo para você mesmo e baixe no celular</li>
+          <li style="padding:5px 0;border-bottom:1px solid var(--border);">💬 <strong>WhatsApp:</strong> mande como arquivo (documento) para você mesmo</li>
+          <li style="padding:5px 0;">☁️ <strong>Google Drive / iCloud:</strong> suba o arquivo e baixe no celular</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">2</div>
+      <div class="step-content">
+        <div class="step-title">Baixe o arquivo no celular</div>
+        <div class="step-text">Salve o arquivo <strong>tabuada-rush.html</strong> nos Downloads do celular.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">3</div>
+      <div class="step-content">
+        <div class="step-title">Abra com o navegador</div>
+        <div class="step-text"><strong>Android:</strong> Abra o app Arquivos → Downloads → toque no arquivo tabuada-rush.html → escolha "Abrir com Chrome (ou outro navegador)".<br><br><strong>iPhone:</strong> Abra o app Arquivos → Downloads → toque no arquivo → ele vai abrir no Safari automaticamente.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box warn">
+      <div class="hl-label">Atenção — Android</div>
+      Se aparecer "Não é possível abrir", toque e segure o arquivo → "Abrir com" → escolha Chrome ou outro navegador. Não abra com apps de gerenciador de arquivos — só com o navegador.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div>
+        <div class="section-title">Atalho na tela inicial do celular</div>
+        <div class="section-desc">Para abrir o jogo com 1 toque, igual a um app.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">1</div>
+      <div class="step-content">
+        <div class="step-title">Abra o arquivo no Chrome (Android) ou Safari (iPhone)</div>
+        <div class="step-text">Siga o passo 04 acima e deixe o jogo aberto no navegador.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">2</div>
+      <div class="step-content">
+        <div class="step-title">Android — Chrome</div>
+        <div class="step-text">Toque nos 3 pontinhos (⋮) no canto superior direito → toque em <strong>"Adicionar à tela inicial"</strong> → confirme. Vai aparecer um ícone na sua tela inicial igual a um app.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">3</div>
+      <div class="step-content">
+        <div class="step-title">iPhone — Safari</div>
+        <div class="step-text">Toque no botão de compartilhar (o quadrado com seta para cima, na barra inferior) → role para baixo → toque em <strong>"Adicionar à Tela de Início"</strong> → toque em "Adicionar".</div>
+      </div>
+    </div>
+
+    <div class="highlight-box tip">
+      <div class="hl-label">Resultado</div>
+      Agora o Tabuada Rush vai aparecer na sua tela inicial igual a qualquer outro app. Toque uma vez para jogar. Sem abrir navegador, sem procurar arquivo.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 06 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div>
+        <div class="section-title">Atalho na área de trabalho (PC)</div>
+        <div class="section-desc">Abra o jogo com 2 cliques, igual a qualquer programa.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">1</div>
+      <div class="step-content">
+        <div class="step-title">Abra o Explorador de Arquivos</div>
+        <div class="step-text">Pressione <strong>Windows + E</strong> e navegue até onde está o tabuada-rush.html.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">2</div>
+      <div class="step-content">
+        <div class="step-title">Clique com o botão direito no arquivo</div>
+        <div class="step-text">Clique com o botão direito do mouse em cima do arquivo <strong>tabuada-rush.html</strong>. Vai abrir um menu.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">3</div>
+      <div class="step-content">
+        <div class="step-title">Enviar para → Área de trabalho</div>
+        <div class="step-text">No menu que abriu: clique em <strong>"Enviar para"</strong> → clique em <strong>"Área de trabalho (criar atalho)"</strong>. Pronto — vai aparecer um atalho na sua área de trabalho.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">4</div>
+      <div class="step-content">
+        <div class="step-title">Mac — alternativa</div>
+        <div class="step-text">No Finder, segure a tecla <strong>Option + Command</strong> e arraste o arquivo para a Dock ou para a área de trabalho. Isso cria um atalho sem mover o arquivo original.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 07 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <div>
+        <div class="section-title">Como o progresso é salvo</div>
+        <div class="section-desc">Entenda para nunca perder seu XP e recordes.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">!</div>
+      <div class="step-content">
+        <div class="step-title">O jogo salva no navegador — não no arquivo</div>
+        <div class="step-text">Seu XP, nível e recordes ficam salvos no <strong>armazenamento local do navegador</strong> (localStorage). O arquivo HTML em si não muda.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">!</div>
+      <div class="step-content">
+        <div class="step-title">Sempre use o mesmo navegador</div>
+        <div class="step-text">Se você joga no Chrome e abre no Firefox, o progresso não vai aparecer. Use sempre o mesmo navegador para acumular XP.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">!</div>
+      <div class="step-content">
+        <div class="step-title">Não limpe dados do navegador</div>
+        <div class="step-text">Se você limpar "histórico e dados do site" ou "cookies e dados armazenados" no navegador, o progresso do jogo é apagado. Evite limpar esses dados se quiser manter o histórico.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box tip">
+      <div class="hl-label">Resumo simples</div>
+      Mesmo navegador + mesmo computador = progresso sempre lá. Isso não é um bug — é como todos os jogos offline no navegador funcionam.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 08 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <div>
+        <div class="section-title">Solução de problemas comuns</div>
+        <div class="section-desc">Se algo não funcionar, resolva com esses passos.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">P1</div>
+      <div class="step-content">
+        <div class="step-title">O arquivo não abre / abre como texto estranho</div>
+        <div class="step-text">Isso acontece quando o arquivo é aberto com um editor de texto. <strong>Solução:</strong> clique com botão direito no arquivo → "Abrir com" → escolha Google Chrome, Firefox ou Edge.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">P2</div>
+      <div class="step-content">
+        <div class="step-title">Fonte estranha / letras diferentes</div>
+        <div class="step-text">O jogo carrega fontes do Google Fonts. Se estiver sem internet, usa uma fonte padrão. Funciona normalmente, só muda a aparência levemente.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">P3</div>
+      <div class="step-content">
+        <div class="step-title">Meu progresso sumiu</div>
+        <div class="step-text">Possíveis causas: usou um navegador diferente, limpou dados do navegador, abriu o arquivo de um lugar diferente, ou usou modo anônimo. <strong>Solução:</strong> sempre abra o mesmo arquivo no mesmo navegador, sem modo anônimo.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">P4</div>
+      <div class="step-content">
+        <div class="step-title">O celular não abre o arquivo</div>
+        <div class="step-text">Tente abrir com o Chrome especificamente: abra o Chrome → toque na barra de endereço → digite <strong>file:///</strong> e navegue até o arquivo. Ou use o método do Google Drive (passo 04).</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">P5</div>
+      <div class="step-content">
+        <div class="step-title">O timer não está contando / travou</div>
+        <div class="step-text">Recarregue a página com <strong>F5</strong> (PC) ou puxe para baixo (celular). Se persistir, feche a aba e abra o arquivo de novo.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 09 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <div>
+        <div class="section-title">Como jogar — guia dos modos</div>
+        <div class="section-desc">Entenda cada modo e quando usar cada um.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">⚡</div>
+      <div class="step-content">
+        <div class="step-title">Modo Rush — recomendado para o dia a dia</div>
+        <div class="step-text">Começa com 5 minutos. Cada acerto dá +1 segundo extra. Quanto mais acertar, mais tempo ganha. A dificuldade sobe sozinha: começa com tabuada do 2 ao 5, depois vai até o 10. <strong>Use este modo todo dia.</strong></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">❤️</div>
+      <div class="step-content">
+        <div class="step-title">Modo Sobrevivência — desafio</div>
+        <div class="step-text">Sem tempo, mas você tem só 3 vidas. Errou 3 vezes, acabou. Ótimo para testar se realmente memorizou. Use 1-2x por semana para se desafiar.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">⏱</div>
+      <div class="step-content">
+        <div class="step-title">Modo Velocidade — reflexo</div>
+        <div class="step-text">Só 60 segundos, sem bônus de tempo. Máxima pressão. Use para treinar rapidez quando já souber a tabuada bem.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">📅</div>
+      <div class="step-content">
+        <div class="step-title">Modo Desafio Diário — rotina</div>
+        <div class="step-text">5 minutos fixos, sequência organizada. Ideal para começar o dia. Sem bônus de tempo — é o modo mais "limpo" para meditar sobre os acertos.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">🔥</div>
+      <div class="step-content">
+        <div class="step-title">Sistema de COMBO e Sequência</div>
+        <div class="step-text">A partir de 3 acertos seguidos, aparece o badge de sequência. A cada 5 acertos sem errar, aparece o COMBO no meio da tela. Errou? A sequência zera. Isso é propositalmente viciante — aproveite.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">⬆️</div>
+      <div class="step-content">
+        <div class="step-title">Sistema de XP e Nível</div>
+        <div class="step-text">Cada acerto dá XP. Acertos em nível de dificuldade maior dão mais XP. Você passa por 7 níveis: <strong>Iniciante → Aprendiz → Calculador → Ágil → Expert → Mestre → Lenda.</strong> A barra de XP fica na parte de baixo durante o jogo.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 10 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <div>
+        <div class="section-title">Rotina diária recomendada</div>
+        <div class="section-desc">O segredo da memorização é a repetição constante.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Rotina de 10 minutos por dia</div>
+      <ul class="checklist">
+        <li><span class="check-icon"></span><span><strong>Dias 1 a 7</strong> — Use só o Modo Rush. Foque em acertar mais rápido cada dia. Não se preocupe com o nível de dificuldade subindo.</span></li>
+        <li><span class="check-icon"></span><span><strong>Dias 8 a 14</strong> — Alterne: Rush pela manhã, Sobrevivência à noite. Compare seus recordes.</span></li>
+        <li><span class="check-icon"></span><span><strong>Semana 3 em diante</strong> — Tente bater seu próprio recorde de pontos no Rush. Use o Velocidade para sprint rápido de 60 segundos.</span></li>
+        <li><span class="check-icon"></span><span><strong>Todo dia</strong> — Olhe a tela de Recordes (botão no menu). Veja seu nível subindo. Isso mantém a motivação.</span></li>
+      </ul>
+    </div>
+
+    <div class="highlight-box tip">
+      <div class="hl-label">Por que funciona</div>
+      5 a 10 minutos por dia é mais eficiente do que 1 hora por semana. O cérebro memoriza por repetição distribuída. A tabuada vai virar reflexo automático em 2 a 4 semanas de uso diário.
+    </div>
+  </div>
+
+  <div class="footer">
+    Tabuada Rush — Guia gerado por Claude (Anthropic) · tabuada-rush.html
+  </div>
+
+</div>
+</body>
+</html>

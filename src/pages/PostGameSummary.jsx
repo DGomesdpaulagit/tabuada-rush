@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Target, X, Zap, Flame, Lock, Check, Share2 } from 'lucide-react';
+import { Trophy, Target, X, Lock, Check, Share2 } from 'lucide-react';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS } from '../constants';
-import { SHOP_ITEM_MAP, POTION_MAP, RARITIES } from '../constants/shop';
+import { SHOP_ITEM_MAP, POTION_MAP } from '../constants/shop';
 import { CHESTS } from '../constants/loot';
 import { getAccuracy, getAchievementProgress, todayStr } from '../utils';
 import { getActiveMissions } from '../utils/missions';
@@ -21,7 +21,6 @@ import GameIcon from '../components/GameIcon';
 // Conquistas → 1 página por recompensa achada (Fase 6).
 
 const DOW_LETTER = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
-const DOW_LABEL = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
 // Gênero de cada item de loot pra frase "Você ganhou um(a) ..." — lista fixa
 // e pequena, mais seguro que tentar inferir automaticamente.
@@ -47,9 +46,9 @@ const LOOT_GENDER = {
   'bau-mistico': 'm',
 };
 
-// "Classificação" pra poções/baús — power-ups já têm RARITIES próprio.
-const POTION_RARITY = { 1.5: 'Comum', 2: 'Raro', 3: 'Épico' };
-const CHEST_RARITY = { 'bau-madeira': 'Comum', 'bau-ferro': 'Raro', 'bau-ouro': 'Épico', 'bau-mistico': 'Lendário' };
+// [Fase 7.1, sessão 080] As tabelas de "Classificação" (POTION_RARITY/
+// CHEST_RARITY) foram removidas junto com a caixa que as exibia — o Davi
+// pediu pra nenhuma página de recompensa mostrar rótulo de raridade.
 
 // [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem ÚNICA já
 // pronta, com o TIPO de baú escolhido pelo Davi por item (não é mais
@@ -78,28 +77,12 @@ const REWARD_COMBO = {
   'pocao-xp-3': 'combo-pocao-3',
 };
 
-function Confetti() {
-  const dots = [
-    { x: -70, y: -10, color: 'bg-coin', shape: 'rounded-full', rotate: 0 },
-    { x: 68, y: -18, color: 'bg-coin', shape: 'rounded-full', rotate: 0 },
-    { x: -50, y: 30, color: 'bg-rose-500', shape: 'rounded-full', rotate: 20 },
-    { x: 55, y: 40, color: 'bg-blue-500', shape: 'rotate-45', rotate: 0 },
-    { x: -30, y: -35, color: 'bg-emerald-500', shape: 'rounded-full', rotate: -20 },
-  ];
-  return (
-    <div className="relative w-full h-0">
-      {dots.map((d, i) => (
-        <span
-          key={i}
-          className={`absolute w-2.5 h-2.5 ${d.color} ${d.shape} opacity-90`}
-          style={{ left: `calc(50% + ${d.x}px)`, top: d.y, transform: `rotate(${d.rotate}deg)` }}
-        />
-      ))}
-    </div>
-  );
-}
-
 // ── CASCA COMUM DE TODA PÁGINA ────────────────────────────────────────────────
+// [Fase 7.1, sessão 080] O `<Confetti />` que ficava aqui (5 bolinhas
+// coloridas ao redor do ícone principal) foi REMOVIDO de toda a sequência —
+// o Davi reclamou do efeito em várias páginas diferentes e confirmou que é
+// pra sumir de TODAS, não só das que ele citou. Sem substituto: a arte dos
+// ícones já carrega o destaque visual sozinha.
 function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', title, subtitle, children, footer }) {
   return (
     <motion.div
@@ -110,7 +93,6 @@ function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', 
       className="flex flex-col gap-5 bg-background rounded-3xl -mx-4 px-4 py-6 min-h-[70vh] sm:mx-0 sm:rounded-3xl"
     >
       <div className="flex-1 flex flex-col items-center text-center gap-3">
-        <Confetti />
         <div className={`flex items-center justify-center shrink-0 ${iconWrapClass} ${iconBg}`}>
           {icon}
         </div>
@@ -161,10 +143,12 @@ function ScorePage({ result, footer }) {
       </StatBox>
       <StatBox label="Desempenho">
         <div className="flex items-center justify-center gap-6">
+          {/* [Fase 7.1, sessão 080] Sem o círculo colorido atrás dos ícones —
+              só a arte pura, pedido do Davi. O mesmo vale pro "Erro", pra não
+              ficar um lado com bolha e o outro sem (o ícone de erro em si
+              ainda é o X da lucide, esperando a arte nova dele). */}
           <div className="flex items-center gap-2">
-            <div className="w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
-              <GameIcon name="resumo-acertos" size={26} />
-            </div>
+            <GameIcon name="resumo-acertos" size={36} />
             <div className="text-left">
               <p className="text-2xl font-black text-accent leading-none">{result.correct}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">Acertos</p>
@@ -172,9 +156,7 @@ function ScorePage({ result, footer }) {
           </div>
           <div className="w-px h-10 bg-border" />
           <div className="flex items-center gap-2">
-            <div className="w-11 h-11 rounded-full bg-rose-500/15 flex items-center justify-center">
-              <X size={22} className="text-rose-500" />
-            </div>
+            <X size={32} className="text-rose-500 shrink-0" />
             <div className="text-left">
               <p className="text-2xl font-black text-rose-500 leading-none">{result.wrong}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">Erros</p>
@@ -191,16 +173,19 @@ function XpPage({ result, footer }) {
   const accuracy = getAccuracy(result.correct, result.correct + result.wrong);
   const accLabel = accuracy >= 90 ? 'Acertou muito!' : accuracy >= 70 ? 'Bom trabalho!' : 'Continue praticando!';
   return (
+    // [Fase 7.1, sessão 080] Raio da lucide dentro de bolha amarela trocado
+    // pelo ícone de XP de verdade do jogo (`xp`, mesma arte do Header).
     <SummaryShell
-      icon={<Zap size={44} className="text-graphite" fill="currentColor" />}
-      iconBg="bg-coin"
+      icon={<GameIcon name="xp" size={96} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Excelente!"
       subtitle="Você ganhou XP!"
       footer={footer}
     >
       <StatBox label="Total de XP" labelClassName="text-graphite bg-coin -m-4 mb-3 p-3 rounded-t-2xl">
         <div className="flex items-center justify-center gap-2">
-          <Zap size={26} className="text-coin" fill="currentColor" />
+          <GameIcon name="xp" size={32} />
           <span className="text-3xl font-black text-coin">{result.gameXp || 0}</span>
           <span className="text-xs font-black text-fg-muted uppercase self-end mb-1.5">XP ganho</span>
         </div>
@@ -286,7 +271,7 @@ function MissionsProgressPage({ footer }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Zap size={32} className="text-coin" fill="currentColor" />
+            <GameIcon name="xp" size={32} />
             <div className="text-left">
               <p className="text-xl font-black text-coin leading-none">{todayXp}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">XP ganho</p>
@@ -301,28 +286,34 @@ function MissionsProgressPage({ footer }) {
 // ── PÁGINA 4 — Ofensiva ativada (1ª partida do dia) ───────────────────────────
 function StreakPage({ footer }) {
   const { data } = useApp();
+  // [Fase 7.1, sessão 080] Antes o "concluído" era assumido (`i <= 0`, ou
+  // seja: ontem SEMPRE aparecia feito, mesmo em quem jogou pela 1ª vez
+  // hoje). Agora vem das sessões de verdade, na data LOCAL — mesma conta
+  // do painel de ofensiva do Header (evita o bug de fuso do D040).
   const days = useMemo(() => {
+    const played = new Set(
+      (data.sessions || []).map((s) => s.localDate).filter(Boolean)
+    );
     const arr = [];
     for (let i = -1; i <= 3; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
-      const dow = d.getDay();
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       arr.push({
         key: i,
-        letter: DOW_LETTER[dow],
-        label: i === -1 ? 'ONTEM' : i === 0 ? 'HOJE' : i === 1 ? 'AMANHÃ' : DOW_LABEL[dow],
-        done: i <= 0,
+        letter: DOW_LETTER[d.getDay()],
+        done: i === 0 ? true : played.has(key), // hoje acabou de ser jogado
         isToday: i === 0,
-        count: i >= 1 ? i : null,
       });
     }
     return arr;
-  }, []);
+  }, [data.sessions]);
 
   return (
     <SummaryShell
-      icon={<Flame size={44} className="text-white" fill="currentColor" />}
-      iconBg="bg-orange-500"
+      icon={<GameIcon name="ofensiva" size={96} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Ofensiva ativada!"
       subtitle="Continue assim e fortaleça sua sequência!"
       footer={footer}
@@ -330,37 +321,23 @@ function StreakPage({ footer }) {
       <StatBox label="Dias de ofensiva">
         <p className="text-5xl font-black text-coin text-center">{data.currentStreak || 0}</p>
         <p className="text-xs font-black text-coin text-center uppercase mt-1">dias de ofensiva</p>
+        {/* [Fase 7.1, sessão 080] Caixas quadradas com o número do dia dentro
+            trocadas pelos MESMOS marcadores redondos do painel de ofensiva do
+            Header (`dia-feito` laranja com check / `dia-vazio` sem cor) — só a
+            letra do dia por cima, sem número, hoje marcado pela cor da letra. */}
         <div className="grid grid-cols-5 gap-1.5 mt-4">
           {days.map((d) => (
-            <div key={d.key} className="flex flex-col items-center gap-1">
-              <span className={`text-[10px] font-black ${d.isToday ? 'text-coin' : 'text-fg-muted'}`}>{d.letter}</span>
-              <span className={`text-[9px] font-bold ${d.isToday ? 'text-coin' : 'text-fg-muted'}`}>{d.label}</span>
-              <div
-                className={`w-full aspect-square rounded-xl border-2 flex items-center justify-center ${
-                  d.isToday ? 'border-coin bg-coin/10' : 'border-border'
-                }`}
-              >
-                {d.done ? (
-                  <Check size={16} className="text-coin" />
-                ) : (
-                  <span className="text-xs font-black text-fg-muted">{d.count}</span>
-                )}
-              </div>
+            <div key={d.key} className="flex flex-col items-center gap-1.5">
+              <span className={`text-[11px] font-black ${d.isToday ? 'text-streak' : 'text-fg-muted'}`}>{d.letter}</span>
+              <GameIcon name={d.done ? 'dia-feito' : 'dia-vazio'} size={30} />
             </div>
           ))}
         </div>
       </StatBox>
-      <div className="border-2 border-border rounded-2xl p-3 flex items-start gap-3 text-left">
-        <div className="w-8 h-8 rounded-full border-2 border-coin flex items-center justify-center shrink-0">
-          <Flame size={14} className="text-coin" />
-        </div>
-        <div>
-          <p className="text-sm font-black text-fg">Como funciona?</p>
-          <p className="text-xs text-fg-muted font-semibold">
-            Pratique todos os dias pra aumentar sua ofensiva. Se pular um dia, ela zera!
-          </p>
-        </div>
-      </div>
+      {/* Caixa "Como funciona?" removida (7.1) — sobrou só a legenda curta. */}
+      <p className="text-xs text-fg-muted font-semibold px-2">
+        Pratique todos os dias pra aumentar sua ofensiva. Se pular um dia, ela zera!
+      </p>
     </SummaryShell>
   );
 }
@@ -371,15 +348,19 @@ function StreakGoalPage({ result, onSelectStreakGoal, footer }) {
   const suggestions = STREAK_GOALS.filter((g) => g > (data.currentStreak || 0)).slice(0, 3);
   return (
     <SummaryShell
-      icon={<Flame size={44} className="text-white" fill="currentColor" />}
-      iconBg="bg-coin"
+      icon={<GameIcon name="ofensiva" size={96} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Meta de ofensiva concluída!"
       subtitle="Você superou sua meta. Muito foco e consistência!"
       footer={footer}
     >
       <StatBox label="Sua meta batida">
         <p className="text-4xl font-black text-coin text-center">{result.hitGoal} dias</p>
-        <p className="text-xs font-black text-accent text-center mt-1">Meta alcançada! 🔥</p>
+        {/* Emoji 🔥 trocado pelo ícone real de ofensiva (7.1). */}
+        <p className="text-xs font-black text-accent text-center mt-1 flex items-center justify-center gap-1">
+          Meta alcançada! <GameIcon name="ofensiva" size={16} />
+        </p>
       </StatBox>
       {suggestions.length > 0 ? (
         <div>
@@ -526,19 +507,35 @@ function RewardPage({ item, footer }) {
   // inteiro. Sem combo (só os 2 power-ups que ainda não têm arte), mantém o
   // círculo com o ícone do recurso sozinho, igual antes.
   const hasCombo = !!item.comboArt;
+  // [Fase 7.1, sessão 080] Baú de MOEDA: baú ABERTO (arte nova, moedas à
+  // vista) com o total ganho ACIMA dele — ícone de moeda + "+N", sem caixa
+  // nem badge decorativo em volta (o recorte do badge antigo saía ruim).
+  const isCoinChest = item.coins != null;
+
+  const icon = isCoinChest ? (
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex items-center gap-2">
+        <GameIcon name="moedas" size={34} />
+        <span className="text-4xl font-black text-coin leading-none">+{item.coins}</span>
+      </div>
+      <GameIcon name={item.art} size={168} />
+    </div>
+  ) : (
+    <GameIcon name={hasCombo ? item.comboArt : item.art} size={hasCombo ? 168 : 72} />
+  );
+  const plainIcon = hasCombo || isCoinChest;
 
   return (
     <SummaryShell
-      icon={<GameIcon name={hasCombo ? item.comboArt : item.art} size={hasCombo ? 168 : 72} />}
-      iconBg={hasCombo ? '' : 'bg-coin/20'}
-      iconWrapClass={hasCombo ? 'w-auto h-auto' : 'w-24 h-24 rounded-full'}
+      icon={icon}
+      iconBg={plainIcon ? '' : 'bg-coin/20'}
+      iconWrapClass={plainIcon ? 'w-auto h-auto' : 'w-24 h-24 rounded-full'}
       title={`Você ganhou ${article} ${item.name}!`}
       subtitle={item.desc}
       footer={footer}
     >
-      <StatBox label="Classificação">
-        <p className="text-lg font-black text-coin text-center">{item.rarityLabel}</p>
-      </StatBox>
+      {/* Caixa "Classificação" removida na 7.1 — nenhuma página de
+          recompensa mostra mais rótulo de raridade. */}
       {/* [Fase 6, sessão 074, D052] Fallback pros 2 power-ups sem ícone
           combo ainda — baú separado, TIER bate com a raridade do recurso. */}
       {!hasCombo && item.chestArt && (
@@ -629,10 +626,11 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
         type: 'reward',
         item: {
           id: c.id,
-          art: chest?.art,
+          // Versão ABERTA da arte (7.1) — o fechado continua na Mochila/Loja.
+          art: `${c.id}-aberto`,
           name: chest?.name || 'Baú',
-          desc: `Continha ${c.coins} moedas!`,
-          rarityLabel: CHEST_RARITY[c.id] || 'Especial',
+          desc: 'As moedas já foram direto pra sua carteira!',
+          coins: c.coins,
           comboArt: null,
           chestArt: null, // já É o baú, não embala outro
         },
@@ -648,7 +646,6 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           art: shopItem.art,
           name: shopItem.name,
           desc: shopItem.desc,
-          rarityLabel: RARITIES[shopItem.rarity]?.label || 'Comum',
           comboArt: REWARD_COMBO[id] || null,
           chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },
@@ -664,7 +661,6 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           art: potion.art,
           name: potion.name,
           desc: `Multiplica seu XP por ${String(potion.multiplier).replace('.', ',')}× por até ${potion.durationMin} minutos.`,
-          rarityLabel: POTION_RARITY[potion.multiplier] || 'Especial',
           comboArt: REWARD_COMBO[id] || null,
           chestArt: REWARD_COMBO[id] ? null : (FALLBACK_CHEST[id] || 'bau-madeira'),
         },

@@ -318,28 +318,37 @@ ver pendência na Fase 6 acima; gênero gramatical, ver checklist em
 
 ---
 
-## FASE 7.1 — Revisão visual completa da Fase 7 (sessão 078, PENDENTE)
+## FASE 7.1 — Revisão visual completa da Fase 7 (sessão 078) — BLOCO 1 ✅ (sessão 080)
 
 Davi revisou cada página do resumo pós-partida depois de ver os ícones
 combo rodando e mandou uma lista extensa de ajustes. **Lista completa,
 página por página, está em `sessions/sessao-078.md`** — não duplicada
 aqui de propósito (uma fonte de verdade só). Resumo do que tem lá:
 
-- [ ] Remover partículas/confete (`<Confetti />`) de várias páginas
-- [ ] Corrigir bug de linha + remover fundo colorido do ícone de Acertos
-      (página 1 e no "Resumo do dia" da página de Missões)
-- [ ] Trocar ícone da página 2 (XP) pelo ícone de XP real, sem partículas
+- [x] Remover partículas/confete (`<Confetti />`) — **de TODAS as
+      páginas** (ele confirmou na sessão 080 que é geral)
+- [x] Corrigir bug de linha + remover fundo colorido do ícone de Acertos
+      (página 1 e no "Resumo do dia" da página de Missões) — a "linha"
+      era uma faixa branca de 3px dentro do próprio PNG, reprocessado
+- [x] Trocar ícone da página 2 (XP) pelo ícone de XP real, sem partículas
 - [ ] **Nova implementação (página 3 + aba Missões):** baú por missão,
       tier bate com a faixa de moedas da recompensa específica; fechado
-      quando incompleta, aberto quando completa
-- [ ] Trocar ícone de ofensiva (chama+partículas) pelo ícone real —
-      página 4 e página ocasional "meta batida"
-- [ ] Calendário de 5 dias (página 4): caixas redondas sem número, só
-      a letra do dia; remover caixa "Como funciona"
-- [ ] Trocar ícone de Conquistas pelo troféu que o Davi vai fornecer
-- [ ] Página 6: remover caixa "Classificação"; reordenar (baú de moeda
-      primeiro); baú de moeda ABERTO com moedas visíveis + legenda de
-      moedas em cima, sem caixa decorativa ao redor
+      quando incompleta, aberto quando completa → **BLOCO 2, é o próximo
+      passo.** Não depende mais de arte nova: o baú fechado já existia e
+      o ABERTO foi recortado na sessão 080 (`bau-*-aberto`)
+- [x] Trocar ícone de ofensiva (chama+partículas) pelo ícone real —
+      página 4 e página ocasional "meta batida" (inclusive o emoji 🔥)
+- [x] Calendário de 5 dias (página 4): agora usa os marcadores redondos
+      do Header (`dia-feito`/`dia-vazio`), só a letra, sem número; caixa
+      "Como funciona" removida — não precisou da imagem de referência,
+      o padrão já existia implementado no Header
+- [ ] Trocar ícone de Conquistas pelo troféu que o Davi vai fornecer —
+      **aguardando arte**, nome de arquivo pedido: `icone-de-trofeu.png`
+      (quando chegar, trocar também o troféu da página 1)
+- [ ] Ícone de **Erro** da página 1 — **aguardando arte** dele
+- [x] Página 6: caixa "Classificação" removida; ordem já estava certa
+      (baú de moeda primeiro); baú de moeda ABERTO com moedas visíveis +
+      ícone de moeda e total em cima, sem caixa decorativa ao redor
 
 **Correção registrada (D056):** Seguro de Ofensiva NÃO é um escudo — é
 `ofensiva-congelada` (chama azul). Erro estava no prompt que eu escrevi

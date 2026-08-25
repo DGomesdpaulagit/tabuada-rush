@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-22
-**Versão:** 6.0.26 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-077.md)
+**Versão:** 6.0.27 (Tabuada Rush 6.0 completo + Resumo pós-partida (Fase 7) — sessao-078.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,17 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.27]** Sessão só de documentação (D056) — Davi mandou uma revisão
+visual extensa de toda a Fase 7 e avisou que o contexto da conversa
+estava acabando; pediu pra documentar tudo antes de qualquer código
+novo. Criados `RECURSOS.md` (catálogo dos 3 tipos de recurso) e
+`sessions/sessao-078.md` (lista completa de pendências, página por
+página — não implementada ainda). **Achei e corrigi o próprio erro**: o
+prompt que escrevi nas sessões 075-076 pra gerar o ícone do Seguro de
+Ofensiva pedia um escudo, mas o item já usa `ofensiva-congelada`
+(chama azul) no código — por isso as 2 gerações falharam. Nova regra
+permanente em `CLAUDE.md`: referência visual ambígua → pedir imagem
+"base", Claude nomeia o arquivo. Ver `sessao-078.md` e D056.
 **[v6.0.26]** Ícones combo em resolução maior (D055) — Davi gerou de
 novo (2ª geração independente, arquivo bem maior). Os 8 recursos que já
 tinham saído certos continuam certos, agora mais nítidos. **Seguro de
@@ -453,37 +464,47 @@ Bloco 3), Perfil novo (resumo mínimo). Ver `sessao-044.md` e `DECISIONS.md` D02
 
 ---
 
-## 🎯 PRÓXIMA SESSÃO — FASE 8 DO `PLANO_ACAO.md` (Painel da Arena)
+## 🎯 PRÓXIMA SESSÃO — FASE 7.1 DO `PLANO_ACAO.md` (Revisão visual da Fase 7)
 
-**Ler antes de tocar em qualquer código:** `PLANO_ACAO.md` → 
-`sessions/sessao-077.md` (a mais recente) → `DECISIONS.md` D020-D055.
+**Ler antes de tocar em qualquer código, NESTA ORDEM:**
+1. `sessions/sessao-078.md` (a mais recente — lista COMPLETA de
+   pendências, página por página, não implementada ainda)
+2. `RECURSOS.md` (catálogo de recursos, criado na sessão 078)
+3. `PLANO_ACAO.md` → seção "FASE 7.1" (resumo, aponta pra sessao-078.md)
+4. `DECISIONS.md` D056 (a mais recente)
 
-**Fases 0-7 concluídas** (sessões 064-077; sessão 069 foi um ajuste de
+**A sessão 078 foi só documentação** (Davi mandou uma revisão visual
+extensa de toda a Fase 7 e o contexto da conversa acabou no meio — ele
+pediu explicitamente pra documentar tudo antes de qualquer código novo,
+pra não perder nada na transição). **Nada da lista foi implementado
+ainda** — comece por ela.
+
+**Correção importante (D056):** o Seguro de Ofensiva NÃO é um escudo — é
+`ofensiva-congelada` (chama azul). Erro estava no MEU prompt de geração
+(sessões 075-076), não na IA. Se for gerar essa peça de novo, o prompt
+certo já está em `RECURSOS.md`.
+
+**Nova regra permanente (`CLAUDE.md`):** referência visual ambígua →
+pedir ao Davi pra baixar uma imagem "base", e Claude nomeia o arquivo
+(não ele) — evita a confusão de nomes que causou retrabalho nesta fase.
+
+**Perguntar ao Davi antes de começar:** se a remoção de partículas
+(`<Confetti />`) é só nas 4 páginas que ele mencionou ou em todas as
+páginas do resumo pós-partida (ver `sessao-078.md`).
+
+**Fases 0-7 concluídas** (sessões 064-078; sessão 069 foi um ajuste de
 arte fora da sequência das Fases, ícones + alvo verde nas missões, pedido
-direto do Davi; sessões 073-077 foram ajustes sobre a Fase 7, não fase
-nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog aqui.
+direto do Davi; sessões 073-078 foram ajustes/revisão sobre a Fase 7, não
+fase nova). `PLANO_ACAO.md` é a lista de verdade; não duplicar o backlog
+aqui.
 
-**Ícones combo (D053→D055): 8 de 9 fechados, em resolução alta.** Davi
-gerou o conjunto completo com baú por classificação própria (Madeira/
-Ferro/Ouro/Místico, ver D054) DUAS VEZES de forma independente — só
-falta **Seguro de Ofensiva** nas duas tentativas, sempre com o mesmo erro
-(repete uma arte antiga em vez de escudo+baú de ouro). Sinal de que não
-é acaso — provavelmente falta referência clara desse ícone no material
-que ele anexa. Continua funcionando no fallback (`FALLBACK_CHEST`) até
-ele gerar a peça certa — não é bloqueio, só uma peça faltando.
+**Depois da Fase 7.1 resolvida: Fase 8 (painel central da Arena)** —
+Davi pediu explicitamente pra **começar perguntando o que ele quer**, não
+propor design pronto (mesma lição das sessões 055-058 com a tela de
+Ligas).
 
-**Ainda em aberto (não é bloqueio, é pendência leve):**
-- Davi mencionou "vou mencionar todas as conquistas" (sessão 073,
-  provavelmente ícones específicos por conquista) mas a lista não chegou
-  a vir na mensagem — perguntar se ele ainda quer mandar
-- Linha divisória do box "Desempenho" (página 1 do resumo pós-partida)
-  não foi removida — só a do "Resumo do dia" foi, por pedido específico
-  dele (sessão 074); perguntar se quer o mesmo ali
-
-**Próxima (depois do acima resolvido): Fase 8 (painel central da
-Arena)** — Davi pediu explicitamente pra **começar perguntando o que ele
-quer**, não propor design pronto (mesma lição das sessões 055-058 com a
-tela de Ligas).
+**Pendência de organização (sem prazo):** criar pasta e organizar as
+dezenas de imagens de referência acumuladas no Downloads.
 
 **Pendente de verificação real (D034, sempre a mesma limitação):** Fase 7
 inteira só foi testada via ferramentas de DEV (`?screen=results&full=1`),
@@ -622,9 +643,10 @@ Para continuar qualquer sessão, ler nesta ordem:
 2. `MEMORY.md` — 5 min (arquitetura completa)
 3. `PLANO_ACAO.md` — backlog vivo em andamento (D042) — ler ANTES de codar
 4. `sessions/planejamento-6.0.md` — spec completa do reset 6.0, COMPLETO (todas as 7 seções ✅)
-5. `sessions/sessao-077.md` — última sessão → `sessions/sessao-076.md` → `sessions/sessao-075.md`
-6. `DECISIONS.md` D020-D055 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
-7. `BUGS.md` — problemas ativos
+5. `sessions/sessao-078.md` — última sessão (lista de pendências da Fase 7.1, não implementada) → `sessions/sessao-077.md` → `sessions/sessao-076.md`
+6. `DECISIONS.md` D020-D056 (reset 6.0 + limpeza + recalibração + Ligas/Header + processo + backlog) — D015-D019 (5.0) são história, não aplicam mais
+7. `RECURSOS.md` — catálogo de recursos (baús/power-ups/poções), criado sessão 078
+8. `BUGS.md` — problemas ativos
 
 **Supabase não configurado:** App funciona 100% com localStorage.
 Para ativar cloud: criar `.env` com `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`

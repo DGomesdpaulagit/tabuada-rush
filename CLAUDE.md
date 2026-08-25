@@ -40,6 +40,15 @@ atualizar (marcar itens, mover de fase) ao terminar cada fase. Ideias que surgir
 meio de uma fase e não pertencem a ela vão pra `PENDENCIAS.md`, não pro meio da fase
 em andamento. Não implementar uma fase nova sem o Davi ter confirmado o plano dela.
 
+## 🖼️ Referência visual ambígua → pedir "imagem base" (pedido do Davi, sessão 078)
+Quando uma feature visual nova depender de posicionamento/layout que só texto não
+resolve (onde exatamente um ícone fica, como um elemento se comporta visualmente),
+não adivinhar. Pedir ao Davi pra baixar uma imagem de referência ("base") — e sou EU
+quem dá o nome do arquivo (não ele), pra facilitar localizar depois no Downloads
+(que já acumula dezenas de arquivos de sessões diferentes). Ele confirma o nome,
+salva assim, eu processo a partir daí. Motivo: confusão de nomes/arquivos já causou
+retrabalho real na revisão da Fase 7 (ver D056, sessao-078.md).
+
 ## Estrutura
 - `src/constants/` — `index.js` (MODES, LEVELS 28 c/ title, ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).
 - `src/utils/index.js` — geração de perguntas, scoring, datas, `computeQI`/`getQiInfo`.

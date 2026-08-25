@@ -318,6 +318,44 @@ ver pendência na Fase 6 acima; gênero gramatical, ver checklist em
 
 ---
 
+## FASE 7.1 — Revisão visual completa da Fase 7 (sessão 078, PENDENTE)
+
+Davi revisou cada página do resumo pós-partida depois de ver os ícones
+combo rodando e mandou uma lista extensa de ajustes. **Lista completa,
+página por página, está em `sessions/sessao-078.md`** — não duplicada
+aqui de propósito (uma fonte de verdade só). Resumo do que tem lá:
+
+- [ ] Remover partículas/confete (`<Confetti />`) de várias páginas
+- [ ] Corrigir bug de linha + remover fundo colorido do ícone de Acertos
+      (página 1 e no "Resumo do dia" da página de Missões)
+- [ ] Trocar ícone da página 2 (XP) pelo ícone de XP real, sem partículas
+- [ ] **Nova implementação (página 3 + aba Missões):** baú por missão,
+      tier bate com a faixa de moedas da recompensa específica; fechado
+      quando incompleta, aberto quando completa
+- [ ] Trocar ícone de ofensiva (chama+partículas) pelo ícone real —
+      página 4 e página ocasional "meta batida"
+- [ ] Calendário de 5 dias (página 4): caixas redondas sem número, só
+      a letra do dia; remover caixa "Como funciona"
+- [ ] Trocar ícone de Conquistas pelo troféu que o Davi vai fornecer
+- [ ] Página 6: remover caixa "Classificação"; reordenar (baú de moeda
+      primeiro); baú de moeda ABERTO com moedas visíveis + legenda de
+      moedas em cima, sem caixa decorativa ao redor
+
+**Correção registrada (D056):** Seguro de Ofensiva NÃO é um escudo — é
+`ofensiva-congelada` (chama azul). Erro estava no prompt que eu escrevi
+(sessões 075-076), não na geração em si. Ver `RECURSOS.md`.
+
+**Novo processo de trabalho (regra permanente a partir daqui):** quando
+uma feature visual depender de referência ambígua, pedir ao Davi pra
+baixar uma imagem "base" — e **Claude nomeia o arquivo**, não ele, pra
+facilitar localizar depois.
+
+**Pendência de organização:** criar uma pasta e organizar as dezenas de
+imagens de referência acumuladas no Downloads ao longo das sessões —
+sem prazo, fazer quando a poeira da revisão assentar.
+
+---
+
 ## FASE 8 — Painel central da Arena (só depois de tudo acima)
 
 O Davi pediu explicitamente pra **não mexer nisso antes** — ele quer

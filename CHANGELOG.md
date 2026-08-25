@@ -4,6 +4,27 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.27] — 2026-08-25 — Documentação: revisão visual da Fase 7 (handoff)
+
+**Detalhes em `sessions/sessao-078.md` e `DECISIONS.md` (D056). Sem
+mudança de código nesta versão — só documentação.**
+
+### Adicionado
+- `RECURSOS.md` — catálogo único dos 3 tipos de recurso (baús/power-ups/
+  poções), compilado do código real
+- `sessions/sessao-078.md` — lista completa de pendências da revisão
+  visual da Fase 7, página por página (Davi revisou tudo depois de ver
+  os ícones combo rodando)
+- Nova regra permanente em `CLAUDE.md`: referência visual ambígua → pedir
+  imagem "base" ao Davi, Claude nomeia o arquivo
+
+### Corrigido (documentação)
+- Identificado erro meu nos prompts de geração (sessões 075-076): Seguro
+  de Ofensiva não é um escudo, é `ofensiva-congelada` — por isso as 2
+  gerações anteriores falharam nessa peça
+
+---
+
 ## [6.0.26] — 2026-08-24 — Ícones combo em resolução maior
 
 **Detalhes em `sessions/sessao-077.md` e `DECISIONS.md` (D055).**

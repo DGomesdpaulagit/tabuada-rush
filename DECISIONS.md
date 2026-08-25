@@ -2327,6 +2327,55 @@ não geraram essa peça.
 
 ---
 
+## D056 — Correção do erro Seguro de Ofensiva + revisão visual completa da Fase 7 (handoff)
+
+**Data:** 2026-08-25 · sessao-078
+
+**A causa raiz do bug do Seguro de Ofensiva (D053-D055) era MINHA, não da
+geração de imagem.** O prompt que escrevi (sessões 075-076) descrevia
+esse power-up como "ícone de escudo azul" — errado. O próprio código
+(`SHOP_ITEMS`) já registra `art: 'ofensiva-congelada'` pra esse item —
+é a chama de ofensiva CONGELADA, não um escudo (o "Escudo" é um power-up
+TOTALMENTE diferente, `powerup_shield`, que aí sim usa um ícone de
+escudo). Duas gerações independentes "erraram" porque pedi a coisa
+errada duas vezes — não é falha da IA. Corrigido em `RECURSOS.md` pra
+não repetir esse erro na próxima tentativa de gerar essa peça.
+
+**Davi mandou uma revisão visual extensa** de cada página da Fase 7
+depois de ver os ícones combo rodando, e avisou que o contexto desta
+conversa está acabando — pediu explicitamente pra eu **documentar tudo
+organizado antes de qualquer implementação nova**, pra não perder nada
+na transição pra uma conversa nova. Decisão: não implementar nada agora,
+só capturar. Lista completa (partículas a remover, bug de linha no
+ícone de Acertos, nova implementação de baú-por-missão na página 3,
+troca de ícones em várias páginas, remoção da caixa "Classificação" na
+página 6, baú de moeda mostrado aberto com moedas em cima) está em
+`sessions/sessao-078.md` — não duplicada aqui de propósito, pra não ter
+2 fontes de verdade divergindo.
+
+**2 documentos novos criados:**
+1. `RECURSOS.md` — catálogo único dos 3 tipos de recurso (baús/
+   power-ups/poções): o que fazem, preço, raridade, probabilidade de
+   drop, tudo compilado do código real (`constants/shop.js`,
+   `constants/loot.js`) — fonte de verdade pra consulta rápida, evita
+   ter que reler 6 decisions diferentes (D046/D049/D052/D054) toda vez.
+2. `sessions/sessao-078.md` — a lista de pendências completa, página por
+   página, organizada exatamente na ordem que ele revisou.
+
+**Novo processo de trabalho, pedido por ele — vira regra permanente:**
+sempre que uma feature visual nova depender de referência ambígua
+(posicionamento/layout que só texto não resolve), EU devo pedir a ele
+pra baixar uma imagem "base", e EU MESMO dou o nome do arquivo (não ele)
+— facilita localizar depois no Downloads, que já está com dezenas de
+arquivos acumulados sem organização nenhuma (limpeza dessa pasta também
+virou pendência registrada no `PLANO_ACAO.md`).
+
+**Nenhum código foi alterado nesta sessão** — é puramente documentação,
+por decisão explícita (evitar começar uma implementação grande com o
+contexto acabando).
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

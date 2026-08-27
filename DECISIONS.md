@@ -2770,6 +2770,30 @@ duas versões (D066) — aqui o `RECURSOS.md` foi junto.
 
 ---
 
+## D068 — Vida vira compra unitária de 300 moedas
+
+**Data:** 2026-08-27 · sessao-090
+
+O Davi mudou a regra: nada de "repor o pote inteiro". **Cada compra dá 1
+vida, por 300 moedas.**
+
+**Renomeei a constante** (`LIFE_REFILL_PRICE` → `LIFE_PRICE`) em vez de só
+trocar o número. O nome antigo descrevia um comportamento que deixou de
+existir — manter "REFILL" ali era garantir que alguém (eu, daqui a três
+sessões) leria errado.
+
+**Encher o pote do zero passou de 150 para 1.500 moedas.** Parece muito,
+mas é coerente com o resto: o planejamento original já dizia que vida era
+"cara de propósito", e depois do nerf de renda das sessões 088-089 (renda
+caindo ~45%) o preço de 150 tinha virado troco. Com 300, uma vida custa
+mais que o baú médio (236) — comprar vida é decisão, não hábito.
+
+**Detalhe de implementação:** as duas compras (painel do Header e modal
+"Sem vidas hoje") somam com `Math.min(DAILY_LIVES_MAX, atual + 1)`. Sem o
+teto, dava pra estourar o limite diário comprando com o pote cheio.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

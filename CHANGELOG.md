@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.39] — 2026-08-27 — Vida comprada uma a uma (300) + classificação compacta
+
+**Detalhes em `sessions/sessao-090.md` e `DECISIONS.md` (D068).**
+
+### Alterado
+- **Vidas são compradas UMA a UMA, a 300 moedas** (antes: 150 pelo pote
+  inteiro). Quem está com 3 de 5 e quer o pote cheio compra duas vezes.
+  `LIFE_REFILL_PRICE` virou `LIFE_PRICE`; textos passaram de "Recuperar
+  vidas" para **"Comprar 1 vida"** no Header e no modal "Sem vidas hoje"
+- **Classificação das ligas mais compacta**, no estilo da referência que
+  o Davi mandou: espaço entre linhas 8px → 2px, respiro interno menor e
+  avatar 40px → 36px. Linha de 58px → 54px, lista contínua em vez de
+  cards soltos
+
+---
+
 ## [6.0.38] — 2026-08-27 — Balanceamento dos baús (opção B + empurrãozinho de A)
 
 **Detalhes em `sessions/sessao-089.md` e `DECISIONS.md` (D067).**

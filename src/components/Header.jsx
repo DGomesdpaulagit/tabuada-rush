@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { getLevelIdx, getXpProgress, getLivesInfo, todayStr } from '../utils';
-import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from '../constants';
+import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX, LIFE_PRICE } from '../constants';
 import { Progress } from './ui';
 import GameIcon from './GameIcon';
 
@@ -161,19 +161,21 @@ export default function Header({ onNavigate }) {
 
   const { remaining: lives, max: maxLives } = getLivesInfo(data);
   const livesFull = lives >= maxLives;
-  const canRefill = coins >= LIFE_REFILL_PRICE;
+  const canRefill = coins >= LIFE_PRICE;
 
   const goTo = (screen) => {
     setOpenId(null);
     onNavigate?.(screen);
   };
 
-  const buyLifeRefill = () => {
+  // [sessão 090] Uma vida por compra, a `LIFE_PRICE`. Botão some de vez
+  // quando o pote está cheio.
+  const buyLife = () => {
     if (!canRefill || livesFull) return;
     update((prev) => ({
       ...prev,
-      coins: (prev.coins || 0) - LIFE_REFILL_PRICE,
-      livesData: { date: todayStr(), remaining: DAILY_LIVES_MAX },
+      coins: (prev.coins || 0) - LIFE_PRICE,
+      livesData: { date: todayStr(), remaining: Math.min(DAILY_LIVES_MAX, getLivesInfo(prev).remaining + 1) },
     }));
   };
 
@@ -339,15 +341,15 @@ export default function Header({ onNavigate }) {
             </p>
             <button
               type="button"
-              onClick={buyLifeRefill}
+              onClick={buyLife}
               disabled={livesFull || !canRefill}
               className="flex items-center justify-between w-full px-3 py-2.5 rounded-xl bg-surface-2 font-black text-sm text-fg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-border transition-colors"
             >
               <span className="flex items-center gap-2">
                 <GameIcon name="vidas" size={16} />
-                Recuperar vidas
+                Comprar 1 vida
               </span>
-              <span className="flex items-center gap-1 text-coin"><GameIcon name="moedas" size={15} />{LIFE_REFILL_PRICE}</span>
+              <span className="flex items-center gap-1 text-coin"><GameIcon name="moedas" size={15} />{LIFE_PRICE}</span>
             </button>
           </div>
           <div className="px-4 pb-4">

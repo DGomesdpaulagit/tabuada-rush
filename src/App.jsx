@@ -8,7 +8,7 @@ import { getActiveXpMultiplier } from './utils/potions';
 import { rollMatchLoot } from './utils/loot';
 import { LEAGUE_MAP } from './constants/leagues';
 import { SHOP_ITEM_MAP } from './constants/shop';
-import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_REFILL_PRICE } from './constants';
+import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
 import { maybeStreakReminder, maybeMissionExpireReminder, maybeForgettingReminder } from './lib/notify';
@@ -272,11 +272,11 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
 }
 
 // ── MODAL: SEM VIDAS HOJE [v6.0 · Bloco 2] ──────────────────────────────────
-// Pote diário de vidas zerado (qualquer modo bloqueado até repor). Reposição
-// enche o pote de volta a DAILY_LIVES_MAX inteiro, não vida por vida — de
-// propósito caro (ver planejamento-6.0.md seção 5, LIFE_REFILL_PRICE).
+// Pote diário de vidas zerado (qualquer modo bloqueado até repor).
+// [sessão 090] Compra UMA vida por vez, a `LIFE_PRICE` — o suficiente pra
+// destravar a próxima partida. Quem quiser o pote cheio compra de novo.
 function NoLivesModal({ coins, onBuy, onClose }) {
-  const canBuy = coins >= LIFE_REFILL_PRICE;
+  const canBuy = coins >= LIFE_PRICE;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -297,7 +297,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
         <h3 className="text-xl font-black text-fg text-center">Sem vidas hoje!</h3>
         <p className="text-sm text-fg-muted font-semibold text-center mt-1 mb-4 leading-snug">
           Você usou suas {DAILY_LIVES_MAX} vidas do dia. Volta amanhã com o pote cheio,
-          ou compra a reposição agora.
+          ou compra 1 vida agora pra continuar.
         </p>
         <p className="text-xs text-center font-bold text-fg-muted mb-3">
           Você tem <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> {coins.toLocaleString('pt-BR')}
@@ -311,7 +311,7 @@ function NoLivesModal({ coins, onBuy, onClose }) {
                 ? 'bg-accent text-white shadow-chunky-accent hover:bg-accent/90 active:translate-y-1 active:shadow-none'
                 : 'bg-surface-2 text-fg-muted cursor-not-allowed'}`}
           >
-            <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> Repor vidas ({LIFE_REFILL_PRICE})
+            <GameIcon name="moedas" size={15} className="inline-block align-text-bottom" /> Comprar 1 vida ({LIFE_PRICE})
           </button>
           <button
             onClick={onClose}
@@ -1005,17 +1005,20 @@ export default function App() {
     startGame(mode);
   }, [data, startGame]);
 
-  // Compra a reposição do pote de vidas (enche de volta a DAILY_LIVES_MAX) e
-  // segue direto pro modo que estava bloqueado — pula o fluxo de aposta
-  // nessa entrada específica (evita empilhar modal em cima de modal logo
-  // depois de pagar pra desbloquear).
+  // [sessão 090] Compra UMA vida e segue direto pro modo que estava
+  // bloqueado — pula o fluxo de aposta nessa entrada específica (evita
+  // empilhar modal em cima de modal logo depois de pagar pra desbloquear).
+  // O `Math.min` protege o teto do dia: comprar nunca passa de DAILY_LIVES_MAX.
   const handleBuyLifeRefill = useCallback(() => {
-    if ((data.coins || 0) < LIFE_REFILL_PRICE) return;
-    update((prev) => ({
-      ...prev,
-      coins: (prev.coins || 0) - LIFE_REFILL_PRICE,
-      livesData: { date: todayStr(), remaining: DAILY_LIVES_MAX },
-    }));
+    if ((data.coins || 0) < LIFE_PRICE) return;
+    update((prev) => {
+      const atual = getLivesInfo(prev).remaining;
+      return {
+        ...prev,
+        coins: (prev.coins || 0) - LIFE_PRICE,
+        livesData: { date: todayStr(), remaining: Math.min(DAILY_LIVES_MAX, atual + 1) },
+      };
+    });
     const mode = pendingNoLivesMode;
     setPendingNoLivesMode(null);
     if (mode) startGame(mode);

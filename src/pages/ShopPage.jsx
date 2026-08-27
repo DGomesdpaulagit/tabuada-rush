@@ -30,7 +30,7 @@ function resetLabel() {
 // local — sem precisar guardar nada no storage, o resultado já é sempre o
 // mesmo pro mesmo dia. Itens fora do sorteio de hoje só voltam a ficar
 // compráveis quando saírem de novo (ou, no futuro, forem achados em
-// partida — Fase 6). "Recuperar vidas" (Header, `LIFE_REFILL_PRICE`) não
+// partida — Fase 6). "Comprar 1 vida" (Header, `LIFE_PRICE`) não
 // faz parte desse sorteio — já é sempre visível por fora da Loja, regra
 // fixa do plano já satisfeita sem precisar duplicar aqui.
 export default function ShopPage({ onBack, embedded = false }) {

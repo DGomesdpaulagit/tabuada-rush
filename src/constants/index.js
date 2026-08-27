@@ -143,7 +143,10 @@ export const STREAK_REWARD_MILESTONES = [40, 100, 250, 365];
 // Zerou? Não dá pra começar partida nova até repor (comprar com moeda — caro
 // de propósito, ver planejamento-6.0.md seção 5) ou esperar o próximo dia.
 export const DAILY_LIVES_MAX = 5;
-export const LIFE_REFILL_PRICE = 150; // moedas — repõe o pote inteiro de volta a 5
+// [sessão 090] Antes era `LIFE_REFILL_PRICE = 150`, que enchia o pote
+// INTEIRO de uma vez. O Davi mudou a regra: agora se compra UMA vida por vez,
+// a 300 moedas. Quem está com 3 de 5 e quer o pote cheio compra duas vezes.
+export const LIFE_PRICE = 300; // moedas por 1 vida
 
 // ── ACHIEVEMENTS ───────────────────────────────────────────────────────────
 

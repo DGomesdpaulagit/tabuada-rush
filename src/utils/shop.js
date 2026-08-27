@@ -8,7 +8,7 @@ import { todayStr } from './index';
 // mesmo dia e muda sozinho na virada (`todayStr()`, D040 — nunca
 // `toISOString()`, que erra o fuso do Brasil).
 //
-// "Recuperar vidas" (o refil do pote diário, `LIFE_REFILL_PRICE`) NÃO entra
+// "Comprar 1 vida" (o pote diário, `LIFE_PRICE`) NÃO entra
 // nesse pool — já é um mecanismo à parte, sempre visível no Header, e
 // continua assim (regra fixa do plano: nunca sorteado, sempre disponível).
 

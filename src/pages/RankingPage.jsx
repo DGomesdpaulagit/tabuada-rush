@@ -30,7 +30,7 @@ function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false, on
     <Tag
       {...(clicavel ? { type: 'button', onClick: () => onSelect(entry, rank) } : {})}
       className={`w-full text-left flex items-center gap-3 rounded-2xl transition-all
-        ${compact ? 'px-2 py-1.5' : 'px-3 py-2.5'}
+        ${compact ? 'px-2 py-1' : 'px-3 py-1.5'}
         ${entry.isPlayer
           ? 'bg-surface-2 border-2 border-accent'
           : selected
@@ -51,9 +51,12 @@ function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false, on
             />
           : rank}
       </span>
+      {/* [sessão 090] Avatar menor: é ele que mandava na altura da linha
+          (40px + respiro = 58px por posição). Com 36px a lista fica mais
+          densa sem o nome nem o XP encolherem. */}
       <div
         className={`rounded-full flex items-center justify-center shrink-0 bg-surface-2
-          ${compact ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'}`}
+          ${compact ? 'w-7 h-7 text-sm' : 'w-9 h-9 text-lg'}`}
       >
         {entry.emoji}
       </div>
@@ -180,7 +183,10 @@ export default function RankingPage({ onBack }) {
               (`lg:min-h-0` é o que permite o flex encolher e a rolagem
               acontecer aqui dentro). No celular flui normal e quem rola é a
               página. */}
-          <div className="flex flex-col gap-2 lg:overflow-y-auto lg:flex-1 lg:min-h-0 lg:pr-1">
+          {/* [sessão 090] Linhas coladas (gap-0.5 + padding menor), no estilo da
+              referência que o Davi mandou — antes o `gap-2` deixava a lista
+              esparsa demais e cada posição parecia um card solto. */}
+          <div className="flex flex-col gap-0.5 lg:overflow-y-auto lg:flex-1 lg:min-h-0 lg:pr-1">
             {standings.entries.map((e, i) => (
               <RosterRow
                 key={e.name + i}

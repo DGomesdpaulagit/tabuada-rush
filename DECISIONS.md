@@ -2698,6 +2698,47 @@ em memória ao sair da página e desfazia o patch feito na página carregada.
 
 ---
 
+## D066 — Balanceamento de moedas: a fonte não era onde parecia
+
+**Data:** 2026-08-27 · sessao-088
+
+O Davi relatou 0 → 896 moedas em 2 partidas e pediu pra dificultar, dando
+carta branca ("cria o seu sistema"). Antes de mexer, medi de onde vem a
+renda — e o resultado mudou o alvo do ajuste:
+
+| Fonte | Moedas por partida |
+|---|---:|
+| Partida em si | 2 a 7 |
+| **Baús de loot** | **96 a 257** |
+
+O baú médio vale **321 moedas**, porque 27% dos baús sorteados são de Ouro
+(650) ou Místico (1000). Ou seja: **o ganho por partida é ~3% da renda** —
+mexer só nele seria cosmético.
+
+**O que fiz** (dentro do que ele autorizou): taxa por partida 0.15 → 0.12
+e teto 8 → 6; alvos das missões diárias maiores, com as recompensas
+intactas. Mantive o piso de 1 moeda por partida jogada, pra quem foi mal
+não sair sem nada — o pedido dele foi "um pouquinho mais difícil, sem
+desanimar".
+
+**O que NÃO fiz, de propósito:** mexer nos baús. As probabilidades e as
+faixas de moedas foram especificadas por ele na Fase 6 ("números exatos que
+o Davi deu", `constants/loot.js`). Mudar sem confirmar seria contrariar
+especificação explícita. Levei o diagnóstico e três opções pra ele decidir
+(`PENDENCIAS.md`).
+
+**Bug achado no caminho:** o texto "Como ganhar moedas?" da Loja prometia
+15 moedas/partida (0.3 × acertos) enquanto o código dava 8 (0.15 ×) desde a
+v5.0. Era essa a "regra de 15 moedas" que ele queria tirar — não existia no
+código, só no texto. Corrigido, com aviso no código pra manter os dois
+juntos.
+
+**Descartado por ele na mesma conversa:** dar poções (além de moedas) como
+recompensa de missão. Ele levantou e desistiu — "vai dar mal rolo, deixa só
+com as moedinhas mesmo".
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

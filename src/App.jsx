@@ -593,13 +593,20 @@ export default function App() {
         const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
-        // v5.0 · Bloco 1: mais difícil de ganhar — precisa praticar mais pra
-        // acumular. Zen não gera moeda nenhuma (é treino livre, sem recompensa).
-        // Cap: 8 moedas/partida = 0.15 × acertos, +1 bônus se manteve a ofensiva.
+        // Zen não gera moeda nenhuma (é treino livre, sem recompensa).
+        //
+        // [sessão 088] Ficou mais difícil a pedido do Davi: taxa 0.15 → 0.12
+        // (1 moeda a cada ~8 acertos) e teto 8 → 6 por partida. O piso de 1
+        // moeda continua — quem jogou e acertou pouco ainda leva alguma coisa,
+        // senão desanima. Com a ofensiva ativa, o máximo por partida é 7.
+        //
+        // ⚠️ Se mexer aqui, atualizar o texto "Como ganhar moedas?" da Loja
+        // (ShopPage.jsx) — ele ficou desatualizado por duas versões e passou a
+        // prometer 15 moedas/partida quando o código já dava 8.
         const coinsEarned =
           result.mode === 'zen'
             ? 0
-            : Math.min(8, Math.max(1, Math.floor((result.correct || 0) * 0.15))) +
+            : Math.min(6, Math.max(1, Math.floor((result.correct || 0) * 0.12))) +
               (currentStreak > 1 ? 1 : 0);
 
         // ── XP de temporada (separado do XP de nível) ───────────────────────

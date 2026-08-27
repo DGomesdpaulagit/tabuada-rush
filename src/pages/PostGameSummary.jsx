@@ -9,7 +9,7 @@ import { getActiveMissions } from '../utils/missions';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageTransition, stillInitial } from '../components/ui';
-import { MissionIcon, MissionChest, progressLabel } from './MissionsPage';
+import { MissionIcon, MissionProgress } from './MissionsPage';
 import { shareCard } from '../lib/shareCard';
 import GameIcon from '../components/GameIcon';
 import { REWARD_BG } from '../components/rewardBackgrounds';
@@ -277,15 +277,11 @@ function MissionsProgressPage({ footer }) {
               <MissionIcon type={m.type} emoji={m.emoji} size={22} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-black text-fg leading-tight">{m.title}</p>
-                {/* [Fase 7.1 bloco 2, sessão 087] Mesmo baú da aba Missões:
-                    tier pela recompensa da missão, aberto quando ela completa. */}
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="flex-1 h-1.5 rounded-full bg-surface-2 overflow-hidden">
-                    <div className={`h-full rounded-full ${m.completed ? 'bg-accent' : 'bg-coin'}`} style={{ width: `${pct}%` }} />
-                  </div>
-                  <MissionChest coins={m.reward} completa={m.completed} size={24} />
+                {/* [sessão 088] Mesma barra da aba Missões: número dentro e
+                    baú encavalado na ponta. */}
+                <div className="mt-2">
+                  <MissionProgress mission={m} pct={pct} size={26} />
                 </div>
-                <p className="text-[11px] font-bold text-fg-muted mt-1">{progressLabel(m)}</p>
               </div>
             </div>
           );

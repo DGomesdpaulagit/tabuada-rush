@@ -47,15 +47,44 @@ export function MissionIcon({ type, emoji, size = 24 }) {
 // ela não completa, ABERTO quando completa — o baú abrindo é o feedback de
 // "terminei". Exportado porque a página de missões do resumo pós-partida
 // mostra a mesma coisa.
-export function MissionChest({ coins, completa, size = 26 }) {
+export function MissionChest({ coins, completa, size = 26, className = '' }) {
   const tier = chestForCoins(coins || 0);
   return (
     <GameIcon
       name={completa ? `${tier}-aberto` : tier}
       size={size}
-      className={`shrink-0 transition-opacity ${completa ? '' : 'opacity-60'}`}
+      className={`shrink-0 ${className}`}
       alt={completa ? 'Baú aberto — missão concluída' : 'Baú fechado — missão em andamento'}
     />
+  );
+}
+
+// ── BARRA DE PROGRESSO DA MISSÃO [sessão 088] ────────────────────────────────
+// Estilo da referência que o Davi mandou (Duolingo): barra grossa com o
+// número DENTRO, e o baú encavalado na ponta direita — a barra passa por
+// baixo dele, em vez de terminar antes. É isso que dá a sensação de que o
+// baú está "na linha de chegada".
+export function MissionProgress({ mission, pct, size = 30 }) {
+  // Preenchimento SEMPRE na cor da moeda (a barra "enche de moeda" até o
+  // baú), como na referência. O número fica escuro quando o preenchimento
+  // já passou do meio e claro quando ainda está sobre o trilho cinza — é o
+  // que mantém ele legível nos dois casos.
+  const sobreCheio = pct >= 50;
+  return (
+    <div className="flex items-center">
+      <div className="relative flex-1">
+        <Progress value={pct} colorClass="bg-coin" className="h-5 bg-surface-2" />
+        <span
+          className={`absolute inset-0 flex items-center justify-center text-[11px] font-black tabular-nums ${
+            sobreCheio ? 'text-graphite' : 'text-fg-muted'
+          }`}
+        >
+          {progressCompact(mission)}
+        </span>
+      </div>
+      {/* -ml puxa o baú pra cima do fim da barra */}
+      <MissionChest coins={mission.reward} completa={mission.completed} size={size} className="-ml-3 relative z-10" />
+    </div>
   );
 }
 
@@ -71,6 +100,14 @@ function resetLabel(tab) {
     return `Renova em ${h}h ${m}m`;
   }
   return 'Novos desafios no 1º dia do mês';
+}
+
+// [sessão 088] Número curto pra caber DENTRO da barra, no estilo do
+// Duolingo que o Davi mandou de referência ("10 / 15"). A unidade já está
+// escrita na descrição da missão logo acima, então não precisa repetir.
+export function progressCompact(mission) {
+  const { progress: p, target: t } = mission;
+  return mission.type === 'accuracy' ? `${p} / ${t}%` : `${p} / ${t}`;
 }
 
 export function progressLabel(mission) {
@@ -238,15 +275,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                       <span className="text-xs font-black text-coin shrink-0"><GameIcon name="moedas" size={13} className="inline-block align-text-bottom" /> {mission.reward}</span>
                     </div>
                     <p className="text-xs text-fg-muted font-semibold mb-2">{mission.desc}</p>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Progress
-                        value={pct}
-                        colorClass={mission.completed ? 'bg-success' : 'bg-accent'}
-                        className="flex-1 bg-surface-2 h-1.5"
-                      />
-                      <MissionChest coins={mission.reward} completa={mission.completed} />
-                    </div>
-                    <p className="text-xs font-bold text-fg-muted">{progressLabel(mission)}</p>
+                    <MissionProgress mission={mission} pct={pct} />
                   </div>
                 </div>
 
@@ -310,14 +339,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                           <span className="text-xs font-black text-coin shrink-0"><GameIcon name="moedas" size={13} className="inline-block align-text-bottom" /> +{c.reward}</span>
                         </div>
                         <p className="text-xs text-fg-muted font-semibold mb-2">{c.desc}</p>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Progress
-                            value={pct}
-                            colorClass={c.completed ? 'bg-success' : 'bg-accent'}
-                            className="flex-1 bg-surface-2 h-1.5"
-                          />
-                          <MissionChest coins={c.reward} completa={c.completed} />
-                        </div>
+                        <MissionProgress mission={c} pct={pct} />
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-bold text-fg-muted">{progressLabel(c)}</p>
                           <p className="text-xs font-bold text-fg-muted">{daysUntil(c.deadline)}d restantes</p>

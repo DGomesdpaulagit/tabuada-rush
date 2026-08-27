@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.37] — 2026-08-27 — Barra de missão nova + 1ª rodada de balanceamento
+
+**Detalhes em `sessions/sessao-088.md` e `DECISIONS.md` (D066).**
+
+### Alterado
+- **Barra de progresso da missão no estilo da referência do Davi**: barra
+  grossa com o número DENTRO (`10 / 15`), baú encavalado na ponta (a barra
+  passa por baixo dele) e preenchimento sempre na cor da moeda. Vale na
+  aba Missões e na página 3 do resumo
+- **Missões diárias mais difíceis** (recompensas iguais): partidas 1→2 e
+  3→5, acertos numa partida 20→35, acertos no dia 50→120, sequências
+  10→15 e 15→25, pontuação 100→250 e 200→500. As de precisão e os
+  desafios mensais ficaram como estavam
+- **Moeda por partida**: taxa 0.15 → 0.12 (1 a cada ~8 acertos) e teto
+  8 → 6; com ofensiva, máximo 7 por partida
+
+### Corrigido
+- O texto "Como ganhar moedas?" da Loja prometia **15 moedas por partida
+  (0.3 × acertos)** enquanto o código dava 8 desde a v5.0 — estava
+  desatualizado por duas versões
+
+---
+
 ## [6.0.36] — 2026-08-27 — Baú por missão: FASE 7.1 concluída
 
 **Detalhes em `sessions/sessao-087.md` e `DECISIONS.md` (D065).**

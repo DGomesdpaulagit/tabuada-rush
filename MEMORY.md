@@ -19,7 +19,7 @@
 ## 📌 VISÃO GERAL
 
 **Nome:** Tabuada Rush  
-**Versão:** 6.0.36 (Reset completo + Poções de XP (Fase 4) + Loja rotativa (Fase 5) + Baús/recompensas (Fase 6) + Resumo pós-partida (Fase 7) + revisão visual bloco 1 (Fase 7.1 bloco 1) + catálogo de ícones `ICONES.md` (Fase 7.2) + arte nova/fundos por recurso + screenshots + fundo em tela cheia + FASE 7.1 concluída · sessao-087; backlog grande em andamento, ver `PLANO_ACAO.md`)  
+**Versão:** 6.0.37 (Reset completo + Poções de XP (Fase 4) + Loja rotativa (Fase 5) + Baús/recompensas (Fase 6) + Resumo pós-partida (Fase 7) + revisão visual bloco 1 (Fase 7.1 bloco 1) + catálogo de ícones `ICONES.md` (Fase 7.2) + arte nova/fundos por recurso + screenshots + fundo em tela cheia + FASE 7.1 concluída + balanceamento · sessao-088; backlog grande em andamento, ver `PLANO_ACAO.md`)  
 **Tipo:** SaaS educacional gamificado — PWA  
 **Propósito:** Treino de tabuada de forma rápida, divertida e viciante  
 **Origem:** Problema pessoal do criador (Davi) — dificuldade em memorizar tabuada  

@@ -45,6 +45,35 @@ provavelmente cobre parte disso.
 
 ---
 
+## 💰 DECISÃO PENDENTE — os baús são 93% da renda de moedas (sessão 088)
+
+Medido com os números atuais da Fase 6:
+
+| Fonte | Moedas por partida |
+|---|---:|
+| Partida em si (já ajustada) | 2 a 7 |
+| **Baús de loot** | **96** (partida curta) a **257** (longa) |
+
+O baú médio vale **321 moedas** porque 27% dos baús sorteados são de Ouro
+(650) ou Místico (1000). Foi daí que vieram as 896 moedas em 2 partidas.
+
+**Não mexi porque esses números foram especificados pelo Davi na Fase 6.**
+Três caminhos, do mais suave ao mais forte:
+
+- **A — Menos baú:** cortar a chance por faixa de tempo (curta 30% → 15%,
+  média 50% → 30%, longa 80% → 50%). Renda cai ~pela metade, os valores de
+  cada baú continuam os mesmos.
+- **B — Baú grande mais raro:** manter as chances, mas espaçar os tiers
+  altos (Ouro 1-40 → 1-80 partidas, Místico 1-50 → 1-120). O baú médio cai
+  de 321 pra ~180, e achar um Místico vira evento de verdade.
+- **C — Baú vale menos:** reduzir as faixas de moedas (ex.: Ouro 500-800 →
+  250-400, Místico 1000 → 500). Mexe na sensação de prêmio, não recomendo.
+
+**Recomendação:** B, talvez com um empurrãozinho de A. B mantém a emoção do
+baú raro e é o que mais reduz a inflação sem tirar a graça.
+
+---
+
 ## 🔢 Tipos de pontuação por faixa numérica (pedido da sessão 082)
 
 Hoje existe **um único** ícone de pontuação (`missao-tipo-pontuacao`, o

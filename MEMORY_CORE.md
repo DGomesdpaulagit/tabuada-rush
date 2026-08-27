@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.36 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída — sessao-087.md)
+**Versão:** 6.0.37 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + balanceamento — sessao-088.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.37]** Barra de missão no estilo da referência (número dentro, baú
+encavalado na ponta) + 1ª rodada de balanceamento (D066). **Achado
+importante:** a renda de moedas vem ~93% dos BAÚS de loot (baú médio = 321
+moedas), não do ganho por partida (2 a 7) — mexi no que o Davi autorizou
+(taxa 0.15→0.12, teto 8→6, alvos das diárias maiores) e deixei a decisão
+dos baús pra ele em `PENDENCIAS.md`, com 3 opções. Bug corrigido: o texto
+da Loja prometia 15 moedas/partida enquanto o código dava 8 desde a v5.0.
 **[v6.0.36]** **FASE 7.1 CONCLUÍDA** — o último item era o baú por missão
 (D065): tier pela recompensa da missão (`chestForCoins`, derivado de
 `CHESTS`), fechado enquanto incompleta / ABERTO quando completa, na aba

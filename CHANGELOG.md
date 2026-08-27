@@ -4,6 +4,33 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.32] — 2026-08-27 — Arte nova: baús fechados, erro, troféu e fundo por recurso
+
+**Detalhes em `sessions/sessao-083.md` e `DECISIONS.md` (D061).**
+
+### Adicionado
+- **Fundo próprio por recurso nas páginas de recompensa** — 12 fundos
+  (4 baús + 8 power-ups/poções), fatiados das folhas do Davi, em
+  `src/assets/fundos/`. Ligados por `id` de loot em
+  `src/components/rewardBackgrounds.js`; `SummaryShell` ganhou a prop
+  `bgImage` (fundo em `cover`, título branco, véu escuro em gradiente
+  por cima pra manter o texto legível do dourado ao roxo)
+- `resumo-erros` — ícone de erro, par do `resumo-acertos`
+- `trofeu` — troféu, no lugar do `Trophy` da lucide
+- `bau-vazio` — baú aberto e vazio com moscas, arte dedicada pra página
+  "Nada desta vez" (ideia do próprio Davi)
+
+### Alterado
+- **Os 4 baús agora são fechados de verdade** (`bau-madeira`, `bau-ferro`,
+  `bau-ouro`, `bau-mistico`) — as artes antigas estavam todas abertas e
+  cheias de moeda, ver D060
+- `combo-pocao-3` trocado pela versão sem brilho/partículas em volta
+- Página "Nada desta vez" saiu da solução temporária (baú de madeira em
+  cinza e apagado) e passou a usar a arte dedicada
+- `ICONES.md` e página visual: 64 ícones + seção nova de fundos
+
+---
+
 ## [6.0.31] — 2026-08-25 — Combo do Seguro de Ofensiva + fim do "baú genérico"
 
 **Detalhes em `sessions/sessao-082.md` e `DECISIONS.md` (D060).**

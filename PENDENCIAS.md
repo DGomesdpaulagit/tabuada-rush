@@ -7,29 +7,26 @@
 
 ---
 
-## 🎨 Arte que o Davi vai gerar (fila de ícones)
+## 🎨 Arte — fila do Davi
 
 Nomes de arquivo definidos por mim (regra da sessão 078: eu nomeio, ele
-salva assim no Downloads). Conforme forem chegando, eu processo, registro
-em `GameIcon.jsx`, guardo o original em `referencias/icones/` e atualizo o
+salva assim no Downloads). Conforme chegam, eu processo, registro em
+`GameIcon.jsx`, guardo o original em `referencias/icones/` e atualizo o
 `ICONES.md`.
 
-- [ ] **4 baús FECHADOS, sem moedas** → `baus-fechados-4-tiers.png`
-      (uma folha só com os 4, como as anteriores). Os 4 ícones que hoje
-      se chamam "fechados" (`bau-madeira/ferro/ouro/mistico`) estão todos
-      **abertos e cheios de moeda** — confirmado olhando os arquivos na
-      sessão 082. Quando a arte chegar, ela substitui esses 4; a versão
-      `-aberto` continua como está.
-- [ ] **Combo Poção ×3 + Místico sem enfeite** →
-      `combo-pocao-3-sem-brilho.png`. A atual tem brilho/partículas roxas
-      em volta que ficam ruins quando o ícone entra na página.
-- [ ] **Ícone de Erro** → `icone-de-erro.png` (resumo pós-partida, pág. 1
-      — hoje é o `X` vermelho da lucide).
-- [ ] **Troféu** → `icone-de-trofeu.png` (resumo pós-partida, págs. 1 e 5).
+**✅ Entregue na sessão 083 (2026-08-27):** ícone de erro, troféu, 4 baús
+FECHADOS de verdade, combo Poção ×3 sem brilho, baú vazio com moscas
+(página "Nada desta vez") e **12 fundos** de página de recompensa.
+
+**Ainda falta:**
+- [ ] **Fundo do Seguro de Ofensiva** → `fundo-seguro-de-ofensiva.png`.
+      É o único dos 13 recursos sem fundo próprio — a leva de fundos veio
+      com 4 baús + 8 recursos, e o Seguro ficou de fora. Enquanto não
+      chega, a página dele cai no fundo escuro padrão (não quebra nada).
 - [ ] *(opcional)* **Combo do Seguro de Ofensiva em resolução maior** →
-      `combo-seguro-ofensiva.png`. A peça já existe e está funcionando,
-      mas foi recortada de dentro de uma folha, então tem resolução menor
-      que os outros combos. Só refazer se ficar visivelmente mole na tela.
+      `combo-seguro-ofensiva.png`. Funciona hoje, mas foi recortado de
+      dentro de uma folha, então tem resolução menor que os outros combos.
+      Só refazer se ficar visivelmente mole na tela.
 
 ---
 

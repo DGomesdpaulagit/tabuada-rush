@@ -2520,6 +2520,40 @@ eu já tinha em mãos, com o fundo levemente diferente dos vizinhos.
 
 ---
 
+## D061 — Fundo por recurso nas páginas de recompensa
+
+**Data:** 2026-08-27 · sessao-083
+
+O Davi mandou 12 fundos de página (gradiente na cor do recurso + o símbolo
+dele repetido e desfocado) com a instrução: "ao invés de ficar preto o
+fundo, ficar combinando com o recurso". Três decisões minhas na
+implementação, todas sinalizadas:
+
+1. **Véu escuro por cima da arte.** Os fundos cobrem um intervalo grande
+   de luminosidade — o do baú de ouro é dourado claro, o do místico é roxo
+   escuro. Texto branco fixo sumia no dourado; texto amarelo sumia nos
+   dois. Coloquei um gradiente preto de 25% a 55% por cima do fundo e
+   deixei o título branco. A cor do recurso continua dominando a tela, e a
+   leitura funciona nos 12.
+2. **JPEG, não PNG.** São gradientes grandes sem transparência: em PNG
+   passavam de 100 KB cada (1,2 MB no bundle), em JPEG de qualidade 84
+   ficaram entre 11 e 26 KB (menos de 200 KB no total).
+3. **Recorte do retângulo branco.** Cada tile da folha tinha um retângulo
+   branco arredondado embaixo — o lugar do botão na referência dele, não
+   parte do fundo. Cortei fora; se ficasse, apareceria como um borrão
+   branco atrás do "Continuar" de verdade.
+
+**Fallback:** recurso sem entrada no mapa cai no fundo escuro padrão. É o
+caso do Seguro de Ofensiva hoje (a leva veio com 12 fundos e o jogo tem 13
+recursos com página de recompensa) — a página funciona, só não tem a cor.
+
+**O que o Davi decidiu sozinho e eu acatei:** a página "Nada desta vez"
+ganhou arte própria — baú aberto e VAZIO, com moscas. É melhor que a
+solução temporária que eu tinha feito na sessão 082 (baú de madeira em
+cinza e apagado) e diz a mesma coisa de forma bem mais clara.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

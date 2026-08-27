@@ -43,10 +43,10 @@ import bauFerro from '../assets/icons/bau-ferro.png';
 import bauOuro from '../assets/icons/bau-ouro.png';
 import bauMistico from '../assets/icons/bau-mistico.png';
 import bauMoedas from '../assets/icons/bau-moedas.png';
-// [Fase 7.1, sessão 080] Versão ABERTA (com moedas à vista) dos 4 baús —
-// recortada de `novo_icone_baus_classificações.png` (arte do Davi). Usada
-// na página de recompensa de baú de moeda do resumo pós-partida; a versão
-// fechada continua valendo pra decoração/estoque.
+// [sessão 080] Versão ABERTA (com moedas à vista) dos 4 baús, usada na
+// página de recompensa de baú de moeda. Os `bau-<tier>` sem sufixo são os
+// FECHADOS — desde a sessão 083 fechados de verdade (antes eram outra arte
+// aberta, ver D060).
 import bauMadeiraAberto from '../assets/icons/bau-madeira-aberto.png';
 import bauFerroAberto from '../assets/icons/bau-ferro-aberto.png';
 import bauOuroAberto from '../assets/icons/bau-ouro-aberto.png';
@@ -59,6 +59,12 @@ import bauMisticoAberto from '../assets/icons/bau-mistico-aberto.png';
 // o que embaralhou as duas coisas. A versão certa agora é
 // `combo-seguro-ofensiva` (logo abaixo).
 import resumoAcertos from '../assets/icons/resumo-acertos.png';
+// [sessão 083] Arte nova do Davi: par do `resumo-acertos` (bolinha vermelha
+// com X), troféu (substituiu o `Trophy` da lucide nas páginas de pontuação e
+// conquistas) e o baú VAZIO com moscas — o "não achou nada desta vez".
+import resumoErros from '../assets/icons/resumo-erros.png';
+import trofeu from '../assets/icons/trofeu.png';
+import bauVazio from '../assets/icons/bau-vazio.png';
 // [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem única já
 // pronta, com o TIPO de baú batendo com a classificação que o Davi deu
 // (Madeira/Ferro/Ouro/Místico, não é mais Comum/Raro/Épico do sistema de
@@ -135,6 +141,9 @@ export const ICONS = {
   'combo-pocao-3': comboPocao3,
   'combo-seguro-ofensiva': comboSeguroOfensiva,
   'resumo-acertos': resumoAcertos,
+  'resumo-erros': resumoErros,
+  trofeu,
+  'bau-vazio': bauVazio,
   'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
   'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer
   'pocao-xp-3': pocaoXp3, // x3 — frasco redondo (maior multiplicador, menor duração)

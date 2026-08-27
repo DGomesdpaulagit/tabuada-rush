@@ -342,10 +342,14 @@ aqui de propósito (uma fonte de verdade só). Resumo do que tem lá:
       do Header (`dia-feito`/`dia-vazio`), só a letra, sem número; caixa
       "Como funciona" removida — não precisou da imagem de referência,
       o padrão já existia implementado no Header
-- [ ] Trocar ícone de Conquistas pelo troféu que o Davi vai fornecer —
-      **aguardando arte**, nome de arquivo pedido: `icone-de-trofeu.png`
-      (quando chegar, trocar também o troféu da página 1)
-- [ ] Ícone de **Erro** da página 1 — **aguardando arte** dele
+- [x] Trocar ícone de Conquistas pelo troféu — **feito na sessão 083**,
+      com a arte dele; trocado também nas duas aparições da página 1
+- [x] Ícone de **Erro** da página 1 — **feito na sessão 083**
+      (`resumo-erros`, par do `resumo-acertos`)
+- [x] **Extra da sessão 083, não estava na lista:** cada página de
+      recompensa ganhou FUNDO próprio na cor do recurso (12 fundos), o
+      baú da página "Nada desta vez" virou arte dedicada (baú vazio com
+      moscas) e os 4 baús "fechados" viraram fechados de verdade
 - [x] Página 6: caixa "Classificação" removida; ordem já estava certa
       (baú de moeda primeiro); baú de moeda ABERTO com moedas visíveis +
       ícone de moeda e total em cima, sem caixa decorativa ao redor

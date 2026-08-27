@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Target, X, Lock, Check, Share2 } from 'lucide-react';
+import { Target, Lock, Check, Share2 } from 'lucide-react';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS } from '../constants';
 import { SHOP_ITEM_MAP, POTION_MAP } from '../constants/shop';
 import { CHESTS } from '../constants/loot';
@@ -12,6 +12,7 @@ import { Button, pageTransition } from '../components/ui';
 import { MissionIcon, progressLabel } from './MissionsPage';
 import { shareCard } from '../lib/shareCard';
 import GameIcon from '../components/GameIcon';
+import { REWARD_BG } from '../components/rewardBackgrounds';
 
 // ── FLUXO DE RESUMO PÓS-PARTIDA [Fase 7 do PLANO_ACAO.md, sessão 072] ────────
 // Substitui a antiga `ResultsPage.jsx` (removida) por uma sequência de
@@ -82,24 +83,35 @@ const REWARD_COMBO = {
 // o Davi reclamou do efeito em várias páginas diferentes e confirmou que é
 // pra sumir de TODAS, não só das que ele citou. Sem substituto: a arte dos
 // ícones já carrega o destaque visual sozinha.
-function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', title, subtitle, children, footer }) {
+function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', title, subtitle, children, footer, bgImage }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={pageTransition}
-      className="flex flex-col gap-5 bg-background rounded-3xl -mx-4 px-4 py-6 min-h-[70vh] sm:mx-0 sm:rounded-3xl"
+      style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
+      className={`relative overflow-hidden flex flex-col gap-5 rounded-3xl -mx-4 px-4 py-6 min-h-[70vh] sm:mx-0 sm:rounded-3xl ${
+        bgImage ? 'bg-cover bg-center' : 'bg-background'
+      }`}
     >
-      <div className="flex-1 flex flex-col items-center text-center gap-3">
+      {/* [sessão 083] Véu escuro por cima da arte de fundo: os fundos vão do
+          dourado claro ao roxo escuro, e o texto branco precisa se manter
+          legível nos dois extremos. Sem isso, o título some no baú de ouro. */}
+      {bgImage && (
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/30 to-black/55 pointer-events-none" />
+      )}
+      <div className="relative flex-1 flex flex-col items-center text-center gap-3">
         <div className={`flex items-center justify-center shrink-0 ${iconWrapClass} ${iconBg}`}>
           {icon}
         </div>
-        <h1 className="text-3xl font-black text-coin leading-tight px-4">{title}</h1>
-        {subtitle && <p className="text-fg-muted font-semibold px-6">{subtitle}</p>}
+        <h1 className={`text-3xl font-black leading-tight px-4 ${bgImage ? 'text-white' : 'text-coin'}`}>{title}</h1>
+        {subtitle && (
+          <p className={`font-semibold px-6 ${bgImage ? 'text-white/90' : 'text-fg-muted'}`}>{subtitle}</p>
+        )}
         <div className="w-full flex flex-col gap-4 mt-2">{children}</div>
       </div>
-      <div className="flex flex-col gap-2 mt-4">{footer}</div>
+      <div className="relative flex flex-col gap-2 mt-4">{footer}</div>
     </motion.div>
   );
 }
@@ -128,24 +140,24 @@ function ContinueButton({ onClick, label = 'Continuar' }) {
 function ScorePage({ result, footer }) {
   return (
     <SummaryShell
-      icon={<Trophy size={44} className="text-graphite" />}
-      iconBg="bg-coin"
+      icon={<GameIcon name="trofeu" size={96} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Tarefa concluída!"
       subtitle="Você mandou muito bem!"
       footer={footer}
     >
       <StatBox label="Pontuação total">
         <div className="flex items-center justify-center gap-2">
-          <Trophy size={28} className="text-coin" />
+          <GameIcon name="trofeu" size={34} />
           <span className="text-4xl font-black text-coin">{result.score}</span>
         </div>
       </StatBox>
       <StatBox label="Desempenho">
         <div className="flex items-center justify-center gap-6">
-          {/* [Fase 7.1, sessão 080] Sem o círculo colorido atrás dos ícones —
-              só a arte pura, pedido do Davi. O mesmo vale pro "Erro", pra não
-              ficar um lado com bolha e o outro sem (o ícone de erro em si
-              ainda é o X da lucide, esperando a arte nova dele). */}
+          {/* Sem círculo colorido atrás dos ícones — só a arte pura (7.1).
+              Desde a sessão 083 o "Erro" também é arte do Davi, não mais o
+              X da lucide. */}
           <div className="flex items-center gap-2">
             <GameIcon name="resumo-acertos" size={36} />
             <div className="text-left">
@@ -155,7 +167,7 @@ function ScorePage({ result, footer }) {
           </div>
           <div className="w-px h-10 bg-border" />
           <div className="flex items-center gap-2">
-            <X size={32} className="text-rose-500 shrink-0" />
+            <GameIcon name="resumo-erros" size={36} />
             <div className="text-left">
               <p className="text-2xl font-black text-rose-500 leading-none">{result.wrong}</p>
               <p className="text-[10px] font-black text-fg-muted uppercase">Erros</p>
@@ -466,8 +478,9 @@ function AchievementsPage({ footer }) {
 
   return (
     <SummaryShell
-      icon={<Trophy size={44} className="text-graphite" />}
-      iconBg="bg-coin"
+      icon={<GameIcon name="trofeu" size={96} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Suas conquistas"
       subtitle="Você está indo muito bem!"
       footer={footer}
@@ -511,11 +524,17 @@ function RewardPage({ item, footer }) {
   // nem badge decorativo em volta (o recorte do badge antigo saía ruim).
   const isCoinChest = item.coins != null;
 
+  // [sessão 083] Fundo próprio por recurso (arte do Davi) — sem entrada no
+  // mapa, a página fica com o fundo escuro padrão.
+  const bgImage = REWARD_BG[item.id];
+
   const icon = isCoinChest ? (
     <div className="flex flex-col items-center gap-1">
       <div className="flex items-center gap-2">
         <GameIcon name="moedas" size={34} />
-        <span className="text-4xl font-black text-coin leading-none">+{item.coins}</span>
+        <span className={`text-4xl font-black leading-none ${bgImage ? 'text-white' : 'text-coin'}`}>
+          +{item.coins}
+        </span>
       </div>
       <GameIcon name={item.art} size={168} />
     </div>
@@ -532,6 +551,7 @@ function RewardPage({ item, footer }) {
       title={`Você ganhou ${article} ${item.name}!`}
       subtitle={item.desc}
       footer={footer}
+      bgImage={bgImage}
     >
       {/* Sem filhos: a caixa "Classificação" saiu na 7.1 e o baú separado
           (fallback de recurso sem combo) saiu na sessão 082 — todo recurso
@@ -543,13 +563,12 @@ function RewardPage({ item, footer }) {
 // ── PÁGINA 6 (sem nada achado) — aparece mesmo sem loot [D051] ────────────────
 function RewardEmptyPage({ footer }) {
   return (
-    // [sessão 082] `bau-recurso` foi removido do projeto. Enquanto a arte de
-    // baú FECHADO (sem moedas) não chega, esta página usa o de madeira
-    // apagado e sem cor — mostrar baú cheio de moedas numa página que diz
-    // "não achou nada" seria contraditório.
+    // [sessão 083] Arte dedicada: baú aberto e VAZIO, com moscas — o Davi
+    // gerou pra esta página exatamente com esse sentido.
     <SummaryShell
-      icon={<GameIcon name="bau-madeira" size={56} className="grayscale opacity-40" />}
-      iconBg="bg-surface-2"
+      icon={<GameIcon name="bau-vazio" size={132} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Nada desta vez"
       subtitle="Baús e power-ups são sorteados a cada partida — continue jogando pra achar algo!"
       footer={footer}

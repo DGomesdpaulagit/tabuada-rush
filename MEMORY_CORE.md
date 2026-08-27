@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-25
-**Versão:** 6.0.31 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + combo do Seguro corrigido — sessao-082.md)
+**Data:** 2026-08-27
+**Versão:** 6.0.32 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova e fundos por recurso — sessao-083.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.32]** Leva de arte do Davi processada (D061) — os 4 baús agora
+são FECHADOS de verdade, entraram os ícones de erro, troféu e baú vazio
+(com moscas, pra página "Nada desta vez"), o combo Poção ×3 perdeu o
+brilho, e cada página de recompensa ganhou **fundo próprio na cor do
+recurso** (12 fundos JPEG, mapa em `rewardBackgrounds.js`, véu escuro por
+cima pra legibilidade). Falta só `fundo-seguro-de-ofensiva`. Com o baú
+fechado existindo, o **bloco 2 da 7.1 (baú por missão) não tem mais
+impedimento**. Ver `sessao-083.md`.
 **[v6.0.31]** Correção de arte (D060) — o "baú genérico" (`bau-recurso`)
 era, na verdade, o combo do Seguro de Ofensiva no tier errado; a versão
 certa (cristal de gelo + baú de OURO) já existia dentro da folha

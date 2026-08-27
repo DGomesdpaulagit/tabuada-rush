@@ -49,6 +49,7 @@ GRUPOS = [
         ('missao-tipo-pontuacao', 'Tipo: pontuação', 'missão score'),
         ('missao-travada', 'Missão travada', 'aba Missões'),
         ('resumo-acertos', 'Acertos', 'resumo pós-partida, págs. 1, 2 e 3'),
+        ('resumo-erros', 'Erros', 'resumo pós-partida, pág. 1'),
     ]),
     ('Loja', 'power-ups e poções', [
         ('pu-vida-extra', 'Vida Extra', '80 moedas'),
@@ -81,7 +82,18 @@ GRUPOS = [
         ('combo-pocao-2', 'Poção ×2 + Ouro', 'recompensa'),
         ('combo-pocao-3', 'Poção ×3 + Místico', 'recompensa'),
         ('combo-seguro-ofensiva', 'Seguro de Ofensiva + Ouro', 'recompensa'),
+        ('trofeu', 'Troféu', 'págs. 1 e 5 do resumo'),
+        ('bau-vazio', 'Baú vazio (com moscas)', 'página "Nada desta vez"'),
     ]),
+]
+
+FUNDOS = [
+    ('fundo-bau-madeira', 'Baú de Madeira'), ('fundo-bau-ferro', 'Baú de Ferro'),
+    ('fundo-bau-ouro', 'Baú de Ouro'), ('fundo-bau-mistico', 'Baú Místico'),
+    ('fundo-vida-extra', 'Vida Extra'), ('fundo-congelar', 'Congelar Missão'),
+    ('fundo-largada', 'Largada Turbo'), ('fundo-tempo', '+60s no relógio'),
+    ('fundo-escudo', 'Escudo'), ('fundo-pocao-1', 'Poção ×1,5'),
+    ('fundo-pocao-2', 'Poção ×2'), ('fundo-pocao-3', 'Poção ×3'),
 ]
 
 FALTANDO = [
@@ -92,8 +104,8 @@ FALTANDO = [
 ]
 
 
-def b64(nome):
-    with open(os.path.join(ICONS_DIR, nome + '.png'), 'rb') as f:
+def b64(nome, pasta=None, ext='.png'):
+    with open(os.path.join(pasta or ICONS_DIR, nome + ext), 'rb') as f:
         return base64.b64encode(f.read()).decode('ascii')
 
 
@@ -117,6 +129,15 @@ for titulo, sub, itens in GRUPOS:
         '        <div class="grade">\n%s\n        </div>\n'
         '      </section>' % (titulo, sub, len(itens), '\n'.join(cards))
     )
+
+FUNDOS_DIR = os.path.join(REPO, 'src', 'assets', 'fundos')
+fundos_html = '\n'.join(
+    '        <figure class="fundo">\n'
+    '          <img src="data:image/jpeg;base64,%s" alt="%s" loading="lazy">\n'
+    '          <figcaption>%s<code>%s.jpg</code></figcaption>\n'
+    '        </figure>' % (b64(n, FUNDOS_DIR, '.jpg'), r, r, n)
+    for n, r in FUNDOS
+)
 
 faltando_html = '\n'.join(
     '          <li><strong>%s</strong><span>%s</span><em>%s</em></li>' % f for f in FALTANDO
@@ -311,6 +332,18 @@ HTML = """<title>Ícones do Tabuada Rush</title>
     .pendentes li { grid-template-columns: 1fr; }
     .barra-interna .aviso { display: none; }
   }
+  .fundos { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .fundo { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  .fundo img {
+    width: 100%;
+    aspect-ratio: 1 / 1.7;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--linha);
+    display: block;
+  }
+  .fundo figcaption { font-size: .74rem; font-weight: 700; display: flex; flex-direction: column; gap: 1px; }
+  .fundo code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .62rem; color: var(--tinta-fraca); }
   .vazio { color: var(--tinta-fraca); padding: 40px 0; text-align: center; }
   @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
 </style>
@@ -325,7 +358,8 @@ HTML = """<title>Ícones do Tabuada Rush</title>
     <span><b>__TOTAL__</b> ícones no jogo</span>
     <span><b>__GRUPOS__</b> telas cobertas</span>
     <span><b>__REFS__</b> arquivos de referência guardados</span>
-    <span><b>4</b> peças ainda faltando</span>
+    <span><b>12</b> fundos de recompensa</span>
+    <span><b>1</b> peça ainda faltando</span>
   </div>
 </header>
 
@@ -338,6 +372,13 @@ HTML = """<title>Ícones do Tabuada Rush</title>
 
 <main>
 __SECOES__
+
+  <section class="grupo">
+    <h2>Fundos das páginas de recompensa <span class="sub">src/assets/fundos/</span> <span class="contagem">12</span></h2>
+    <div class="fundos">
+__FUNDOS__
+    </div>
+  </section>
 
   <section class="pendentes">
     <h2>Ainda sem arte</h2>
@@ -396,7 +437,8 @@ HTML = (HTML
         .replace('__FALTANDO__', faltando_html)
         .replace('__TOTAL__', str(cards_total))
         .replace('__GRUPOS__', str(len(GRUPOS)))
-        .replace('__REFS__', str(refs)))
+        .replace('__REFS__', str(refs))
+        .replace('__FUNDOS__', fundos_html))
 
 io.open(OUT, 'w', encoding='utf-8', newline='').write(HTML)
 print('pagina escrita:', OUT)

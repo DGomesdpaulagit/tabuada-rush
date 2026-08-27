@@ -9,6 +9,13 @@ def linha(nome, desc, onde):
     return '| ![\\|48](%s/%s.png) | `%s` | %s | %s |' % (ICONS, nome, nome, desc, onde)
 
 
+def tabela_fundo(rows):
+    out = ['| Fundo | Arquivo | Recurso |', '|:---:|---|---|']
+    for nome, recurso in rows:
+        out.append('| ![\\|64](src/assets/fundos/%s.jpg) | `%s.jpg` | %s |' % (nome, nome, recurso))
+    return '\n'.join(out)
+
+
 def tabela(rows):
     out = ['| Ícone | Nome no código | O que é | Onde aparece |', '|:---:|---|---|---|']
     out += [linha(*r) for r in rows]
@@ -145,6 +152,9 @@ A(tabela([
     ('combo-pocao-3', 'Poção ×3 + Baú Místico', 'Página 6 (recompensa)'),
     ('combo-seguro-ofensiva', 'Seguro de Ofensiva (cristal de gelo) + Baú de Ouro', 'Página 6 (recompensa)'),
     ('resumo-acertos', 'Alvo verde com flecha — acertos', 'Páginas 1, 2 e 3'),
+    ('resumo-erros', 'Bolinha vermelha com X — erros (par do acertos)', 'Página 1'),
+    ('trofeu', 'Troféu (substituiu o `Trophy` da lucide)', 'Páginas 1 e 5'),
+    ('bau-vazio', 'Baú aberto e vazio, com moscas', 'Página "Nada desta vez"'),
 ]))
 A("""
 **Os 9 recursos têm combo próprio desde a sessão 082.** O do Seguro de
@@ -158,21 +168,43 @@ resolução menor que os outros (240 px contra ~260).
 foi genérico de verdade, era o exemplo do combo do Seguro no tier errado.
 """)
 
-A('\n---\n\n## 8. Ainda SEM arte (usa lucide/emoji)\n')
+A('\n---\n\n## 8. Fundos das páginas de recompensa\n')
+A("""Arte de FUNDO por recurso (sessão 083): gradiente na cor do item + o
+símbolo dele repetido e desfocado. Ficam em `src/assets/fundos/` (JPEG, sem
+transparência, 11-26 KB cada) e são ligados pelo `id` do loot em
+`src/components/rewardBackgrounds.js`. Sem entrada no mapa, a página cai no
+fundo escuro padrão.
+""")
+A(tabela_fundo([
+    ('fundo-bau-madeira', 'Baú de Madeira'),
+    ('fundo-bau-ferro', 'Baú de Ferro'),
+    ('fundo-bau-ouro', 'Baú de Ouro'),
+    ('fundo-bau-mistico', 'Baú Místico'),
+    ('fundo-vida-extra', 'Vida Extra'),
+    ('fundo-congelar', 'Congelar Missão'),
+    ('fundo-largada', 'Largada Turbo'),
+    ('fundo-tempo', '+60s no relógio'),
+    ('fundo-escudo', 'Escudo'),
+    ('fundo-pocao-1', 'Poção ×1,5'),
+    ('fundo-pocao-2', 'Poção ×2'),
+    ('fundo-pocao-3', 'Poção ×3'),
+]))
+
+A('\n---\n\n## 9. Ainda SEM arte (usa lucide/emoji)\n')
 A("""| O que | Onde | Situação |
 |---|---|---|
-| **4 baús FECHADOS**, sem moedas dentro | Mochila, decoração, página "Nada desta vez" | ⏳ os 4 atuais estão todos ABERTOS — nome do arquivo: `baus-fechados-4-tiers.png` |
-| **Combo Poção ×3 + Místico sem enfeite** | Resumo pós-partida, página 6 | ⏳ a versão atual tem brilho/partículas em volta — nome do arquivo: `combo-pocao-3-sem-brilho.png` |
-| **Ícone de Erro** (`X` vermelho da lucide) | Resumo pós-partida, página 1 | ⏳ você vai gerar |
-| **Troféu** (`Trophy` da lucide) | Resumo pós-partida, páginas 1 e 5 · Conquistas | ⏳ você vai baixar como `icone-de-trofeu.png` |
+| **Fundo do Seguro de Ofensiva** | Resumo pós-partida, página 6 | ⏳ único recurso sem fundo — nome do arquivo: `fundo-seguro-de-ofensiva.png` |
 | Ícones das 26 conquistas | Aba Conquistas | Emoji — sem plano de troca ainda |
 | Badges das 28 faixas de tabuada | Faixa / progressão | Emoji (🌱 etc.) — sem plano de troca ainda |
+
+Entregue na sessão 083: ícone de erro, troféu, 4 baús fechados de verdade,
+combo Poção ×3 sem brilho, baú vazio com moscas e 12 fundos de recompensa.
 """)
 
 A("""
 ---
 
-## 9. Pasta de referências — `referencias/icones/`
+## 10. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):
@@ -198,7 +230,7 @@ io.open(os.path.join(REPO, 'ICONES.md'), 'w', encoding='utf-8', newline='').writ
 
 # Conferência: todo ícone citado existe mesmo em src/assets/icons?
 import re
-citados = set(re.findall(r'\| `([a-z0-9\-]+)` \|', texto))
+citados = set(n for n in re.findall(r'\| `([a-z0-9\-]+)` \|', texto) if not n.startswith('fundo-'))
 existem = set(os.path.splitext(f)[0] for f in os.listdir(os.path.join(REPO, ICONS.replace('/', os.sep))))
 print('ICONES.md escrito —', len(texto), 'chars')
 print('citados:', len(citados), '| na pasta:', len(existem))

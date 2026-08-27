@@ -147,6 +147,9 @@ que você definiu (D054), não a raridade da Loja.
 | ![\|48](src/assets/icons/combo-pocao-3.png) | `combo-pocao-3` | Poção ×3 + Baú Místico | Página 6 (recompensa) |
 | ![\|48](src/assets/icons/combo-seguro-ofensiva.png) | `combo-seguro-ofensiva` | Seguro de Ofensiva (cristal de gelo) + Baú de Ouro | Página 6 (recompensa) |
 | ![\|48](src/assets/icons/resumo-acertos.png) | `resumo-acertos` | Alvo verde com flecha — acertos | Páginas 1, 2 e 3 |
+| ![\|48](src/assets/icons/resumo-erros.png) | `resumo-erros` | Bolinha vermelha com X — erros (par do acertos) | Página 1 |
+| ![\|48](src/assets/icons/trofeu.png) | `trofeu` | Troféu (substituiu o `Trophy` da lucide) | Páginas 1 e 5 |
+| ![\|48](src/assets/icons/bau-vazio.png) | `bau-vazio` | Baú aberto e vazio, com moscas | Página "Nada desta vez" |
 
 **Os 9 recursos têm combo próprio desde a sessão 082.** O do Seguro de
 Ofensiva estava pronto o tempo todo dentro da folha
@@ -161,21 +164,46 @@ foi genérico de verdade, era o exemplo do combo do Seguro no tier errado.
 
 ---
 
-## 8. Ainda SEM arte (usa lucide/emoji)
+## 8. Fundos das páginas de recompensa
+
+Arte de FUNDO por recurso (sessão 083): gradiente na cor do item + o
+símbolo dele repetido e desfocado. Ficam em `src/assets/fundos/` (JPEG, sem
+transparência, 11-26 KB cada) e são ligados pelo `id` do loot em
+`src/components/rewardBackgrounds.js`. Sem entrada no mapa, a página cai no
+fundo escuro padrão.
+
+| Fundo | Arquivo | Recurso |
+|:---:|---|---|
+| ![\|64](src/assets/fundos/fundo-bau-madeira.jpg) | `fundo-bau-madeira.jpg` | Baú de Madeira |
+| ![\|64](src/assets/fundos/fundo-bau-ferro.jpg) | `fundo-bau-ferro.jpg` | Baú de Ferro |
+| ![\|64](src/assets/fundos/fundo-bau-ouro.jpg) | `fundo-bau-ouro.jpg` | Baú de Ouro |
+| ![\|64](src/assets/fundos/fundo-bau-mistico.jpg) | `fundo-bau-mistico.jpg` | Baú Místico |
+| ![\|64](src/assets/fundos/fundo-vida-extra.jpg) | `fundo-vida-extra.jpg` | Vida Extra |
+| ![\|64](src/assets/fundos/fundo-congelar.jpg) | `fundo-congelar.jpg` | Congelar Missão |
+| ![\|64](src/assets/fundos/fundo-largada.jpg) | `fundo-largada.jpg` | Largada Turbo |
+| ![\|64](src/assets/fundos/fundo-tempo.jpg) | `fundo-tempo.jpg` | +60s no relógio |
+| ![\|64](src/assets/fundos/fundo-escudo.jpg) | `fundo-escudo.jpg` | Escudo |
+| ![\|64](src/assets/fundos/fundo-pocao-1.jpg) | `fundo-pocao-1.jpg` | Poção ×1,5 |
+| ![\|64](src/assets/fundos/fundo-pocao-2.jpg) | `fundo-pocao-2.jpg` | Poção ×2 |
+| ![\|64](src/assets/fundos/fundo-pocao-3.jpg) | `fundo-pocao-3.jpg` | Poção ×3 |
+
+---
+
+## 9. Ainda SEM arte (usa lucide/emoji)
 
 | O que | Onde | Situação |
 |---|---|---|
-| **4 baús FECHADOS**, sem moedas dentro | Mochila, decoração, página "Nada desta vez" | ⏳ os 4 atuais estão todos ABERTOS — nome do arquivo: `baus-fechados-4-tiers.png` |
-| **Combo Poção ×3 + Místico sem enfeite** | Resumo pós-partida, página 6 | ⏳ a versão atual tem brilho/partículas em volta — nome do arquivo: `combo-pocao-3-sem-brilho.png` |
-| **Ícone de Erro** (`X` vermelho da lucide) | Resumo pós-partida, página 1 | ⏳ você vai gerar |
-| **Troféu** (`Trophy` da lucide) | Resumo pós-partida, páginas 1 e 5 · Conquistas | ⏳ você vai baixar como `icone-de-trofeu.png` |
+| **Fundo do Seguro de Ofensiva** | Resumo pós-partida, página 6 | ⏳ único recurso sem fundo — nome do arquivo: `fundo-seguro-de-ofensiva.png` |
 | Ícones das 26 conquistas | Aba Conquistas | Emoji — sem plano de troca ainda |
 | Badges das 28 faixas de tabuada | Faixa / progressão | Emoji (🌱 etc.) — sem plano de troca ainda |
+
+Entregue na sessão 083: ícone de erro, troféu, 4 baús fechados de verdade,
+combo Poção ×3 sem brilho, baú vazio com moscas e 12 fundos de recompensa.
 
 
 ---
 
-## 9. Pasta de referências — `referencias/icones/`
+## 10. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):

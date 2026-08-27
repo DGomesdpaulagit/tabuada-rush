@@ -125,7 +125,6 @@
 | ![\|48](src/assets/icons/bau-ferro-aberto.png) | `bau-ferro-aberto` | Baú de Ferro ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
 | ![\|48](src/assets/icons/bau-ouro-aberto.png) | `bau-ouro-aberto` | Baú de Ouro ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
 | ![\|48](src/assets/icons/bau-mistico-aberto.png) | `bau-mistico-aberto` | Baú Místico ABERTO, com moedas à vista | Resumo pós-partida (pág. 6) |
-| ![\|48](src/assets/icons/bau-moedas.png) | `bau-moedas` | Baú com moedas | Reserva — sem uso ativo hoje |
 
 ---
 

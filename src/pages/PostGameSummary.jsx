@@ -90,7 +90,12 @@ function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', 
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={pageTransition}
-      className={`relative flex flex-col gap-5 -mx-4 px-4 py-6 min-h-[70vh] ${
+      /* [sessão 086] Sem a barra superior (que sumiu no resumo inteiro), a
+         página passa a ocupar a tela toda: `min-h` da altura da janela menos
+         o respiro do container. O conteúdo fica centralizado no vão e o
+         botão encosta no rodapé, em vez de tudo grudado no topo com um
+         buraco embaixo. */
+      className={`relative flex flex-col gap-5 -mx-4 px-4 py-6 min-h-[calc(100dvh-3rem)] ${
         bgImage ? '' : 'overflow-hidden rounded-3xl bg-background sm:mx-0 sm:rounded-3xl'
       }`}
     >
@@ -110,7 +115,7 @@ function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', 
           <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/25 via-black/30 to-black/55 pointer-events-none" />
         </>
       )}
-      <div className="relative z-10 flex-1 flex flex-col items-center text-center gap-3">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center gap-3">
         <div className={`flex items-center justify-center shrink-0 ${iconWrapClass} ${iconBg}`}>
           {icon}
         </div>

@@ -1037,15 +1037,21 @@ export default function App() {
     setScreen('game');
   }, []);
 
+  // Partida = a partida em si + o resumo dela (as páginas de resultado
+  // fazem parte da mesma sessão de jogo, ver comentário no JSX abaixo).
+  const emPartida = screen === 'game' || screen === 'results';
+
   return (
     <div className="min-h-dvh app-shell font-nunito lg:flex">
-      {/* Barra lateral estilo Duolingo — só em telas largas (lg+); no
-          celular o app segue em coluna única, sem sidebar. */}
-      <Sidebar screen={screen} onNavigate={setScreen} />
+      {/* [sessão 086] EM PARTIDA a moldura do app inteira some — barra
+          lateral E barra superior. Pedido do Davi: dentro da partida o foco
+          é a partida, sem "quantas moedas você tem" na tela.
+          As páginas de RESUMO contam como partida: elas falam do que
+          acabou de acontecer nela, então seguem sem moldura também. A barra
+          volta no "hall" (menu, loja, missões, perfil...). */}
+      {!emPartida && <Sidebar screen={screen} onNavigate={setScreen} />}
       <div className="flex-1 flex flex-col min-h-dvh">
-        {/* v6.0 · Bloco 1: barra superior persistente (faixa/ofensiva/moedas/
-            vidas) — some durante a partida, que já tem seu próprio HUD. */}
-        {screen !== 'game' && <Header onNavigate={setScreen} />}
+        {!emPartida && <Header onNavigate={setScreen} />}
         <div className="flex-1 flex justify-center">
         {/* Ligas usa a largura toda (coluna da liga + painel lateral, estilo
             Duolingo); as demais telas seguem na coluna estreita de sempre. */}

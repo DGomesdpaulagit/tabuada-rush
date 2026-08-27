@@ -127,8 +127,11 @@ async function main() {
     const esperarConteudo = async () => {
       for (let i = 0; i < 60; i++) {
         const { result } = await cdp.enviar('Runtime.evaluate', {
+          // Nem toda tela tem <h1> (o resumo tem, a Loja e a Mochila não).
+          // O sinal genérico é: documento carregado, já existe texto na tela
+          // e nenhuma imagem pendente.
           expression: `document.readyState === 'complete'
-            && !!document.querySelector('h1')
+            && document.body.innerText.trim().length > 120
             && [...document.images].every((i) => i.complete)`,
           returnByValue: true,
         }, sessionId);

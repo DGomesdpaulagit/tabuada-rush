@@ -133,7 +133,6 @@ A(tabela([
     ('bau-ferro-aberto', 'Baú de Ferro ABERTO, com moedas à vista', 'Resumo pós-partida (pág. 6)'),
     ('bau-ouro-aberto', 'Baú de Ouro ABERTO, com moedas à vista', 'Resumo pós-partida (pág. 6)'),
     ('bau-mistico-aberto', 'Baú Místico ABERTO, com moedas à vista', 'Resumo pós-partida (pág. 6)'),
-    ('bau-moedas', 'Baú com moedas', 'Reserva — sem uso ativo hoje'),
 ]))
 
 A('\n---\n\n## 7. Resumo pós-partida — `PostGameSummary.jsx`\n')

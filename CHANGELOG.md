@@ -4,6 +4,32 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.35] — 2026-08-27 — Moldura some na partida + recortes sem rebarba
+
+**Detalhes em `sessions/sessao-086.md` e `DECISIONS.md` (D064).**
+
+### Alterado
+- **Barra superior E barra lateral somem durante a partida e no resumo
+  pós-partida** — o resumo faz parte da partida. Voltam no "hall"
+  (menu, loja, missões, perfil...)
+- Resumo pós-partida ocupa a tela toda: conteúdo centralizado no vão e
+  botão encostado no rodapé (antes sobrava um buraco embaixo)
+- `bau-madeira-aberto`, `bau-ferro-aberto` e `bau-ouro-aberto`
+  reprocessados sem rebarba branca (borda quase-branca caiu de 50,3%
+  para 18,0% no de ouro; 61,4% → 21,1% no de madeira)
+
+### Adicionado
+- `scripts/recortar-icone.py` — recorte de fundo sólido com **alfa suave
+  e descontaminação de cor** (`F = (C − (1−α)·B)/α`), que é o que elimina
+  o contorno branco deixado pelo anti-aliasing do fundo original
+
+### Removido
+- `bau-moedas` — reserva sem uso que podia confundir com os baús abertos
+  (pedido do Davi). Regra confirmada: **na página de recompensa o baú é
+  sempre o ABERTO**, em qualquer tier
+
+---
+
 ## [6.0.34] — 2026-08-27 — Fundo em tela cheia, arte dos recursos completa
 
 **Detalhes em `sessions/sessao-085.md` e `DECISIONS.md` (D063).**

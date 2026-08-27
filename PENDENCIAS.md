@@ -29,6 +29,22 @@ recursos), baú místico aberto sem brilho e ícone de XP novo.
 
 ---
 
+## 🧹 Dívidas de layout vistas na revisão de telas (sessão 086)
+
+Achadas capturando as telas uma a uma. Nenhuma é regressão — já estavam
+lá. Não mexi porque a reformulação da Arena/menu que o Davi adiantou
+provavelmente cobre parte disso.
+
+- **Menu:** o modal "Defina sua meta de ofensiva" abre na primeira visita
+  por cima do card da liga, sem escurecer o fundo o suficiente — é a
+  primeira impressão do app.
+- **Menu:** o título "Tabuada Rush" encosta nos botões de configurações e
+  login no canto superior direito.
+- **Loja:** as dicas de "Como ganhar moedas?" ainda usam emoji (🔥, 🎁) em
+  linhas que já têm ícone de arte.
+
+---
+
 ## 🔢 Tipos de pontuação por faixa numérica (pedido da sessão 082)
 
 Hoje existe **um único** ícone de pontuação (`missao-tipo-pontuacao`, o

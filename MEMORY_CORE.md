@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.34 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + fundo em tela cheia — sessao-085.md)
+**Versão:** 6.0.35 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + moldura some na partida — sessao-086.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.35]** Moldura do app (barra superior + lateral) some na partida
+E no resumo — o resumo faz parte da partida (D064/sessao-086). Resumo
+recomposto pra ocupar a tela toda, conteúdo centralizado. Rebarba branca
+dos recortes resolvida na raiz com descontaminação de cor
+(`scripts/recortar-icone.py`); 3 baús abertos reprocessados. `bau-moedas`
+excluído; regra confirmada: **na recompensa o baú é sempre o ABERTO**.
+Dívidas de layout do menu/loja anotadas em `PENDENCIAS.md`.
 **[v6.0.34]** Fundo de recompensa em TELA CHEIA (D063) — camada `fixed`
 por baixo do cabeçalho, sem faixa escura sobrando; "+1000" de volta ao
 amarelo da moeda; emoji 🔥 substituído pelo ícone de ofensiva no HUD de

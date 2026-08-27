@@ -71,7 +71,6 @@ GRUPOS = [
         ('bau-ferro-aberto', 'Ferro — aberto', 'página de recompensa'),
         ('bau-ouro-aberto', 'Ouro — aberto', 'página de recompensa'),
         ('bau-mistico-aberto', 'Místico — aberto', 'página de recompensa'),
-        ('bau-moedas', 'Baú com moedas', 'reserva, sem uso hoje'),
     ]),
     ('Combo recurso + baú', 'resumo pós-partida, página 6', [
         ('combo-congelar', 'Congelar + Madeira', 'recompensa'),

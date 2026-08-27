@@ -42,7 +42,6 @@ import bauMadeira from '../assets/icons/bau-madeira.png';
 import bauFerro from '../assets/icons/bau-ferro.png';
 import bauOuro from '../assets/icons/bau-ouro.png';
 import bauMistico from '../assets/icons/bau-mistico.png';
-import bauMoedas from '../assets/icons/bau-moedas.png';
 // [sessão 080] Versão ABERTA (com moedas à vista) dos 4 baús, usada na
 // página de recompensa de baú de moeda. Os `bau-<tier>` sem sufixo são os
 // FECHADOS — desde a sessão 083 fechados de verdade (antes eram outra arte
@@ -122,7 +121,6 @@ export const ICONS = {
   loja,
   podio,
   mochila,
-  'bau-moedas': bauMoedas,
   'bau-madeira': bauMadeira,
   'bau-ferro': bauFerro,
   'bau-ouro': bauOuro,

@@ -2631,6 +2631,43 @@ sistema. Emojis que são DADO (conquistas, missões, personagens em
 
 ---
 
+## D064 — Rebarba de recorte: causa, solução e o que o Davi pode fazer
+
+**Data:** 2026-08-27 · sessao-086
+
+Ele perguntou, direto: "o que você está com dificuldade de fazer? Como eu
+posso te ajudar? Está muito ruim esse negócio de recorte."
+
+**A causa não era o formato do arquivo.** A arte chega em PNG, mas com
+FUNDO SÓLIDO pintado (branco ou preto). Na borda do desenho o gerador
+mistura a cor do objeto com a do fundo (anti-aliasing). Remover só os
+pixels "parecidos com o fundo" deixa essa faixa misturada — o contorno
+branco que ele viu.
+
+**Solução do meu lado** (`scripts/recortar-icone.py`): alfa proporcional à
+distância até a cor do fundo + **descontaminação de cor**, recuperando a
+cor real do objeto com `F = (C − (1−α)·B)/α`. Medido no baú de ouro
+aberto: borda quase-branca de 50,3% → 18,0%.
+
+**O que ajuda do lado dele, em ordem de eficácia:**
+
+1. Pedir ao gerador **PNG com fundo transparente** de verdade. Resolve na
+   fonte.
+2. Se o gerador não fizer transparência, pedir fundo **de uma cor que não
+   existe na arte** — magenta ou verde puro. Fundo branco atrás de arte com
+   brilho branco (o baú místico antigo) é o pior caso.
+3. **Sem brilho, fumaça, estrelinhas ou sombra** em volta do objeto: esse
+   efeito é meio-transparente por natureza, então vira rebarba
+   inevitavelmente. Foi exatamente o problema do baú místico, que ele
+   mesmo identificou e regerou.
+4. Deixar uma margem entre o objeto e a borda da imagem.
+
+**Varredura:** medi rebarba nos 63 ícones. Os outros valores altos são cor
+legítima (o escudo É branco, o alvo TEM contorno escuro) — reprocessar
+esses estragaria a arte, então só os 3 baús abertos foram refeitos.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

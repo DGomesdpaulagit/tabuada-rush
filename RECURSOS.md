@@ -62,8 +62,8 @@ preço, não se compra). Só aparecem como loot de partida.
 | ----------- | ----------------------: | ------------------: | ------------- |
 | **Madeira** |           3-10 partidas |  10-100 (aleatório) | `bau-madeira` |
 | **Ferro**   |           1-25 partidas | 200-400 (aleatório) | `bau-ferro`   |
-| **Ouro**    |           1-40 partidas | 500-800 (aleatório) | `bau-ouro`    |
-| **Místico** |           1-50 partidas |        1.000 (fixo) | `bau-mistico` |
+| **Ouro**    |           1-80 partidas | 500-800 (aleatório) | `bau-ouro`    |
+| **Místico** |          1-120 partidas |        1.000 (fixo) | `bau-mistico` |
 
 ---
 
@@ -75,10 +75,18 @@ por combo do Rush) multiplica a chance de CADA categoria de drop:
 
 | Duração real da partida | Chance de Baú | Chance de Power-up | Chance de Poção |
 |---|---:|---:|---:|
-| 1-5 min | 30% | 60% | 50% |
-| 6-20 min | 50% | 90% | 70% |
-| 21-50 min | 80% | 100% | 95% |
-| 51+ min (~1h) | 100% (garantido) | 200% (garantido 2x) | 195% (garantido 1x + 95% de +1) |
+| 1-5 min | 22% | 60% | 50% |
+| 6-20 min | 40% | 90% | 70% |
+| 21-50 min | 65% | 100% | 95% |
+| 51+ min (~1h) | 90% | 200% (garantido 2x) | 195% (garantido 1x + 95% de +1) |
+
+**[sessão 089] Balanceamento:** as colunas de BAÚ desceram um degrau
+(30→22, 50→40, 80→65, 100→90) e Ouro/Místico ficaram mais raros no sorteio
+(intervalo 1-40→1-80 e 1-50→1-120). Motivo: os baús eram ~93% de toda a
+renda de moedas do jogo — o baú médio valia 321 moedas e agora vale 236,
+com a renda de baú caindo ~45%. As faixas de moeda de cada baú NÃO mudaram.
+Power-up e poção ficaram intactos (são consumíveis, não inflacionam a
+carteira). Ver D067.
 
 Acima de 100%: `floor(pct/100)` unidades garantidas + 1 rolagem extra com
 o resto (`pct % 100`)%. Cada partida é uma rolagem independente — não é

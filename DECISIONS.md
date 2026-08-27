@@ -2739,6 +2739,37 @@ com as moedinhas mesmo".
 
 ---
 
+## D067 — Como os baús foram nerfados (e o que ficou intocado)
+
+**Data:** 2026-08-27 · sessao-089
+
+Diante do diagnóstico do D066 (baús = ~93% da renda), o Davi escolheu
+**"B, talvez com um empurrãozinho de A"**:
+
+- **B:** Ouro `intervalMax` 40 → 80, Místico 50 → 120. Muda o PESO no
+  sorteio de qual baú sai, não a chance de sair baú.
+- **A leve:** `chestPct` 30→22, 50→40, 80→65, 100→90.
+
+**Resultado medido:** baú médio 321 → 236 moedas (−27%); renda de baú por
+partida −40% a −46% conforme a duração. Místico virou ~1 a cada 75 partidas
+curtas.
+
+**Duas coisas que deixei intocadas de propósito, e o porquê:**
+
+1. **As faixas de moeda de cada baú** (Ouro segue 500-800, Místico 1000).
+   O Davi disse explicitamente que não queria mexer na sensação de prêmio —
+   era a opção C, que eu tinha desaconselhado.
+2. **`powerupPct`/`potionPct`.** Power-up e poção são consumíveis: não
+   entram na carteira e não inflacionam nada. A reclamação era de moeda,
+   então nerfar loot de item junto seria punir o jogador sem motivo.
+
+**Regra de processo que sai daqui:** número de balanceamento que aparece na
+tela ou em documento tem que ser atualizado **no mesmo commit** que muda o
+código. Foi assim que o texto da Loja ficou prometendo 15 moedas/partida por
+duas versões (D066) — aqui o `RECURSOS.md` foi junto.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

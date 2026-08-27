@@ -10,11 +10,20 @@
 // um(a) [nome]" da página de recompensas) — sem isso cai no masculino por
 // padrão, pode sair errado.
 
+// [sessão 089] OURO e MÍSTICO ficaram mais raros (opção B do balanceamento,
+// escolhida pelo Davi): `intervalMax` do Ouro 40 → 80 e do Místico 50 → 120.
+// Isso NÃO muda a chance de cair um baú — muda o PESO no sorteio de QUAL baú
+// é (ver `weightedPick` em utils/loot.js, peso = 1/intervalo médio).
+// Efeito: dos baús sorteados, Místico cai de 12,3% pra 6,1% e Ouro de 15,3%
+// pra 9,1%; o baú médio vai de 321 pra 236 moedas. Motivo: a medição da
+// sessão 088 mostrou que os baús eram ~93% de toda a renda de moedas do jogo
+// (ver D066/D067). As FAIXAS DE MOEDA de cada baú ficaram intactas de
+// propósito — o Davi não quis mexer na sensação de prêmio.
 export const CHESTS = [
-  { id: 'bau-madeira', art: 'bau-madeira', name: 'Baú de Madeira',  intervalMin: 3,  intervalMax: 10, coinMin: 10,  coinMax: 100 },
-  { id: 'bau-ferro',   art: 'bau-ferro',   name: 'Baú de Ferro',    intervalMin: 1,  intervalMax: 25, coinMin: 200, coinMax: 400 },
-  { id: 'bau-ouro',    art: 'bau-ouro',    name: 'Baú de Ouro',     intervalMin: 1,  intervalMax: 40, coinMin: 500, coinMax: 800 },
-  { id: 'bau-mistico', art: 'bau-mistico', name: 'Baú Místico',     intervalMin: 1,  intervalMax: 50, coinFixed: 1000 },
+  { id: 'bau-madeira', art: 'bau-madeira', name: 'Baú de Madeira',  intervalMin: 3,  intervalMax: 10,  coinMin: 10,  coinMax: 100 },
+  { id: 'bau-ferro',   art: 'bau-ferro',   name: 'Baú de Ferro',    intervalMin: 1,  intervalMax: 25,  coinMin: 200, coinMax: 400 },
+  { id: 'bau-ouro',    art: 'bau-ouro',    name: 'Baú de Ouro',     intervalMin: 1,  intervalMax: 80,  coinMin: 500, coinMax: 800 },
+  { id: 'bau-mistico', art: 'bau-mistico', name: 'Baú Místico',     intervalMin: 1,  intervalMax: 120, coinFixed: 1000 },
 ];
 
 // [Fase 7.1 bloco 2, sessão 087] Qual baú representa uma recompensa de N
@@ -57,9 +66,14 @@ export const LOOT_POTIONS = [
 // Faixas 21-24min e 51+min não tinham número exato no plano original —
 // tratadas como parte da faixa vizinha mais próxima (média/aproximação,
 // o próprio Davi descreveu essas porcentagens como "uma média").
+// [sessão 089] `chestPct` desceu um degrau em todas as faixas (o
+// "empurrãozinho da opção A" que o Davi pediu junto com a B): 30→22, 50→40,
+// 80→65, 100→90. `powerupPct`/`potionPct` NÃO mudaram — power-up e poção são
+// consumíveis, não inflacionam a carteira, e o Davi só reclamou de moeda.
+// Somando com a raridade nova do Ouro/Místico, a renda de baú cai ~45%.
 export const TIME_TIERS = [
-  { maxMin: 5,        chestPct: 30,  powerupPct: 60,  potionPct: 50  },
-  { maxMin: 20,       chestPct: 50,  powerupPct: 90,  potionPct: 70  },
-  { maxMin: 50,       chestPct: 80,  powerupPct: 100, potionPct: 95  },
-  { maxMin: Infinity, chestPct: 100, powerupPct: 200, potionPct: 195 },
+  { maxMin: 5,        chestPct: 22, powerupPct: 60,  potionPct: 50  },
+  { maxMin: 20,       chestPct: 40, powerupPct: 90,  potionPct: 70  },
+  { maxMin: 50,       chestPct: 65, powerupPct: 100, potionPct: 95  },
+  { maxMin: Infinity, chestPct: 90, powerupPct: 200, potionPct: 195 },
 ];

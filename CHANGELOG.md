@@ -4,6 +4,25 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.38] — 2026-08-27 — Balanceamento dos baús (opção B + empurrãozinho de A)
+
+**Detalhes em `sessions/sessao-089.md` e `DECISIONS.md` (D067).**
+
+### Alterado
+- **Ouro e Místico ficaram mais raros no sorteio**: `intervalMax` 40 → 80
+  (Ouro) e 50 → 120 (Místico). Dos baús que caem, Místico vai de 12,3%
+  para **6,1%** e Ouro de 15,3% para **9,1%** — o baú médio cai de 321
+  para **236 moedas**
+- **Chance de cair baú desceu um degrau** em todas as faixas de tempo:
+  30→22%, 50→40%, 80→65%, 100→90%. Renda de baú cai ~45%
+- `RECURSOS.md` atualizado no mesmo commit (as duas tabelas tinham os
+  números antigos)
+
+**Intocado:** faixas de moeda de cada baú (sensação de prêmio) e as
+chances de power-up/poção (consumíveis, não inflacionam a carteira).
+
+---
+
 ## [6.0.37] — 2026-08-27 — Barra de missão nova + 1ª rodada de balanceamento
 
 **Detalhes em `sessions/sessao-088.md` e `DECISIONS.md` (D066).**

@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.37 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + balanceamento — sessao-088.md)
+**Versão:** 6.0.38 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + balanceamento dos baús — sessao-089.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.38]** Baús nerfados (D067) — o Davi escolheu a opção B + um
+empurrãozinho de A: Ouro/Místico mais raros no sorteio (intervalo 1-80 e
+1-120) e `chestPct` um degrau abaixo (22/40/65/90). Baú médio 321 → 236
+moedas, renda de baú −45%. Faixas de moeda de cada baú e loot de
+power-up/poção ficaram intocados de propósito. `RECURSOS.md` atualizado no
+mesmo commit. **Fila limpa: a próxima é a FASE 8 (Arena)**, que ele vai
+detalhar antes de eu codar.
 **[v6.0.37]** Barra de missão no estilo da referência (número dentro, baú
 encavalado na ponta) + 1ª rodada de balanceamento (D066). **Achado
 importante:** a renda de moedas vem ~93% dos BAÚS de loot (baú médio = 321

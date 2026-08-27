@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.32 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova e fundos por recurso — sessao-083.md)
+**Versão:** 6.0.33 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshot das telas resolvido — sessao-084.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.33]** **Verificação visual resolvida (D062)** — dá pra tirar
+screenshot das telas do jogo agora: `node scripts/tirar-telas.mjs` (com
+`npm run dev` rodando) captura via protocolo de DevTools do Chrome, no
+viewport de iPhone 14 Pro. A causa do D034 era o `requestAnimationFrame`
+não rodar sem janela visível, congelando o framer-motion no primeiro
+quadro — resolvido pela flag `?still=1` (DEV). Também corrigidos dois
+erros meus no catálogo visual (Seguro faltando na Loja, pendências
+desatualizadas publicadas sem conferência). Ver `sessao-084.md`.
 **[v6.0.32]** Leva de arte do Davi processada (D061) — os 4 baús agora
 são FECHADOS de verdade, entraram os ícones de erro, troféu e baú vazio
 (com moscas, pra página "Nada desta vez"), o combo Poção ×3 perdeu o

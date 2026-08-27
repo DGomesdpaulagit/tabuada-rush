@@ -49,6 +49,24 @@ quem dá o nome do arquivo (não ele), pra facilitar localizar depois no Downloa
 salva assim, eu processo a partir daí. Motivo: confusão de nomes/arquivos já causou
 retrabalho real na revisão da Fase 7 (ver D056, sessao-078.md).
 
+## 📸 Verificação visual (resolvido na sessão 084 — ver D062)
+
+Dá pra tirar screenshot das telas do jogo. Com `npm run dev` rodando:
+
+```
+node scripts/tirar-telas.mjs                      # 13 telas do resumo pós-partida
+node scripts/tirar-telas.mjs "screen=menu" menu   # uma tela específica
+```
+
+Saída em `telas/` (fora do Git). Antes de dizer que uma mudança visual
+está pronta, **capturar e olhar** — foi assim que apareceram problemas que
+asserção de DOM não pegava.
+
+**Por que o `&still=1`** (o script já põe sozinho): o framer-motion anima
+por `requestAnimationFrame`, que o navegador não roda sem janela sendo
+pintada; sem a flag a tela congela no primeiro quadro da animação e sai
+deslocada. Isso era o D034 — não é mais impedimento.
+
 ## Estrutura
 - `src/constants/` — `index.js` (MODES, LEVELS 28 c/ title, ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).
 - `src/utils/index.js` — geração de perguntas, scoring, datas, `computeQI`/`getQiInfo`.

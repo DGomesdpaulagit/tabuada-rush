@@ -2554,6 +2554,48 @@ cinza e apagado) e diz a mesma coisa de forma bem mais clara.
 
 ---
 
+## D062 — Verificação visual resolvida: o problema era rAF, não "IA não vê tela"
+
+**Data:** 2026-08-27 · sessao-084
+
+O Davi perguntou por que eu não conseguia ver as telas e mandou resolver.
+Resolvido — e a causa raiz do D034 finalmente ficou clara.
+
+**O que acontecia:** o `framer-motion` anima via `requestAnimationFrame`,
+e o navegador NÃO roda rAF numa janela que não está sendo pintada (painel
+fechado, aba oculta, headless com tempo virtual). A tela ficava congelada
+no ESTADO INICIAL da animação — `opacity: 0, x: 24`. Por isso toda captura
+saía deslocada 24 px, cortada na direita, ou totalmente em branco. Não era
+limitação de enxergar imagem: era animação parada no primeiro quadro.
+
+**Solução em três peças:**
+
+1. **`?still=1`, só em DEV** (`STILL_MODE`). Com a flag, `initial` vira
+   `false` — o framer pinta o estado final direto, sem animação e sem
+   depender de rAF. Escolhi isso em vez de `duration: 0` porque duração
+   zero ainda precisa de um quadro pra aplicar; `initial={false}` não
+   precisa de nenhum.
+2. **Protocolo de DevTools em vez de `--screenshot`.** A flag de linha de
+   comando captura a JANELA, que traz alguns pixels de moldura e corta a
+   direita da página (perdi um tempo achando que era bug de layout: medi
+   no navegador e a página estava certa, 430 px sem transbordo). Pelo
+   protocolo dá pra fixar o viewport exato do aparelho.
+3. **Esperar conteúdo, não tempo.** Com `setTimeout` fixo a primeira tela
+   saía em branco — em DEV o Vite serve centenas de módulos soltos e a 1ª
+   navegação demora bem mais. O script pergunta à própria página se
+   carregou (`readyState`, existe `h1`, todas as imagens completas).
+
+**Consequência prática:** dá pra verificar mudança visual sem depender do
+Davi abrir painel nenhum, e mandar as imagens pra ele. O D034 deixa de ser
+um impedimento permanente e vira nota histórica.
+
+**Erro de processo junto (registrado pra não repetir):** na sessão 083 eu
+atualizei o gerador do catálogo, a substituição de texto NÃO pegou, e eu
+publiquei sem conferir o resultado. Publicação de artefato agora tem que
+terminar com uma conferência no arquivo gerado — foi o Davi quem viu.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

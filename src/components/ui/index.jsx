@@ -139,3 +139,20 @@ export const pageVariants = {
 };
 
 export const pageTransition = { duration: 0.3, ease: [0.4, 0, 0.2, 1] };
+
+// ── MODO PARADO (só em DEV, com `?still=1`) [sessão 084, D062] ───────────────
+// O framer-motion anima via `requestAnimationFrame`, que o navegador NÃO roda
+// quando a aba/janela não está sendo pintada (painel do preview fechado,
+// Chrome headless com tempo virtual). Resultado: a tela congela no estado
+// INICIAL da animação — foi essa a causa raiz do D034, que travou a
+// verificação visual por várias sessões seguidas.
+//
+// Com `?still=1`, `initial` vira `false`: o framer pinta direto o estado
+// final, sem animação e sem depender de rAF. É o que faz o script de
+// screenshots (`scripts/tirar-telas.sh`) capturar a tela já assentada.
+// Sem o parâmetro, nada muda; e em produção a flag nem existe.
+export const STILL_MODE =
+  import.meta.env.DEV && new URLSearchParams(window.location.search).has('still');
+
+// Uso: <motion.div initial={stillInitial({ opacity: 0, x: 24 })} ... />
+export const stillInitial = (valor) => (STILL_MODE ? false : valor);

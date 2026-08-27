@@ -8,7 +8,7 @@ import { getAccuracy, getAchievementProgress, todayStr } from '../utils';
 import { getActiveMissions } from '../utils/missions';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
-import { Button, pageTransition } from '../components/ui';
+import { Button, pageTransition, stillInitial } from '../components/ui';
 import { MissionIcon, progressLabel } from './MissionsPage';
 import { shareCard } from '../lib/shareCard';
 import GameIcon from '../components/GameIcon';
@@ -86,7 +86,7 @@ const REWARD_COMBO = {
 function SummaryShell({ icon, iconBg, iconWrapClass = 'w-24 h-24 rounded-full', title, subtitle, children, footer, bgImage }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 24 }}
+      initial={stillInitial({ opacity: 0, x: 24 })}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={pageTransition}

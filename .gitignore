@@ -7,3 +7,6 @@ dist/
 
 # Catalogo visual de icones (2,3 MB, regeneravel por scripts/gerar-catalogo-icones.py)
 scripts/catalogo-icones.html
+
+# Screenshots de verificacao (regeneraveis por scripts/tirar-telas.sh)
+telas/

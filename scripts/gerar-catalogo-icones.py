@@ -57,6 +57,7 @@ GRUPOS = [
         ('pu-largada', 'Largada Turbo', '90 moedas'),
         ('pu-tempo', '+60s no relógio', '120 moedas'),
         ('pu-escudo', 'Escudo', '100 moedas'),
+        ('ofensiva-congelada', 'Seguro de Ofensiva', '100 moedas — mesma arte do Header'),
         ('pocao-xp-1', 'Poção ×1,5', 'tubo de ensaio'),
         ('pocao-xp-2', 'Poção ×2', 'erlenmeyer'),
         ('pocao-xp-3', 'Poção ×3', 'frasco redondo'),
@@ -97,10 +98,7 @@ FUNDOS = [
 ]
 
 FALTANDO = [
-    ('Ícone de Erro', 'Resumo pós-partida, página 1', 'hoje é o X vermelho da lucide'),
-    ('Troféu', 'Resumo pós-partida, páginas 1 e 5', 'baixar como icone-de-trofeu.png'),
-    ('4 baús FECHADOS, sem moedas', 'Mochila, decoração, página "nada desta vez"', 'os atuais estão todos abertos'),
-    ('Combo Poção ×3 + Místico sem brilho', 'Resumo pós-partida, página 6', 'os enfeites em volta ficam ruins'),
+    ('Fundo do Seguro de Ofensiva', 'Resumo pós-partida, página 6', 'único recurso sem fundo próprio'),
 ]
 
 
@@ -109,7 +107,7 @@ def b64(nome, pasta=None, ext='.png'):
         return base64.b64encode(f.read()).decode('ascii')
 
 
-cards_total = sum(len(g[2]) for g in GRUPOS)
+cards_total = len(set(n for g in GRUPOS for n, _, _ in g[2]))  # unicos: o Seguro aparece em 2 grupos
 secoes = []
 for titulo, sub, itens in GRUPOS:
     cards = []

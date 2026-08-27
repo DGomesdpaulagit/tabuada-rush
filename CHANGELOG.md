@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.33] — 2026-08-27 — Screenshot das telas resolvido (fim do D034)
+
+**Detalhes em `sessions/sessao-084.md` e `DECISIONS.md` (D062).**
+
+### Adicionado
+- `scripts/tirar-telas.mjs` — captura as telas do jogo via protocolo de
+  DevTools do Chrome, com viewport de iPhone 14 Pro (393×852 em 2×) e
+  espera por conteúdo carregado. Saída em `telas/` (fora do Git)
+- `STILL_MODE` / `stillInitial` (`components/ui/index.jsx`) — com
+  `?still=1` em DEV, a animação de entrada não roda e a tela pinta já
+  assentada. Sem isso nenhuma captura presta: sem janela visível o
+  navegador não roda `requestAnimationFrame` e o framer-motion congela
+  no primeiro quadro da animação — a causa raiz do D034
+
+### Corrigido
+- Catálogo visual: **Seguro de Ofensiva** faltava na seção da Loja
+  (só aparecia no Header) e a seção "ainda sem arte" ainda listava as
+  peças já entregues na sessão 083 — a atualização do gerador não tinha
+  pegado e eu publiquei sem conferir o resultado
+- Contagem do topo do catálogo passa a contar ícones únicos (64)
+
+---
+
 ## [6.0.32] — 2026-08-27 — Arte nova: baús fechados, erro, troféu e fundo por recurso
 
 **Detalhes em `sessions/sessao-083.md` e `DECISIONS.md` (D061).**

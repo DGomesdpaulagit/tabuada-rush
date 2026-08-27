@@ -95,10 +95,12 @@ FUNDOS = [
     ('fundo-largada', 'Largada Turbo'), ('fundo-tempo', '+60s no relógio'),
     ('fundo-escudo', 'Escudo'), ('fundo-pocao-1', 'Poção ×1,5'),
     ('fundo-pocao-2', 'Poção ×2'), ('fundo-pocao-3', 'Poção ×3'),
+    ('fundo-seguro-ofensiva', 'Seguro de Ofensiva'),
 ]
 
 FALTANDO = [
-    ('Fundo do Seguro de Ofensiva', 'Resumo pós-partida, página 6', 'único recurso sem fundo próprio'),
+    ('Ícones das 26 conquistas', 'Aba Conquistas', 'emoji — sem plano de troca ainda'),
+    ('Badges das 28 faixas de tabuada', 'Faixa / progressão', 'emoji — sem plano de troca ainda'),
 ]
 
 
@@ -356,8 +358,8 @@ HTML = """<title>Ícones do Tabuada Rush</title>
     <span><b>__TOTAL__</b> ícones no jogo</span>
     <span><b>__GRUPOS__</b> telas cobertas</span>
     <span><b>__REFS__</b> arquivos de referência guardados</span>
-    <span><b>12</b> fundos de recompensa</span>
-    <span><b>1</b> peça ainda faltando</span>
+    <span><b>13</b> fundos de recompensa</span>
+    <span>arte dos recursos <b>completa</b></span>
   </div>
 </header>
 
@@ -372,7 +374,7 @@ HTML = """<title>Ícones do Tabuada Rush</title>
 __SECOES__
 
   <section class="grupo">
-    <h2>Fundos das páginas de recompensa <span class="sub">src/assets/fundos/</span> <span class="contagem">12</span></h2>
+    <h2>Fundos das páginas de recompensa <span class="sub">src/assets/fundos/</span> <span class="contagem">13</span></h2>
     <div class="fundos">
 __FUNDOS__
     </div>
@@ -380,7 +382,7 @@ __FUNDOS__
 
   <section class="pendentes">
     <h2>Ainda sem arte</h2>
-    <p>O que hoje é ícone da biblioteca lucide ou emoji, esperando substituição.</p>
+    <p>Todo recurso, baú e fundo já tem arte própria. O que sobra é emoji, sem plano de troca definido.</p>
     <ul>
 __FALTANDO__
     </ul>

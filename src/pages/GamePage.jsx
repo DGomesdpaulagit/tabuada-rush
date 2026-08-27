@@ -582,7 +582,10 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                   exit={{ scale: 0, opacity: 0 }}
                   className="flex items-center gap-1 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-black"
                 >
-                  🔥 {state.streak}
+                  {/* [sessão 085] Emoji 🔥 trocado pelo ícone de ofensiva: a
+                      chama do jogo serve tanto pra ofensiva quanto pro combo,
+                      e mantém a cara própria em vez do emoji do sistema. */}
+                  <GameIcon name="ofensiva" size={16} /> {state.streak}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -817,7 +820,15 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
                 : 'bg-gradient-to-r from-amber-400 to-orange-500 text-white text-2xl shadow-amber-300'
               }`}
           >
-            {isInsane ? `🤯 INSANE COMBO! ×${state.streak}` : `🔥 COMBO ×${state.streak}!`}
+            {/* [sessão 085] O 🔥 do combo virou o ícone de ofensiva; o 🤯 do
+                combo insano continua emoji (não tem arte equivalente). */}
+            {isInsane ? (
+              `🤯 INSANE COMBO! ×${state.streak}`
+            ) : (
+              <span className="flex items-center gap-2">
+                <GameIcon name="ofensiva" size={28} /> COMBO ×{state.streak}!
+              </span>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

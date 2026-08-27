@@ -18,11 +18,10 @@ salva assim no Downloads). Conforme chegam, eu processo, registro em
 FECHADOS de verdade, combo Poção ×3 sem brilho, baú vazio com moscas
 (página "Nada desta vez") e **12 fundos** de página de recompensa.
 
-**Ainda falta:**
-- [ ] **Fundo do Seguro de Ofensiva** → `fundo-seguro-de-ofensiva.png`.
-      É o único dos 13 recursos sem fundo próprio — a leva de fundos veio
-      com 4 baús + 8 recursos, e o Seguro ficou de fora. Enquanto não
-      chega, a página dele cai no fundo escuro padrão (não quebra nada).
+**✅ Entregue na sessão 085:** fundo do Seguro de Ofensiva (fecha os 13
+recursos), baú místico aberto sem brilho e ícone de XP novo.
+
+**Fila de arte obrigatória: vazia.** Sobrou só isto, opcional:
 - [ ] *(opcional)* **Combo do Seguro de Ofensiva em resolução maior** →
       `combo-seguro-ofensiva.png`. Funciona hoje, mas foi recortado de
       dentro de uma folha, então tem resolução menor que os outros combos.

@@ -2596,6 +2596,41 @@ terminar com uma conferência no arquivo gerado — foi o Davi quem viu.
 
 ---
 
+## D063 — Fundo de recompensa em tela cheia (camada fixa, não fundo do cartão)
+
+**Data:** 2026-08-27 · sessao-085
+
+O Davi olhou a screenshot e pediu que a arte de fundo "complete a imagem
+inteira", não só o cartão: "se você quiser expandir, expande, mas quero
+que fique completo".
+
+**Como implementei:** a arte saiu do `background` do cartão e virou uma
+camada `fixed inset-0 z-0` (mais o véu escuro, também fixo). Escolhi
+`fixed` em vez de esticar o cartão por dois motivos:
+
+1. Cobre a tela toda de ponta a ponta sem depender de calcular a altura do
+   cabeçalho — esticar o cartão com `min-h-dvh` deixaria ele mais alto que
+   a área visível e criaria rolagem.
+2. O cabeçalho é `sticky top-0 z-40`, ou seja, um contexto de empilhamento
+   ACIMA de `z-0`. Então a arte passa por baixo dele e o cabeçalho continua
+   legível por cima, em vez de sumir atrás da imagem.
+
+O conteúdo (ícone, título, botão) subiu pra `z-10`. Quando não há arte, o
+cartão continua exatamente como era: fundo próprio e cantos arredondados.
+
+**Junto disso:** o total de moedas voltou pro amarelo (`text-coin`) mesmo
+sobre a arte — eu tinha deixado branco na sessão 083 por causa do
+contraste, mas o véu escuro já resolve isso e ele quis a cor da moeda.
+
+**Emoji de fogo:** trocado pelo ícone de ofensiva no HUD de combo, no
+toast de combo e no modal de meta. Raciocínio dele, que eu registro
+porque vale pra decisões futuras: a chama do jogo serve pros dois papéis
+(ofensiva e combo) e mantém a identidade própria em vez do emoji do
+sistema. Emojis que são DADO (conquistas, missões, personagens em
+`constants/`) não foram tocados — são dezenas e é outra decisão.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

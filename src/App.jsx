@@ -78,7 +78,9 @@ function GoalModal({ onSelect, onClose }) {
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
       >
-        <div className="text-center text-4xl mb-1">🔥</div>
+        {/* [sessão 085] Mesma troca do HUD de combo: ícone de ofensiva no
+            lugar do emoji do sistema. */}
+        <div className="flex justify-center mb-1"><GameIcon name="ofensiva" size={40} /></div>
         <h3 className="text-xl font-black text-gray-900 text-center">Defina sua meta de ofensiva</h3>
         <p className="text-sm text-gray-400 font-semibold text-center mt-1 mb-5">
           Quantos dias seguidos você quer praticar?

@@ -4,6 +4,28 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.34] — 2026-08-27 — Fundo em tela cheia, arte dos recursos completa
+
+**Detalhes em `sessions/sessao-085.md` e `DECISIONS.md` (D063).**
+
+### Adicionado
+- `fundo-seguro-ofensiva` — com ele, **os 13 recursos com página de
+  recompensa têm fundo próprio**; nenhum cai mais no escuro padrão
+
+### Alterado
+- **A arte de fundo passa a cobrir a TELA INTEIRA** (camada `fixed`, por
+  baixo do cabeçalho `sticky`), não só o cartão da página — pedido do
+  Davi. Sem faixa escura em cima nem embaixo
+- Total de moedas (`+1000`) volta pro amarelo da moeda, inclusive sobre
+  a arte de fundo
+- **Emoji 🔥 trocado pelo ícone de ofensiva** no HUD de combo da partida,
+  no toast "COMBO ×N!" e no modal de meta de ofensiva (o 🤯 do "INSANE
+  COMBO" continua emoji — não há arte equivalente)
+- `bau-mistico-aberto` trocado pela arte nova, sem o brilho que estragava
+  o recorte; `xp` trocado pelo ícone novo
+
+---
+
 ## [6.0.33] — 2026-08-27 — Screenshot das telas resolvido (fim do D034)
 
 **Detalhes em `sessions/sessao-084.md` e `DECISIONS.md` (D062).**

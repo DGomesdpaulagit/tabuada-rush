@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.33 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshot das telas resolvido — sessao-084.md)
+**Versão:** 6.0.34 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + fundo em tela cheia — sessao-085.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,13 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.34]** Fundo de recompensa em TELA CHEIA (D063) — camada `fixed`
+por baixo do cabeçalho, sem faixa escura sobrando; "+1000" de volta ao
+amarelo da moeda; emoji 🔥 substituído pelo ícone de ofensiva no HUD de
+combo, no toast de combo e no modal de meta. Com o `fundo-seguro-ofensiva`,
+**os 13 recursos têm fundo próprio** — a fila de arte zerou (só resta o
+opcional de regerar o combo do Seguro em resolução maior). Baú místico
+aberto e ícone de XP também trocados por arte nova. Ver `sessao-085.md`.
 **[v6.0.33]** **Verificação visual resolvida (D062)** — dá pra tirar
 screenshot das telas do jogo agora: `node scripts/tirar-telas.mjs` (com
 `npm run dev` rodando) captura via protocolo de DevTools do Chrome, no

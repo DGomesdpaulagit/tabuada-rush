@@ -186,6 +186,7 @@ fundo escuro padrão.
 | ![\|64](src/assets/fundos/fundo-pocao-1.jpg) | `fundo-pocao-1.jpg` | Poção ×1,5 |
 | ![\|64](src/assets/fundos/fundo-pocao-2.jpg) | `fundo-pocao-2.jpg` | Poção ×2 |
 | ![\|64](src/assets/fundos/fundo-pocao-3.jpg) | `fundo-pocao-3.jpg` | Poção ×3 |
+| ![\|64](src/assets/fundos/fundo-seguro-ofensiva.jpg) | `fundo-seguro-ofensiva.jpg` | Seguro de Ofensiva |
 
 ---
 
@@ -193,12 +194,13 @@ fundo escuro padrão.
 
 | O que | Onde | Situação |
 |---|---|---|
-| **Fundo do Seguro de Ofensiva** | Resumo pós-partida, página 6 | ⏳ único recurso sem fundo — nome do arquivo: `fundo-seguro-de-ofensiva.png` |
 | Ícones das 26 conquistas | Aba Conquistas | Emoji — sem plano de troca ainda |
 | Badges das 28 faixas de tabuada | Faixa / progressão | Emoji (🌱 etc.) — sem plano de troca ainda |
 
-Entregue na sessão 083: ícone de erro, troféu, 4 baús fechados de verdade,
-combo Poção ×3 sem brilho, baú vazio com moscas e 12 fundos de recompensa.
+**Arte dos recursos: completa.** Sessão 083 trouxe ícone de erro, troféu, 4
+baús fechados, combo Poção ×3 sem brilho, baú vazio com moscas e 12 fundos;
+a sessão 085 fechou com o fundo do Seguro de Ofensiva, o baú místico aberto
+sem brilho e o ícone de XP novo.
 
 
 ---

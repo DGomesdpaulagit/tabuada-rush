@@ -8,8 +8,7 @@
 //
 // ⚠️ Ao adicionar um recurso novo: se não houver entrada aqui, a página cai
 // no fundo escuro padrão (nada quebra) — mas o certo é pedir a arte.
-// FALTA HOJE: `powerup_streak_insurance` (Seguro de Ofensiva) — não veio na
-// leva de fundos; nome do arquivo pedido: `fundo-seguro-de-ofensiva.png`.
+// Desde a sessão 085 os 13 recursos têm fundo próprio, nenhum sobrando.
 import fundoBauMadeira from '../assets/fundos/fundo-bau-madeira.jpg';
 import fundoBauFerro from '../assets/fundos/fundo-bau-ferro.jpg';
 import fundoBauOuro from '../assets/fundos/fundo-bau-ouro.jpg';
@@ -22,6 +21,7 @@ import fundoEscudo from '../assets/fundos/fundo-escudo.jpg';
 import fundoPocao1 from '../assets/fundos/fundo-pocao-1.jpg';
 import fundoPocao2 from '../assets/fundos/fundo-pocao-2.jpg';
 import fundoPocao3 from '../assets/fundos/fundo-pocao-3.jpg';
+import fundoSeguroOfensiva from '../assets/fundos/fundo-seguro-ofensiva.jpg';
 
 // Chave = `id` do item de loot (CHESTS/SHOP_ITEMS/POTIONS).
 export const REWARD_BG = {
@@ -29,6 +29,7 @@ export const REWARD_BG = {
   'bau-ferro': fundoBauFerro,
   'bau-ouro': fundoBauOuro,
   'bau-mistico': fundoBauMistico,
+  powerup_streak_insurance: fundoSeguroOfensiva,
   powerup_life: fundoVidaExtra,
   powerup_mission_freeze: fundoCongelar,
   powerup_headstart: fundoLargada,

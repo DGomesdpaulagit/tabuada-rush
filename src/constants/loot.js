@@ -17,6 +17,21 @@ export const CHESTS = [
   { id: 'bau-mistico', art: 'bau-mistico', name: 'Baú Místico',     intervalMin: 1,  intervalMax: 50, coinFixed: 1000 },
 ];
 
+// [Fase 7.1 bloco 2, sessão 087] Qual baú representa uma recompensa de N
+// moedas. Usado pelas missões: cada uma mostra o baú do tier que combina com
+// a SUA recompensa (uma diária de 40 moedas mostra madeira; um desafio mensal
+// de 800, ouro).
+//
+// A regra é "o primeiro baú cujo TETO alcança o valor". Isso importa porque as
+// faixas dos baús têm buracos (não existe baú de 101-199, nem de 401-499) e há
+// missão caindo justamente neles — o desafio mensal de 450 moedas, por
+// exemplo, vira Ouro. Deriva de `CHESTS` de propósito: mexeu nos valores dos
+// baús, as missões acompanham sozinhas.
+export function chestForCoins(coins) {
+  const achado = CHESTS.find((c) => coins <= (c.coinFixed ?? c.coinMax));
+  return (achado || CHESTS[CHESTS.length - 1]).id;
+}
+
 // `id` bate com `SHOP_ITEMS[i].id` (constants/shop.js) — loot só empresta o
 // intervalo médio, nome/arte/powerupKey continuam vivendo só na Loja.
 export const LOOT_POWERUPS = [

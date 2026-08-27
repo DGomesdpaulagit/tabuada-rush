@@ -2668,6 +2668,36 @@ esses estragaria a arte, então só os 3 baús abertos foram refeitos.
 
 ---
 
+## D065 — Tier do baú por missão: a regra do "primeiro teto que alcança"
+
+**Data:** 2026-08-27 · sessao-087
+
+O pedido era "o tier do baú bate com a faixa de moedas da recompensa
+específica da missão". Ao implementar apareceu um caso que a especificação
+não cobria: **as faixas dos baús têm buracos**. Madeira vai até 100, Ferro
+começa em 200; Ferro termina em 400, Ouro começa em 500. E existe missão
+caindo no buraco — o desafio mensal de **450 moedas**.
+
+**Regra que adotei:** o baú é o primeiro cujo TETO alcança o valor. Então
+450 → Ouro (teto 800), 150 → Ferro (teto 400). Alternativa seria arredondar
+pra baixo (450 → Ferro), mas premiar o jogador com o baú de cima numa
+recompensa maior que o teto do tier anterior é mais coerente com a ideia de
+"recompensa maior, baú melhor".
+
+**Deriva de `CHESTS`, não é tabela nova.** Se os valores dos baús mudarem
+(Fase 6), as missões acompanham sozinhas — uma fonte de verdade só.
+
+**Estado visual:** fechado com 60% de opacidade enquanto incompleta, aberto
+e opaco quando completa. O baú abrindo É o feedback de conclusão, junto com
+a barra ficando verde.
+
+**Nota de ferramenta:** pra fotografar o estado "aberto" precisei ensinar o
+script de telas a montar estado (`--preparar`). O detalhe que custou
+tentativas: tem que rodar ANTES do app iniciar, porque o app salva o estado
+em memória ao sair da página e desfazia o patch feito na página carregada.
+
+---
+
 ## 🏁 RESET 6.0 — COMPLETO (sessões 044-050, 2026-08-16 a 2026-08-17)
 
 Os 7 blocos planejados em `sessions/planejamento-6.0.md` foram todos entregues:

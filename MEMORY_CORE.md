@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-27
-**Versão:** 6.0.35 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + moldura some na partida — sessao-086.md)
+**Versão:** 6.0.36 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída — sessao-087.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.36]** **FASE 7.1 CONCLUÍDA** — o último item era o baú por missão
+(D065): tier pela recompensa da missão (`chestForCoins`, derivado de
+`CHESTS`), fechado enquanto incompleta / ABERTO quando completa, na aba
+Missões e na página 3 do resumo. Regra pros valores que caem entre faixas
+(o mensal de 450): o primeiro baú cujo teto alcança. Ferramenta: o script
+de telas ganhou `--preparar` pra montar estado, e `Progress` passou a
+respeitar `?still=1` (a barra saía zerada nas capturas). **Próxima fase
+grande: 8 — Arena**, que o Davi quer planejar antes de codar.
 **[v6.0.35]** Moldura do app (barra superior + lateral) some na partida
 E no resumo — o resumo faz parte da partida (D064/sessao-086). Resumo
 recomposto pra ocupar a tela toda, conteúdo centralizado. Rebarba branca

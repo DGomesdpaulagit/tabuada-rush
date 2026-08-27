@@ -80,7 +80,8 @@ class CDP {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
+  const sysArgs = process.argv.slice(2);
+  const args = sysArgs.filter((a, i) => !a.startsWith('--') && sysArgs[i - 1] !== '--preparar');
   const lista = args.length ? [[args[0], args[1] || 'tela']] : TELAS;
 
   const chrome = CAMINHOS.find((c) => existsSync(c));
@@ -140,6 +141,24 @@ async function main() {
       }
       return false;
     };
+
+    // `--preparar "<js>"`: monta um estado que não dá pra pedir pela URL —
+    // por exemplo marcar uma missão como concluída no `localStorage` pra
+    // fotografar o baú ABERTO.
+    //
+    // Roda ANTES do app iniciar (`addScriptToEvaluateOnNewDocument`), e não
+    // depois com um reload: o app salva o estado que tem em memória ao sair
+    // da página, então um patch feito na página já carregada era desfeito
+    // pelo próprio save do unload. Injetando no documento novo, a ordem
+    // vira: página velha salva → documento novo → patch → app lê o patch.
+    const preparar = sysArgs.includes('--preparar')
+      ? sysArgs[sysArgs.indexOf('--preparar') + 1]
+      : null;
+    if (preparar) {
+      await cdp.enviar('Page.addScriptToEvaluateOnNewDocument', {
+        source: `try { ${preparar} } catch (e) {}`,
+      }, sessionId);
+    }
 
     for (const [query, nome] of lista) {
       await cdp.enviar('Page.navigate', { url: `${BASE}/?${query}&still=1` }, sessionId);

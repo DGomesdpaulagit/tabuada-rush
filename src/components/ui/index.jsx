@@ -88,7 +88,9 @@ export function Progress({ value = 0, className = '', colorClass = 'bg-violet-50
     <div className={`h-2 bg-gray-100 rounded-full overflow-hidden ${className}`}>
       <motion.div
         className={`h-full rounded-full ${colorClass}`}
-        initial={{ width: 0 }}
+        /* `?still=1`: sem isso a barra fica em 0% nas capturas de tela, porque
+           a animação de preenchimento depende de rAF (ver D062). */
+        initial={stillInitial({ width: 0 })}
         animate={{ width: `${Math.min(Math.max(value, 0), 100)}%` }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
       />
@@ -149,7 +151,7 @@ export const pageTransition = { duration: 0.3, ease: [0.4, 0, 0.2, 1] };
 //
 // Com `?still=1`, `initial` vira `false`: o framer pinta direto o estado
 // final, sem animação e sem depender de rAF. É o que faz o script de
-// screenshots (`scripts/tirar-telas.sh`) capturar a tela já assentada.
+// screenshots (`scripts/tirar-telas.mjs`) capturar a tela já assentada.
 // Sem o parâmetro, nada muda; e em produção a flag nem existe.
 export const STILL_MODE =
   import.meta.env.DEV && new URLSearchParams(window.location.search).has('still');

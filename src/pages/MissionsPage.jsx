@@ -5,6 +5,7 @@ import { useApp } from '../contexts/AppContext';
 import { getActiveMissions, claimMission, freezeMission, acceptChallenge, freezeChallenge } from '../utils/missions';
 import { pageVariants, pageTransition, Progress } from '../components/ui';
 import GameIcon from '../components/GameIcon';
+import { chestForCoins } from '../constants/loot';
 
 // ── Tabs [v6.0 · Bloco 5] ─────────────────────────────────────────────────────
 // Semanais removidas por pedido do Davi — só diárias (sem risco) e mensais
@@ -38,6 +39,24 @@ export function MissionIcon({ type, emoji, size = 24 }) {
   return art
     ? <GameIcon name={art} size={size} className="shrink-0" />
     : <span className="text-2xl mt-0.5 shrink-0">{emoji}</span>;
+}
+
+// ── BAÚ DA MISSÃO [Fase 7.1 bloco 2, sessão 087] ─────────────────────────────
+// No fim da barra de progresso de cada missão: o baú do tier que combina com
+// a recompensa DAQUELA missão (não uma regra fixa pro dia). Fechado enquanto
+// ela não completa, ABERTO quando completa — o baú abrindo é o feedback de
+// "terminei". Exportado porque a página de missões do resumo pós-partida
+// mostra a mesma coisa.
+export function MissionChest({ coins, completa, size = 26 }) {
+  const tier = chestForCoins(coins || 0);
+  return (
+    <GameIcon
+      name={completa ? `${tier}-aberto` : tier}
+      size={size}
+      className={`shrink-0 transition-opacity ${completa ? '' : 'opacity-60'}`}
+      alt={completa ? 'Baú aberto — missão concluída' : 'Baú fechado — missão em andamento'}
+    />
+  );
 }
 
 function resetLabel(tab) {
@@ -219,11 +238,14 @@ export default function MissionsPage({ onBack, embedded = false }) {
                       <span className="text-xs font-black text-coin shrink-0"><GameIcon name="moedas" size={13} className="inline-block align-text-bottom" /> {mission.reward}</span>
                     </div>
                     <p className="text-xs text-fg-muted font-semibold mb-2">{mission.desc}</p>
-                    <Progress
-                      value={pct}
-                      colorClass={mission.completed ? 'bg-success' : 'bg-accent'}
-                      className="bg-surface-2 h-1.5 mb-1"
-                    />
+                    <div className="flex items-center gap-2 mb-1">
+                      <Progress
+                        value={pct}
+                        colorClass={mission.completed ? 'bg-success' : 'bg-accent'}
+                        className="flex-1 bg-surface-2 h-1.5"
+                      />
+                      <MissionChest coins={mission.reward} completa={mission.completed} />
+                    </div>
                     <p className="text-xs font-bold text-fg-muted">{progressLabel(mission)}</p>
                   </div>
                 </div>
@@ -288,11 +310,14 @@ export default function MissionsPage({ onBack, embedded = false }) {
                           <span className="text-xs font-black text-coin shrink-0"><GameIcon name="moedas" size={13} className="inline-block align-text-bottom" /> +{c.reward}</span>
                         </div>
                         <p className="text-xs text-fg-muted font-semibold mb-2">{c.desc}</p>
-                        <Progress
-                          value={pct}
-                          colorClass={c.completed ? 'bg-success' : 'bg-accent'}
-                          className="bg-surface-2 h-1.5 mb-1"
-                        />
+                        <div className="flex items-center gap-2 mb-1">
+                          <Progress
+                            value={pct}
+                            colorClass={c.completed ? 'bg-success' : 'bg-accent'}
+                            className="flex-1 bg-surface-2 h-1.5"
+                          />
+                          <MissionChest coins={c.reward} completa={c.completed} />
+                        </div>
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-bold text-fg-muted">{progressLabel(c)}</p>
                           <p className="text-xs font-bold text-fg-muted">{daysUntil(c.deadline)}d restantes</p>

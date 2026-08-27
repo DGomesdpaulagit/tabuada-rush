@@ -318,7 +318,7 @@ ver pendência na Fase 6 acima; gênero gramatical, ver checklist em
 
 ---
 
-## FASE 7.1 — Revisão visual completa da Fase 7 (sessão 078) — BLOCO 1 ✅ (sessão 080)
+## FASE 7.1 — Revisão visual completa da Fase 7 ✅ CONCLUÍDA (sessões 080-087)
 
 Davi revisou cada página do resumo pós-partida depois de ver os ícones
 combo rodando e mandou uma lista extensa de ajustes. **Lista completa,
@@ -331,11 +331,11 @@ aqui de propósito (uma fonte de verdade só). Resumo do que tem lá:
       (página 1 e no "Resumo do dia" da página de Missões) — a "linha"
       era uma faixa branca de 3px dentro do próprio PNG, reprocessado
 - [x] Trocar ícone da página 2 (XP) pelo ícone de XP real, sem partículas
-- [ ] **Nova implementação (página 3 + aba Missões):** baú por missão,
-      tier bate com a faixa de moedas da recompensa específica; fechado
-      quando incompleta, aberto quando completa → **BLOCO 2, é o próximo
-      passo.** Não depende mais de arte nova: o baú fechado já existia e
-      o ABERTO foi recortado na sessão 080 (`bau-*-aberto`)
+- [x] **Baú por missão (página 3 + aba Missões)** — feito na sessão 087.
+      Tier pela recompensa de cada missão (`chestForCoins`, deriva de
+      `CHESTS`), fechado enquanto incompleta / aberto quando completa.
+      Vale pras diárias e pros desafios mensais aceitos. Ver D065 pra
+      regra dos valores que caem entre duas faixas (o mensal de 450)
 - [x] Trocar ícone de ofensiva (chama+partículas) pelo ícone real —
       página 4 e página ocasional "meta batida" (inclusive o emoji 🔥)
 - [x] Calendário de 5 dias (página 4): agora usa os marcadores redondos

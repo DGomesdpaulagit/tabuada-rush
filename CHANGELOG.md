@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.36] — 2026-08-27 — Baú por missão: FASE 7.1 concluída
+
+**Detalhes em `sessions/sessao-087.md` e `DECISIONS.md` (D065).**
+
+### Adicionado
+- **Baú no fim da barra de progresso de cada missão**, com o tier batendo
+  com a recompensa DAQUELA missão: fechado (e apagado) enquanto ela não
+  completa, **aberto** quando completa. Vale na aba Missões (diárias e
+  desafios mensais aceitos) e na página 3 do resumo pós-partida
+- `chestForCoins()` em `constants/loot.js` — devolve o primeiro baú cujo
+  teto alcança o valor; deriva de `CHESTS`, então mexer nos valores dos
+  baús ajusta as missões sozinho
+- `scripts/tirar-telas.mjs --preparar "<js>"` — monta estado que não dá
+  pra pedir pela URL (uma missão concluída, por exemplo) rodando o script
+  ANTES do app iniciar
+
+### Corrigido
+- `Progress` respeita o modo parado (`?still=1`): a barra saía **zerada**
+  nas capturas porque o preenchimento é animado e animação depende de
+  rAF (mesma raiz do D062)
+
+---
+
 ## [6.0.35] — 2026-08-27 — Moldura some na partida + recortes sem rebarba
 
 **Detalhes em `sessions/sessao-086.md` e `DECISIONS.md` (D064).**

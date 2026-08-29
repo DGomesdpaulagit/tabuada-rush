@@ -42,9 +42,6 @@ export const DEFAULTS = {
   ownedItems: [],            // ids dos itens comprados na loja (cosméticos)
   equippedItems: {},         // { frame, card } → id do item equipado em cada slot
   missionsData: null,        // { daily, monthly } — v6.0 · Bloco 5: semanais removidas, controlado por utils/missions.js
-  seasonXp: 0,               // XP exclusivo da temporada (separado do XP de nível)
-  seasonRewards: [],         // xpRequired[] de recompensas de temporada já resgatadas
-  seasonId: 'temporada_1',   // id da temporada ativa no momento do save
   lastPlayDate: null,
   progressLog: [],           // registro da evolução: marcos (nível, XP, ofensiva, recordes) — últimos 50
   // Viés (não exclusividade) pelos fatos mais fracos do jogador em

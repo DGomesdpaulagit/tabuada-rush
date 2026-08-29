@@ -64,6 +64,12 @@ import resumoAcertos from '../assets/icons/resumo-acertos.png';
 import resumoErros from '../assets/icons/resumo-erros.png';
 import trofeu from '../assets/icons/trofeu.png';
 import bauVazio from '../assets/icons/bau-vazio.png';
+// [Fase 8.6, sessão 092] Perfil e Conquistas: estrela (Conquistas), livro
+// (Catálogo), relógio e o cadeado de conquista bloqueada.
+import conquistaEstrela from '../assets/icons/conquista-estrela.png';
+import conquistaRelogio from '../assets/icons/conquista-relogio.png';
+import conquistaBloqueada from '../assets/icons/conquista-bloqueada.png';
+import catalogoLivro from '../assets/icons/catalogo-livro.png';
 // [Fase 7, sessão 076, D054] Ícones COMBO recurso+baú — imagem única já
 // pronta, com o TIPO de baú batendo com a classificação que o Davi deu
 // (Madeira/Ferro/Ouro/Místico, não é mais Comum/Raro/Épico do sistema de
@@ -142,6 +148,10 @@ export const ICONS = {
   'resumo-erros': resumoErros,
   trofeu,
   'bau-vazio': bauVazio,
+  'conquista-estrela': conquistaEstrela,
+  'conquista-relogio': conquistaRelogio,
+  'conquista-bloqueada': conquistaBloqueada,
+  'catalogo-livro': catalogoLivro,
   'pocao-xp-1': pocaoXp1, // x1,5 — tubo de ensaio (menor multiplicador, maior duração)
   'pocao-xp-2': pocaoXp2, // x2 — erlenmeyer
   'pocao-xp-3': pocaoXp3, // x3 — frasco redondo (maior multiplicador, menor duração)

@@ -76,7 +76,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           </h1>
         </motion.div>
         <p className="text-gray-400 text-sm font-semibold mt-1">
-          Memorize a tabuada. 5 minutos por dia.
+          Memorize a tabuada. Domine a multiplicação.
         </p>
 
         {/* Cloud sync indicator */}
@@ -261,7 +261,7 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
       </motion.button>
 
       {/* ── Destinos primários: Recompensas + Estatísticas ────────────────
-          Loja/Missões/Temporada viraram abas dentro de um único hub
+          Loja/Missões viraram abas dentro de um único hub
           (RewardsPage) — a Loja de cosméticos está em standby (economia
           será repensada antes de investir em UI nova pra ela), mas as 3
           continuam acessíveis aqui. Recordes/Conquistas/Ranking viraram

@@ -25,13 +25,11 @@ import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 import ShopPage from './pages/ShopPage';
 import MissionsPage from './pages/MissionsPage';
-import SeasonsPage from './pages/SeasonsPage';
 import RewardsPage from './pages/RewardsPage';
 import PerfilPage from './pages/PerfilPage';
 import MochilaPage from './pages/MochilaPage';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import { calcSeasonXp } from './constants/seasons';
 import { updateMissions, getNewlyCompleted, resolveChallenges } from './utils/missions';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
@@ -609,9 +607,6 @@ export default function App() {
             : Math.min(6, Math.max(1, Math.floor((result.correct || 0) * 0.12))) +
               (currentStreak > 1 ? 1 : 0);
 
-        // ── XP de temporada (separado do XP de nível) ───────────────────────
-        const earnedSeasonXp = calcSeasonXp(result, currentStreak);
-
         // ── Atualiza progresso das missões ──────────────────────────────────
         let updatedMissionsData = updateMissions(prev.missionsData, result, currentStreak);
 
@@ -717,7 +712,6 @@ export default function App() {
           },
           coins: (prev.coins || 0) + coinsEarned + betPayout + challengeCoinDelta + lootCoins,
           activeBet: null,
-          seasonXp: (prev.seasonXp || 0) + earnedSeasonXp,
           missionsData: updatedMissionsData,
           // [Fase 6] +1 por power-up achado — `SHOP_ITEM_MAP[id].powerupKey`
           // traduz o id do drop pra chave de estoque (mesma usada na Loja).
@@ -1147,9 +1141,6 @@ export default function App() {
           )}
           {screen === 'mochila' && (
             <MochilaPage key="mochila" onBack={() => setScreen('menu')} />
-          )}
-          {screen === 'seasons' && (
-            <SeasonsPage key="seasons" onBack={() => setScreen('menu')} />
           )}
           {screen === 'perfil' && <PerfilPage key="perfil" />}
         </AnimatePresence>

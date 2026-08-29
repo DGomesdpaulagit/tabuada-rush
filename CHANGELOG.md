@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.41] — 2026-08-29 — FASE 8 começou: Temporada removida + bloco 8.6
+
+**Detalhes em `sessions/sessao-092.md`.**
+
+### Removido
+- **Sistema de Temporada inteiro** (pedido do Davi: "não é mais preciso,
+  já temos a loja completa"): `SeasonsPage`, `constants/seasons.js`, a aba
+  do hub, a rota, o `calcSeasonXp` do fim de partida e os 3 campos de save
+- Bolha colorida atrás dos ícones dos acessos do Perfil
+
+### Alterado
+- **Perfil**: Conquistas com a **estrela** do Davi, Catálogo com o
+  **livro**, Recordes no mesmo padrão, e o card do usuário mostrando o
+  **escudo da liga** em vez do emoji
+- **Conquistas de liga** mostram o escudo da liga (campo `art` novo);
+  conquista bloqueada usa o **cadeado** do Davi
+- Frase do menu → **"Memorize a tabuada. Domine a multiplicação."**
+
+### Nota
+O hub "Recompensas" continua de pé de propósito: no celular ele é o
+**único caminho até Missões** (a barra lateral só existe no desktop).
+Ele morre no bloco 8.4, quando a caixa "Missões do dia" assumir o acesso.
+
+---
+
 ## [6.0.40] — 2026-08-29 — FASE 8 planejada + arte nova processada
 
 **Detalhes em `sessions/sessao-091.md`. Sem mudança de tela — plano e

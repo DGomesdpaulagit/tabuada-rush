@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-29
-**Versão:** 6.0.40 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + FASE 8 planejada — sessao-091.md)
+**Versão:** 6.0.41 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + FASE 8 em andamento — sessao-092.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.41]** FASE 8 começou. **Temporada removida do jogo inteiro**
+(tela, constants, XP, campos de save) a pedido do Davi. **Bloco 8.6
+feito:** estrela/livro/pódio no Perfil sem bolha, escudo da liga no card
+do usuário e nas conquistas de liga, cadeado novo na conquista bloqueada,
+frase nova no menu. ⚠️ O hub "Recompensas" segue vivo de propósito — no
+CELULAR ele é o único caminho até Missões (a sidebar é só desktop); morre
+no bloco 8.4. Travados esperando arte: 8.1 (troféus com fundo branco) e
+8.2 (ofensiva apagada). Ver `sessao-092.md`.
 **[v6.0.40]** FASE 8 (Arena) **planejada, não implementada** — o Davi
 ditou o escopo inteiro e o plano ficou em 6 blocos no `PLANO_ACAO.md`,
 esperando ele confirmar. Arte nova processada (estrela, relógio, livro,

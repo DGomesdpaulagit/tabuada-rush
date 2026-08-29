@@ -514,6 +514,8 @@ moram no Header e nas caixas laterais) e entram os modos:
 - [ ] **Remover** a caixa "X fatos prestes a serem esquecidos / toque para
       revisar agora"
 - [ ] **Manter** o botão "Modos de jogo"; **remover** o botão "Recompensas"
+      — ⚠️ só dá pra remover DEPOIS do 8.4: hoje o hub é o único caminho
+      até Missões no celular (a barra lateral é `hidden lg:flex`)
 - [ ] Reorganizar a página com o que sobrou
 
 **Dado que isso precisa:** hoje `modesPlayed` guarda só QUAIS modos foram
@@ -526,7 +528,7 @@ existindo, acessível por outro caminho (Perfil, por exemplo)?
 
 ---
 
-### BLOCO 8.6 — Edições gerais
+### BLOCO 8.6 — Edições gerais ✅ CONCLUÍDO (sessão 092)
 
 - [ ] **Estrela** (`conquista-estrela`) em Perfil → Conquistas
 - [ ] **Ícones das ligas** também em Conquistas

@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Map, ShoppingBag, Leaf } from 'lucide-react';
+import { ArrowLeft, Map, ShoppingBag } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { countUnclaimedMissions } from '../utils/missions';
 import { pageVariants, pageTransition } from '../components/ui';
 import MissionsPage from './MissionsPage';
 import ShopPage from './ShopPage';
-import SeasonsPage from './SeasonsPage';
 import GameIcon from '../components/GameIcon';
 
-// Hub único pra Missões / Loja / Temporada — antes eram 3 botões separados no
-// menu principal, agora são 3 abas de uma mesma tela (Bloco 1 · v5.0). A Loja
-// de cosméticos fica de propósito sem destaque visual maior aqui: a economia
-// de moedas/aposta vai ser repensada num bloco à parte antes de investir em
-// UI nova pra ela — por ora ela só continua acessível.
+// Hub de Missões / Loja.
+//
+// [sessão 092] A aba TEMPORADA saiu junto com o sistema inteiro, que o Davi
+// mandou apagar ("não é mais preciso, já temos a loja completa").
+//
+// ⚠️ Este hub ainda existe SÓ porque, no celular, ele é o único caminho até
+// a aba Missões (a barra lateral é `hidden lg:flex`, ou seja, só desktop).
+// Ele morre no bloco 8.4 da FASE 8, quando a caixa de "Missões do dia" do
+// painel novo passar a dar esse acesso — aí o botão "Recompensas" do menu
+// sai junto, como o Davi pediu.
 const TABS = [
   { id: 'missions', label: 'Missões', icon: Map },
   { id: 'shop', label: 'Loja', icon: ShoppingBag },
-  { id: 'seasons', label: 'Temporada', icon: Leaf },
 ];
 
 export default function RewardsPage({ onBack }) {
@@ -76,7 +79,6 @@ export default function RewardsPage({ onBack }) {
 
       {tab === 'missions' && <MissionsPage embedded onBack={onBack} />}
       {tab === 'shop' && <ShopPage embedded onBack={onBack} />}
-      {tab === 'seasons' && <SeasonsPage embedded onBack={onBack} />}
     </motion.div>
   );
 }

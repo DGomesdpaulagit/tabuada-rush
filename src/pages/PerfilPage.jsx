@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Star, BookMarked, ChevronRight, Calendar } from 'lucide-react';
-import GameIcon from '../components/GameIcon';
+import { User, ChevronRight, Calendar } from 'lucide-react';
+import GameIcon, { LeagueIcon } from '../components/GameIcon';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getLevelIdx } from '../utils';
@@ -79,7 +79,8 @@ export default function PerfilPage() {
         </div>
         <div className="h-px bg-white/15 my-4" />
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{league.emoji}</span>
+          {/* [Fase 8.6] Escudo da liga no lugar do emoji. */}
+          <LeagueIcon leagueId={league.id} size={40} />
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide">Liga</p>
             <p className="text-lg font-black leading-tight">{league.name}</p>
@@ -113,15 +114,15 @@ export default function PerfilPage() {
         </div>
       </div>
 
-      {/* Acesso: Conquistas / Recordes / Catálogo */}
+      {/* Acesso: Conquistas / Recordes / Catálogo
+          [Fase 8.6] Arte do Davi no lugar dos ícones da lucide, e sem a
+          bolha colorida atrás — mesmo padrão do resto do app. */}
       <div className="flex flex-col gap-2">
         <button
           onClick={() => setView('achievements')}
           className="flex items-center gap-3 w-full text-left bg-surface rounded-2xl px-4 py-3.5 border-2 border-border hover:border-accent/40 transition-colors"
         >
-          <span className="w-9 h-9 rounded-xl bg-accent/15 text-accent flex items-center justify-center shrink-0">
-            <Star size={16} />
-          </span>
+          <GameIcon name="conquista-estrela" size={30} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-fg">Conquistas</p>
             <p className="text-xs text-fg-muted font-semibold">{achievementsCount} desbloqueadas</p>
@@ -132,9 +133,7 @@ export default function PerfilPage() {
           onClick={() => setView('records')}
           className="flex items-center gap-3 w-full text-left bg-surface rounded-2xl px-4 py-3.5 border-2 border-border hover:border-coin/40 transition-colors"
         >
-          <span className="w-9 h-9 rounded-xl bg-coin/15 text-coin flex items-center justify-center shrink-0">
-            <GameIcon name="podio" size={18} />
-          </span>
+          <GameIcon name="podio" size={30} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-fg">Recordes</p>
             <p className="text-xs text-fg-muted font-semibold">Sua melhor pontuação por modo</p>
@@ -145,9 +144,7 @@ export default function PerfilPage() {
           onClick={() => setView('catalog')}
           className="flex items-center gap-3 w-full text-left bg-surface rounded-2xl px-4 py-3.5 border-2 border-border hover:border-blue-400/40 transition-colors"
         >
-          <span className="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-500 flex items-center justify-center shrink-0">
-            <BookMarked size={16} />
-          </span>
+          <GameIcon name="catalogo-livro" size={30} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-fg">Catálogo</p>
             <p className="text-xs text-fg-muted font-semibold">Progresso, faixas e evolução</p>

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, Award } from 'lucide-react';
+import { ArrowLeft, Award } from 'lucide-react';
+import GameIcon from '../components/GameIcon';
 import { ACHIEVEMENTS } from '../constants';
 import { useApp } from '../contexts/AppContext';
 import { computeCertificates } from '../utils';
@@ -126,12 +127,12 @@ export default function AchievementsPage({ onBack }) {
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
+                      {/* [Fase 8.6] Conquista com `art` (as de liga) mostra o
+                          escudo de verdade; o resto segue no emoji. */}
                       <span className={`text-3xl ${!isUnlocked ? 'grayscale opacity-40' : ''}`}>
-                        {a.icon}
+                        {a.art ? <GameIcon name={a.art} size={34} /> : a.icon}
                       </span>
-                      {!isUnlocked && (
-                        <Lock size={14} className="text-gray-300 mt-1" />
-                      )}
+                      {!isUnlocked && <GameIcon name="conquista-bloqueada" size={18} className="mt-1" />}
                       {isUnlocked && (
                         <motion.div
                           initial={{ scale: 0 }}

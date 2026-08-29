@@ -363,6 +363,10 @@ export const ACHIEVEMENTS = [
     title: `Liga ${league.name}`,
     desc: `Chegue na Liga ${league.name}`,
     icon: league.emoji,
+    // [Fase 8.6] `art` = nome que o GameIcon entende (ele resolve LEAGUE_ICONS
+    // além dos ícones normais). Conquista com `art` mostra a arte; sem `art`,
+    // cai no emoji de `icon`.
+    art: league.id,
     category: 'Ligas',
     check: (s) => {
       const idx = LEAGUES.findIndex((l) => l.id === s.leagueId);

@@ -167,7 +167,18 @@ resolução menor que os outros (240 px contra ~260).
 foi genérico de verdade, era o exemplo do combo do Seguro no tier errado.
 """)
 
-A('\n---\n\n## 8. Fundos das páginas de recompensa\n')
+A('\n---\n\n## 8. Prontos, esperando a FASE 8\n')
+A("""Processados na sessão 091, ainda sem tela que os use — entram nos blocos
+8.2 e 8.6 do `PLANO_ACAO.md`.
+""")
+A(tabela([
+    ('conquista-estrela', 'Estrela', 'Perfil → Conquistas'),
+    ('conquista-relogio', 'Relógio', 'Conquistas'),
+    ('conquista-bloqueada', 'Cadeado de conquista bloqueada', 'Conquistas'),
+    ('catalogo-livro', 'Livro', 'Perfil → Catálogo'),
+]))
+
+A('\n---\n\n## 9. Fundos das páginas de recompensa\n')
 A("""Arte de FUNDO por recurso (sessão 083): gradiente na cor do item + o
 símbolo dele repetido e desfocado. Ficam em `src/assets/fundos/` (JPEG, sem
 transparência, 11-26 KB cada) e são ligados pelo `id` do loot em
@@ -205,7 +216,7 @@ sem brilho e o ícone de XP novo.
 A("""
 ---
 
-## 10. Pasta de referências — `referencias/icones/`
+## 11. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):

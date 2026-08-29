@@ -163,7 +163,21 @@ foi genérico de verdade, era o exemplo do combo do Seguro no tier errado.
 
 ---
 
-## 8. Fundos das páginas de recompensa
+## 8. Prontos, esperando a FASE 8
+
+Processados na sessão 091, ainda sem tela que os use — entram nos blocos
+8.2 e 8.6 do `PLANO_ACAO.md`.
+
+| Ícone | Nome no código | O que é | Onde aparece |
+|:---:|---|---|---|
+| ![\|48](src/assets/icons/conquista-estrela.png) | `conquista-estrela` | Estrela | Perfil → Conquistas |
+| ![\|48](src/assets/icons/conquista-relogio.png) | `conquista-relogio` | Relógio | Conquistas |
+| ![\|48](src/assets/icons/conquista-bloqueada.png) | `conquista-bloqueada` | Cadeado de conquista bloqueada | Conquistas |
+| ![\|48](src/assets/icons/catalogo-livro.png) | `catalogo-livro` | Livro | Perfil → Catálogo |
+
+---
+
+## 9. Fundos das páginas de recompensa
 
 Arte de FUNDO por recurso (sessão 083): gradiente na cor do item + o
 símbolo dele repetido e desfocado. Ficam em `src/assets/fundos/` (JPEG, sem
@@ -204,7 +218,7 @@ sem brilho e o ícone de XP novo.
 
 ---
 
-## 10. Pasta de referências — `referencias/icones/`
+## 11. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):

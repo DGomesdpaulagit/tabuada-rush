@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.40] — 2026-08-29 — FASE 8 planejada + arte nova processada
+
+**Detalhes em `sessions/sessao-091.md`. Sem mudança de tela — plano e
+preparação de arte.**
+
+### Adicionado
+- **FASE 8 detalhada no `PLANO_ACAO.md`**, em 6 blocos (troféus de faixa,
+  painel de ofensiva, caixa de divisão, missões do dia, 3 modos mais
+  jogados, edições gerais), com bloqueios, ordem sugerida e as perguntas
+  em aberto
+- 4 ícones: `conquista-estrela`, `conquista-relogio`, `catalogo-livro`,
+  `conquista-bloqueada`
+- As **15 frases de ofensiva** (5 por estado) extraídas do PDF do Davi —
+  transcritas no plano, vão virar `constants/streakPhrases.js` no bloco 8.2
+
+### Corrigido
+- `CLAUDE.md` dizia "LEVELS 28"; são **20 faixas** de tabuada
+
+---
+
 ## [6.0.39] — 2026-08-27 — Vida comprada uma a uma (300) + classificação compacta
 
 **Detalhes em `sessions/sessao-090.md` e `DECISIONS.md` (D068).**

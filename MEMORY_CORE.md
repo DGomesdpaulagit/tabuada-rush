@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-27
-**Versão:** 6.0.39 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + vidas unitárias — sessao-090.md)
+**Data:** 2026-08-29
+**Versão:** 6.0.40 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + FASE 8 planejada — sessao-091.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,15 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.40]** FASE 8 (Arena) **planejada, não implementada** — o Davi
+ditou o escopo inteiro e o plano ficou em 6 blocos no `PLANO_ACAO.md`,
+esperando ele confirmar. Arte nova processada (estrela, relógio, livro,
+conquista bloqueada) e as 15 frases de ofensiva extraídas do PDF dele (na
+mão: ASCII85+Flate + CMap ToUnicode, sem biblioteca de PDF aqui).
+**2 bloqueios:** folha dos troféus veio com fundo colorido (preciso com
+fundo branco) e falta o ícone de ofensiva APAGADA. Achado: são **20
+faixas** de tabuada e a folha tem **20 troféus** — encaixa 1 pra 1 (o
+`CLAUDE.md` dizia 28, corrigido). Ver `sessao-091.md`.
 **[v6.0.39]** Vida agora é comprada UMA a UMA por 300 moedas (D068) —
 `LIFE_REFILL_PRICE` (150, enchia o pote) virou `LIFE_PRICE` (300, uma
 vida). Encher o pote do zero custa 1.500. Classificação das ligas ficou

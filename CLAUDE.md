@@ -68,7 +68,7 @@ pintada; sem a flag a tela congela no primeiro quadro da animação e sai
 deslocada. Isso era o D034 — não é mais impedimento.
 
 ## Estrutura
-- `src/constants/` — `index.js` (MODES, LEVELS 28 c/ title, ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).
+- `src/constants/` — `index.js` (MODES, LEVELS 20 c/ title (20 faixas de tabuada), ACHIEVEMENTS, STREAK_GOALS), `characters.js` (104 personagens do Ranking de QI).
 - `src/utils/index.js` — geração de perguntas, scoring, datas, `computeQI`/`getQiInfo`.
 - `src/lib/storage.js` — localStorage (KEY `tabuada_rush_v2`).
 - `src/pages/` — Menu, Game, Results, Records, Stats, Achievements, Ranking, Auth.

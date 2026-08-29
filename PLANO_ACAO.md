@@ -409,13 +409,152 @@ antes.
 
 ---
 
-## FASE 8 — Painel central da Arena (só depois de tudo acima)
+## FASE 8 — Arena: Header, painel de início e edições gerais
 
-O Davi pediu explicitamente pra **não mexer nisso antes** — ele quer
-terminar o backlog de cima primeiro. Quando chegar a vez: **começar
-perguntando o que ele quer**, não propondo um design pronto (mesma lição
-das sessões 055-058 com a tela de Ligas — mockup ou pergunta primeiro,
-código depois).
+**Escopo ditado pelo Davi na sessão 091.** Ele descreveu tudo de uma vez;
+o plano abaixo quebra em 5 blocos que podem ser feitos e conferidos um a
+um. **Nada começa sem ele confirmar este plano.**
+
+Referência visual: prints do Duolingo que ele anexou (painel de ofensiva,
+calendário mensal, meta de ofensiva, caixa de divisão) + o artigo do
+Duolingo sobre a reforma das abas — a ideia que importa de lá: *consistência
+equilibrada com propósito, simplicidade equilibrada com clareza*. Cabeçalho
+com tamanho escalonado por finalidade, tipografia com poucos estilos, e
+espaço em branco em vez de caixa em volta de tudo.
+
+---
+
+### BLOCO 8.1 — Faixa de tabuada vira troféu
+
+Hoje cada uma das **20 faixas** (`TABUADA_TIER_RANGES`) tem um emoji de
+badge (🌱📚✏️…). Passa a ter **troféu de verdade** — a folha do Davi tem
+exatamente **20 troféus**, um por faixa, na ordem simples → elaborado.
+
+- [ ] Recortar os 20 troféus (`faixa-01` … `faixa-20`) e registrar
+- [ ] Trocar `TIER_BADGES` (emoji) pelo nome do troféu; `LEVELS[i].badge`
+      passa a ser um `GameIcon`
+- [ ] Aplicar em todos os lugares que mostram o badge: Header, Perfil,
+      Catálogo, Configurações, Loja e resumo pós-partida
+- [ ] **Página ocasional 2** (mudança de faixa) mostra o troféu da faixa
+      que ele acabou de concluir — é o momento de "ganhar" o troféu.
+      Sem fundo atrás do troféu (pedido explícito)
+
+**🔴 BLOQUEIO:** a folha que chegou (`trofeus-faixas-folha.png`) tem
+**fundo colorido borrado**, não o branco da imagem que ele colou no chat.
+Fundo colorido em volta de arte colorida é o pior caso possível pro recorte
+(D064) — vai deixar rebarba em todos. **Preciso da mesma folha com fundo
+branco ou transparente.** Nome do arquivo: `trofeus_faixas_fundo_branco.png`
+
+---
+
+### BLOCO 8.2 — Painel de ofensiva do Header (maior e vivo)
+
+- [ ] **Ícone de ofensiva grande**, em 3 estados: **apagado** (cinza),
+      **aceso** (laranja) e **congelado** (azul)
+- [ ] **Caixas dos dias** maiores e mais juntas, com a cor acompanhando a
+      situação: laranja quando acesa, neutra quando apagada, azul quando
+      congelada
+- [ ] **Recorde sai do painel** (passa a viver só no Perfil). No lugar,
+      uma **legenda aleatória** conforme a situação — as 15 frases do PDF
+      dele (5 por estado) já estão extraídas e vão pra
+      `constants/streakPhrases.js`
+- [ ] **Próxima conquista de ofensiva** logo abaixo (ele já avisou que os
+      ícones de conquista vêm depois, junto com o "bloqueada" que já chegou)
+- [ ] Botão **"Ver mais"** abre o painel completo de ofensiva com:
+      quantidade atual · ícone do estado · legenda · **calendário mensal** ·
+      **meta de ofensiva** · caixa de conquista · **recorde geral**
+
+**🔴 BLOQUEIO:** falta o **ícone de ofensiva APAGADA** (cinza).
+Nome do arquivo: `ofensiva_apagada.png`. *(Alternativa se ele preferir: eu
+gero uma versão dessaturada da acesa — fica aceitável, mas perde o
+capricho das outras três.)*
+
+**As 15 frases (extraídas do PDF dele):**
+
+| Estado | Frases |
+|---|---|
+| **Acesa** | Hoje você aumentou sua ofensiva! · Mais um dia na ofensiva! · Sua ofensiva continua firme! · Boa! Você manteve sua ofensiva acesa! · Ofensiva aumentando! Continue assim! |
+| **Apagada** | Duas horas para sua ofensiva zerar! · Sua ofensiva está por um fio! · Corre! Sua ofensiva está quase acabando! · O tempo está passando... não deixe sua ofensiva zerar! · Sua ofensiva precisa de você! |
+| **Congelada** | Você deixou sua ofensiva congelar! · Sua ofensiva entrou no modo congelado! · Ops! Sua ofensiva ficou congelada! · Sua ofensiva está congelada. Hora de descongelar! · O gelo tomou conta da sua ofensiva! |
+
+**❓ Pergunta:** a frase *"Duas horas para sua ofensiva zerar!"* fala de
+tempo. Deixo o texto fixo ou troco pelo tempo real que falta até a
+meia-noite ("Faltam 4 horas para sua ofensiva zerar!")? Acho o dinâmico
+melhor — mas é mudar a frase dele, então pergunto.
+
+---
+
+### BLOCO 8.3 — Caixa de divisão sai do centro e vai pro canto direito
+
+- [ ] Caixa própria no canto direito com: **"Sua posição"** (posição
+      atual) · **legenda da situação** ("5 posições acima da zona de
+      rebaixamento!") · **ícone da divisão** · botão **"Ver divisão"** no
+      canto superior direito da caixa
+
+---
+
+### BLOCO 8.4 — Caixa de missões do dia (abaixo da divisão)
+
+- [ ] Só as **diárias**, com a barra de progresso e os baús
+      fechado/aberto que já existem (sessões 087-088)
+- [ ] Botão **"Ver todas"** no canto superior direito da caixa
+
+---
+
+### BLOCO 8.5 — Painel central: os 3 modos mais jogados
+
+Sai o resumo de dados do usuário (divisão, ofensiva etc. — que agora
+moram no Header e nas caixas laterais) e entram os modos:
+
+- [ ] **Caixa grande** = modo mais jogado: nome, descrição e botão
+      **"Jogar agora"**
+- [ ] **Duas caixas menores** = 2º e 3º mais jogados: nome e descrição
+- [ ] **Sem rótulo** dizendo que são os mais jogados (pedido dele)
+- [ ] Quem nunca jogou vê os **modos principais** do jogo
+- [ ] **Remover** a caixa "X fatos prestes a serem esquecidos / toque para
+      revisar agora"
+- [ ] **Manter** o botão "Modos de jogo"; **remover** o botão "Recompensas"
+- [ ] Reorganizar a página com o que sobrou
+
+**Dado que isso precisa:** hoje `modesPlayed` guarda só QUAIS modos foram
+jogados, sem contagem. Mas `data.sessions` guarda o `mode` de cada
+partida — dá pra contar de lá, sem precisar de campo novo nem migração.
+
+**❓ Pergunta:** tirando o botão "Recompensas" do menu, a tela
+`RewardsPage` fica sem porta de entrada. Apago a tela junto ou deixo ela
+existindo, acessível por outro caminho (Perfil, por exemplo)?
+
+---
+
+### BLOCO 8.6 — Edições gerais
+
+- [ ] **Estrela** (`conquista-estrela`) em Perfil → Conquistas
+- [ ] **Ícones das ligas** também em Conquistas
+- [ ] **Livro** (`catalogo-livro`) em Perfil → Catálogo
+- [ ] Atualizar os ícones da **caixa de usuário** do Perfil
+- [ ] Frase abaixo de TABUADA RUSH →
+      **"Memorize a tabuada. Domine a multiplicação."**
+
+*(`conquista-estrela`, `conquista-relogio`, `catalogo-livro` e
+`conquista-bloqueada` já foram processados e registrados na sessão 091.)*
+
+---
+
+### Ordem sugerida
+
+**8.6 → 8.1 → 8.2 → 8.3 → 8.4 → 8.5.** Começar pelas edições gerais
+(rápidas, sem bloqueio) enquanto ele gera as duas artes que faltam; depois
+o Header (faixa e ofensiva), e por último a Arena em si, que é o bloco mais
+pesado e o que mais muda de lugar.
+
+### O que trava e o que não trava
+
+| Bloco | Depende de |
+|---|---|
+| 8.6 | nada — pode começar já |
+| 8.1 | 🔴 folha dos troféus com fundo branco/transparente |
+| 8.2 | 🔴 ícone de ofensiva apagada (ou aval pra eu dessaturar) |
+| 8.3, 8.4, 8.5 | nada — pode começar já |
 
 ---
 

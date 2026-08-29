@@ -72,6 +72,12 @@ GRUPOS = [
         ('bau-ouro-aberto', 'Ouro — aberto', 'página de recompensa'),
         ('bau-mistico-aberto', 'Místico — aberto', 'página de recompensa'),
     ]),
+    ('Prontos, esperando a FASE 8', 'ainda sem tela que use', [
+        ('conquista-estrela', 'Estrela', 'Perfil → Conquistas'),
+        ('conquista-relogio', 'Relógio', 'Conquistas'),
+        ('conquista-bloqueada', 'Conquista bloqueada', 'Conquistas'),
+        ('catalogo-livro', 'Livro', 'Perfil → Catálogo'),
+    ]),
     ('Combo recurso + baú', 'resumo pós-partida, página 6', [
         ('combo-congelar', 'Congelar + Madeira', 'recompensa'),
         ('combo-vida-extra', 'Vida Extra + Madeira', 'recompensa'),

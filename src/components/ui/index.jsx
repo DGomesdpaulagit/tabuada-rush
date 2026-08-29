@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, MotionGlobalConfig } from 'framer-motion';
 
 // ── BUTTON ─────────────────────────────────────────────────────────────────
 export function Button({
@@ -155,6 +155,17 @@ export const pageTransition = { duration: 0.3, ease: [0.4, 0, 0.2, 1] };
 // Sem o parâmetro, nada muda; e em produção a flag nem existe.
 export const STILL_MODE =
   import.meta.env.DEV && new URLSearchParams(window.location.search).has('still');
+
+// [sessão 094] `skipAnimations` do próprio framer-motion resolve o caso
+// GERAL: toda animação pinta direto no valor final, sem passar por rAF. Antes
+// eu vinha marcando `stillInitial` elemento por elemento, e qualquer
+// `motion.div` esquecido saía INVISÍVEL na captura (foi o que aconteceu com o
+// rodapé de estatísticas da Arena, que tem `initial={{ opacity: 0 }}`).
+// O `stillInitial` continua existindo pros casos que dependem do `initial`
+// não ser aplicado nem por um quadro.
+if (STILL_MODE) {
+  MotionGlobalConfig.skipAnimations = true;
+}
 
 // Uso: <motion.div initial={stillInitial({ opacity: 0, x: 24 })} ... />
 export const stillInitial = (valor) => (STILL_MODE ? false : valor);

@@ -14,6 +14,7 @@
 // USO (com `npm run dev` rodando):
 //   node scripts/tirar-telas.mjs                          # telas do resumo
 //   node scripts/tirar-telas.mjs "screen=menu" menu       # uma tela só
+//   node scripts/tirar-telas.mjs --mobile                 # no formato celular
 //
 // Saída: pasta `telas/` na raiz (ignorada pelo Git).
 import { spawn } from 'node:child_process';
@@ -26,10 +27,14 @@ const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DEST = join(RAIZ, 'telas');
 const BASE = 'http://localhost:3000';
 const PORTA = 9222;
-// iPhone 14 Pro: é o formato em que o jogo é jogado de verdade.
-const LARGURA = 393;
-const ALTURA = 852;
-const ESCALA = 2;
+// [sessão 094] DESKTOP é o padrão — foi o Davi quem apontou que eu vinha
+// tirando todas as prévias em formato de celular por conta própria, sem ele
+// ter pedido. O jogo é visto no desktop hoje; o mobile ele vai tratar depois.
+// `--mobile` continua disponível pra conferir o outro formato.
+const FORMATOS = {
+  desktop: { largura: 1440, altura: 900, escala: 1, mobile: false },
+  mobile: { largura: 393, altura: 852, escala: 2, mobile: true },
+};
 
 const CAMINHOS = [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -118,8 +123,12 @@ async function main() {
     const { sessionId } = await cdp.enviar('Target.attachToTarget', { targetId, flatten: true });
 
     await cdp.enviar('Page.enable', {}, sessionId);
+    const formato = FORMATOS[sysArgs.includes('--mobile') ? 'mobile' : 'desktop'];
     await cdp.enviar('Emulation.setDeviceMetricsOverride', {
-      width: LARGURA, height: ALTURA, deviceScaleFactor: ESCALA, mobile: true,
+      width: formato.largura,
+      height: formato.altura,
+      deviceScaleFactor: formato.escala,
+      mobile: formato.mobile,
     }, sessionId);
 
     // Espera CONTEÚDO, não tempo fixo: em DEV o Vite serve centenas de
@@ -131,8 +140,10 @@ async function main() {
           // Nem toda tela tem <h1> (o resumo tem, a Loja e a Mochila não).
           // O sinal genérico é: documento carregado, já existe texto na tela
           // e nenhuma imagem pendente.
+          // Título OU texto suficiente: as páginas de recompensa têm pouco
+          // texto (só título + uma linha) e caíam no timeout à toa.
           expression: `document.readyState === 'complete'
-            && document.body.innerText.trim().length > 120
+            && (!!document.querySelector('h1') || document.body.innerText.trim().length > 120)
             && [...document.images].every((i) => i.complete)`,
           returnByValue: true,
         }, sessionId);

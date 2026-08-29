@@ -58,9 +58,10 @@ node scripts/tirar-telas.mjs                      # 13 telas do resumo pós-part
 node scripts/tirar-telas.mjs "screen=menu" menu   # uma tela específica
 ```
 
-Saída em `telas/` (fora do Git). Antes de dizer que uma mudança visual
-está pronta, **capturar e olhar** — foi assim que apareceram problemas que
-asserção de DOM não pegava.
+Saída em `telas/` (fora do Git). **Captura em DESKTOP (1440×900) por
+padrão** — o jogo é visto assim hoje; `--mobile` confere o formato de
+celular. Antes de dizer que uma mudança visual está pronta, **capturar e
+olhar** — foi assim que apareceram problemas que asserção de DOM não pegava.
 
 **Por que o `&still=1`** (o script já põe sozinho): o framer-motion anima
 por `requestAnimationFrame`, que o navegador não roda sem janela sendo

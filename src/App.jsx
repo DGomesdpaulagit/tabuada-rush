@@ -1056,9 +1056,12 @@ export default function App() {
       <div className="flex-1 flex flex-col min-h-dvh">
         {!emPartida && <Header onNavigate={setScreen} />}
         <div className="flex-1 flex justify-center">
-        {/* Ligas usa a largura toda (coluna da liga + painel lateral, estilo
-            Duolingo); as demais telas seguem na coluna estreita de sempre. */}
-        <div className={`w-full px-4 py-6 ${screen === 'ranking' ? 'max-w-5xl' : 'max-w-lg'}`}>
+        {/* Ligas e ARENA usam a largura toda (duas colunas: conteúdo +
+            painel de apoio); as demais telas seguem na coluna estreita.
+            [sessão 094] A Arena entrou aqui porque o painel novo tem duas
+            colunas — dentro dos 512px do `max-w-lg` as caixas de modo viravam
+            tiras de uma palavra por linha. */}
+        <div className={`w-full px-4 py-6 ${screen === 'ranking' || screen === 'menu' ? 'max-w-5xl' : 'max-w-lg'}`}>
         <AnimatePresence mode="wait">
           {screen === 'menu' && (
             <MenuPage

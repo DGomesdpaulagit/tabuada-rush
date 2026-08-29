@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-29
-**Versão:** 6.0.42 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + painel da Arena novo — sessao-093.md)
+**Versão:** 6.0.43 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + Arena no desktop — sessao-094.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.43]** Arena consertada no DESKTOP — ela usava a coluna estreita
+(`max-w-lg`) e as duas colunas viravam tiras de uma palavra por linha;
+agora usa `max-w-5xl` como as Ligas. ⚠️ **As prévias passam a ser em
+desktop (1440×900)** — o formato de celular era escolha minha, nunca
+pedida pelo Davi (`--mobile` pra conferir o outro). E em `?still=1` agora
+ligo `MotionGlobalConfig.skipAnimations`: antes, qualquer `motion` sem
+`stillInitial` saía INVISÍVEL da captura (o rodapé da Arena sumiu assim).
+Ver `sessao-094.md`.
 **[v6.0.42]** **Painel da Arena reescrito** (blocos 8.3/8.4/8.5): 3 modos
 como assunto principal (o mais jogado numa caixa grande com "Jogar agora",
 contagem vinda de `data.sessions`), caixa de divisão com legenda real da

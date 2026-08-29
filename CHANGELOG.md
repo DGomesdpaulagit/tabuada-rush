@@ -4,6 +4,31 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.43] — 2026-08-29 — Arena consertada no desktop
+
+**Detalhes em `sessions/sessao-094.md`.**
+
+### Corrigido
+- **Arena estava deformada no desktop**: o container dava `max-w-lg`
+  (512px) e as duas colunas do painel novo viravam tiras de uma palavra
+  por linha. A Arena entrou no grupo de largura larga (`max-w-5xl`), junto
+  com Ligas
+- Cabeçalho da Arena virou uma linha só (título à esquerda, botões à
+  direita), que é o que faz sentido na largura cheia
+
+### Alterado
+- **`scripts/tirar-telas.mjs` captura em DESKTOP (1440×900) por padrão** —
+  o formato de celular era escolha minha, nunca pedida; `--mobile`
+  continua disponível
+- Em `?still=1` o `MotionGlobalConfig.skipAnimations` do framer-motion é
+  ligado: **toda** animação pinta direto no valor final. Antes eu marcava
+  elemento por elemento, e qualquer `motion` esquecido saía **invisível**
+  na captura (foi o que aconteceu com o rodapé de estatísticas)
+- Detector de "página pronta" aceita título OU texto suficiente (as
+  páginas de recompensa têm pouco texto e caíam no timeout à toa)
+
+---
+
 ## [6.0.42] — 2026-08-29 — Painel da Arena novo (blocos 8.3, 8.4 e 8.5)
 
 **Detalhes em `sessions/sessao-093.md`.**

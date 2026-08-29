@@ -104,8 +104,33 @@ export default function MenuPage({ onStart, onNavigate }) {
           `absolute` e o "Tabuada Rush" encostava neles (dívida anotada na
           revisão de telas da sessão 086). Agora o cabeçalho é uma linha
           própria e o título respira embaixo. */}
-      <div className="text-center pt-2">
-        <div className="flex items-center justify-end gap-2">
+      <div className="flex items-start justify-between gap-3 pt-2">
+        <div className="min-w-0">
+          <motion.h1
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="text-4xl font-black text-accent leading-none"
+          >
+            Tabuada Rush
+          </motion.h1>
+          <p className="text-fg-muted text-sm font-semibold mt-1.5">
+            Memorize a tabuada. Domine a multiplicação.
+          </p>
+          {cloudSyncing && (
+            <p className="flex items-center gap-1 mt-1 text-xs text-accent font-semibold">
+              <Cloud size={11} className="animate-pulse" />
+              Sincronizando...
+            </p>
+          )}
+          {user && !cloudSyncing && (
+            <p className="flex items-center gap-1 mt-1 text-xs text-success font-semibold">
+              <Cloud size={11} />
+              {user.email}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => onNavigate('settings')}
             title="Configurações"
@@ -124,38 +149,6 @@ export default function MenuPage({ onStart, onNavigate }) {
           )}
         </div>
 
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="inline-block"
-        >
-          <h1 className="text-4xl font-black text-accent">Tabuada Rush</h1>
-        </motion.div>
-        <p className="text-fg-muted text-sm font-semibold mt-1">
-          Memorize a tabuada. Domine a multiplicação.
-        </p>
-
-        {cloudSyncing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-1 mt-1 text-xs text-accent font-semibold"
-          >
-            <Cloud size={11} className="animate-pulse" />
-            Sincronizando...
-          </motion.div>
-        )}
-        {user && !cloudSyncing && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-1 mt-1 text-xs text-success font-semibold"
-          >
-            <Cloud size={11} />
-            {user.email}
-          </motion.div>
-        )}
       </div>
 
       {/* Duas colunas no desktop: modos à esquerda, apoio à direita.

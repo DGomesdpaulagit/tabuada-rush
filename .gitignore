@@ -10,3 +10,7 @@ scripts/catalogo-icones.html
 
 # Screenshots de verificacao (regeneraveis por scripts/tirar-telas.sh)
 telas/
+
+# cache do Python dos scripts
+__pycache__/
+*.pyc

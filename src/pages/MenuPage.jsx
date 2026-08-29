@@ -1,36 +1,94 @@
 import { motion } from 'framer-motion';
-import { Gamepad2, Gift, BarChart2, LogIn, Cloud, Sparkles, Settings, ChevronRight, Brain, Coins } from 'lucide-react';
+import { Gamepad2, BarChart2, LogIn, Cloud, Settings, ChevronRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
-import { countDueFlashcards, countFactsAtRiskAllOps, getModeUnlock } from '../utils';
+import { getModeUnlock } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
-import { analyzeUser } from '../utils/analysis';
-import { countUnclaimedMissions } from '../utils/missions';
-import { Button, Progress, pageVariants, pageTransition } from '../components/ui';
-import GameIcon from '../components/GameIcon';
+import { getActiveMissions } from '../utils/missions';
+import { MODES } from '../constants';
+import { Button, pageVariants, pageTransition } from '../components/ui';
+import GameIcon, { LeagueIcon } from '../components/GameIcon';
+import { MissionProgress } from './MissionsPage';
 
-export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
+// ── PAINEL DE INÍCIO — FASE 8, blocos 8.3/8.4/8.5 [sessão 093] ───────────────
+// O que saiu daqui e por quê:
+//   · card de perfil (liga + ofensiva + meta): ofensiva e meta agora moram no
+//     painel do Header; a liga virou caixa própria (8.3)
+//   · caixa "X fatos prestes a serem esquecidos": pedido explícito do Davi
+//   · botão "Recompensas": o hub morreu junto com a Temporada; Missões agora
+//     se alcança pela caixa de Missões do dia (8.4) e a Loja pelo Header
+//   · insight da Análise Inteligente: era mais um card de texto competindo com
+//     o que importa aqui, que é começar uma partida
+//
+// O que a página é agora: os 3 modos (8.5) como assunto principal, com liga e
+// missões do dia numa coluna de apoio à direita no desktop — no celular tudo
+// empilha, modos primeiro.
+
+// Ordena os modos pelos MAIS JOGADOS (conta as partidas em `sessions`).
+// Quem nunca jogou vê a ordem padrão do jogo: Rush primeiro, depois os de
+// treino. Sem rótulo dizendo "mais jogados" — pedido do Davi.
+const ORDEM_PADRAO = ['rush', 'zen', 'review'];
+
+function modosPorUso(sessions = []) {
+  const partidas = sessions.reduce((acc, s) => {
+    if (!s?.mode) return acc;
+    return { ...acc, [s.mode]: (acc[s.mode] || 0) + 1 };
+  }, {});
+  return ORDEM_PADRAO
+    .map((id) => ({ id, mode: MODES[id], partidas: partidas[id] || 0 }))
+    .filter((m) => m.mode)
+    .sort((a, b) => b.partidas - a.partidas || ORDEM_PADRAO.indexOf(a.id) - ORDEM_PADRAO.indexOf(b.id));
+}
+
+// Onde o jogador está em relação à zona de rebaixamento/promoção — a legenda
+// da caixa de divisão, no mesmo espírito do "5 posições acima da zona de
+// rebaixamento!" da referência que o Davi mandou.
+function legendaDaDivisao(posicao, total, league) {
+  const promo = league.promotionCount || 0;
+  const rebaixa = league.relegationCount || 0;
+  const primeiroRebaixado = total - rebaixa + 1;
+
+  if (promo && posicao <= promo) return 'Você está na zona de promoção!';
+  if (rebaixa && posicao >= primeiroRebaixado) return 'Cuidado: você está na zona de rebaixamento!';
+  if (promo) {
+    const faltam = posicao - promo;
+    if (faltam <= 3) return `${faltam} ${faltam === 1 ? 'posição' : 'posições'} para a zona de promoção!`;
+  }
+  if (rebaixa) {
+    const acima = primeiroRebaixado - posicao;
+    return `${acima} ${acima === 1 ? 'posição' : 'posições'} acima da zona de rebaixamento!`;
+  }
+  return 'Jogue para subir na classificação!';
+}
+
+// ── Cabeçalho de caixa: título à esquerda, atalho à direita ─────────────────
+function TituloCaixa({ children, acao, onAcao }) {
+  return (
+    <div className="flex items-center justify-between gap-2 mb-3">
+      <p className="text-sm font-black text-fg">{children}</p>
+      <button
+        onClick={onAcao}
+        className="text-[11px] font-black text-accent hover:underline shrink-0 uppercase tracking-wide"
+      >
+        {acao}
+      </button>
+    </div>
+  );
+}
+
+export default function MenuPage({ onStart, onNavigate }) {
   const { data, cloudSyncing } = useApp();
   const { user } = useAuth();
 
-  const streak = data.currentStreak || 0;
-  const bestDayStreak = data.bestDayStreak || 0;
-  const coins = data.coins || 0;
-  const streakGoal = data.streakGoal; // pode ser null (meta ainda não definida)
-  const streakGoalBase = data.streakGoalBase || 0;
-  const metaProgress = Math.max(0, streak - streakGoalBase); // progresso rumo à meta atual
-  const goalPct = streakGoal ? Math.min((metaProgress / streakGoal) * 100, 100) : 0;
-  const analysisHeadline = analyzeUser(data).headline;
-
-  // [v6.0 · Bloco 6] Painel de perfil muda de cor conforme a LIGA atual (era
-  // o tier do QI antigo, ver DECISIONS.md D023) — mesma ideia, "veste a
-  // cara" de onde o jogador está, sem precisar de cosmético comprável.
   const { league, playerRank, total: leagueTotal } = getLeagueStandings(data);
-  const cardGradient = league.gradient;
-  const unclaimedMissions = countUnclaimedMissions(data.missionsData);
-  const dueFlashcards = countDueFlashcards(data.srsData?.mult || {});
-  const factsAtRisk = countFactsAtRiskAllOps(data); // [v4.0 · Fase 4] curva de esquecimento
-  const reviewUnlocked = getModeUnlock('review', data).unlocked;
+  const missoes = getActiveMissions(data.missionsData).daily.missions;
+  const modos = modosPorUso(data.sessions);
+  const [principal, ...secundarios] = modos;
+
+  const jogar = (id) => {
+    const { unlocked } = getModeUnlock(id, data);
+    return unlocked ? onStart(id) : onNavigate('modes');
+  };
 
   return (
     <motion.div
@@ -41,24 +99,25 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
       transition={pageTransition}
       className="flex flex-col gap-6"
     >
-      {/* Header */}
-      <div className="relative text-center pt-2">
-        {/* Controles: configurações (áudio/som/música agora ficam dentro dela)
-            + login apenas quando o usuário NÃO está logado (conta fica nas configs) */}
-        <div className="absolute right-0 top-1 flex items-center gap-2">
+      {/* ── Cabeçalho ────────────────────────────────────────────────────── */}
+      {/* [sessão 093] Botões saíram de cima do título: antes eram
+          `absolute` e o "Tabuada Rush" encostava neles (dívida anotada na
+          revisão de telas da sessão 086). Agora o cabeçalho é uma linha
+          própria e o título respira embaixo. */}
+      <div className="text-center pt-2">
+        <div className="flex items-center justify-end gap-2">
           <button
             onClick={() => onNavigate('settings')}
             title="Configurações"
-            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+            className="w-9 h-9 rounded-xl bg-surface-2 flex items-center justify-center text-fg-muted hover:bg-border transition-colors"
           >
             <Settings size={15} />
           </button>
-
           {!user && (
             <button
               onClick={() => onNavigate('auth')}
               title="Entrar / Criar conta"
-              className="w-9 h-9 rounded-xl bg-ink/10 flex items-center justify-center text-ink hover:bg-ink/20 transition-colors"
+              className="w-9 h-9 rounded-xl bg-surface-2 flex items-center justify-center text-fg-muted hover:bg-border transition-colors"
             >
               <LogIn size={15} />
             </button>
@@ -71,32 +130,27 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           className="inline-block"
         >
-          <h1 className="text-4xl font-black text-ink">
-            Tabuada Rush
-          </h1>
+          <h1 className="text-4xl font-black text-accent">Tabuada Rush</h1>
         </motion.div>
-        <p className="text-gray-400 text-sm font-semibold mt-1">
+        <p className="text-fg-muted text-sm font-semibold mt-1">
           Memorize a tabuada. Domine a multiplicação.
         </p>
 
-        {/* Cloud sync indicator */}
         {cloudSyncing && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-1 mt-1 text-xs text-ink font-semibold"
+            className="flex items-center justify-center gap-1 mt-1 text-xs text-accent font-semibold"
           >
             <Cloud size={11} className="animate-pulse" />
             Sincronizando...
           </motion.div>
         )}
-
-        {/* Logged in badge */}
         {user && !cloudSyncing && (
           <motion.div
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-1 mt-1 text-xs text-emerald-500 font-semibold"
+            className="flex items-center justify-center gap-1 mt-1 text-xs text-success font-semibold"
           >
             <Cloud size={11} />
             {user.email}
@@ -104,187 +158,119 @@ export default function MenuPage({ onStart, onNavigate, onEditGoal }) {
         )}
       </div>
 
-      {/* ── CARD DE PERFIL DO USUÁRIO ──────────────────────────────────────
-          QI-first: uma métrica única de progressão (já é composta — inclui
-          nível, precisão, velocidade, ofensiva e consistência, ver
-          utils/computeQI). Nível/XP deixam de ser exibidos aqui; XP continua
-          existindo internamente (multiplicador de modos) e fica visível em
-          detalhe dentro de Estatísticas. */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className={`bg-gradient-to-r ${cardGradient} rounded-3xl p-5 text-white shadow-lg`}
-      >
-        {/* Topo: liga atual + posição + moedas */}
-        <button
-          onClick={() => onNavigate('ranking')}
-          className="flex items-center gap-3 w-full text-left"
-        >
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
-            className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0"
-          >
-            {league.emoji}
-          </motion.div>
-          <div className="flex-1 min-w-0">
-            <p className="text-white/70 text-xs font-bold uppercase tracking-wide truncate">
-              Liga {league.name}
-            </p>
-            <div className="flex items-baseline gap-1.5">
-              <p className="text-3xl font-black leading-tight">{playerRank}º</p>
-              <p className="text-white/70 text-xs font-bold">de {leagueTotal}</p>
-            </div>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-amber-200 text-lg font-black flex items-center gap-1 justify-end">
-              <Coins size={16} /> {coins}
-            </p>
-            <span className="inline-flex items-center gap-0.5 text-white/70 text-[11px] font-bold">
-              Ver ligas <ChevronRight size={12} />
-            </span>
-          </div>
-        </button>
-
-        {/* Divisor */}
-        <div className="h-px bg-white/15 my-4" />
-
-        {/* Ofensiva diária — recorde vira um detalhe pequeno, não uma coluna
-            inteira (menos informação disputando atenção no painel). */}
-        <div className="flex items-center gap-2">
-          <GameIcon name="ofensiva" size={24} />
-          <p className="text-lg font-black leading-tight">
-            {streak} {streak === 1 ? 'dia' : 'dias'}
-          </p>
-          {bestDayStreak > 0 && (
-            <span className="text-white/60 text-xs font-bold flex items-center gap-0.5 ml-1">
-              <GameIcon name="podio" size={12} /> {bestDayStreak}
-            </span>
-          )}
-        </div>
-
-        {/* Meta de ofensiva */}
-        <div className="mt-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-white/70 text-xs font-bold uppercase tracking-wide">
-              Meta
-            </p>
-            {streakGoal ? (
-              // Meta travada — não pode ser alterada depois de definida (só muda
-              // automaticamente quando é batida, via RewardModal + nova escolha).
-              <span className="text-xs font-bold text-white/90">
-                {Math.min(metaProgress, streakGoal)}/{streakGoal} dias
+      {/* Duas colunas no desktop: modos à esquerda, apoio à direita.
+          No celular vira uma coluna só, com os modos primeiro. */}
+      <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+        {/* ── 8.5 · OS 3 MODOS ─────────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col gap-3 min-w-0">
+          {principal && (
+            <motion.button
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.01, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => jogar(principal.id)}
+              className={`w-full text-left rounded-3xl p-5 bg-gradient-to-br ${principal.mode.gradient} text-white shadow-lg`}
+            >
+              <p className="text-3xl font-black leading-tight">{principal.mode.name}</p>
+              <p className="text-sm font-semibold text-white/85 mt-1 leading-snug">
+                {principal.mode.description}
+              </p>
+              {/* [sessão 093] `bg-white` NÃO serve aqui: no tema escuro o
+                  projeto redefine o branco (vira #25252d) e o botão sumia.
+                  `bg-coin` é o mesmo amarelo do "Continuar" do resumo. */}
+              <span className="mt-4 inline-flex items-center gap-2 bg-coin text-graphite font-black text-sm px-5 py-2.5 rounded-2xl shadow">
+                Jogar agora
+                <ChevronRight size={16} />
               </span>
-            ) : (
-              <button
-                onClick={onEditGoal}
-                className="text-xs font-black bg-white text-ink px-3 py-1 rounded-full hover:bg-white/90 transition-colors"
-              >
-                Definir meta
-              </button>
-            )}
-          </div>
-          <Progress value={goalPct} colorClass="bg-amber-300" className="bg-white/20 h-1.5" />
-        </div>
-      </motion.div>
-
-      {/* Insight da Análise Inteligente (toque para ver detalhes) */}
-      <motion.button
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        onClick={() => onNavigate('stats')}
-        className="flex items-center gap-3 w-full text-left bg-white rounded-2xl px-4 py-3 border-2 border-[#E0DACB] shadow-sm hover:border-ink/30 transition-colors"
-      >
-        <span className="w-8 h-8 rounded-xl bg-ink/10 text-ink flex items-center justify-center shrink-0">
-          <Sparkles size={15} />
-        </span>
-        <p className="text-sm font-bold text-gray-600 leading-snug">{analysisHeadline}</p>
-      </motion.button>
-
-      {/* ── FATOS A VENCER [v4.0 · Fase 4] ──────────────────────────────────
-          Curva de esquecimento: fatos já praticados que o modelo prevê que o
-          jogador está prestes a esquecer (combina precisão, velocidade e tempo
-          desde a última prática — não é a mesma coisa que o SRS do Flashcard,
-          que só olha pra multiplicação e exige avaliação subjetiva). */}
-      {factsAtRisk > 0 && (
-        <motion.button
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.16 }}
-          onClick={() => (reviewUnlocked ? onStart('review') : onNavigate('modes'))}
-          className="flex items-center gap-3 w-full text-left bg-gradient-to-r from-rose-50 to-orange-50 rounded-2xl px-4 py-3 border border-rose-200 hover:border-rose-300 transition-colors"
-        >
-          <span className="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-            <Brain size={15} />
-          </span>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-gray-700 leading-snug">
-              {factsAtRisk} {factsAtRisk === 1 ? 'fato prestes a ser esquecido' : 'fatos prestes a serem esquecidos'}
-            </p>
-            <p className="text-xs text-gray-400 font-semibold">
-              {reviewUnlocked ? 'Toque para revisar agora' : 'Toque para ver como desbloquear a Revisão'}
-            </p>
-          </div>
-          <ChevronRight size={18} className="text-rose-400 shrink-0" />
-        </motion.button>
-      )}
-
-      {/* ── BOTÃO ESCOLHER MODO ─────────────────────────────────────────────
-          Leva para ModesPage: Rush (modo principal) + Zen/Revisão (treino). */}
-      <motion.button
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18 }}
-        whileHover={{ scale: 1.01, y: -1 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => onNavigate('modes')}
-        className="w-full flex items-center gap-3 rounded-3xl p-5 bg-ink text-white shadow-lg hover:bg-ink/90 transition-colors"
-      >
-        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
-          <Gamepad2 size={22} />
-        </div>
-        <div className="flex-1 text-left min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-wider text-white/70">
-            Modos de Jogo
-          </p>
-          <p className="text-lg font-black leading-tight">Escolher Modo</p>
-          <p className="text-xs font-bold text-white/80 mt-0.5">
-            {dueFlashcards > 0
-              ? `${dueFlashcards} flashcards para revisar`
-              : 'Rush · Zen · Revisão'}
-          </p>
-        </div>
-        <ChevronRight size={22} className="text-white shrink-0" />
-      </motion.button>
-
-      {/* ── Destinos primários: Recompensas + Estatísticas ────────────────
-          Loja/Missões viraram abas dentro de um único hub
-          (RewardsPage) — a Loja de cosméticos está em standby (economia
-          será repensada antes de investir em UI nova pra ela), mas as 3
-          continuam acessíveis aqui. Recordes/Conquistas/Ranking viraram
-          seções dentro de Estatísticas. */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="relative">
-          <Button variant="secondary" onClick={() => onNavigate('rewards')} className="w-full">
-            <Gift size={16} />
-            Recompensas
-          </Button>
-          {unclaimedMissions > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 z-10 shadow-sm">
-              {unclaimedMissions}
-            </span>
+            </motion.button>
           )}
+
+          <div className="grid grid-cols-2 gap-3">
+            {secundarios.map(({ id, mode }, i) => (
+              <motion.button
+                key={id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 + i * 0.05 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => jogar(id)}
+                className="text-left bg-surface rounded-2xl p-4 border-2 border-border hover:border-accent/40 transition-colors"
+              >
+                <p className="text-base font-black text-fg leading-tight">{mode.name}</p>
+                <p className="text-xs font-semibold text-fg-muted mt-1 leading-snug">
+                  {mode.description}
+                </p>
+              </motion.button>
+            ))}
+          </div>
+
+          <Button variant="secondary" onClick={() => onNavigate('modes')} className="w-full">
+            <Gamepad2 size={16} />
+            Modos de jogo
+          </Button>
         </div>
-        <Button variant="secondary" onClick={() => onNavigate('stats')} className="w-full">
-          <BarChart2 size={16} />
-          Estatísticas
-        </Button>
+
+        {/* ── Coluna de apoio: divisão (8.3) + missões do dia (8.4) ─────── */}
+        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="bg-surface rounded-2xl p-4 border-2 border-border"
+          >
+            <TituloCaixa acao="Ver divisão" onAcao={() => onNavigate('ranking')}>
+              Divisão {league.name}
+            </TituloCaixa>
+            <div className="flex items-center gap-3">
+              <LeagueIcon leagueId={league.id} size={48} />
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-fg-muted">Sua posição</p>
+                <p className="text-2xl font-black text-fg leading-tight tabular-nums">
+                  {playerRank}º <span className="text-sm text-fg-muted font-bold">de {leagueTotal}</span>
+                </p>
+              </div>
+            </div>
+            <p className="text-xs font-bold text-accent mt-2 leading-snug">
+              {legendaDaDivisao(playerRank, leagueTotal, league)}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.16 }}
+            className="bg-surface rounded-2xl p-4 border-2 border-border"
+          >
+            <TituloCaixa acao="Ver todas" onAcao={() => onNavigate('missions')}>
+              Missões do dia
+            </TituloCaixa>
+            <div className="flex flex-col gap-3">
+              {missoes.length === 0 && (
+                <p className="text-xs font-semibold text-fg-muted">Nenhuma missão hoje.</p>
+              )}
+              {missoes.map((m) => (
+                <div key={m.id}>
+                  <p className="text-xs font-black text-fg leading-tight mb-1.5 truncate">{m.title}</p>
+                  <MissionProgress
+                    mission={m}
+                    pct={Math.min((m.progress / m.target) * 100, 100)}
+                    size={24}
+                  />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <Button variant="secondary" onClick={() => onNavigate('stats')} className="w-full">
+            <BarChart2 size={16} />
+            Estatísticas
+          </Button>
+        </div>
       </div>
 
-      {/* Footer stats */}
+      {/* Rodapé com o resumo de sempre */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

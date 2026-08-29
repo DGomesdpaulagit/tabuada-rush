@@ -25,7 +25,6 @@ import SettingsPage from './pages/SettingsPage';
 import AuthPage from './pages/AuthPage';
 import ShopPage from './pages/ShopPage';
 import MissionsPage from './pages/MissionsPage';
-import RewardsPage from './pages/RewardsPage';
 import PerfilPage from './pages/PerfilPage';
 import MochilaPage from './pages/MochilaPage';
 import Sidebar from './components/Sidebar';
@@ -1066,7 +1065,6 @@ export default function App() {
               key="menu"
               onStart={handleStart}
               onNavigate={setScreen}
-              onEditGoal={() => setGoalModalManual(true)}
             />
           )}
           {screen === 'auth' && (
@@ -1129,9 +1127,6 @@ export default function App() {
               onBack={() => setScreen('menu')}
               onNavigate={setScreen}
             />
-          )}
-          {screen === 'rewards' && (
-            <RewardsPage key="rewards" onBack={() => setScreen('menu')} />
           )}
           {screen === 'shop' && (
             <ShopPage key="shop" onBack={() => setScreen('menu')} />

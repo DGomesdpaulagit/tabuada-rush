@@ -484,7 +484,7 @@ melhor — mas é mudar a frase dele, então pergunto.
 
 ---
 
-### BLOCO 8.3 — Caixa de divisão sai do centro e vai pro canto direito
+### BLOCO 8.3 — Caixa de divisão sai do centro e vai pro canto direito ✅ CONCLUÍDO (sessão 093)
 
 - [ ] Caixa própria no canto direito com: **"Sua posição"** (posição
       atual) · **legenda da situação** ("5 posições acima da zona de
@@ -493,7 +493,7 @@ melhor — mas é mudar a frase dele, então pergunto.
 
 ---
 
-### BLOCO 8.4 — Caixa de missões do dia (abaixo da divisão)
+### BLOCO 8.4 — Caixa de missões do dia ✅ CONCLUÍDO (sessão 093)
 
 - [ ] Só as **diárias**, com a barra de progresso e os baús
       fechado/aberto que já existem (sessões 087-088)
@@ -501,7 +501,7 @@ melhor — mas é mudar a frase dele, então pergunto.
 
 ---
 
-### BLOCO 8.5 — Painel central: os 3 modos mais jogados
+### BLOCO 8.5 — Painel central: os 3 modos mais jogados ✅ CONCLUÍDO (sessão 093)
 
 Sai o resumo de dados do usuário (divisão, ofensiva etc. — que agora
 moram no Header e nas caixas laterais) e entram os modos:

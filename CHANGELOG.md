@@ -4,6 +4,35 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.42] — 2026-08-29 — Painel da Arena novo (blocos 8.3, 8.4 e 8.5)
+
+**Detalhes em `sessions/sessao-093.md`.**
+
+### Alterado
+- **Página inicial reescrita.** Os **3 modos** viraram o assunto principal:
+  caixa grande com o mais jogado (nome, descrição, "Jogar agora") e duas
+  menores com o 2º e o 3º, sem rótulo dizendo que são os mais jogados.
+  A contagem sai de `data.sessions`; quem nunca jogou vê Rush → Zen →
+  Revisão
+- **Caixa de divisão** com posição, escudo, "Ver divisão" e legenda real
+  da situação (zona de promoção / X posições acima do rebaixamento)
+- **Caixa de missões do dia** com a mesma barra + baú da aba Missões e
+  "Ver todas"
+- Duas colunas no desktop, uma no celular
+
+### Removido
+- Botão **"Recompensas"** e o hub `RewardsPage` (arquivo apagado)
+- Card de perfil da inicial (ofensiva e meta vivem no Header; liga virou
+  caixa própria), caixa "fatos prestes a serem esquecidos" e o card de
+  insight da Análise Inteligente
+
+### Corrigido
+- Título "Tabuada Rush" encostava nos botões de configuração/login
+- Botão "Jogar agora" saía ilegível: **no tema escuro deste projeto
+  `bg-white` vira `#25252d`** — trocado pelo amarelo `bg-coin`
+
+---
+
 ## [6.0.41] — 2026-08-29 — FASE 8 começou: Temporada removida + bloco 8.6
 
 **Detalhes em `sessions/sessao-092.md`.**

@@ -4,6 +4,33 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.46] — 2026-08-30 — Zona de rebaixamento com penalidades + aviso de ofensiva perdida
+
+**Detalhes em `sessions/sessao-097.md`.**
+
+### Adicionado
+- **Penalidades da zona de rebaixamento** (`utils/relegation.js`): XP pela
+  metade, chance de recurso/baú a 25%, missões com alvo +50% e recompensa
+  ×2 — e o **baú de cada missão sobe de tier junto**, porque o tier vem da
+  recompensa
+- **Painel de aviso da zona**, uma vez por dia, com "Ver mais" (página das
+  consequências + dicas de como sair) e "Não mostrar novamente" (desliga o
+  aviso, não as penalidades)
+- **Aviso de ofensiva perdida** ao abrir o jogo, com a arte da chama
+  caindo. `applyStreakDecay` passou a guardar quantos dias foram perdidos
+- **30 frases na caixa de divisão**, 10 por situação, com a cor mudando:
+  vermelho na zona, normal no meio, verde no pódio
+- 5 ícones: `zona-selo`, `zona-buraco`, `zona-xp-50`, `zona-recursos-25`,
+  `ofensiva-perdida`
+
+### Alterado
+- Na página de Ligas a **zona de rebaixamento fica vermelha**, e a linha do
+  jogador fica destacada em vermelho quando ele está nela
+- A **Bronze também sofre as penalidades** (últimas 5 posições), mesmo sem
+  divisão abaixo — pedido explícito do Davi
+
+---
+
 ## [6.0.45] — 2026-08-29 — Painel de ofensiva (8.2): FASE 8 CONCLUÍDA
 
 **Detalhes em `sessions/sessao-096.md`.**

@@ -6,6 +6,8 @@ import { getModeUnlock } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
 import { analyzeUser } from '../utils/analysis';
 import { getActiveMissions } from '../utils/missions';
+import { emZonaDeRebaixamento, primeiraPosicaoDaZona } from '../utils/relegation';
+import { fraseDaDivisao, situacaoDaDivisao, COR_DIVISAO } from '../constants/leaguePhrases';
 import { MODES } from '../constants';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import GameIcon, { LeagueIcon } from '../components/GameIcon';
@@ -41,27 +43,6 @@ function modosPorUso(sessions = []) {
     .sort((a, b) => b.partidas - a.partidas || ORDEM_PADRAO.indexOf(a.id) - ORDEM_PADRAO.indexOf(b.id));
 }
 
-// Onde o jogador está em relação à zona de rebaixamento/promoção — a legenda
-// da caixa de divisão, no mesmo espírito do "5 posições acima da zona de
-// rebaixamento!" da referência que o Davi mandou.
-function legendaDaDivisao(posicao, total, league) {
-  const promo = league.promotionCount || 0;
-  const rebaixa = league.relegationCount || 0;
-  const primeiroRebaixado = total - rebaixa + 1;
-
-  if (promo && posicao <= promo) return 'Você está na zona de promoção!';
-  if (rebaixa && posicao >= primeiroRebaixado) return 'Cuidado: você está na zona de rebaixamento!';
-  if (promo) {
-    const faltam = posicao - promo;
-    if (faltam <= 3) return `${faltam} ${faltam === 1 ? 'posição' : 'posições'} para a zona de promoção!`;
-  }
-  if (rebaixa) {
-    const acima = primeiroRebaixado - posicao;
-    return `${acima} ${acima === 1 ? 'posição' : 'posições'} acima da zona de rebaixamento!`;
-  }
-  return 'Jogue para subir na classificação!';
-}
-
 // ── Cabeçalho de caixa: título à esquerda, atalho à direita ─────────────────
 function TituloCaixa({ children, acao, onAcao }) {
   return (
@@ -82,7 +63,10 @@ export default function MenuPage({ onStart, onNavigate }) {
   const { user } = useAuth();
 
   const { league, playerRank, total: leagueTotal } = getLeagueStandings(data);
-  const missoes = getActiveMissions(data.missionsData).daily.missions;
+  const primeiroDaZona = primeiraPosicaoDaZona(leagueTotal, league);
+  const situacao = situacaoDaDivisao(playerRank, primeiroDaZona);
+  const naZona = situacao === 'rebaixamento';
+  const missoes = getActiveMissions(data.missionsData, { zonaRebaixamento: naZona }).daily.missions;
   const modos = modosPorUso(data.sessions);
   const analise = analyzeUser(data);
   const [principal, ...secundarios] = modos;
@@ -251,8 +235,11 @@ export default function MenuPage({ onStart, onNavigate }) {
                 </p>
               </div>
             </div>
-            <p className="text-xs font-bold text-accent mt-2 leading-snug">
-              {legendaDaDivisao(playerRank, leagueTotal, league)}
+            {/* [sessão 097] Uma das 30 frases do Davi, na cor da situação:
+                vermelho na zona de rebaixamento, normal no meio, verde no
+                pódio. */}
+            <p className={`text-xs font-black mt-2 leading-snug ${COR_DIVISAO[situacao]}`}>
+              {fraseDaDivisao(situacao)}
             </p>
           </motion.div>
 

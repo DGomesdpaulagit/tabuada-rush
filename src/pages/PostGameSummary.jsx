@@ -6,6 +6,7 @@ import { SHOP_ITEM_MAP, POTION_MAP } from '../constants/shop';
 import { CHESTS } from '../constants/loot';
 import { getAccuracy, getAchievementProgress, todayStr } from '../utils';
 import { getActiveMissions } from '../utils/missions';
+import { emZonaDeRebaixamento } from '../utils/relegation';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
 import { Button, pageTransition, stillInitial } from '../components/ui';
@@ -230,7 +231,10 @@ function XpPage({ result, footer }) {
 function MissionsProgressPage({ footer }) {
   const { data } = useApp();
   const [tab, setTab] = useState('daily');
-  const active = useMemo(() => getActiveMissions(data.missionsData), [data.missionsData]);
+  const active = useMemo(
+    () => getActiveMissions(data.missionsData, { zonaRebaixamento: emZonaDeRebaixamento(data) }),
+    [data]
+  );
   const monthlyAccepted = active.monthly.accepted.filter((c) => !c.resolved);
   const list = tab === 'daily' ? active.daily.missions : monthlyAccepted;
 

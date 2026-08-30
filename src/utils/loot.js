@@ -43,23 +43,29 @@ function getTimeTier(realSeconds) {
 // de `result.timePlayed` — corrigido no GamePage.jsx pra medir relógio de
 // parede de verdade, não mais `cfg.timer - state.time`, que ignorava o
 // bônus de tempo por combo/Largada Turbo).
-export function rollMatchLoot(realSeconds) {
+export function rollMatchLoot(realSeconds, multiplicador = 1) {
   const tier = getTimeTier(realSeconds);
+  // [sessão 097] `multiplicador` < 1 = jogador na ZONA DE REBAIXAMENTO: a
+  // chance de TUDO (baú, power-up e poção) cai pro percentual dado — 25% do
+  // normal, número que o Davi definiu. Aplica na chance, não no valor: quem
+  // acha um baú de ouro lá continua levando as moedas do baú de ouro; só
+  // acha muito menos vezes.
+  const pct = (v) => v * multiplicador;
 
   const chests = [];
-  for (let i = 0; i < rollCount(tier.chestPct); i++) {
+  for (let i = 0; i < rollCount(pct(tier.chestPct)); i++) {
     const chest = weightedPick(CHESTS);
     const coins = chest.coinFixed ?? (chest.coinMin + Math.floor(Math.random() * (chest.coinMax - chest.coinMin + 1)));
     chests.push({ id: chest.id, coins });
   }
 
   const powerupIds = [];
-  for (let i = 0; i < rollCount(tier.powerupPct); i++) {
+  for (let i = 0; i < rollCount(pct(tier.powerupPct)); i++) {
     powerupIds.push(weightedPick(LOOT_POWERUPS).id);
   }
 
   const potionIds = [];
-  for (let i = 0; i < rollCount(tier.potionPct); i++) {
+  for (let i = 0; i < rollCount(pct(tier.potionPct)); i++) {
     potionIds.push(weightedPick(LOOT_POTIONS).id);
   }
 

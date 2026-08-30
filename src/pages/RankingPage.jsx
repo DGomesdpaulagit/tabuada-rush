@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, TrendingDown, X } from 'lucide-react';
 import { LEAGUES } from '../constants/leagues';
 import { getLeagueStandings, getCycleDaysRemaining } from '../utils/leagues';
+import { primeiraPosicaoDaZona } from '../utils/relegation';
 import { useApp } from '../contexts/AppContext';
 import { pageVariants, pageTransition } from '../components/ui';
 import GameIcon, { LeagueIcon, PODIUM_ICONS } from '../components/GameIcon';
@@ -32,10 +33,16 @@ function RosterRow({ entry, rank, inPromotion, inRelegation, compact = false, on
       className={`w-full text-left flex items-center gap-3 rounded-2xl transition-all
         ${compact ? 'px-2 py-1' : 'px-3 py-1.5'}
         ${entry.isPlayer
-          ? 'bg-surface-2 border-2 border-accent'
+          ? inRelegation
+            // [sessão 097] Na zona, a linha do jogador fica VERMELHA — o Davi
+            // quer que dar de cara com isso seja desconfortável.
+            ? 'bg-danger/15 border-2 border-danger'
+            : 'bg-surface-2 border-2 border-accent'
           : selected
             ? 'bg-surface-2 border-2 border-border'
-            : `border-2 border-transparent ${clicavel ? 'hover:bg-surface-2' : ''}`}`}
+            : inRelegation
+              ? `bg-danger/5 border-2 border-transparent ${clicavel ? 'hover:bg-danger/10' : ''}`
+              : `border-2 border-transparent ${clicavel ? 'hover:bg-surface-2' : ''}`}`}
     >
       <span
         className={`w-7 flex items-center justify-center text-sm font-black shrink-0 tabular-nums
@@ -193,7 +200,7 @@ export default function RankingPage({ onBack }) {
                 entry={e}
                 rank={i + 1}
                 inPromotion={i + 1 <= promoCut}
-                inRelegation={i + 1 > standings.total - selectedLeague.relegationCount}
+                inRelegation={i + 1 >= primeiraPosicaoDaZona(standings.total, selectedLeague)}
                 onSelect={(entry, rank) => setFicha({ ...entry, rank })}
                 selected={ficha?.name === e.name}
               />

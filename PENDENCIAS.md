@@ -45,6 +45,25 @@ provavelmente cobre parte disso.
 
 ---
 
+## 📌 PRÓXIMA CONVERSA — combinado na sessão 097
+
+O Davi encerrou a conversa por limite de contexto e pediu pra documentar:
+
+1. **"O que teríamos que mudar se tirássemos os PONTOS do jogo?"** — ele
+   quer essa resposta ANTES de decidir sobre os tipos de pontuação por
+   faixa (item abaixo). Mapeamento inicial de quem depende de `score`
+   hoje: o **XP** (`score × multiplicador do modo` — é a única fonte de
+   XP do jogo), as missões de `type: 'score'`, o recorde `bestScore`, o
+   card "Pontuação total" do resumo, o `scoreScale` de cada modo e,
+   indiretamente, a **classificação da liga** (que roda sobre XP).
+2. **Ícones das conquistas** — ele vai gerar.
+3. **Dívida de layout:** o modal "Defina sua meta de ofensiva" ainda abre
+   por cima do conteúdo na primeira visita.
+4. **Conferir o balanceamento da zona de rebaixamento na prática** — é a
+   primeira mecânica punitiva do jogo; vale medir se não desanima.
+
+---
+
 ## 🔢 Tipos de pontuação por faixa numérica (pedido da sessão 082)
 
 Hoje existe **um único** ícone de pontuação (`missao-tipo-pontuacao`, o

@@ -15,6 +15,14 @@ import ofensivaCongelada from '../assets/icons/ofensiva-congelada.png';
 // laranja sai claro demais). O Davi escolheu esta versão, a de cinza puro,
 // entre as duas que mostrei.
 import ofensivaApagada from '../assets/icons/ofensiva-apagada.png';
+// [sessão 097] Chama caindo com as anilhas — o aviso de ofensiva perdida.
+import ofensivaPerdida from '../assets/icons/ofensiva-perdida.png';
+// [sessão 097] Zona de rebaixamento: selo, o buraco engolindo os recursos e
+// as duas artes das penalidades (XP -50% e recursos a 25%).
+import zonaSelo from '../assets/icons/zona-selo.png';
+import zonaBuraco from '../assets/icons/zona-buraco.png';
+import zonaXp50 from '../assets/icons/zona-xp-50.png';
+import zonaRecursos25 from '../assets/icons/zona-recursos-25.png';
 import diaFeito from '../assets/icons/dia-feito.png';
 import diaCongelado from '../assets/icons/dia-congelado.png';
 import diaVazio from '../assets/icons/dia-vazio.png';
@@ -121,6 +129,11 @@ export const ICONS = {
   ofensiva,
   'ofensiva-congelada': ofensivaCongelada,
   'ofensiva-apagada': ofensivaApagada,
+  'ofensiva-perdida': ofensivaPerdida,
+  'zona-selo': zonaSelo,
+  'zona-buraco': zonaBuraco,
+  'zona-xp-50': zonaXp50,
+  'zona-recursos-25': zonaRecursos25,
   'dia-feito': diaFeito,
   'dia-congelado': diaCongelado,
   'dia-vazio': diaVazio,

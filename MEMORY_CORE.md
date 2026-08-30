@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-08-29
-**Versão:** 6.0.45 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + FASE 8 concluída — sessao-096.md)
+**Data:** 2026-08-30
+**Versão:** 6.0.46 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + zona de rebaixamento — sessao-097.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,14 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.46]** **Zona de rebaixamento agora PUNE** (`utils/relegation.js`,
+regras num arquivo só): XP pela metade, loot a 25% da chance, missões com
+alvo +50% e recompensa ×2 (o baú da missão sobe de tier junto). Painel de
+aviso 1×/dia com "Ver mais" e "Não mostrar novamente" (desliga o aviso,
+NÃO a penalidade). Zona vermelha na página de Ligas; a Bronze também sofre
+(últimas 5 posições). Entrou também o **aviso de ofensiva perdida** e as
+**30 frases da caixa de divisão** com cor por situação. Ver `sessao-097.md`
+— tem uma lista do que ficou pra próxima conversa.
 **[v6.0.45]** 🏁 **FASE 8 CONCLUÍDA** — último bloco foi o painel de
 ofensiva (8.2): agora com TRÊS estados (acesa/congelada/APAGADA — antes
 "sem ofensiva" era desenhada como congelada, o que era mentira), ícone

@@ -1,4 +1,5 @@
 import { DAILY_MISSION_POOL, MONTHLY_CHALLENGE_POOL } from '../constants/missions';
+import { penalizarMissoes } from './relegation';
 
 // ── Helpers de data ───────────────────────────────────────────────────────────
 
@@ -92,7 +93,11 @@ function initMonthlyPool(month, prevAccepted = []) {
 // ── Obter missões/desafios ativos (com reset automático) ──────────────────────
 // Chamada a cada leitura: verifica se o período mudou e reinicia se necessário,
 // preservando progresso das missões que NÃO mudaram de período.
-export function getActiveMissions(missionsData) {
+export function getActiveMissions(missionsData, opcoes = {}) {
+  // [sessão 097] `opcoes.zonaRebaixamento` deixa as missões mais difíceis e
+  // mais bem pagas enquanto o jogador está na zona (ver utils/relegation.js).
+  // Aplico na LEITURA, não no save: o progresso guardado continua sendo o
+  // real, e sair da zona devolve as missões ao normal sem migração nenhuma.
   const today    = todayStr();
   const monthStr = currentMonthKey();
 
@@ -112,6 +117,12 @@ export function getActiveMissions(missionsData) {
     ? initMonthlyPool(monthStr, Array.isArray(md.monthly?.accepted) ? md.monthly.accepted : [])
     : md.monthly;
 
+  if (opcoes.zonaRebaixamento) {
+    return {
+      daily: { ...daily, missions: penalizarMissoes(daily.missions, true) },
+      monthly: { ...monthly, accepted: penalizarMissoes(monthly.accepted, true) },
+    };
+  }
   return { daily, monthly };
 }
 

@@ -6,6 +6,7 @@ import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgre
 import { applyLeaguePromotion } from './utils/leagues';
 import { getActiveXpMultiplier } from './utils/potions';
 import { rollMatchLoot } from './utils/loot';
+import { emZonaDeRebaixamento, multiplicadorXp, multiplicadorLoot, deveAvisarDaZona, chaveDoDia } from './utils/relegation';
 import { LEAGUE_MAP } from './constants/leagues';
 import { SHOP_ITEM_MAP } from './constants/shop';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_PRICE } from './constants';
@@ -29,6 +30,8 @@ import PerfilPage from './pages/PerfilPage';
 import MochilaPage from './pages/MochilaPage';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import LostStreakModal from './components/LostStreakModal';
+import RelegationPanel from './components/RelegationPanel';
 import { updateMissions, getNewlyCompleted, resolveChallenges } from './utils/missions';
 
 import { motion, AnimatePresence as AP } from 'framer-motion';
@@ -512,9 +515,10 @@ export default function App() {
       // sem nem jogar de verdade. Mesmo espírito de "Zen não gera moeda nenhuma"
       // (já valia pra `coinsEarned`, linha abaixo) — decisão não escrita no
       // PLANO_ACAO.md, sinalizada em D049.
+      // Loot também cai na zona de rebaixamento (25% da chance normal)
       const loot = result.mode === 'zen'
         ? { chests: [], powerupIds: [], potionIds: [] }
-        : rollMatchLoot(result.timePlayed || 0);
+        : rollMatchLoot(result.timePlayed || 0, multiplicadorLoot(prev));
       const lootCoins = loot.chests.reduce((sum, c) => sum + c.coins, 0);
 
       const newData = update((prev) => {
@@ -586,11 +590,18 @@ export default function App() {
         // dentro da janela `potionActiveUntil`), diferente do antigo XP
         // Dobrado que valia por 1 partida (removido na Fase 2, D043).
         const potionMultiplier = getActiveXpMultiplier(prev);
-        gameXp = Math.round(
+        // [sessão 097] ZONA DE REBAIXAMENTO: metade do XP. Entra como mais um
+        // fator da mesma conta, então convive com poção e bônus da Diamante
+        // em vez de brigar com eles — quem está na zona COM poção ×2 fica em
+        // ×1, e não perde a poção. O `Math.max(…, 1)` garante que quem pontuou
+        // não sai com 0 XP só por causa do arredondamento pra baixo.
+        const penalidadeXp = multiplicadorXp(prev);
+        const xpBruto =
           Math.round((result.score || 0) * (MODE_XP_MULT[result.mode] ?? 0.20)) *
-            potionMultiplier *
-            (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1)
-        );
+          potionMultiplier *
+          (diamondBonusActive ? DIAMOND_PODIUM_BONUS : 1) *
+          penalidadeXp;
+        gameXp = xpBruto > 0 ? Math.max(1, Math.round(xpBruto)) : 0;
         const xp = (prev.xp || 0) + gameXp;
 
         // ── Moedas ganhas nesta partida ─────────────────────────────────────
@@ -1048,6 +1059,36 @@ export default function App() {
   // fazem parte da mesma sessão de jogo, ver comentário no JSX abaixo).
   const emPartida = screen === 'game' || screen === 'results';
 
+  // ── [sessão 097] Avisos de abertura: ofensiva perdida e zona de rebaixamento
+  const ofensivaPerdida = data.ofensivaPerdida;
+  const temSeguro = (data.powerups?.streakInsurance || 0) > 0;
+
+  const limparAvisoOfensiva = useCallback(() => {
+    update((prev) => ({ ...prev, ofensivaPerdida: null }));
+  }, [update]);
+
+  // "Trazer de volta" gasta 1 Seguro de Ofensiva e devolve os dias perdidos.
+  const recuperarOfensiva = useCallback(() => {
+    update((prev) => {
+      const estoque = prev.powerups?.streakInsurance || 0;
+      if (estoque === 0) return { ...prev, ofensivaPerdida: null };
+      return {
+        ...prev,
+        currentStreak: prev.ofensivaPerdida?.dias || 0,
+        powerups: { ...(prev.powerups || {}), streakInsurance: estoque - 1 },
+        ofensivaPerdida: null,
+      };
+    });
+  }, [update]);
+
+  const mostrarAvisoZona = screen === 'menu' && deveAvisarDaZona(data);
+  const fecharAvisoZona = useCallback(() => {
+    update((prev) => ({ ...prev, zonaAvisoVistoEm: chaveDoDia() }));
+  }, [update]);
+  const desligarAvisoZona = useCallback(() => {
+    update((prev) => ({ ...prev, zonaAvisoDesligado: true, zonaAvisoVistoEm: chaveDoDia() }));
+  }, [update]);
+
   return (
     <div className="min-h-dvh app-shell font-nunito lg:flex">
       {/* [sessão 086] EM PARTIDA a moldura do app inteira some — barra
@@ -1224,15 +1265,37 @@ export default function App() {
         )}
       </AP>
 
+      {/* [sessão 097] Avisos de abertura, um de cada vez e nesta ordem:
+          ofensiva perdida → zona de rebaixamento → recompensa → meta. */}
+      <AP>
+        {screen === 'menu' && ofensivaPerdida ? (
+          <LostStreakModal
+            key="lost-streak"
+            dias={ofensivaPerdida.dias}
+            temSeguro={temSeguro}
+            onUsarSeguro={recuperarOfensiva}
+            onIrPraLoja={() => { limparAvisoOfensiva(); setScreen('shop'); }}
+            onReiniciar={limparAvisoOfensiva}
+          />
+        ) : mostrarAvisoZona ? (
+          <RelegationPanel
+            key="relegation"
+            leagueId={data.leagueId}
+            onFechar={fecharAvisoZona}
+            onNaoMostrarMais={desligarAvisoZona}
+          />
+        ) : null}
+      </AP>
+
       {/* Modais de ofensiva — só no menu. Recompensa tem prioridade sobre a meta. */}
       <AP>
-        {screen === 'menu' && data.pendingStreakReward != null ? (
+        {screen === 'menu' && !ofensivaPerdida && !mostrarAvisoZona && data.pendingStreakReward != null ? (
           <RewardModal
             key="reward"
             milestone={data.pendingStreakReward}
             onChoose={chooseReward}
           />
-        ) : screen === 'menu' && (data.streakGoal == null || goalModalManual) ? (
+        ) : screen === 'menu' && !ofensivaPerdida && !mostrarAvisoZona && (data.streakGoal == null || goalModalManual) ? (
           <GoalModal
             key="goal"
             onSelect={chooseGoal}

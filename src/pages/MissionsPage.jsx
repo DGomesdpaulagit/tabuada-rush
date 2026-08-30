@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { getActiveMissions, claimMission, freezeMission, acceptChallenge, freezeChallenge } from '../utils/missions';
+import { emZonaDeRebaixamento } from '../utils/relegation';
 import { pageVariants, pageTransition, Progress } from '../components/ui';
 import GameIcon from '../components/GameIcon';
 import { chestForCoins } from '../constants/loot';
@@ -131,7 +132,9 @@ export default function MissionsPage({ onBack, embedded = false }) {
   const { data, update } = useApp();
   const [activeTab, setActiveTab] = useState('daily');
 
-  const active = getActiveMissions(data.missionsData);
+  // [sessão 097] Na zona de rebaixamento as missões vêm mais difíceis e
+  // pagando mais — inclusive o baú de cada uma sobe de tier junto.
+  const active = getActiveMissions(data.missionsData, { zonaRebaixamento: emZonaDeRebaixamento(data) });
   const dailyMissions = active.daily.missions;
   const acceptedChallenges = active.monthly.accepted.filter((c) => !c.resolved);
   const acceptedIds = new Set(acceptedChallenges.map((c) => c.id));

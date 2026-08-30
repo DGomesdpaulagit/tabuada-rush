@@ -344,7 +344,17 @@ export function applyStreakDecay(data = {}) {
         powerups: { ...(data.powerups || {}), streakInsurance: insurance - 1 },
       };
     }
-    return { ...data, currentStreak: 0, streakGoalBase: 0, streakInsuredAt: null };
+    // [sessão 097] Guarda QUANTOS dias foram perdidos: o aviso que aparece
+    // ao abrir o jogo ("Você perdeu sua ofensiva de N dias") precisa desse
+    // número, e ele desaparece no instante em que a ofensiva zera. O campo é
+    // limpo quando o jogador responde ao aviso (App.jsx).
+    return {
+      ...data,
+      currentStreak: 0,
+      streakGoalBase: 0,
+      streakInsuredAt: null,
+      ofensivaPerdida: { dias: data.currentStreak || 0, em: new Date().toISOString() },
+    };
   }
   return data;
 }

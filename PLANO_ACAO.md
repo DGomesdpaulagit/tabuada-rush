@@ -409,7 +409,7 @@ antes.
 
 ---
 
-## FASE 8 — Arena: Header, painel de início e edições gerais
+## FASE 8 — Arena: Header, painel de início e edições gerais ✅ CONCLUÍDA (sessões 092-096)
 
 **Escopo ditado pelo Davi na sessão 091.** Ele descreveu tudo de uma vez;
 o plano abaixo quebra em 5 blocos que podem ser feitos e conferidos um a
@@ -447,7 +447,7 @@ branco ou transparente.** Nome do arquivo: `trofeus_faixas_fundo_branco.png`
 
 ---
 
-### BLOCO 8.2 — Painel de ofensiva do Header (maior e vivo)
+### BLOCO 8.2 — Painel de ofensiva do Header ✅ CONCLUÍDO (sessão 096)
 
 - [ ] **Ícone de ofensiva grande**, em 3 estados: **apagado** (cinza),
       **aceso** (laranja) e **congelado** (azul)

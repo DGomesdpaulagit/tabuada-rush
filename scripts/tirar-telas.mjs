@@ -15,6 +15,7 @@
 //   node scripts/tirar-telas.mjs                          # telas do resumo
 //   node scripts/tirar-telas.mjs "screen=menu" menu       # uma tela só
 //   node scripts/tirar-telas.mjs --mobile                 # no formato celular
+//   ... --acao "<js>"                                     # clica antes de fotografar
 //
 // Saída: pasta `telas/` na raiz (ignorada pelo Git).
 import { spawn } from 'node:child_process';
@@ -86,7 +87,8 @@ class CDP {
 
 async function main() {
   const sysArgs = process.argv.slice(2);
-  const args = sysArgs.filter((a, i) => !a.startsWith('--') && sysArgs[i - 1] !== '--preparar');
+  const bandeirasComValor = ['--preparar', '--acao'];
+  const args = sysArgs.filter((a, i) => !a.startsWith('--') && !bandeirasComValor.includes(sysArgs[i - 1]));
   const lista = args.length ? [[args[0], args[1] || 'tela']] : TELAS;
 
   const chrome = CAMINHOS.find((c) => existsSync(c));
@@ -165,6 +167,7 @@ async function main() {
     const preparar = sysArgs.includes('--preparar')
       ? sysArgs[sysArgs.indexOf('--preparar') + 1]
       : null;
+    const acao = sysArgs.includes('--acao') ? sysArgs[sysArgs.indexOf('--acao') + 1] : null;
     if (preparar) {
       await cdp.enviar('Page.addScriptToEvaluateOnNewDocument', {
         source: `try { ${preparar} } catch (e) {}`,
@@ -175,6 +178,14 @@ async function main() {
       await cdp.enviar('Page.navigate', { url: `${BASE}/?${query}&still=1` }, sessionId);
       const ok = await esperarConteudo();
       if (!ok) console.log(`  (aviso) ${nome}: conteúdo não apareceu a tempo`);
+
+      // `--acao "<js>"`: interage com a página já carregada antes de
+      // fotografar — abrir um painel de hover, clicar num botão. Sem isso não
+      // dá pra registrar nada que só existe depois de um clique.
+      if (acao) {
+        await cdp.enviar('Runtime.evaluate', { expression: acao, awaitPromise: true }, sessionId);
+        await espera(500);
+      }
       await espera(250); // respiro pro layout assentar depois das imagens
       const { data } = await cdp.enviar('Page.captureScreenshot', { format: 'png' }, sessionId);
       writeFileSync(join(DEST, `${nome}.png`), Buffer.from(data, 'base64'));

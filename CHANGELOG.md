@@ -4,6 +4,32 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.45] — 2026-08-29 — Painel de ofensiva (8.2): FASE 8 CONCLUÍDA
+
+**Detalhes em `sessions/sessao-096.md`.**
+
+### Adicionado
+- **Painel de ofensiva reformado**: ícone grande, caixas dos dias maiores,
+  o bloco vestindo a cor da situação, próxima conquista e botão "Ver mais"
+- **Painel completo de ofensiva** (`components/StreakPanel.jsx`):
+  calendário do mês com os dias jogados, meta com barra, caixa de
+  conquista e recorde geral
+- `constants/streakPhrases.js` — as 15 frases do Davi, 5 por situação. A
+  de tempo usa o **tempo real até a meia-noite**; o sorteio é preso ao dia
+  pra frase não trocar a cada abrir/fechar do painel
+- `scripts/tirar-telas.mjs --acao "<js>"` — interage antes de fotografar
+  (foi o que permitiu registrar o painel, que só existe após clique)
+- Estrela em **Catálogo → Marcos de Progresso**
+
+### Alterado
+- **A ofensiva agora tem TRÊS estados**: acesa, congelada e **apagada**.
+  Antes "sem ofensiva" era desenhada como congelada, o que dizia uma coisa
+  errada — quem está em 0 dia não tem nada congelado
+- O **recorde saiu** do painel do Header (vive no Perfil e no painel
+  completo); no lugar entra a frase da situação
+
+---
+
 ## [6.0.44] — 2026-08-29 — Troféus das faixas (8.1) + ofensiva apagada
 
 **Detalhes em `sessions/sessao-095.md`.**

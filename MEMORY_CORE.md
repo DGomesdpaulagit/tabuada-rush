@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-08-29
-**Versão:** 6.0.44 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + troféus das faixas — sessao-095.md)
+**Versão:** 6.0.45 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + FASE 8 concluída — sessao-096.md)
 **Status:** ✅ A 5.0 foi considerada insatisfatória pelo Davi e foi **substituída por um
 reset completo (6.0)** — não uma continuação. Reset implementado em 7 blocos ao longo
 das sessões 044-050 (2026-08-16 a 2026-08-17), sem pausa de confirmação a cada bloco
@@ -47,6 +47,15 @@ cobrou por que eu entrego tela sem ver rodando. **Causa raiz achada:** o Browser
 estava COLAPSADO na tela dele — navegador não renderiza aba invisível, o que congela
 o `requestAnimationFrame` e trava a transição `AnimatePresence mode="wait"`. Não era
 limitação de IA, era janela fechada. Ver D034.
+**[v6.0.45]** 🏁 **FASE 8 CONCLUÍDA** — último bloco foi o painel de
+ofensiva (8.2): agora com TRÊS estados (acesa/congelada/APAGADA — antes
+"sem ofensiva" era desenhada como congelada, o que era mentira), ícone
+grande, dias maiores, o bloco vestindo a cor da situação, próxima
+conquista e "Ver mais" abrindo o painel completo (calendário do mês, meta,
+conquista, recorde geral). As 15 frases do Davi em
+`constants/streakPhrases.js`, com a de tempo usando o tempo real até a
+meia-noite e sorteio preso ao dia. O script de telas ganhou `--acao` pra
+clicar antes de fotografar. Ver `sessao-096.md`.
 **[v6.0.44]** **Bloco 8.1 feito**: a faixa de tabuada virou TROFÉU (20
 artes, `faixa-01`…`faixa-20`) em todas as telas. A folha tinha fundo
 colorido borrado e mesmo assim deu certo — recorte por NITIDEZ (gradiente

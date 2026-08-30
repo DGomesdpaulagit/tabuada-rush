@@ -6,6 +6,8 @@ import { getLevelIdx, getXpProgress, getLivesInfo, todayStr } from '../utils';
 import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX, LIFE_PRICE } from '../constants';
 import { Progress } from './ui';
 import GameIcon from './GameIcon';
+import StreakPanel, { ESTADOS, estadoDaOfensiva, proximaConquista } from './StreakPanel';
+import { fraseDaOfensiva } from '../constants/streakPhrases';
 
 // ── HEADER [v6.0 · escada de Ligas / barra maior] ────────────────────────────
 // Reescrita a pedido do Davi: os 4 indicadores (faixa/ofensiva/moedas/vidas)
@@ -136,6 +138,8 @@ function PanelCta({ onClick, children }) {
 export default function Header({ onNavigate }) {
   const { data, update } = useApp();
   const [openId, setOpenId] = useState(null);
+  // [Fase 8.2] modal completo de ofensiva, aberto pelo "Ver mais" do painel
+  const [painelOfensiva, setPainelOfensiva] = useState(false);
 
   const levelIdx = getLevelIdx(data.xp || 0);
   const level = LEVELS[levelIdx];
@@ -147,15 +151,13 @@ export default function Header({ onNavigate }) {
   const weekActivity = currentWeekActivity(data);
   const streakGoal = nextStreakAchievement(data);
 
-  // [pedido do Davi] A chama da BARRA SUPERIOR alterna entre acesa e
-  // congelada — ícone e cor do número mudam juntos. Congelada quando:
-  //   · não há ofensiva (streak 0), ou
-  //   · o Seguro de Ofensiva está segurando a ofensiva até a próxima
-  //     partida (`streakInsuredAt`, ver utils/applyStreakDecay) — aí ela
-  //     está literalmente congelada, não perdida.
-  // Isso vale SÓ aqui na barra; as outras menções de ofensiva no app
-  // seguem sempre com a chama acesa (ele foi explícito).
-  const ofensivaCongelada = streak === 0 || !!data.streakInsuredAt;
+  // [Fase 8.2, sessão 096] Agora são TRÊS situações, não duas: acesa,
+  // congelada (Seguro segurando, `streakInsuredAt`) e APAGADA (nenhuma
+  // ofensiva). Antes "sem ofensiva" era desenhada como congelada, o que
+  // dizia uma coisa errada — quem está em 0 dia não tem nada congelado.
+  const situacao = estadoDaOfensiva(data);
+  const visual = ESTADOS[situacao];
+  const conquistaOfensiva = proximaConquista(data);
 
   const coins = data.coins || 0;
 
@@ -229,57 +231,65 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <GameIcon name={ofensivaCongelada ? 'ofensiva-congelada' : 'ofensiva'} size={20} />
-              {/* Cor do número acompanha o ícone: laranja acesa, azul congelada */}
-              <span className={ofensivaCongelada ? 'text-frozen' : 'text-streak'}>{streak}</span>
+              <GameIcon name={visual.icone} size={20} />
+              {/* Cor do número acompanha a situação */}
+              <span className={visual.texto}>{streak}</span>
             </>
           }
         >
           <div className="p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <GameIcon name={ofensivaCongelada ? 'ofensiva-congelada' : 'ofensiva'} size={32} />
-              <div className="min-w-0">
-                <p className="font-black text-fg leading-tight">
-                  {streak > 0 ? `${streak} dia${streak === 1 ? '' : 's'} de ofensiva` : 'Nenhuma ofensiva ainda'}
-                </p>
-                <p className="text-xs font-bold text-fg-muted">
-                  {data.streakInsuredAt
-                    ? 'Congelada pelo Seguro — jogue pra reacender'
-                    : `Recorde: ${bestStreak} dias`}
-                </p>
+            {/* [Fase 8.2] O bloco inteiro veste a cor da situação: laranja
+                acesa, azul congelada, neutro apagada — pedido do Davi. */}
+            <div className={`rounded-2xl p-3 mb-3 ${visual.fundo}`}>
+              <div className="flex items-center gap-3">
+                <GameIcon name={visual.icone} size={52} />
+                <div className="min-w-0">
+                  <p className={`text-lg font-black leading-tight ${visual.texto}`}>
+                    {streak > 0 ? `${streak} dia${streak === 1 ? '' : 's'} de ofensiva` : 'Nenhuma ofensiva ainda'}
+                  </p>
+                  {/* O RECORDE saiu daqui (vive no Perfil e no painel completo).
+                      No lugar entra uma das 15 frases do Davi, conforme a
+                      situação — ver constants/streakPhrases.js. */}
+                  <p className="text-xs font-bold text-fg-muted leading-snug mt-0.5">
+                    {fraseDaOfensiva(situacao)}
+                  </p>
+                </div>
               </div>
-            </div>
-            {/* Semana: marcador de dia feito / congelado / vazio (arte do Davi) */}
-            <div className="flex items-center justify-between gap-1 mb-3">
-              {weekActivity.map((d) => (
-                <div key={d.key} className="flex flex-col items-center gap-1">
-                  <span
-                    className={`text-[9px] font-bold ${
-                      d.isToday ? (ofensivaCongelada ? 'text-frozen' : 'text-streak') : 'text-fg-muted'
-                    }`}
-                  >
-                    {d.label}
-                  </span>
-                  <div className="w-6 h-6 flex items-center justify-center">
+
+              {/* Semana: caixas maiores e mais juntas que antes */}
+              <div className="flex items-center justify-between gap-0.5 mt-3">
+                {weekActivity.map((d) => (
+                  <div key={d.key} className="flex flex-col items-center gap-1">
+                    <span className={`text-[10px] font-black ${d.isToday ? visual.texto : 'text-fg-muted'}`}>
+                      {d.label}
+                    </span>
                     <GameIcon
                       name={`dia-${d.estado}`}
-                      size={d.estado === 'congelado' ? 22 : 20}
+                      size={28}
                       className={d.isFuture ? 'opacity-40' : ''}
                     />
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-            {streakGoal && (
-              <p className="text-xs font-bold text-fg-muted bg-surface-2 rounded-xl px-3 py-2">
-                {streakGoal.daysToGo > 0
-                  ? <>Faltam <span className="text-fg">{streakGoal.daysToGo} dia{streakGoal.daysToGo === 1 ? '' : 's'}</span> pra "{streakGoal.title}" {streakGoal.icon}</>
-                  : <>Conquista "{streakGoal.title}" {streakGoal.icon} desbloqueada na próxima partida!</>}
-              </p>
+
+            {/* Próxima conquista de ofensiva */}
+            {conquistaOfensiva && (
+              <div className="flex items-center gap-2.5 bg-surface-2 rounded-xl px-3 py-2.5 mb-3">
+                <GameIcon name="conquista-bloqueada" size={22} />
+                <div className="min-w-0">
+                  <p className="text-xs font-black text-fg leading-tight truncate">{conquistaOfensiva.title}</p>
+                  <p className="text-[11px] font-bold text-fg-muted">
+                    {conquistaOfensiva.faltam > 0
+                      ? `Faltam ${conquistaOfensiva.faltam} ${conquistaOfensiva.faltam === 1 ? 'dia' : 'dias'}`
+                      : 'Desbloqueia na próxima partida!'}
+                  </p>
+                </div>
+              </div>
             )}
           </div>
           <div className="px-4 pb-4">
-            <PanelCta onClick={() => goTo('perfil')}>Ver perfil</PanelCta>
+            <PanelCta onClick={() => { setOpenId(null); setPainelOfensiva(true); }}>Ver mais</PanelCta>
           </div>
         </StatItem>
 
@@ -357,6 +367,12 @@ export default function Header({ onNavigate }) {
           </div>
         </StatItem>
       </div>
+      {/* [Fase 8.2] Painel completo da ofensiva — calendário do mês, meta,
+          conquista e recorde geral. Fica fora do <header> pra não herdar o
+          `sticky`/`z-40` dele. */}
+      <AnimatePresence>
+        {painelOfensiva && <StreakPanel data={data} onFechar={() => setPainelOfensiva(false)} />}
+      </AnimatePresence>
     </header>
   );
 }

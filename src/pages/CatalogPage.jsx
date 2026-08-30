@@ -187,12 +187,13 @@ export default function CatalogPage({ onBack }) {
       {/* ── MARCOS DE PROGRESSO ──────────────────────────────────────────── */}
       <div>
         <div className="flex items-center gap-2 mb-3 px-1">
-          <GameIcon name="podio" size={16} />
+          {/* [sessão 096] Estrela do Davi marcando a seção. */}
+          <GameIcon name="conquista-estrela" size={18} />
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Marcos de Progresso</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <StatCard
-            icon={<Star size={16} />}
+            icon={<GameIcon name="conquista-estrela" size={18} />}
             label="Nível alcançado"
             value={levelIdx + 1}
             colorClass="bg-violet-100 text-violet-600"

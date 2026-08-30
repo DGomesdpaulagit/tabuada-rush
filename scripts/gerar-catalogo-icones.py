@@ -17,12 +17,17 @@ GRUPOS = [
     ('Header', 'barra de status no topo', [
         ('ofensiva', 'Ofensiva acesa', 'Header, Menu, Perfil, resumo'),
         ('ofensiva-congelada', 'Ofensiva congelada', 'Header, Loja — NÃO é escudo'),
+        ('ofensiva-apagada', 'Ofensiva apagada', 'painel de ofensiva do Header'),
         ('moedas', 'Moedas', 'Header, Loja, Missões'),
         ('vidas', 'Vidas', 'Header, durante a partida'),
         ('xp', 'XP', 'Header, Perfil, resumo'),
         ('dia-feito', 'Dia jogado', 'calendário do Header e da pág. 4'),
         ('dia-congelado', 'Dia congelado', 'calendário do Header'),
         ('dia-vazio', 'Dia não jogado', 'calendário do Header e da pág. 4'),
+    ]),
+    ('Faixas de tabuada', 'um troféu por faixa', [
+        ('faixa-%02d' % i, 'Faixa %d' % i, 'Header · Perfil · Catálogo · resumo')
+        for i in range(1, 21)
     ]),
     ('Ligas e pódio', 'RankingPage.jsx', [
         ('liga-bronze', 'Bronze', 'divisão 1'),

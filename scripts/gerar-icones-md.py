@@ -75,6 +75,7 @@ A('\n---\n\n## 2. Header — barra de status no topo\n')
 A(tabela([
     ('ofensiva', 'Chama da ofensiva acesa', 'Header · Menu · Perfil · Stats · Loja · resumo pós-partida'),
     ('ofensiva-congelada', 'Chama azul — ofensiva congelada pelo Seguro. **NÃO é escudo**', 'Header · Loja (Seguro de Ofensiva)'),
+    ('ofensiva-apagada', 'Chama cinza — ofensiva apagada (dessaturada da acesa)', 'Painel de ofensiva do Header'),
     ('moedas', 'Moeda do jogo', 'Header · Loja · Missões · resumo pós-partida'),
     ('vidas', 'Coração de vidas diárias', 'Header · durante a partida'),
     ('xp', 'Ícone de XP', 'Header · Perfil · resumo pós-partida'),
@@ -83,7 +84,16 @@ A(tabela([
     ('dia-vazio', 'Círculo cinza — dia não jogado', 'Calendário do Header · resumo pós-partida (pág. 4)'),
 ]))
 
-A('\n---\n\n## 3. Ligas e pódio — `RankingPage.jsx`\n')
+A('\n---\n\n## 3. Faixas de tabuada — troféus\n')
+A("""Um troféu por faixa (20 faixas, 20 troféus). O jogador ganha o da faixa que
+concluiu — aparece na página de mudança de faixa do resumo pós-partida, e é o
+mesmo badge que Header, Perfil, Catálogo e Configurações mostram.
+`LEVELS[i].badge` guarda o NOME do ícone.
+""")
+A(tabela([('faixa-%02d' % i, 'Faixa %d' % i, 'Header · Perfil · Catálogo · resumo')
+          for i in range(1, 21)]))
+
+A('\n---\n\n## 4. Ligas e pódio — `RankingPage.jsx`\n')
 ligas = [
     ('bronze', 'Divisão 1 — Bronze'), ('prata', 'Divisão 2 — Prata'),
     ('ouro', 'Divisão 3 — Ouro'), ('safira', 'Divisão 4 — Safira'),
@@ -216,7 +226,7 @@ sem brilho e o ícone de XP novo.
 A("""
 ---
 
-## 11. Pasta de referências — `referencias/icones/`
+## 12. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):

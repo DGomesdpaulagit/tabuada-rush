@@ -52,6 +52,7 @@
 |:---:|---|---|---|
 | ![\|48](src/assets/icons/ofensiva.png) | `ofensiva` | Chama da ofensiva acesa | Header · Menu · Perfil · Stats · Loja · resumo pós-partida |
 | ![\|48](src/assets/icons/ofensiva-congelada.png) | `ofensiva-congelada` | Chama azul — ofensiva congelada pelo Seguro. **NÃO é escudo** | Header · Loja (Seguro de Ofensiva) |
+| ![\|48](src/assets/icons/ofensiva-apagada.png) | `ofensiva-apagada` | Chama cinza — ofensiva apagada (dessaturada da acesa) | Painel de ofensiva do Header |
 | ![\|48](src/assets/icons/moedas.png) | `moedas` | Moeda do jogo | Header · Loja · Missões · resumo pós-partida |
 | ![\|48](src/assets/icons/vidas.png) | `vidas` | Coração de vidas diárias | Header · durante a partida |
 | ![\|48](src/assets/icons/xp.png) | `xp` | Ícone de XP | Header · Perfil · resumo pós-partida |
@@ -61,7 +62,39 @@
 
 ---
 
-## 3. Ligas e pódio — `RankingPage.jsx`
+## 3. Faixas de tabuada — troféus
+
+Um troféu por faixa (20 faixas, 20 troféus). O jogador ganha o da faixa que
+concluiu — aparece na página de mudança de faixa do resumo pós-partida, e é o
+mesmo badge que Header, Perfil, Catálogo e Configurações mostram.
+`LEVELS[i].badge` guarda o NOME do ícone.
+
+| Ícone | Nome no código | O que é | Onde aparece |
+|:---:|---|---|---|
+| ![\|48](src/assets/icons/faixa-01.png) | `faixa-01` | Faixa 1 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-02.png) | `faixa-02` | Faixa 2 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-03.png) | `faixa-03` | Faixa 3 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-04.png) | `faixa-04` | Faixa 4 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-05.png) | `faixa-05` | Faixa 5 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-06.png) | `faixa-06` | Faixa 6 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-07.png) | `faixa-07` | Faixa 7 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-08.png) | `faixa-08` | Faixa 8 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-09.png) | `faixa-09` | Faixa 9 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-10.png) | `faixa-10` | Faixa 10 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-11.png) | `faixa-11` | Faixa 11 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-12.png) | `faixa-12` | Faixa 12 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-13.png) | `faixa-13` | Faixa 13 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-14.png) | `faixa-14` | Faixa 14 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-15.png) | `faixa-15` | Faixa 15 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-16.png) | `faixa-16` | Faixa 16 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-17.png) | `faixa-17` | Faixa 17 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-18.png) | `faixa-18` | Faixa 18 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-19.png) | `faixa-19` | Faixa 19 | Header · Perfil · Catálogo · resumo |
+| ![\|48](src/assets/icons/faixa-20.png) | `faixa-20` | Faixa 20 | Header · Perfil · Catálogo · resumo |
+
+---
+
+## 4. Ligas e pódio — `RankingPage.jsx`
 
 | Ícone | Nome no código | O que é | Onde aparece |
 |:---:|---|---|---|
@@ -218,7 +251,7 @@ sem brilho e o ícone de XP novo.
 
 ---
 
-## 11. Pasta de referências — `referencias/icones/`
+## 12. Pasta de referências — `referencias/icones/`
 
 Os **arquivos originais** que você baixa ficam aqui, organizados por
 categoria, em vez de soltos no Downloads (organizado na sessão 081):

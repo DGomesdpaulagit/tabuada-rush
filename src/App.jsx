@@ -548,13 +548,22 @@ export default function App() {
         const yStr = localDateStr(yesterday);
         const yearTurn =
           lastPlay && new Date(lastPlay).getFullYear() < new Date(today).getFullYear();
-        const currentStreak = yearTurn
+        const streakNormal = yearTurn
           ? 1
           : lastPlay === yStr
           ? (prev.currentStreak || 0) + 1
           : lastPlay === today
           ? prev.currentStreak || 1
           : 1;
+        // [sessão 098] Recuperação da ofensiva: o jogador apertou "Trazer
+        // ofensiva de volta" no aviso e veio jogar. Terminar a partida devolve
+        // os dias perdidos + o de hoje. Vale pra QUALQUER modo — ele é mandado
+        // pro Rush, mas se trocar de modo no meio do caminho e jogar mesmo
+        // assim, cumpriu o combinado.
+        const recuperando = !!prev.ofensivaPerdida?.recuperando;
+        const currentStreak = recuperando
+          ? (prev.ofensivaPerdida.dias || 0) + 1
+          : streakNormal;
 
         // Recorde de ofensiva diária (não reseta nunca)
         const bestDayStreak = Math.max(prev.bestDayStreak || 0, currentStreak);
@@ -714,6 +723,8 @@ export default function App() {
           tableStats,
           factStats,
           currentStreak,
+          // Recuperação cumprida (ou partida normal): o aviso não deve voltar.
+          ofensivaPerdida: null,
           bestDayStreak,
           streakGoalBase,
           streakGoal: nextStreakGoal,
@@ -1061,25 +1072,22 @@ export default function App() {
 
   // ── [sessão 097] Avisos de abertura: ofensiva perdida e zona de rebaixamento
   const ofensivaPerdida = data.ofensivaPerdida;
-  const temSeguro = (data.powerups?.streakInsurance || 0) > 0;
 
   const limparAvisoOfensiva = useCallback(() => {
     update((prev) => ({ ...prev, ofensivaPerdida: null }));
   }, [update]);
 
-  // "Trazer de volta" gasta 1 Seguro de Ofensiva e devolve os dias perdidos.
+  // "Trazer de volta" = jogar uma partida. Marca a recuperação como pendente e
+  // manda direto pro Rush; quem devolve os dias é o fim da partida (abaixo, em
+  // `handleGameEnd`). Se ele abandonar a partida, a marca continua de pé e ele
+  // pode tentar de novo — só some quando joga ou quando aceita o zero.
   const recuperarOfensiva = useCallback(() => {
-    update((prev) => {
-      const estoque = prev.powerups?.streakInsurance || 0;
-      if (estoque === 0) return { ...prev, ofensivaPerdida: null };
-      return {
-        ...prev,
-        currentStreak: prev.ofensivaPerdida?.dias || 0,
-        powerups: { ...(prev.powerups || {}), streakInsurance: estoque - 1 },
-        ofensivaPerdida: null,
-      };
-    });
-  }, [update]);
+    update((prev) => ({
+      ...prev,
+      ofensivaPerdida: prev.ofensivaPerdida ? { ...prev.ofensivaPerdida, recuperando: true } : null,
+    }));
+    startGame('rush');
+  }, [update, startGame]);
 
   const mostrarAvisoZona = screen === 'menu' && deveAvisarDaZona(data);
   const fecharAvisoZona = useCallback(() => {
@@ -1272,9 +1280,7 @@ export default function App() {
           <LostStreakModal
             key="lost-streak"
             dias={ofensivaPerdida.dias}
-            temSeguro={temSeguro}
-            onUsarSeguro={recuperarOfensiva}
-            onIrPraLoja={() => { limparAvisoOfensiva(); setScreen('shop'); }}
+            onRecuperar={recuperarOfensiva}
             onReiniciar={limparAvisoOfensiva}
           />
         ) : mostrarAvisoZona ? (

@@ -6,12 +6,11 @@ import GameIcon from './GameIcon';
 // mandou de referência: arte grande, a contagem do que se perdeu, um botão
 // forte pra recuperar e um link discreto pra aceitar o zero.
 //
-// ⚠️ Diferença consciente em relação à referência: lá o botão promete um
-// "desafio especial" pra recuperar. Esse desafio NÃO existe no Tabuada Rush —
-// o que existe é o **Seguro de Ofensiva** (power-up da Loja/loot). Então o
-// botão usa o Seguro quando o jogador tem um no estoque, e leva pra Loja
-// quando não tem. Prometer um desafio que não existe seria mentir na tela.
-export default function LostStreakModal({ dias, temSeguro, onUsarSeguro, onIrPraLoja, onReiniciar }) {
+// O "desafio especial" da referência é, aqui, **uma partida de Rush** — o
+// Davi definiu assim na sessão 098: apertar o botão leva direto pro modo
+// principal, e terminar a partida devolve os dias perdidos (ver
+// `handleGameEnd` em App.jsx, que lê `ofensivaPerdida.recuperando`).
+export default function LostStreakModal({ dias, onRecuperar, onReiniciar }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -34,16 +33,14 @@ export default function LostStreakModal({ dias, temSeguro, onUsarSeguro, onIrPra
           Você perdeu a sua ofensiva de {dias} {dias === 1 ? 'dia' : 'dias'}...
         </p>
         <p className="text-sm font-bold text-fg-muted mt-1 leading-snug">
-          {temSeguro
-            ? 'Use um Seguro de Ofensiva pra trazer ela de volta!'
-            : 'Um Seguro de Ofensiva traz ela de volta — dá pra conseguir na Loja.'}
+          Jogue uma partida agora e traga ela de volta!
         </p>
 
         <button
-          onClick={temSeguro ? onUsarSeguro : onIrPraLoja}
+          onClick={onRecuperar}
           className="w-full mt-5 py-3.5 rounded-2xl bg-check text-white font-black text-sm uppercase tracking-wide shadow-chunky-check active:translate-y-1 active:shadow-none transition-all"
         >
-          {temSeguro ? 'Trazer ofensiva de volta' : 'Ver na loja'}
+          Trazer ofensiva de volta
         </button>
 
         <button

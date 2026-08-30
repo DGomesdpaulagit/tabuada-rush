@@ -4,6 +4,22 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.47] — 2026-08-30 — "Trazer ofensiva de volta" leva pra uma partida
+
+**Detalhes em `sessions/sessao-098.md`.**
+
+### Alterado
+- O botão do aviso de ofensiva perdida **leva direto pro Rush** e
+  terminar a partida devolve os dias perdidos + o de hoje. Na versão
+  anterior ele gastava um Seguro de Ofensiva — o Davi esclareceu que a
+  ideia era "fazer uma lição", então a partida É o desafio
+- Abandonar a partida mantém a recuperação pendente (dá pra tentar de
+  novo); ela só some ao jogar ou ao aceitar "Reiniciar com 0 dias"
+- O Seguro de Ofensiva volta a ter só o papel original: evitar a perda
+  automaticamente quando o jogador falha um dia
+
+---
+
 ## [6.0.46] — 2026-08-30 — Zona de rebaixamento com penalidades + aviso de ofensiva perdida
 
 **Detalhes em `sessions/sessao-097.md`.**

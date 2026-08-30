@@ -47,7 +47,11 @@ function AchievementToast({ achievement, onDone }) {
         bg-white border border-gray-100 shadow-2xl rounded-3xl px-4 py-4 flex items-center gap-3
         max-w-sm mx-auto"
     >
-      <span className="text-4xl shrink-0">{achievement.icon}</span>
+      {/* [Fase 8.1, sessão 095] Conquista com `art` (subir de faixa, ligas)
+          mostra a arte; o resto continua no emoji. */}
+      {achievement.art
+        ? <GameIcon name={achievement.art} size={44} className="shrink-0" />
+        : <span className="text-4xl shrink-0">{achievement.icon}</span>}
       <div className="min-w-0 flex-1">
         <p className="text-xs font-bold text-violet-500 uppercase tracking-wide">Conquista Desbloqueada!</p>
         <p className="font-black text-gray-900 leading-tight">{achievement.title}</p>
@@ -172,7 +176,7 @@ function LevelUpBurst({ level, onDone }) {
         transition={{ duration: 1.2, times: [0, 0.3, 0.6, 1] }}
         className="absolute text-center select-none"
       >
-        <div className="text-6xl mb-1">{level?.badge}</div>
+        <div className="flex justify-center mb-1"><GameIcon name={level?.badge} size={72} /></div>
         <div className="text-2xl font-black text-white drop-shadow-lg bg-violet-600/80 px-4 py-2 rounded-2xl">
           LEVEL UP!
         </div>
@@ -740,7 +744,7 @@ export default function App() {
       if (newLevelIdx > prevLevelIdx) {
         showAchievement({
           id: '_levelup',
-          icon: LEVELS[newLevelIdx].badge,
+          art: LEVELS[newLevelIdx].badge, // troféu da faixa nova
           title: `Nível: ${LEVELS[newLevelIdx].name}!`,
           desc: `Você subiu para o nível ${newLevelIdx + 1}`,
         });

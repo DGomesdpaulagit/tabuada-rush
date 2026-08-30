@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { Gamepad2, BarChart2, LogIn, Cloud, Settings, ChevronRight } from 'lucide-react';
+import { Gamepad2, BarChart2, LogIn, Cloud, Settings, ChevronRight, Sparkles } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getModeUnlock } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
+import { analyzeUser } from '../utils/analysis';
 import { getActiveMissions } from '../utils/missions';
 import { MODES } from '../constants';
 import { Button, pageVariants, pageTransition } from '../components/ui';
@@ -83,6 +84,7 @@ export default function MenuPage({ onStart, onNavigate }) {
   const { league, playerRank, total: leagueTotal } = getLeagueStandings(data);
   const missoes = getActiveMissions(data.missionsData).daily.missions;
   const modos = modosPorUso(data.sessions);
+  const analise = analyzeUser(data);
   const [principal, ...secundarios] = modos;
 
   const jogar = (id) => {
@@ -203,6 +205,30 @@ export default function MenuPage({ onStart, onNavigate }) {
             <Gamepad2 size={16} />
             Modos de jogo
           </Button>
+
+          {/* [sessão 095] Análise Inteligente volta — agora como caixa que
+              ocupa o vão que sobrava embaixo dos modos, em vez do cartãozinho
+              de uma linha que competia com o topo da tela. `flex-1` faz ela
+              esticar até o fim da coluna no desktop. */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            onClick={() => onNavigate('stats')}
+            className="flex-1 min-h-[128px] text-left bg-surface rounded-2xl p-4 border-2 border-border hover:border-accent/40 transition-colors flex flex-col"
+          >
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="flex items-center gap-2 text-sm font-black text-fg">
+                <Sparkles size={15} className="text-accent" />
+                Análise inteligente
+              </span>
+              <span className="text-[11px] font-black text-accent uppercase tracking-wide shrink-0">
+                Ver mais
+              </span>
+            </div>
+            <p className="text-sm font-semibold text-fg-muted leading-snug">{analise.headline}</p>
+            <p className="text-xs font-semibold text-fg-muted/70 leading-snug mt-2">{analise.summary}</p>
+          </motion.button>
         </div>
 
         {/* ── Coluna de apoio: divisão (8.3) + missões do dia (8.4) ─────── */}

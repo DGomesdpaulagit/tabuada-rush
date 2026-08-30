@@ -70,7 +70,7 @@ export default function PerfilPage() {
       <div className={`bg-gradient-to-br ${league.gradient} rounded-3xl p-5 text-white shadow-lg`}>
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0">
-            {level?.badge}
+            <GameIcon name={level?.badge} size={44} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white/70 text-xs font-bold uppercase tracking-wide">Faixa atual</p>

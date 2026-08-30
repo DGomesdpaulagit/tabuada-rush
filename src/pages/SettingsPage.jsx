@@ -8,6 +8,7 @@ import { LEVELS, DAILY_LIVES_MAX } from '../constants';
 import { getLevelIdx, getLivesInfo } from '../utils';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
+import GameIcon from '../components/GameIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { prefs } from '../lib/prefs';
 import { audio } from '../lib/audioManager';
@@ -320,7 +321,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
       <Section title="Conta">
         <div className="flex items-center gap-3 py-2">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center text-2xl shrink-0">
-            {level.badge}
+            <GameIcon name={level.badge} size={30} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-black text-gray-900 leading-tight truncate">{level.name}</p>

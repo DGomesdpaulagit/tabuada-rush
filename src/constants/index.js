@@ -104,7 +104,11 @@ const TABUADA_TIER_RANGES = [
   [2, 10],
   ...Array.from({ length: 19 }, (_, i) => [10 + i * 10, 20 + i * 10]),
 ];
-const TIER_BADGES = ['🌱', '📚', '✏️', '🧮', '🎯', '⚡', '🚀', '🎲', '💪', '📐', '♟️', '🗺️', '🔬', '🎓', '✨', '🎼', '🏅', '🥇', '📜', '🦉'];
+// [Fase 8.1, sessão 095] O badge da faixa deixou de ser emoji e virou o
+// TROFÉU que o jogador ganha ao concluir a faixa (arte do Davi, 20 troféus
+// pra 20 faixas). O valor aqui é o nome do ícone — quem exibe usa
+// `<GameIcon name={level.badge} />`, não texto.
+const TIER_BADGES = Array.from({ length: 20 }, (_, i) => `faixa-${String(i + 1).padStart(2, '0')}`);
 const FIRST_TIER_XP = 27000;
 const TIER_XP_DECAY = 0.68;
 const TIER_XP_FLOOR = 300;
@@ -117,7 +121,7 @@ function buildTabuadaTiers() {
       name: `Tabuada ${min}×${max}`,
       title: `Tabuada ${min}×${max}`,
       xp,
-      badge: TIER_BADGES[i] || '🔢',
+      badge: TIER_BADGES[i] || 'faixa-01',
       rangeMin: min,
       rangeMax: max,
     };

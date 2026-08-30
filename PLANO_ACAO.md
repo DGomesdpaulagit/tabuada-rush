@@ -424,7 +424,7 @@ espaço em branco em vez de caixa em volta de tudo.
 
 ---
 
-### BLOCO 8.1 — Faixa de tabuada vira troféu
+### BLOCO 8.1 — Faixa de tabuada vira troféu ✅ CONCLUÍDO (sessão 095)
 
 Hoje cada uma das **20 faixas** (`TABUADA_TIER_RANGES`) tem um emoji de
 badge (🌱📚✏️…). Passa a ter **troféu de verdade** — a folha do Davi tem

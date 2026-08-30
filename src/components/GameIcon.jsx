@@ -10,6 +10,11 @@
 // visual sem distorcer, que é o que mantém as fileiras alinhadas.
 import ofensiva from '../assets/icons/ofensiva.png';
 import ofensivaCongelada from '../assets/icons/ofensiva-congelada.png';
+// [Fase 8.2, sessão 095] Terceiro estado da chama: APAGADA. Derivada da acesa
+// por dessaturação (luminância percebida, não média dos canais — senão o
+// laranja sai claro demais). O Davi escolheu esta versão, a de cinza puro,
+// entre as duas que mostrei.
+import ofensivaApagada from '../assets/icons/ofensiva-apagada.png';
 import diaFeito from '../assets/icons/dia-feito.png';
 import diaCongelado from '../assets/icons/dia-congelado.png';
 import diaVazio from '../assets/icons/dia-vazio.png';
@@ -102,9 +107,20 @@ import ligaPerola from '../assets/icons/liga-perola.png';
 import ligaObsidiana from '../assets/icons/liga-obsidiana.png';
 import ligaDiamante from '../assets/icons/liga-diamante.png';
 
+// [Fase 8.1, sessão 095] Os 20 troféus de faixa entram por glob em vez de 20
+// linhas de import — a lista é fixa (uma por faixa de `TABUADA_TIER_RANGES`) e
+// o nome do arquivo já É o nome do ícone (`faixa-01` … `faixa-20`).
+const TROFEUS_FAIXA = Object.fromEntries(
+  Object.entries(
+    import.meta.glob('../assets/icons/faixa-*.png', { eager: true, import: 'default' })
+  ).map(([caminho, src]) => [caminho.split('/').pop().replace('.png', ''), src])
+);
+
 export const ICONS = {
+  ...TROFEUS_FAIXA,
   ofensiva,
   'ofensiva-congelada': ofensivaCongelada,
+  'ofensiva-apagada': ofensivaApagada,
   'dia-feito': diaFeito,
   'dia-congelado': diaCongelado,
   'dia-vazio': diaVazio,

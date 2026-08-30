@@ -4,6 +4,28 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.44] — 2026-08-29 — Troféus das faixas (8.1) + ofensiva apagada
+
+**Detalhes em `sessions/sessao-095.md`.**
+
+### Adicionado
+- **20 troféus de faixa** (`faixa-01` … `faixa-20`), recortados da folha
+  do Davi mesmo com fundo colorido borrado — recorte por NITIDEZ (gradiente
+  local + flood fill), já que não existe "cor do fundo" nessa arte
+- `ofensiva-apagada` (cinza puro, dessaturada por luminância percebida)
+- **Caixa de Análise Inteligente** na Arena, embaixo de "Modos de jogo",
+  esticando até o fim da coluna
+
+### Alterado
+- **A faixa de tabuada virou troféu**: `TIER_BADGES` deixou de ser emoji e
+  agora é arte. Trocado no Header, Perfil, Catálogo, Configurações, modal
+  de subida de nível e resumo pós-partida
+- Na página de mudança de faixa o troféu aparece **sem fundo atrás**
+- Toast de conquista aceita arte (`art`) além de emoji — senão a subida de
+  faixa mostraria o texto "faixa-07" na tela
+
+---
+
 ## [6.0.43] — 2026-08-29 — Arena consertada no desktop
 
 **Detalhes em `sessions/sessao-094.md`.**

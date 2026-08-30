@@ -425,8 +425,9 @@ function TierPage({ result, footer }) {
 
   return (
     <SummaryShell
-      icon={<span className="text-4xl">{newLevel.badge}</span>}
-      iconBg="bg-coin"
+      icon={<GameIcon name={newLevel.badge} size={112} />}
+      iconBg=""
+      iconWrapClass="w-auto h-auto"
       title="Nova faixa alcançada!"
       subtitle="Você avançou na tabuada!"
       footer={footer}
@@ -434,13 +435,13 @@ function TierPage({ result, footer }) {
       <StatBox label="Sua evolução">
         <div className="flex items-center justify-center gap-4">
           <div className="text-center opacity-60">
-            <span className="block text-3xl">{prevLevel.badge}</span>
+            <GameIcon name={prevLevel.badge} size={44} className="mx-auto" />
             <p className="text-xs font-black text-fg-muted mt-1">{prevLevel.name}</p>
             <p className="text-[10px] font-bold text-fg-muted">Até agora</p>
           </div>
           <span className="text-coin font-black text-xl">»</span>
           <div className="text-center">
-            <span className="block text-3xl">{newLevel.badge}</span>
+            <GameIcon name={newLevel.badge} size={44} className="mx-auto" />
             <p className="text-xs font-black text-coin mt-1">{newLevel.name}</p>
             <p className="text-[10px] font-bold text-coin">Nova faixa</p>
           </div>
@@ -468,7 +469,7 @@ function TierPage({ result, footer }) {
                   : 'bg-surface-2 text-fg-muted'
               }`}
             >
-              {isLocked ? <Lock size={14} /> : isDone ? <Check size={16} /> : tier.badge}
+              {isLocked ? <Lock size={14} /> : isDone ? <Check size={16} /> : <GameIcon name={tier.badge} size={22} />}
             </div>
           );
         })}

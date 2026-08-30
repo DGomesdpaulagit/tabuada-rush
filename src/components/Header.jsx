@@ -193,14 +193,14 @@ export default function Header({ onNavigate }) {
           setOpenId={setOpenId}
           trigger={
             <>
-              <span className="text-xl">{level?.badge}</span>
+              <GameIcon name={level?.badge} size={22} />
               <span className="text-fg">{level?.rangeMin}×{level?.rangeMax}</span>
             </>
           }
         >
           <div className="p-4">
             <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl">{level?.badge}</span>
+              <GameIcon name={level?.badge} size={34} />
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-wide text-fg-muted">Faixa atual</p>
                 <p className="font-black text-fg leading-tight truncate">{level?.name}</p>
@@ -210,7 +210,7 @@ export default function Header({ onNavigate }) {
               <>
                 <Progress value={xpProgress.pct} colorClass="bg-accent" className="mb-1.5" />
                 <p className="text-xs font-bold text-fg-muted">
-                  Faltam <span className="text-fg">{xpProgress.toNext} XP</span> pra {nextLevel.badge} {nextLevel.rangeMin}×{nextLevel.rangeMax}
+                  Faltam <span className="text-fg">{xpProgress.toNext} XP</span> pra <GameIcon name={nextLevel.badge} size={14} className="inline-block align-text-bottom" /> {nextLevel.rangeMin}×{nextLevel.rangeMax}
                 </p>
               </>
             ) : (

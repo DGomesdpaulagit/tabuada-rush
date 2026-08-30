@@ -84,7 +84,7 @@ export default function CatalogPage({ onBack }) {
       >
         <div className="flex items-center gap-3 mb-4">
           <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-3xl shrink-0">
-            {level.badge}
+            <GameIcon name={level.badge} size={40} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-violet-200 text-xs font-bold uppercase tracking-wide truncate">
@@ -250,7 +250,7 @@ export default function CatalogPage({ onBack }) {
                 }`}
               >
                 <span className={`text-2xl shrink-0 ${!unlocked && !current ? 'grayscale opacity-50' : ''}`}>
-                  {lv.badge}
+                  <GameIcon name={lv.badge} size={26} />
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

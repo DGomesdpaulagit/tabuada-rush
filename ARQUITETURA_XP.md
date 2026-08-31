@@ -446,6 +446,8 @@ aqui é ponto de partida, não estrutura.**
 | Base da fluência | **p25** dos tempos medianos (fatos com ≥5 respostas) |
 | Limiar de fluência | tempo ≤ base × **1,4** |
 | Estabilização | <15 fatos com ≥5 respostas → fluência não pontua (60/25/–/15) |
+| **Catraca de dias** | **< 3 dias distintos → nunca 🟢** *(medido na Fase 1: sem isso, um fato de um dia só somava 81 e passava)* |
+| 1ª pergunta da partida | **fora da fluência** *(medido: 2966 ms vs 1860 ms, +60%)* |
 | Fluência | **latch** — do componente, nunca da nota |
 | Fonte do tempo | **`firstKeyMs`**, nunca o tempo total |
 | Plano de Resgate | 🔴 + **≥15 tentativas** desde que ficou vermelho |
@@ -454,6 +456,7 @@ aqui é ponto de partida, não estrutura.**
 | | |
 |---|---|
 | 🔴 / 🟡 / 🟢 | peso **4 / 2 / 1** |
+| ⚠️ Granularidade | **por FATO, nunca por tabuada** — o `weakBias` de hoje enviesa por tabuada e deixa conta com 0 exposições ao lado de conta com 20+ |
 | 🔴 em Plano de Resgate | peso **8** |
 | Faixas anteriores | `10% + 20% × (fração verde da faixa atual)`; piso **25%** se houver 🔴 antigo |
 | Rush | pool inteiro, ponderado |

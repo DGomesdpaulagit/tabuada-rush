@@ -20,6 +20,14 @@ export const PISO_PRECISAO = 70;      // catraca: abaixo disso é 🔴 sempre
 export const FLUENCIA_MULT = 1.4;     // fluente = mediana ≤ base × isto
 export const FLUENCIA_TETO = 2.5;     // acima de base × isto, fluência = 0
 export const DIAS_ALVO = 4;           // dias distintos pra consistência cheia
+// ⚠️ CATRACA DE DIAS [medida na Fase 1, sessão 099]. Com os pesos da
+// Tabela-Mãe, um fato com precisão, fluência e recência perfeitas mas
+// praticado num DIA SÓ soma 81 — e 81 já é verde. Ou seja: "10 acertos numa
+// tarde" viraria "dominado", exatamente o que a consistência existia pra
+// impedir. Não é problema de peso, é de validade: aprendizado não se
+// estabelece numa sessão. Então dias distintos vira catraca, igual à
+// precisão.
+export const MIN_DIAS_VERDE = 3;
 export const MIN_RESPOSTAS_BASE = 5;  // respostas pra um fato entrar na base
 export const MIN_FATOS_BASE = 15;     // fatos medidos pra a base ser confiável
 export const CORTE_FAIXA = 0.95;      // 95% em 🟢 e nenhum 🔴
@@ -41,8 +49,14 @@ const percentil = (xs, p) => {
 // (`d` só é gravado quando passou nos descartes: aba escondida, power-up na
 // frente, > 30s). Ver GamePage.jsx.
 export function medianaDecisao(fato) {
-  const ds = (fato?.ult || []).map((t) => t.d).filter((d) => d != null && d > 0);
-  return mediana(ds);
+  const ult = fato?.ult || [];
+  // Fora a primeira pergunta da partida: medida na Fase 1, ela é ~60% mais
+  // lenta que as demais (2966 ms contra 1860 ms) porque carrega o tempo de se
+  // situar. Só descarta se sobrar amostra — num fato que só apareceu como
+  // primeira pergunta, é melhor um dado sujo que dado nenhum.
+  const semQ1 = ult.filter((t) => !t.q1);
+  const fonte = semQ1.length >= 3 ? semQ1 : ult;
+  return mediana(fonte.map((t) => t.d).filter((d) => d != null && d > 0));
 }
 
 // ── A BASE DA FLUÊNCIA ──────────────────────────────────────────────────────
@@ -115,11 +129,28 @@ export function notaDoFato(fato, base, opcoes = {}) {
     (p * pesos.precisao + c * pesos.consistencia + (f ?? 0) * pesos.fluencia + r * pesos.recencia) / 100
   );
 
-  // Catraca: velocidade não compensa erro. É a única regra dura da nota.
+  // Duas catracas, e nenhuma delas é questão de peso:
+  //   1. precisão < 70% → velocidade nunca compensa erro;
+  //   2. menos de MIN_DIAS_VERDE dias distintos → não dá pra chamar de
+  //      aprendido o que só aconteceu numa sessão (ver MIN_DIAS_VERDE).
+  const dias = (fato?.dias || []).length;
   const estado =
-    p < PISO_PRECISAO ? 'vermelho' : nota >= VERDE ? 'verde' : nota >= AMARELO ? 'amarelo' : 'vermelho';
+    p < PISO_PRECISAO
+      ? 'vermelho'
+      : nota >= VERDE && dias >= MIN_DIAS_VERDE
+      ? 'verde'
+      : nota >= AMARELO
+      ? 'amarelo'
+      : 'vermelho';
 
-  return { nota, estado, partes: { precisao: p, consistencia: c, fluencia: f, recencia: r }, pesos };
+  return {
+    nota,
+    estado,
+    partes: { precisao: p, consistencia: c, fluencia: f, recencia: r },
+    pesos,
+    // Por que não é verde apesar da nota — o painel usa isso pra explicar.
+    travadoPorDias: nota >= VERDE && dias < MIN_DIAS_VERDE,
+  };
 }
 
 // ── OS FATOS DE UMA FAIXA ───────────────────────────────────────────────────
@@ -142,13 +173,14 @@ export function dominioDaFaixa(data = {}, idx = 0, agora = Date.now()) {
 
   const linhas = chaves.map((fk) => {
     const fato = fatos[fk];
-    const { nota, estado, partes, semDados } = notaDoFato(fato, base, { estabilizando, agora });
+    const { nota, estado, partes, semDados, travadoPorDias } = notaDoFato(fato, base, { estabilizando, agora });
     return {
       fk,
       nota,
       estado,
       partes,
       semDados: !!semDados,
+      travadoPorDias: !!travadoPorDias,
       tentativas: (fato?.ult || []).length,
       dias: (fato?.dias || []).length,
       medDec: medianaDecisao(fato),
@@ -187,7 +219,18 @@ export function diagnosticoDaColeta(data = {}) {
   const resto = cal.filter((c) => !c.q1);
   const diasDistintos = new Set(Object.values(fatos).flatMap((f) => f?.dias || [])).size;
 
+  // Quão desigual está a exposição entre as contas da faixa? O sorteio de
+  // hoje já enviesa por TABUADA (`weakBias`, em generateQuestion), mas não por
+  // CONTA — então dá pra ter conta com 20 tentativas ao lado de conta com 1.
+  const daFaixa = fatosDaFaixa(0);
+  const exposicoes = daFaixa.map((fk) => (fatos[fk]?.ult || []).length);
+  const nuncaVistos = exposicoes.filter((n) => n === 0).length;
+
   return {
+    nuncaVistos,
+    expMin: exposicoes.length ? Math.min(...exposicoes) : 0,
+    expMax: exposicoes.length ? Math.max(...exposicoes) : 0,
+    expMediana: mediana(exposicoes),
     tentativas: cal.length,
     comDecisao: comDec.length,
     validasFluencia: cal.filter((c) => c.flu).length,

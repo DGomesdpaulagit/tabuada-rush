@@ -504,6 +504,42 @@ calcular a nota até a data T e olhar o erro DEPOIS de T.
 Por isso o painel mostra "dias distintos" em destaque, com o aviso de que só o
 tempo resolve.
 
+## 13. FASE 1, primeira leitura — 3 achados que mudaram a regra
+
+436 tentativas, 53 fatos, 1 dia. Base p25 = **1499 ms**, fluente até 2099 ms.
+30 🟢 / 18 🟡 / 6 🔴 — faixa não abriria (56%).
+
+**1. A 1ª pergunta da partida É mais lenta — confirmado.** 2966 ms contra
+1860 ms das demais: **+60%**. Era hipótese registrada no documento pra *medir,
+não supor*. Medida. Ela carrega tempo de se situar, não de lembrar, então sai
+da fluência. Precisou mudar a COLETA (`q1` passa a ir pro `ult`), senão não
+haveria como excluir na hora de avaliar. Com salvaguarda: só descarta se
+sobrarem ≥3 tentativas, senão um fato que só caiu como primeira pergunta
+ficaria sem dado nenhum.
+
+**2. 🚨 Um fato de UM DIA SÓ já ficava verde.** Com os pesos da Tabela-Mãe,
+precisão 100 + fluência 100 + recência 100 + consistência 25 (1 dia) = **81**,
+e 81 ≥ 80. Ou seja: *"10 acertos numa tarde"* seria "dominado" — exatamente o
+que a consistência existia pra impedir. Estava visível na tela: 30 fatos
+verdes, todos com nota 81 e Cons 25.
+
+Não é problema de peso, é de **validade**: aprendizado não se estabelece numa
+sessão. Virou **catraca**, igual à precisão — `MIN_DIAS_VERDE = 3`. O painel
+marca com ⏳ quem tem nota de verde mas ainda não tem os dias.
+
+**3. A exposição entre contas é absurdamente desigual.** De 0 a 20+
+tentativas: `2×2` e `10×10` **nunca foram sorteadas** em 436 perguntas,
+enquanto `4×6` e `6×7` bateram o teto do buffer.
+
+Causa encontrada no código: `generateQuestion` já tem viés (`weakBias`), mas
+ele força a **TABUADA** (`a`), não a **CONTA**. Some com a assimetria natural
+do sorteio (`2×2` só sai de a=2,b=2 — metade da chance de `2×7`, que sai de
+duas combinações) e o resultado é conta faminta ao lado de conta saturada.
+
+**Reforça o sorteio ponderado da Fase 3** — e acrescenta um requisito que o
+documento não tinha: o peso tem que ser **por fato**, não por tabuada, senão
+herda esse mesmo buraco. O painel agora mostra mín/mediana/máx de exposição.
+
 ---
 
 ## Arquivos alterados

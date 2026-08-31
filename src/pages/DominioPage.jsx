@@ -86,6 +86,15 @@ export default function DominioPage() {
         />
         <Linha rotulo="Fatos tocados" valor={diag.fatosTocados} />
         <Linha
+          rotulo="Exposição por conta (mín / mediana / máx)"
+          valor={`${diag.expMin} / ${diag.expMediana ?? '—'} / ${diag.expMax}`}
+          nota={
+            diag.nuncaVistos > 0
+              ? `${diag.nuncaVistos} conta(s) nunca sorteada(s) — o sorteio enviesa por tabuada, não por conta`
+              : null
+          }
+        />
+        <Linha
           rotulo="Dias distintos de prática"
           valor={diag.diasDistintos}
           nota={diag.diasDistintos < 4 ? 'consistência precisa de 4 — só o tempo resolve' : null}
@@ -143,7 +152,10 @@ export default function DominioPage() {
                   <td className="py-1 font-black text-fg">
                     {PONTO[l.estado]} {l.fk.replace('x', ' × ')}
                   </td>
-                  <td className={`text-right font-black ${COR[l.estado]}`}>{l.nota}</td>
+                  <td className={`text-right font-black ${COR[l.estado]}`}>
+                    {l.nota}
+                    {l.travadoPorDias && <span className="text-[10px] font-bold text-fg-muted"> ⏳</span>}
+                  </td>
                   <td className="text-right text-fg-muted">{l.partes.precisao ?? '—'}</td>
                   <td className="text-right text-fg-muted">{l.partes.consistencia ?? '—'}</td>
                   <td className="text-right text-fg-muted">{l.partes.fluencia ?? '—'}</td>
@@ -158,6 +170,7 @@ export default function DominioPage() {
         <p className="text-[11px] font-semibold text-fg-muted/70 mt-2">
           Prec = precisão recente · Cons = consistência (dias) · Flu = fluência · Rec = recência ·
           Tent = tentativas guardadas · Dec = mediana do tempo de decisão (ms)
+          <br />⏳ = tem nota de verde, mas ainda não tem dias distintos suficientes
         </p>
       </Caixa>
     </motion.div>

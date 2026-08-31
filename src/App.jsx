@@ -728,9 +728,14 @@ export default function App() {
             // alimenta consistência. `d` só é gravado quando a tentativa
             // passou nos descartes da fluência (aba escondida, power-up na
             // frente, tempo > 30s) — ela continua contando pro resto.
+            // `q1` entra aqui porque a Fase 1 mediu e confirmou: a primeira
+            // pergunta da partida é bem mais lenta que as outras (2966 ms
+            // contra 1860 ms no save do Davi, +60%). Ela carrega tempo de se
+            // situar, não de lembrar — então sai da fluência. Sem gravar a
+            // marca no `ult`, não haveria como excluí-la na avaliação.
             f.ult = [
               ...(f.ult || []),
-              { ok: q.correct ? 1 : 0, d: q.flu ? q.dec : null, t: agoraMs },
+              { ok: q.correct ? 1 : 0, d: q.flu ? q.dec : null, q1: q.q1 ? 1 : 0, t: agoraMs },
             ].slice(-ULT_MAX);
             const diasFato = f.dias || [];
             f.dias = diasFato.includes(hojeNum)

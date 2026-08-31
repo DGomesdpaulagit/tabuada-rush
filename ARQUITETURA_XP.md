@@ -1,18 +1,18 @@
 # ✨ ARQUITETURA_XP.md — Pontos, XP, Domínio e progressão
 
-> **v6 (sessão 099).** **Arquitetura conceitual fechada. Parâmetros abertos.**
->
-> Esta versão não comenta posições — ela **resolve** os cinco pontos que ainda
-> estavam soltos: o latch, a objeção pedagógica das estratégias rápidas, o
-> jogador travado numa conta só, o que exatamente a Fase 0 tem que gravar (e
-> aqui tem uma descoberta que muda o plano) e a variância dos personagens.
+> **v7 (sessão 099). CONSENSO FECHADO.** Arquitetura conceitual aprovada dos
+> dois lados. Esta versão fecha o **último item aberto** — o formato e a
+> retenção do histórico, desenhados a partir das consultas — e traz a
+> **simulação de 5.000 ciclos** que verifica a variância dos personagens em
+> vez de confiar na fórmula.
 >
 > Histórico: **v1** tirava o XP das faixas · **v2** `XP + Domínio` pra
 > sustentar os 8–10 meses · **v3** derrubou a condição de XP quando o Davi
 > cancelou a meta de tempo · **v4** nota composta + fluência relativa + 2 furos
 > achados no código · **v5** fecha os últimos pontos em aberto (base da
 > fluência, interleaving, Teste de Faixa, papel da Revisão) e consolida a
-> Tabela-Mãe · **v6** resolve os cinco últimos.
+> Tabela-Mãe · **v6** resolve os cinco últimos · **v7** fecha o histórico e
+> verifica a liga por simulação.
 >
 > Nada aqui está implementado.
 
@@ -35,6 +35,18 @@ PRÓXIMA FAIXA = Domínio suficiente
 O conflito que a discussão inteira estava tentando resolver, resolvido:
 **o XP continua importante sem ser responsável por provar que o jogador
 aprendeu.** Ele não perde nada — perde só o cargo de pedágio de conteúdo.
+
+### 🥇 Regra de ouro
+
+> **O sistema nunca cria uma barreira sem oferecer um caminho claro pra
+> superá-la.**
+
+Não domina → o jogo **mostra mais** o fato (sorteio ponderado, 2.5).
+Continua não dominando → o jogo **muda de estratégia** (Plano de Resgate, 2.7).
+Segue travado → os dados apontam o problema (Fase 1, seção 4).
+
+É essa regra que impede o domínio de virar parede invisível. Toda decisão
+daqui pra frente é medida contra ela.
 
 ---
 
@@ -313,35 +325,76 @@ Consequências, e a segunda é grave:
 
 ### 4.2 Fase 0 — o que gravar (invisível, risco zero)
 
-**Duas coisas, não uma:**
+O ChatGPT fechou o consenso com uma ressalva certa: *"não fecharia um array
+global de 3.000 linhas sem especificar como esse histórico será consumido"*.
+Concordo — a retenção tem que sair das consultas. Sai assim:
 
-**(a) `firstKeyMs`** — tempo até a primeira tecla, no registro da questão. Um
-`onKeyDown` no input do `GamePage.jsx`.
+#### Uma estrutura por consulta, e duas vidas diferentes
 
-**(b) Log de tentativas** — um buffer rolante, o dado que hoje não existe:
+| Consulta do domínio | Onde mora | Vida |
+|---|---|---|
+| **Precisão recente** (últimas 10 do fato) | `ult` — buffer circular de 20 no fato | permanente |
+| **Fluência** (mediana dos tempos do fato) | `ult` (mesmo buffer) | permanente |
+| **Consistência** (dias distintos) | `dias` — últimos 10 dias distintos | permanente |
+| **Recência** | `lastPracticed` (já existe) | permanente |
+| **Base p25** | derivada das medianas por fato | calculada na hora |
+| **Falso positivo / negativo** | `calibra` — log cronológico global | **temporária, descartável** |
+
+> **Por que `dias` não sai do `ult`:** um jogador pesado faz 20 tentativas do
+> mesmo fato em dois dias. O buffer não enxerga espaçamento — e espaçamento é
+> justamente o que a consistência mede. São duas perguntas diferentes, então
+> são duas estruturas.
+
+#### (a) Por fato — permanente, dentro do `factStats` que já existe
 
 ```js
-tentativas: [
-  { fk: '7x8', ok: true, dec: 940, tot: 1620, t: 1756512345678 },
-  …
-]
+factStats.mult['7x8'] = {
+  correct, wrong, totalMs, count, lastPracticed,   // tudo que já existe, intacto
+  ult:  [{ ok: 1, d: 940, t: 1756512345678 }, …],  // últimas 20 tentativas
+  dias: [20693, 20694, 20697, …],                  // últimos 10 dias distintos
+  fluOk: true                                       // latch da fluência (2.3)
+}
 ```
 
-| campo | o quê |
+`d` = `firstKeyMs` · `t` = timestamp · `dias` são inteiros (dias desde a época),
+não strings.
+
+**Custo:** ~460 bytes por fato praticado. 500 fatos ≈ **230 KB**. Fato sem
+prática há 90 dias volta a ser só agregado (`ult`/`dias` podados) — o histórico
+recente dele já não vale nada pro cálculo mesmo.
+
+#### (b) Global — temporária, só pra calibrar
+
+```js
+calibra: [{ fk: '7x8', ok: 1, d: 940, tot: 1620, t: … }, …]   // teto 5.000
+```
+
+Existe **só durante a Fase 0 e a Fase 1** e é **apagada na Fase 2**. Serve a
+uma única pergunta, que é a mais importante de todas e a única que precisa de
+ordem cronológica global: *a regra prevê acerto futuro?* Em produção ela não
+existe — o jogo não precisa dela pra rodar.
+
+Custo: ~200 KB enquanto durar. (`localStorage` tem 5 MB.)
+
+#### Como capturar o `firstKeyMs`
+
+`GamePage.jsx` já guarda `questionShownAt.current`. Entra um
+`firstKeyAt.current`, zerado a cada pergunta nova e preenchido **na primeira
+tecla** (`onKeyDown` do input; no modo Inverso, a primeira tecla de qualquer um
+dos dois campos).
+
+**Regras de descarte** — a tentativa continua contando pra precisão, mas **sai
+da fluência** quando:
+
+| Situação | Por quê |
 |---|---|
-| `fk` | chave normalizada do fato (`getFactKey` já existe) |
-| `ok` | acertou |
-| `dec` | `firstKeyMs` — tempo de decisão |
-| `tot` | tempo total (o `ms` de hoje) |
-| `t` | timestamp |
+| `document.hidden` em algum momento da pergunta | trocou de aba; o relógio não mede pensamento |
+| power-up usado durante a pergunta | modal na frente infla o tempo |
+| tempo total > 30 s | distração, não recuperação |
+| **primeira pergunta da partida** | ⚠️ *suspeita a verificar na Fase 1* — pode conter tempo de se situar. Medir antes de decidir: se Q1 for sistematicamente mais lenta que as demais, passa a ser descartada; se não for, fica |
 
-**Teto de 3.000 tentativas** (~75 partidas de 40 questões), cortando as mais
-antigas. Custo em `localStorage`: ~40 bytes por linha ≈ **120 KB** — o limite
-é 5 MB, então cabe com folga, e pode ser podado depois.
-
-**Isso não muda nada do jogo:** nenhuma regra, nenhuma tela, nenhum XP, nenhuma
-faixa. Só passa a guardar o que já acontece. É a mudança mais barata de todo o
-plano e é a que destrava as outras duas fases.
+**Nada mais muda.** Nenhuma regra, nenhuma tela, nenhum XP, nenhuma faixa. Só
+passa a guardar o que já acontece.
 
 ### 4.3 Fase 1 — o que medir (função pura, sem UI, sem gate)
 
@@ -514,14 +567,49 @@ oscilação de ±30% aplicada de uma vez sobre o total de 14 dias). Somando 14
 sorteios diários, o desvio da janela encolhe por **√14 ≈ 3,74** sozinho. É a
 matemática que garante o "sem caos", sem precisar de nenhuma trava artificial:
 
-| Confronto | Diferença | σ combinado | Distância | Upset? |
-|---|---|---|---|---|
-| Einstein (130, alta) × Batman (120, média) | 140 XP na janela | ~122 | 1,1σ | **~14% dos ciclos** — a surpresa que o Davi quer |
-| Einstein (130, alta) × Patrick (70, baixa) | 840 XP na janela | ~128 | 6,6σ | **praticamente nunca** |
+#### Verificado por simulação, não por fórmula
 
-Ou seja: **vizinho passa vizinho de vez em quando; o fundo da tabela nunca
-passa o topo.** Exatamente "surpresa, mas não caos" — e sem regra especial
-nenhuma, só porque a soma de sorteios diários se comporta assim.
+O ChatGPT pediu (com razão) pra não tratar a conta como garantida: *"quando
+isso roda por 100 ciclos, como fica a distribuição dos pódios?"*. Rodei —
+**5.000 ciclos, liga de 20 (tamanho do Bronze), ritmo de 60 a 140,
+constância alternada**:
+
+| Ritmo | Constância | 1º lugar | Top 3 | |
+|---|---|---|---|---|
+| 140 | alta | **41,1%** | **96,1%** | Einstein |
+| 136 | média | 23,5% | 74,0% | Batman |
+| 132 | baixa | 24,6% | 54,6% | |
+| 127 | média | 4,4% | 35,7% | |
+| … | | | | |
+| 60 | baixa | **0%** | **0%** | Patrick |
+
+- **Pior colocação do Einstein em 5.000 ciclos: 6º.** Acontece — e é
+  exatamente o "caraca, o Einstein está em sexto" que o Davi quer.
+- **Melhor colocação do Patrick em 5.000 ciclos: 14º de 20.** Nunca chegou
+  perto do pódio.
+
+**Vizinho passa vizinho; o fundo nunca passa o topo.** "Surpresa, mas não
+caos", confirmado com número, sem nenhuma regra especial — só porque a soma de
+sorteios diários se comporta assim.
+
+#### ⚠️ Um efeito colateral que apareceu na simulação
+
+Comparando dois personagens da simulação:
+
+| | Ritmo | Constância | Top 3 |
+|---|---|---|---|
+| A | **123** | alta | **7,8%** |
+| B | 119 | baixa | **20,6%** |
+
+**B é pior e aparece no pódio quase 3× mais.** Não é bug: pódio é evento de
+cauda, e quem varia mais ganha mais caudas. **Constância baixa é vantagem pra
+pódio.**
+
+Isso é sabor ou problema? Como sabor, funciona — o gênio irregular tem picos.
+Se o Davi quiser que o ritmo domine a percepção de hierarquia, o ajuste é
+simples e narrativamente coerente: **personagem de constância baixa leva um
+ritmo médio um pouco menor** (ele é irregular, então produz menos na média).
+Fica como knob, não como correção obrigatória.
 
 ---
 
@@ -543,7 +631,7 @@ nenhuma, só porque a soma de sorteios diários se comporta assim.
 
 ## 10. Estado das decisões
 
-### ✅ Arquitetura conceitual fechada
+### ✅ CONSENSO — arquitetura conceitual fechada dos dois lados
 Pontos = desempenho · XP = progressão (liga, missões, eventos, status) ·
 Domínio = aprendizado · **Faixa = domínio** · velocidade sai do XP e vira
 critério de domínio · combo fica no XP · base de XP por acerto com teto de
@@ -556,23 +644,32 @@ porque o Plano de Resgate cobre o buraco) · personagens com ritmo + constância
 **σ por constância e janela somada dia a dia** · QI define ritmo · pontos ficam.
 
 ### 🔧 A construir — nesta ordem
-1. **Fase 0** — `firstKeyMs` + **log de tentativas** (invisível, risco zero)
-2. **Fase 1** — `utils/dominio.js` como função pura, medido no save real
-3. **Fase 2** — calibrar, e só então: `getFaixaIdx`, sorteio ponderado, gate de
-   faixa, UI de domínio, `utils/xp.js`
+
+| Fase | O que | Toca no jogo? |
+|---|---|---|
+| **0** | `firstKeyMs` + `ult`/`dias` por fato + `calibra` global (4.2) | **não** — só grava |
+| **1** | `utils/dominio.js` como função pura + `scripts/analisar-dominio.mjs` rodando no save real (4.3) | **não** — só mede |
+| **2** | calibrar a Tabela-Mãe com o que a Fase 1 mostrar; apagar o `calibra` | não |
+| **3** | ligar: `getFaixaIdx`, gate de faixa, sorteio ponderado, Plano de Resgate, UI de domínio, `utils/xp.js` | **sim** |
+
+**As fases 0, 1 e 2 não mudam uma regra sequer do jogo.** Só a 3 muda.
 
 ### ⚠️ A calibrar (com dado real, não no papel)
 Todos os números da Tabela-Mãe.
 
+### ✅ Já decididos no consenso
+**Teste de Faixa** → depois (o Plano de Resgate cobre o buraco).
+**Interleaving** → sim, adaptativo, sem porcentagem fixa.
+**Header** → ✨ XP como número · 🧠 barra = domínio da faixa atual.
+
 ### ❓ Só o Davi decide
-1. **Ligo a Fase 0 agora?** É a menor mudança possível do plano inteiro, não
-   altera nenhuma regra do jogo, e é o único jeito de a Fase 1 existir — o
-   histórico que falta só começa a existir depois de ligar.
-2. **Header** — XP vira número, barra vira domínio. Confirma?
-3. **Teste de placement na entrada** — quem já sabe a 2×10 pode provar numa
-   prova curta em vez de esperar ~1 semana de domínio se acumular? (Mesma
-   mecânica do Teste de Faixa, aplicada na porta de entrada. O Duolingo faz
-   isso com teste de nivelamento.)
+1. **Ligo a Fase 0?** É a menor mudança do plano inteiro e não altera nenhuma
+   regra — mas é o único jeito de a Fase 1 existir, porque o histórico que
+   falta só começa a existir depois de ligar.
+2. **Teste de placement na entrada** — quem já sabe a 2×10 prova numa prova
+   curta em vez de esperar ~1 semana? (Mesma mecânica do Teste de Faixa, na
+   porta de entrada — é o que o Duolingo faz com o teste de nivelamento.)
+3. **Constância baixa dando vantagem de pódio** (seção 8) — sabor ou corrige?
 
 ---
 

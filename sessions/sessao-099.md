@@ -289,13 +289,64 @@ domínio também é inferido de comportamento, e não existe fórmula pública d
 XP → domínio — que é exatamente o motivo de a v3 ter derrubado a condição de
 XP na faixa.
 
+## 9. `ARQUITETURA_XP.md` v7 — CONSENSO FECHADO
+
+O ChatGPT aprovou as cinco soluções da v6 e deixou **um** item aberto: o
+formato e a retenção do histórico, que segundo ele *"não deveria ser um array
+global de 3.000 linhas sem especificar como será consumido"*. Ele tem razão —
+a retenção tem que sair das consultas.
+
+**A solução: uma estrutura por consulta, e duas vidas diferentes.**
+
+| Consulta | Onde mora | Vida |
+|---|---|---|
+| Precisão recente / fluência | `ult` — buffer circular de 20 no fato | permanente |
+| Consistência (dias distintos) | `dias` — 10 dias distintos, como inteiros | permanente |
+| Recência | `lastPracticed` (já existe) | permanente |
+| Falso positivo/negativo | `calibra` — log cronológico global | **temporária, apagada na Fase 2** |
+
+**Por que `dias` não sai do `ult`:** um jogador pesado faz 20 tentativas do
+mesmo fato em dois dias. O buffer não enxerga espaçamento, e espaçamento é
+justamente o que a consistência mede. Duas perguntas ⇒ duas estruturas.
+
+Custo: ~460 B por fato praticado (≈230 KB pra 500 fatos, podando fato sem
+prática há 90 dias) + ~200 KB temporários do `calibra`. Limite do
+`localStorage`: 5 MB.
+
+Especificadas também a captura do `firstKeyMs` (`onKeyDown`, primeira tecla de
+qualquer campo no modo Inverso) e as **regras de descarte** — aba escondida,
+power-up no meio, tempo > 30 s saem da fluência mas continuam contando pra
+precisão. A primeira pergunta da partida ficou como **suspeita a verificar na
+Fase 1**, não como descarte decidido: medir antes.
+
+### Simulação da liga — 5.000 ciclos
+
+O ChatGPT pediu pra não tratar o cálculo de upset como garantido. Rodei a
+simulação (liga de 20, ritmo 60–140, constância alternada):
+
+- **Einstein (140, alta): 41% de 1º lugar, 96% de pódio. Pior colocação em
+  5.000 ciclos: 6º.** É o "caraca, o Einstein está em sexto" que o Davi quer.
+- **Patrick (60, baixa): 0% de pódio. Melhor colocação: 14º de 20.**
+
+Vizinho passa vizinho; o fundo nunca passa o topo. Confirmado com número.
+
+**Efeito colateral que a simulação revelou:** um personagem de ritmo 119 e
+constância baixa vai a pódio **20,6%** das vezes, contra **7,8%** de um de
+ritmo 123 e constância alta. O pior aparece quase 3× mais. Não é bug — pódio é
+evento de cauda e quem varia mais ganha mais caudas. **Constância baixa é
+vantagem pra pódio.** Fica como decisão do Davi: sabor (o gênio irregular tem
+picos) ou corrige dando ritmo médio um pouco menor a quem tem constância baixa.
+
+Adotada também a **regra de ouro** proposta pelo ChatGPT: *o sistema nunca cria
+uma barreira sem oferecer um caminho claro pra superá-la.*
+
 ---
 
 ## Arquivos alterados
 
 | Arquivo | Mudança |
 |---------|---------|
-| `ARQUITETURA_XP.md` | **novo** — v1 → … → **v6**: arquitetura conceitual fechada, Tabela-Mãe, Plano de Resgate e a especificação das Fases 0/1 |
+| `ARQUITETURA_XP.md` | **novo** — v1 → … → **v7**: consenso fechado, Tabela-Mãe, Plano de Resgate, histórico desenhado por consulta e a liga verificada por simulação |
 | `src/utils/index.js` | `momentoDaPerda`, `mesAtual`, `deveAvisarOfensivaPerdida`; `em` agora é a meia-noite real |
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |

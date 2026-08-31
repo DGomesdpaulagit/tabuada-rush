@@ -28,6 +28,14 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+- **`ARQUITETURA_XP.md` v7 — CONSENSO FECHADO.** Último item resolvido: o
+  histórico passa a ser desenhado **por consulta**, com duas vidas — `ult`
+  (20 tentativas) e `dias` (10 dias distintos) permanentes dentro do
+  `factStats`, e um log cronológico `calibra` **temporário**, apagado na
+  Fase 2. Mais a captura do `firstKeyMs` com regras de descarte, a **regra
+  de ouro** ("nenhuma barreira sem caminho") e a **simulação de 5.000
+  ciclos** da liga: Einstein 41% de 1º e pior colocação 6º; Patrick nunca
+  passa do 14º. Fases 0, 1 e 2 não mudam nenhuma regra do jogo
 - **`ARQUITETURA_XP.md` v6** — resolvidos os cinco últimos pontos: latch é
   do componente e não da nota; a base relativa já é agnóstica ao processo
   mental (responde à objeção das estratégias rápidas); **Plano de Resgate**

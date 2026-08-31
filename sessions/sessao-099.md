@@ -188,13 +188,60 @@ outros — a cauda difícil se arrasta sem fim, e a cauda é o que segura a faix
 Precisa de **sorteio ponderado pelo estado do fato** (🔴 4, 🟡 2, 🟢 1). Sem
 isso, faixa por domínio não funciona na prática.
 
+## 7. `ARQUITETURA_XP.md` v5 — fecha os pontos em aberto
+
+O ChatGPT aprovou a v4 e deixou quatro coisas em aberto. Fechadas:
+
+**1. A base da fluência (problema matemático real que ele levantou e não
+resolveu).** Ele notou que a base pode sair apertada ou permissiva demais
+dependendo dos primeiros fatos verdes. E tem um problema anterior: **no
+primeiro dia não existe fato verde nenhum** — a definição se morde. Três
+regras resolvem: a base vem do **percentil 25 dos tempos medianos** (o quarto
+mais rápido do jogador é o que ele já sabe de cor, e isso funciona desde o dia
+1); **período de estabilização** (<15 fatos com ≥5 respostas → fluência não
+pontua, os 20 pontos vão pra precisão); e **fluência é latch** — porque a base
+DESCE conforme o jogador melhora, e sem o latch ele veria fatos dominados
+voltarem pra amarelo por ter ficado mais rápido.
+
+**2. Interleaving sem porcentagem fixa** — ele tinha razão que "20% sempre do
+passado" é burro, mas não precisa de sistema novo: basta o pool incluir as
+faixas anteriores e deixar o peso trabalhar. Fato antigo dominado tem peso 1;
+se apodrece vira 🟡 e **pula pra peso 2 sozinho**. Só falta impedir que o
+passado engula o presente: `p(anterior) = 10% + 20% × (fração verde da faixa
+atual)`, piso de 25% se houver 🔴 antigo.
+
+**3. Teste de Faixa adiado** — concordo com ele. Com o sorteio ponderado a
+cauda já colapsa sozinha; fazer o domínio funcionar primeiro e medir se ainda
+existe sensação de parede.
+
+**4. "Arquitetura fechada" → "estrutura fechada, parâmetros abertos".** Ele
+tem razão na linguagem.
+
+**Consequência que ninguém tinha notado:** se o modo principal já puxa pros
+fatos fracos, **a Revisão perde o diferencial**. Redivisão: Rush = pool
+inteiro ponderado; Revisão = **só 🔴 e 🟡**, o remédio concentrado.
+
+**Onde eu discordo dele — como validar.** Ele quer uma especificação
+matemática com cenários simulados antes de codar. Não dá pra validar isso no
+papel: o comportamento do domínio depende da distribuição real de tempos e
+erros, e simulação com número inventado devolve **confiança inventada**. E não
+precisamos — o `factStats` já está cheio há meses. O caminho proposto:
+**Fase 0** liga só o `firstKeyMs` (invisível, risco zero, é o único dado que
+não temos e ele só existe depois de existir); **Fase 1** roda `utils/dominio.js`
+como função pura em cima do save real e responde na hora quantos dos 54 fatos
+dariam verde e se a catraca de 95% é alcançável; **Fase 2** calibra e liga o
+gate.
+
+Documento agora tem a **Tabela-Mãe** (pedido dele) com todos os parâmetros
+num lugar só.
+
 ---
 
 ## Arquivos alterados
 
 | Arquivo | Mudança |
 |---------|---------|
-| `ARQUITETURA_XP.md` | **novo** — v1 análise → v2 XP + Domínio → v3 faixa = domínio → **v4** nota composta, fluência relativa e as 2 peças faltando no código |
+| `ARQUITETURA_XP.md` | **novo** — v1 → v2 → v3 → v4 → **v5**: estrutura fechada, Tabela-Mãe e o plano de validação em 3 fases |
 | `src/utils/index.js` | `momentoDaPerda`, `mesAtual`, `deveAvisarOfensivaPerdida`; `em` agora é a meia-noite real |
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |
@@ -204,11 +251,10 @@ isso, faixa por domínio não funciona na prática.
 
 ## 📋 Para a PRÓXIMA CONVERSA
 
-1. **Três perguntas em aberto na seção 11 do `ARQUITETURA_XP.md`**: Teste de
-   Faixa (mecânica nova), fatia de interleaving das faixas antigas, e a barra
-   do Header virando domínio. A arquitetura está fechada; antes de codar
-   faltam 2 peças (`firstKeyMs` e sorteio ponderado) — sem elas o domínio não
-   funciona.
+1. **Seção 10 do `ARQUITETURA_XP.md`** — só três coisas dependem do Davi:
+   ligar a **Fase 0** (`firstKeyMs`, invisível, risco zero), confirmar o
+   **Header** (XP vira número, barra vira domínio) e decidir sobre **teste de
+   placement** na entrada (ele foi pesquisar como o Duolingo faz).
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Tipos de pontuação por faixa** (100/200/500/1000) — destravado agora que
    a pergunta sobre os pontos foi respondida (eles ficam).

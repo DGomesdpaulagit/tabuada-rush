@@ -28,6 +28,13 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+- **`ARQUITETURA_XP.md` v5** — fechados os últimos pontos em aberto: a base
+  da fluência (percentil 25 + período de estabilização + latch, resolvendo o
+  problema de "no dia 1 não existe fato verde"), interleaving pelo peso em
+  vez de porcentagem fixa, Teste de Faixa adiado e a Revisão virando só
+  🔴/🟡. Mais a **Tabela-Mãe** com todos os parâmetros e um plano de
+  validação em 3 fases sobre dados reais (`factStats`) em vez de simulação
+  de papel
 - **`ARQUITETURA_XP.md` v4** — domínio vira **nota composta** (precisão 40 /
   consistência 25 / fluência 20 / recência 15) com piso duro de precisão, e a
   velocidade passa a ser medida **relativa ao próprio jogador** em vez de um

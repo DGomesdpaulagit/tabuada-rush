@@ -311,6 +311,33 @@ export function getRank(score) {
 // (`brokenStreak`) e consome 1 seguro. A restauração efetiva acontece no
 // próximo `lastPlayDate` ser definido (i.e., próxima partida em até 24h da
 // quebra) — feito separadamente em `tryRestoreInsuredStreak`.
+// ── AVISO DE OFENSIVA PERDIDA: QUANDO ELE PODE APARECER [sessão 099] ────────
+// Regra do Davi: o aviso é um privilégio de quem volta correndo. A ofensiva
+// morre à meia-noite; quem abre o jogo até as 2 da manhã vê a caixa e pode
+// trazer ela de volta jogando uma partida. Quem só aparece de tarde perdeu
+// mesmo. E vale UMA VEZ POR MÊS — senão "recuperar" viraria rotina e a
+// ofensiva deixaria de significar alguma coisa.
+export const JANELA_AVISO_OFENSIVA_MS = 2 * 60 * 60 * 1000; // 2 horas
+
+// A queda acontece à meia-noite do dia SEGUINTE ao último dia jogado (hora
+// local). `ultimoDia` vem no formato 'AAAA-MM-DD' de `localDateStr`.
+export function momentoDaPerda(ultimoDia) {
+  const [ano, mes, dia] = String(ultimoDia).split('-').map(Number);
+  return new Date(ano, mes - 1, dia + 1, 0, 0, 0, 0).toISOString();
+}
+
+export function mesAtual(agora = new Date()) {
+  return `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
+}
+
+export function deveAvisarOfensivaPerdida(data = {}, agora = new Date()) {
+  const perdida = data.ofensivaPerdida;
+  if (!perdida || !perdida.em) return false;
+  if (data.ofensivaAvisoMes === mesAtual(agora)) return false; // já apareceu neste mês
+  const desdeAQueda = agora.getTime() - new Date(perdida.em).getTime();
+  return desdeAQueda >= 0 && desdeAQueda <= JANELA_AVISO_OFENSIVA_MS;
+}
+
 export function applyStreakDecay(data = {}) {
   const last = data.lastPlayDate;
   if (!last) return data;
@@ -353,7 +380,11 @@ export function applyStreakDecay(data = {}) {
       currentStreak: 0,
       streakGoalBase: 0,
       streakInsuredAt: null,
-      ofensivaPerdida: { dias: data.currentStreak || 0, em: new Date().toISOString() },
+      // [sessão 099] `em` é o momento REAL da queda (a meia-noite seguinte ao
+      // último dia jogado), não a hora em que o app foi aberto — o aviso só
+      // aparece pra quem chega poucas horas depois, então essa hora precisa
+      // ser a verdadeira. Ver `momentoDaPerda`/`deveAvisarOfensivaPerdida`.
+      ofensivaPerdida: { dias: data.currentStreak || 0, em: momentoDaPerda(last) },
     };
   }
   return data;

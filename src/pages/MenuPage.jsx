@@ -7,7 +7,7 @@ import { getLeagueStandings } from '../utils/leagues';
 import { analyzeUser } from '../utils/analysis';
 import { getActiveMissions } from '../utils/missions';
 import { emZonaDeRebaixamento, primeiraPosicaoDaZona } from '../utils/relegation';
-import { fraseDaDivisao, situacaoDaDivisao, COR_DIVISAO } from '../constants/leaguePhrases';
+import { fraseDaDivisao, situacaoDaDivisao, COR_DIVISAO, COR_POSICAO } from '../constants/leaguePhrases';
 import { MODES } from '../constants';
 import { Button, pageVariants, pageTransition } from '../components/ui';
 import GameIcon, { LeagueIcon } from '../components/GameIcon';
@@ -230,7 +230,7 @@ export default function MenuPage({ onStart, onNavigate }) {
               <LeagueIcon leagueId={league.id} size={48} />
               <div className="min-w-0">
                 <p className="text-xs font-bold text-fg-muted">Sua posição</p>
-                <p className="text-2xl font-black text-fg leading-tight tabular-nums">
+                <p className={`text-2xl font-black leading-tight tabular-nums ${COR_POSICAO[situacao]}`}>
                   {playerRank}º <span className="text-sm text-fg-muted font-bold">de {leagueTotal}</span>
                 </p>
               </div>

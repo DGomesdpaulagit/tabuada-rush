@@ -4,6 +4,33 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.48] — 2026-08-30 — Aviso de ofensiva raro + posição colorida na Arena
+
+**Detalhes em `sessions/sessao-099.md`.**
+
+### Alterado
+- O aviso de ofensiva perdida virou **raro**: só aparece pra quem abre o
+  jogo **até 2h depois da queda** (que acontece à meia-noite) e **no
+  máximo uma vez por mês**. Pedido do Davi — recuperar a ofensiva tem
+  que ser valorizado
+- A recuperação pendente agora **expira no mesmo dia** da queda: apertar
+  o botão e voltar três dias depois não devolve mais a ofensiva antiga
+- A **posição do jogador** na caixa de divisão da Arena segue a cor da
+  situação: vermelho na zona de rebaixamento, verde no pódio
+
+### Corrigido
+- `ofensivaPerdida.em` guardava a hora em que o app foi ABERTO, não a
+  hora real da queda — com a janela de 2h isso deixaria o aviso passar
+  sempre. Agora é a meia-noite do dia seguinte ao último dia jogado
+
+### Documentado
+- **`ARQUITETURA_XP.md`** (novo) — análise da proposta do Davi de separar
+  Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
+  faixas, a fórmula proposta e o checklist que todo modo novo tem que
+  responder antes de existir
+
+---
+
 ## [6.0.47] — 2026-08-30 — "Trazer ofensiva de volta" leva pra uma partida
 
 **Detalhes em `sessions/sessao-098.md`.**

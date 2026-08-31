@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo } from './utils';
+import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo, deveAvisarOfensivaPerdida, mesAtual } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
 import { getActiveXpMultiplier } from './utils/potions';
 import { rollMatchLoot } from './utils/loot';
@@ -560,7 +560,12 @@ export default function App() {
         // os dias perdidos + o de hoje. Vale pra QUALQUER modo — ele é mandado
         // pro Rush, mas se trocar de modo no meio do caminho e jogar mesmo
         // assim, cumpriu o combinado.
-        const recuperando = !!prev.ofensivaPerdida?.recuperando;
+        // ...e só vale no MESMO DIA da queda: o aviso aparece de madrugada,
+        // então "vou jogar já" é hoje. Voltar três dias depois com a marca
+        // ainda pendente devolveria uma ofensiva que já não é verdade.
+        const recuperando =
+          !!prev.ofensivaPerdida?.recuperando &&
+          localDateStr(new Date(prev.ofensivaPerdida.em)) === today;
         const currentStreak = recuperando
           ? (prev.ofensivaPerdida.dias || 0) + 1
           : streakNormal;
@@ -1071,9 +1076,26 @@ export default function App() {
   const emPartida = screen === 'game' || screen === 'results';
 
   // ── [sessão 097] Avisos de abertura: ofensiva perdida e zona de rebaixamento
-  const ofensivaPerdida = data.ofensivaPerdida;
+  //
+  // [sessão 099] O aviso de ofensiva perdida virou RARO, a pedido do Davi:
+  // só aparece pra quem abre o jogo até 2h depois da queda (que acontece à
+  // meia-noite) e no máximo uma vez por mês. A decisão é tomada UMA VEZ, na
+  // abertura — daí o estado local em vez de derivar do `data` a cada render:
+  // marcar "já vi neste mês" no storage faria a condição virar falsa na hora
+  // e o modal sumiria sozinho no meio da tela.
+  const [avisoOfensiva, setAvisoOfensiva] = useState(false);
+  useEffect(() => {
+    if (!deveAvisarOfensivaPerdida(data)) return;
+    setAvisoOfensiva(true);
+    update((prev) => ({ ...prev, ofensivaAvisoMes: mesAtual() }));
+    // Depende do instante da queda: roda na abertura e de novo se um registro
+    // NOVO chegar (sincronização com a nuvem depois do login, AppContext.jsx).
+    // Gravar `ofensivaAvisoMes` não mexe nessa dependência, então não repete.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.ofensivaPerdida?.em]);
 
   const limparAvisoOfensiva = useCallback(() => {
+    setAvisoOfensiva(false);
     update((prev) => ({ ...prev, ofensivaPerdida: null }));
   }, [update]);
 
@@ -1082,6 +1104,7 @@ export default function App() {
   // `handleGameEnd`). Se ele abandonar a partida, a marca continua de pé e ele
   // pode tentar de novo — só some quando joga ou quando aceita o zero.
   const recuperarOfensiva = useCallback(() => {
+    setAvisoOfensiva(false);
     update((prev) => ({
       ...prev,
       ofensivaPerdida: prev.ofensivaPerdida ? { ...prev.ofensivaPerdida, recuperando: true } : null,
@@ -1276,10 +1299,10 @@ export default function App() {
       {/* [sessão 097] Avisos de abertura, um de cada vez e nesta ordem:
           ofensiva perdida → zona de rebaixamento → recompensa → meta. */}
       <AP>
-        {screen === 'menu' && ofensivaPerdida ? (
+        {screen === 'menu' && avisoOfensiva ? (
           <LostStreakModal
             key="lost-streak"
-            dias={ofensivaPerdida.dias}
+            dias={data.ofensivaPerdida?.dias || 0}
             onRecuperar={recuperarOfensiva}
             onReiniciar={limparAvisoOfensiva}
           />
@@ -1295,13 +1318,13 @@ export default function App() {
 
       {/* Modais de ofensiva — só no menu. Recompensa tem prioridade sobre a meta. */}
       <AP>
-        {screen === 'menu' && !ofensivaPerdida && !mostrarAvisoZona && data.pendingStreakReward != null ? (
+        {screen === 'menu' && !avisoOfensiva && !mostrarAvisoZona && data.pendingStreakReward != null ? (
           <RewardModal
             key="reward"
             milestone={data.pendingStreakReward}
             onChoose={chooseReward}
           />
-        ) : screen === 'menu' && !ofensivaPerdida && !mostrarAvisoZona && (data.streakGoal == null || goalModalManual) ? (
+        ) : screen === 'menu' && !avisoOfensiva && !mostrarAvisoZona && (data.streakGoal == null || goalModalManual) ? (
           <GoalModal
             key="goal"
             onSelect={chooseGoal}

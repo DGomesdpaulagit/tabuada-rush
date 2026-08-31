@@ -49,13 +49,14 @@ provavelmente cobre parte disso.
 
 O Davi encerrou a conversa por limite de contexto e pediu pra documentar:
 
-1. **"O que teríamos que mudar se tirássemos os PONTOS do jogo?"** — ele
-   quer essa resposta ANTES de decidir sobre os tipos de pontuação por
-   faixa (item abaixo). Mapeamento inicial de quem depende de `score`
-   hoje: o **XP** (`score × multiplicador do modo` — é a única fonte de
-   XP do jogo), as missões de `type: 'score'`, o recorde `bestScore`, o
-   card "Pontuação total" do resumo, o `scoreScale` de cada modo e,
-   indiretamente, a **classificação da liga** (que roda sobre XP).
+1. ✅ **RESPONDIDO na sessão 099: "o que mudaria se tirássemos os PONTOS
+   do jogo?"** — resposta: **não tirar**. Os pontos ficam, mudando de
+   cargo (desempenho, e não matéria-prima do XP). Análise completa em
+   **`ARQUITETURA_XP.md`**, junto com a proposta de XP que o Davi
+   escreveu. Isso **destrava** os tipos de pontuação por faixa (abaixo).
+   **O que fica pendente com ele:** as 5 decisões da seção 8 do
+   `ARQUITETURA_XP.md` — nada de XP muda, e nenhum modo novo entra, antes
+   dessas respostas.
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Dívida de layout:** o modal "Defina sua meta de ofensiva" ainda abre
    por cima do conteúdo na primeira visita.

@@ -53,6 +53,15 @@ export const COR_DIVISAO = {
   podio: 'text-success',
 };
 
+// [sessão 099] A POSIÇÃO na caixa de divisão segue a mesma sinalização da
+// frase — vermelho na zona, verde no pódio. No meio ela fica na cor normal do
+// texto (e não na cor apagada da frase): é o número mais importante da caixa.
+export const COR_POSICAO = {
+  rebaixamento: 'text-danger',
+  meio: 'text-fg',
+  podio: 'text-success',
+};
+
 export const PODIO_ATE = 3;
 
 // `posicao` é 1-based. `primeiroDaZona` vem de utils/relegation.

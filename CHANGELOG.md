@@ -28,6 +28,12 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+- **`ARQUITETURA_XP.md` v4** — domínio vira **nota composta** (precisão 40 /
+  consistência 25 / fluência 20 / recência 15) com piso duro de precisão, e a
+  velocidade passa a ser medida **relativa ao próprio jogador** em vez de um
+  limite universal. Mais dois furos achados no código: o tempo medido hoje
+  inclui a digitação (falta `firstKeyMs`) e o sorteio uniforme de perguntas
+  travaria a faixa na cauda difícil (falta peso por estado do fato)
 - **`ARQUITETURA_XP.md` v3** — o Davi cancelou a meta de "8 a 10 meses na
   faixa 1" ("se ele aprendeu, ele aprendeu"), o que derruba a condição de
   XP na faixa: **faixa = domínio**, XP = liga + missões. Junto com ela

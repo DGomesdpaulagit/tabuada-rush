@@ -151,13 +151,50 @@ pergunta real é "em que faixa o jogador está". Troca mecânica por
 `getFaixaIdx(data)`, e a migração é uma linha (`faixaIdx = getLevelIdx(xp)` na
 primeira abertura) — ninguém perde faixa.
 
+## 6. `ARQUITETURA_XP.md` v4 — refino do domínio + dois furos no código
+
+Mais uma rodada com o ChatGPT. Três correções dele que eu aceitei, uma
+discordância que não existia, e dois furos que só apareceram lendo o código.
+
+**Aceito (ele tem razão):**
+- **Nada de limite de tempo absoluto.** "≤2,0 s = dominado" reprova criança
+  lenta que sabe e aprova quem conta rápido nos dedos. Substituído por
+  **fluência relativa**: o fato está fluente quando o jogador responde ele tão
+  rápido quanto os fatos que ele já sabe de cor (`base × 1,4`, base = mediana
+  dos fatos verdes dele). Resolve idade, aparelho, ansiedade e dificuldade de
+  uma vez, porque todos deslocam a base junto.
+- **Nota composta, não 5 catracas AND.** Precisão 40 + consistência 25 +
+  fluência 20 + recência 15; verde ≥80. Com **um** piso duro: precisão recente
+  <70% trava em vermelho, senão velocidade compensaria erro.
+- **Teto diário de XP vira knob desligado por padrão.** Cortar 100%→50% na 6ª
+  partida pune o engajado de forma grosseira.
+
+**Discordância que não existe:** ele apresentou como alternativa uma "terceira
+opção" — *faixa = domínio, XP como eixo de progressão geral (liga, missões,
+eventos, status)*. É literalmente a proposta. "Tirar o XP das faixas" nunca
+significou diminuir o XP.
+
+**Furo nº 1 — o tempo medido hoje inclui a digitação.** `GamePage.jsx` grava
+`dt = agora − questionShownAt` **no envio**, e o jogo é de resposta digitada
+(1 a 4 dígitos). Qualquer critério de velocidade em cima disso pune resposta
+grande por ser grande. Precisa gravar o **tempo até a primeira tecla**
+(`firstKeyMs`) — é a janela de decisão, sem o motor da digitação.
+
+**Furo nº 2 — o sorteio das perguntas virou parte da progressão.** Hoje
+`getRandomQuestion` sorteia uniformemente. Fazia sentido quando a faixa era
+XP; agora o sorteio decide quando o jogador passa. Uniforme, ele passa o tempo
+revendo o que já sabe e os 2–3 fatos teimosos aparecem na mesma frequência dos
+outros — a cauda difícil se arrasta sem fim, e a cauda é o que segura a faixa.
+Precisa de **sorteio ponderado pelo estado do fato** (🔴 4, 🟡 2, 🟢 1). Sem
+isso, faixa por domínio não funciona na prática.
+
 ---
 
 ## Arquivos alterados
 
 | Arquivo | Mudança |
 |---------|---------|
-| `ARQUITETURA_XP.md` | **novo** — v1 análise → v2 XP + Domínio → **v3 faixa = domínio**, com a especificação de "decorou" |
+| `ARQUITETURA_XP.md` | **novo** — v1 análise → v2 XP + Domínio → v3 faixa = domínio → **v4** nota composta, fluência relativa e as 2 peças faltando no código |
 | `src/utils/index.js` | `momentoDaPerda`, `mesAtual`, `deveAvisarOfensivaPerdida`; `em` agora é a meia-noite real |
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |
@@ -169,7 +206,9 @@ primeira abertura) — ninguém perde faixa.
 
 1. **Três perguntas em aberto na seção 11 do `ARQUITETURA_XP.md`**: Teste de
    Faixa (mecânica nova), fatia de interleaving das faixas antigas, e a barra
-   do Header virando domínio. A arquitetura em si está fechada.
+   do Header virando domínio. A arquitetura está fechada; antes de codar
+   faltam 2 peças (`firstKeyMs` e sorteio ponderado) — sem elas o domínio não
+   funciona.
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Tipos de pontuação por faixa** (100/200/500/1000) — destravado agora que
    a pergunta sobre os pontos foi respondida (eles ficam).

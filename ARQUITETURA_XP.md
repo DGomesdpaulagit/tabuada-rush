@@ -1,338 +1,369 @@
 # ✨ ARQUITETURA_XP.md — Pontos, XP, Domínio e progressão
 
-> **v3 (sessão 099).** O Davi tirou a meta de "8 a 10 meses na faixa 1":
-> *"cada usuário tem seu tempo (...) se ele aprendeu, ele aprendeu, já era.
-> Outros vão chegar já sabendo essa primeira faixa."*
+> **v4 (sessão 099).** Arquitetura **fechada**. O que sobrou é especificação de
+> domínio e calibração.
 >
-> Isso não é um ajuste — é a decisão que fecha a arquitetura. Documento
-> reescrito. Histórico: **v1** tirava o XP das faixas; **v2** adotou
-> `XP + Domínio` (contraproposta via ChatGPT) pra segurar os 8–10 meses;
-> **v3** derruba a condição de XP, porque a meta que ela existia pra sustentar
-> deixou de existir.
+> Histórico: **v1** tirava o XP das faixas · **v2** adotou `XP + Domínio`
+> (via ChatGPT) pra sustentar os 8–10 meses · **v3** derrubou a condição de XP
+> quando o Davi cancelou a meta de tempo · **v4** refina a definição de
+> domínio com as correções do ChatGPT + dois furos achados no código.
 >
 > Nada aqui está implementado.
 
 ---
 
-## 1. A arquitetura fechada
+## 1. A arquitetura
 
-| Camada | Pergunta que responde | Serve pra |
+| Camada | Pergunta | Manda em |
 |---|---|---|
-| ⭐ **Pontos** | Como eu fui nesta partida? | recorde, estatística, aposta, feedback |
-| ✨ **XP** | Quanto eu me esforcei? | **liga** + missões de progressão |
-| 🧠 **Domínio** | Eu realmente aprendi? | **faixa de tabuada** |
-| 🏆 **Liga** | Como estou em relação aos outros? | competição |
+| ⭐ **Pontos** | Como eu joguei? | recorde, estatística, aposta, feedback |
+| ✨ **XP** | Quanto eu progredi? | **liga**, missões, eventos, status |
+| 🧠 **Domínio** | Eu aprendi? | **faixa de tabuada** |
 
 ```
 PRÓXIMA FAIXA = Domínio suficiente
 ```
 
-**A condição de XP na faixa caiu.** Não por gosto: ela era o cronômetro dos
-8–10 meses, e o cronômetro foi cancelado. Sem meta de tempo, qualquer número
-de XP exigido vira **imposto de tempo cobrado de quem já provou que aprendeu**
-— e o Davi foi explícito que existe gente chegando já sabendo a 2×10.
-
-### Isso não deixa o XP vago
-
-Ele fica com a **liga inteira** — 114 personagens, 8 divisões, promoção,
-rebaixamento, zona de rebaixamento com penalidades, pódio — mais as missões de
-progressão. É o maior sistema do jogo.
-
-A divisão de trabalho vira uma frase:
-
 > **Conteúdo se abre com aprendizado. Competição se ganha com esforço.**
->
-> Domínio mede aprendizado. XP mede esforço. Cada um tem o seu reino, e
-> nenhum dos dois compra o do outro.
 
-### E o XP já estava embutido no domínio
+### ⚠️ Uma discordância que não existe
 
-Essa é a razão técnica de a condição de XP ser dispensável, e não só
-inconveniente: **domínio já exige volume de jogo.** Pela regra da seção 2, os
-54 fatos da faixa 1 só ficam verdes com **~430 acertos no mínimo, espalhados
-por vários dias diferentes**. Ninguém chega lá farmando uma tarde. A trava de
-esforço já está dentro da trava de aprendizado — a de XP só somava tempo.
+O ChatGPT apresentou como divergência uma "terceira opção": *faixa = domínio,
+com XP como eixo de progressão geral (liga, missões, eventos, recompensas,
+status)*.
+
+**Isso é literalmente a proposta.** Não há decisão em aberto aqui — os dois
+lados descreveram a mesma arquitetura com palavras diferentes. "Tirar o XP das
+faixas" nunca significou diminuir o XP; significou que **o XP para de ser
+pedágio de conteúdo** e fica com tudo o que sempre teve, mais o peso
+competitivo inteiro.
+
+A trava de esforço também não sumiu: ela **já estava dentro do domínio**. Os 54
+fatos da faixa 1 só consolidam com centenas de acertos espalhados por dias
+diferentes. A condição de XP só somava tempo em cima de uma barreira que já
+existia.
 
 ---
 
-## 2. O coração do sistema: o que conta como "decorou"
+## 2. Domínio: a especificação
 
-Com a faixa apoiada só no domínio, **toda a arquitetura passa a depender desta
-definição**. É aqui que o trabalho vai.
+Com a faixa apoiada só nisto, é aqui que está o jogo inteiro.
 
-### 2.1 O critério que separa decorar de calcular
+### 2.1 O que estamos tentando enxergar
 
 Um fato **decorado** é recuperado da memória. Um fato **calculado** é montado
-na hora (contar de 7 em 7, somar, decompor). Os dois terminam em acerto — e é
-por isso que contar acertos não enxerga aprendizado.
+na hora (contar de 7 em 7, decompor). **Os dois terminam em acerto** — por isso
+contar acertos não enxerga aprendizado.
 
-O que separa os dois é observável e o jogo já mede: **o tempo de resposta.**
+O sinal que separa os dois é o **tempo de resposta**. Mas...
 
-| | Recuperação (decorou) | Cálculo (ainda não) |
+### 2.2 ✅ O ChatGPT está certo: nada de limite absoluto
+
+Ele freou dois pontos meus, e nos dois ele tem razão:
+
+- ❌ *"menos de 1,5 s = decorou"* — não serve como definição
+- ❌ *"tempo mediano ≤ 2,0 s"* igual pra todo mundo e pra toda conta
+
+Tempo depende de idade, leitura, aparelho, ansiedade, tamanho do número. Um
+limite universal reprova criança lenta que sabe e aprova quem conta rápido nos
+dedos.
+
+**A saída não é abandonar a velocidade — é medi-la relativa ao próprio
+jogador.**
+
+> ### 🎯 Fluência relativa
+>
+> Um fato está fluente quando o jogador responde ele **tão rápido quanto os
+> fatos que ele já sabe de cor** — não quando bate um número que veio de fora.
+>
+> ```
+> base do jogador = mediana do tempo dos fatos que ele já tem em 🟢
+>                   (no começo: os 5 fatos mais rápidos dele)
+>
+> fluente = tempo mediano do fato ≤ base × 1,4
+> ```
+
+Isso resolve **de uma vez** a lista inteira de objeções — idade, aparelho,
+ansiedade, leitura, treino — porque todos esses fatores deslocam a base do
+jogador igualmente. A criança lenta tem base lenta: o que se cobra dela é que
+7×8 seja tão rápido quanto 2×3 **pra ela**. É exatamente o que fluência de
+recuperação significa.
+
+E resolve também o problema da dificuldade que o ChatGPT levantou (127×9 não é
+3×2): a base sobe junto com a faixa, porque ela é recalculada com os fatos
+verdes daquela faixa.
+
+### 2.3 🐛 Furo nº 1: hoje o tempo medido inclui a digitação
+
+`GamePage.jsx` grava `dt = Date.now() − questionShownAt` **no envio**. Ou seja,
+o número que temos hoje é:
+
+```
+ler a pergunta + lembrar + DIGITAR + apertar Enter
+```
+
+O jogo não é múltipla escolha — a resposta é digitada. E as respostas têm de
+**1 a 4 dígitos** (6 na faixa 1; 1143 numa faixa alta). **Qualquer critério de
+velocidade em cima desse número pune resposta grande por ser grande**, não por
+ser mal sabida.
+
+**Correção:** gravar também o **tempo até a primeira tecla** (`firstKeyMs`).
+Essa é a janela de decisão — lembrar ou calcular — sem o motor da digitação
+dentro. É o número que o domínio deve usar; o `ms` atual continua servindo pra
+estatística e pro recorde de velocidade.
+
+É um campo novo no registro da questão e um `onKeyDown` no input. Barato, e
+sem ele a fluência relativa mede metade digitação.
+
+### 2.4 ✅ E o ChatGPT está certo de novo: nota composta, não 5 catracas
+
+Minha v3 pedia cinco critérios simultâneos (AND). Ele apontou o furo: quem sabe
+7×8 perfeitamente mas responde um pouco devagar nunca fica verde, por mais que
+acerte.
+
+**Domínio vira nota de 0 a 100:**
+
+| Componente | Peso | O que mede |
 |---|---|---|
-| Tempo típico | **< 1,5 s** | 3 a 6 s |
-| Varia com o tamanho do número? | não | sim (7×9 demora mais que 2×3) |
+| **Precisão** recente | 40% | acerta? |
+| **Consistência** (dias distintos, sem recaída) | 25% | acerta sempre, não só hoje |
+| **Fluência** (seção 2.2, relativa) | 20% | lembra ou calcula? |
+| **Recência** (`predictRecallProbability`, já existe) | 15% | ainda lembra? |
 
-> **A ironia que fecha o desenho:** eu tirei a velocidade do XP (seção 5) e ela
-> reaparece aqui como critério central. É coerente — **velocidade não deve
-> comprar progresso, ela deve provar aprendizado.** No XP ela era paga duas
-> vezes; no domínio ela é a única evidência confiável de que o fato virou
-> memória.
+- 🟢 **Dominado** — nota ≥ 80
+- 🟡 **Em desenvolvimento** — 50 a 79
+- 🔴 **Precisa praticar** — < 50
 
-### 2.2 A regra proposta
+**Com uma catraca só, e ela é inegociável:** precisão recente **< 70% trava em
+🔴**, não importa a nota composta. Sem esse piso, alguém rápido e constante
+compensa erro com velocidade — que é exatamente o oposto do que o jogo ensina.
 
-Um fato fica 🟢 **dominado** quando, ao mesmo tempo:
+Assim a criança lenta que sabe fecha os 40+25+15 = 80 sem depender da fluência.
+E quem conta nos dedos perde os 20 da fluência e boa parte da consistência —
+fica em amarelo até virar memória, sem nunca ser chamado de errado.
 
-| Critério | Valor inicial | Por que |
-|---|---|---|
-| Acertos | **≥ 8** | amostra mínima |
-| Precisão recente (últimas 10) | **≥ 90%** | tolera um escorregão, não tolera hábito |
-| Tempo mediano | **≤ 2,0 s** | separa recuperação de cálculo (mediana, não média — um travamento não estraga) |
-| Dias distintos | **≥ 4** | 10 acertos numa tarde não é memória, é sessão |
-| Recência | recall previsto **≥ 80%** | usa `predictRecallProbability`, que já existe |
+### 2.5 🐛 Furo nº 2: o sorteio das perguntas virou parte da progressão
 
-Estados intermediários, alimentando o Mapa de Domínio que já está na tela:
+Este é o mais importante, e nenhum dos documentos tocou nele.
 
-- 🔴 **Precisa praticar** — precisão recente < 70%, ou nunca visto
-- 🟡 **Em desenvolvimento** — acerta, mas devagar ou sem constância
-- 🟢 **Dominado** — os cinco critérios acima
+Hoje `getRandomQuestion` sorteia `a` **uniformemente** na faixa e `b`
+uniformemente de 1 a 10. Fazia sentido quando a faixa era XP: o sorteio não
+influía em nada.
 
-**Um fato verde pode voltar pra amarelo** se apodrecer (é o critério de
-recência). Mas **faixa conquistada não se perde** — tirar faixa de alguém é
-punição que não ensina. O que acontece com o apodrecimento é a seção 2.4.
+**Agora o sorteio decide quando o jogador passa de faixa.** Com sorteio
+uniforme:
 
-### 2.3 Quando a faixa abre
+- o jogador passa a maior parte do tempo revendo o que já sabe;
+- os 2 ou 3 fatos teimosos aparecem na mesma frequência dos outros, então **a
+  cauda difícil se arrasta sem fim** — e a cauda é justamente o que segura a
+  faixa;
+- só a Revisão ataca ponto fraco, e ela é um modo separado que o jogador pode
+  simplesmente não abrir.
+
+**Correção: sorteio ponderado pelo estado do fato** no modo principal — algo
+como 🔴 peso 4, 🟡 peso 2, 🟢 peso 1. Continua caindo fato verde (é revisão
+espaçada, não pode sumir), mas o jogo passa a levar o jogador ao que falta.
+
+Efeito colateral bom: a "cauda difícil" deixa de ser o gargalo, porque ela
+recebe 4× mais exposição justamente quando é o que resta.
+
+**Sem isso, a faixa por domínio não funciona na prática** — o jogador ficaria
+travado esperando o sorteio ter piedade dele.
+
+### 2.6 Quando a faixa abre
 
 **95% dos fatos em 🟢 e nenhum em 🔴.**
 
-Os 5% de folga existem por um motivo prático: um gate de "100% verde" trava o
-jogador em dois fatos teimosos por tempo indeterminado, e aí o sistema deixa
-de ensinar e passa a irritar. A cláusula "nenhum vermelho" é o que impede a
-folga de virar buraco — dá pra ter 2 ou 3 fatos amarelos pendentes, nunca um
-que você erra sempre.
+A folga de 5% impede travar em dois fatos teimosos; o "nenhum vermelho" impede
+a folga virar buraco.
 
-**Válvula de escape — Teste de Faixa.** Quando o jogador chega perto (≥85%
-verde), o jogo oferece uma rodada curta **montada só com os fatos fracos
-dele**. Passar certifica os pendentes de uma vez. Vira um momento ("consegui!")
-em vez de uma parede, e é evidência honesta: são exatamente as contas que
-faltavam.
+**Exigência por faixa, como o ChatGPT propôs** — e é a forma certa de o Davi
+conseguir o que queria sem cronômetro:
 
-### 2.4 O que faz o aprendizado ficar
-
-Sem cronômetro de faixa, a permanência não vem de prender o jogador — vem de
-**revisitar**. Duas coisas resolvem:
-
-1. **Interleaving.** Passou pra faixa 10×20? Uma fatia das perguntas continua
-   vindo da 2×10. Não é castigo: 23×7 se resolve com 3×7, então a faixa antiga
-   é insumo da nova, não passado.
-2. **A Revisão já faz isso.** `getRevisionQuestions` monta partida com o que o
-   jogador mais erra, e `countFactsAtRiskAllOps` já sabe listar o que está
-   apodrecendo. Só falta ligar no aviso.
-
-Assim o Davi consegue o que queria de verdade — *"preciso que ele decore o 2 ao
-10"* — sem confinar ninguém: **quem aprendeu segue em frente e continua
-revisando; quem não aprendeu não passa.**
-
-### 2.5 Quanto tempo isso dá na prática
-
-Não é mais meta, é consequência — mas serve pra saber se a regra é sensata:
-
-| Jogador | Tempo estimado na faixa 2×10 |
+| Faixa | Corte |
 |---|---|
-| **Já sabe a tabuada** (chega pronto) | **~1 semana** — o piso é cobrir os 54 fatos e o mínimo de 4 dias distintos |
-| **Aprendendo, joga 2×/dia** | ~1,5 a 3 meses |
-| **Aprendendo, com dificuldade real** | 4 a 8 meses, e a cauda difícil manda no ritmo |
+| **2×10** (infraestrutura de todas as outras) | mais alto — ex.: 95% verde, nota ≥ 85 |
+| Intermediárias | 90% verde |
+| Avançadas | adaptado ao tipo de conhecimento (lá a meta é fluência de estratégia, não memorização de 110 fatos) |
 
-**O piso de ~1 semana é a prova de que a regra respeita a decisão dele.** No
-modelo v2 esse mesmo jogador levaria 10 meses pra provar algo que ele já sabia
-no primeiro dia.
+*"A primeira faixa exige consolidação excepcional"* — não *"a primeira faixa
+dura 10 meses"*. É a mesma intenção sem o imposto de tempo.
 
----
+### 2.7 Válvula de escape: Teste de Faixa
 
-## 3. O que isso mata (a boa notícia)
+Chegando perto (≥85%), o jogo oferece uma rodada curta **montada só com os
+fatos fracos**. Passar certifica os pendentes. Vira momento de conquista em vez
+de parede — e é evidência honesta, são exatamente as contas que faltavam.
 
-Três problemas grandes deixam de existir junto com a condição de XP:
+### 2.8 O que faz ficar
 
-1. **A migração de save perigosa.** Era o item 9 da v2 e o único risco real do
-   plano: se a taxa de XP cai 6×, quem já tem XP velho pula faixas com a régua
-   nova. **Sem faixa por XP, não existe pulo de faixa.** A migração vira uma
-   linha (seção 6).
-2. **A calibração dos 27.000 XP.** Não precisa mais existir número de XP por
-   faixa. A curva `FIRST_TIER_XP`/`TIER_XP_DECAY` sai de cena.
-3. **A fase de "colocar números" inteira** que o ChatGPT propôs como próximo
-   passo (simular jogador casual/normal/engajado pra achar quanto tempo cada
-   um leva). Ela existia pra calibrar tempo, e tempo deixou de ser meta.
+Sem cronômetro, permanência vem de **revisitar**, não de prender:
 
-**O que sobra pra calibrar é só o XP da liga** — e ali errar é barato: a liga
-usa `xp − leagueXpBase`, um **delta desde que entrou na divisão**, que se
-corrige sozinho em um ciclo de 6 dias. Dá pra ajustar em produção sem quebrar
-nada de ninguém.
+1. **Interleaving** — passou pra 10×20, uma fatia das perguntas continua vindo
+   da 2×10. Não é castigo: 23×7 se resolve com 3×7.
+2. **Fato verde pode voltar pra amarelo** (é a recência). Mas **faixa
+   conquistada não se perde** — tirar faixa é punição que não ensina. O que
+   apodrece reaparece no sorteio ponderado e na Revisão.
 
 ---
 
-## 4. XP: a fórmula (agora só pra liga e missões)
+## 3. O que a arquitetura eliminou
+
+1. **A migração de save perigosa** (era o único risco real do plano: rebaixar
+   XP guardado faria gente pular faixa). Vira uma linha — seção 6.
+   *O ChatGPT pediu pra não fechar esse assunto. Ele está fechado **enquanto** a
+   faixa for domínio — que é o que ele mesmo propõe. Não é fragilidade, é
+   dependência: se um dia a faixa voltar a depender de XP, o risco volta junto.*
+2. **A calibração de XP por faixa** — `FIRST_TIER_XP`/`TIER_XP_DECAY` saem de
+   cena.
+3. **A fase de simular jogadores pra achar quanto tempo cada um leva.** Ela
+   existia pra calibrar tempo, e tempo deixou de ser meta.
+
+Sobra calibrar o XP da liga — e ali errar é barato: a liga roda em
+`xp − leagueXpBase`, um delta que se corrige sozinho em um ciclo de 6 dias.
+
+---
+
+## 4. XP: a fórmula
 
 ```
 XP DA PARTIDA = round( (BASE + BÔNUS) × fator do modo × fator do dia ) × poção
 ```
 
-- **BASE = acertos × 1 XP**, piso de 5 pra partida terminada. Base fixa por
-  partida (os "20" da proposta original) é convite a farm: 10 partidas de 15
-  segundos valeriam mais que uma partida séria de 4 minutos.
+- **BASE = acertos × 1 XP**, piso de 5 por partida terminada. Base fixa por
+  partida convida ao farm (10 partidas de 15 s abandonadas valeriam mais que
+  uma partida séria de 4 minutos).
 - **BÔNUS ≤ 50% da base** — teto duro dividido entre todas as fontes. Nenhuma
-  partida passa de 1,5× o que vale pelos acertos, não importa quantos bônus
-  sejam criados depois.
-- **Fator do modo** — 0 a 1,25 (seção 7). Rush = 1,0, Revisão = 0,8, Zen = 0.
-- **Fator do dia** — anti-maratona. **Concordo com a ressalva do ChatGPT:**
-  cair de 100% pra 50% na 6ª partida pune o jogador engajado de forma visível
-  e grosseira. Melhor **decaimento suave** (100, 100, 100, 100, 100, 90, 85,
-  80, 75...) — mesma proteção, sem a sensação de tapa na mão.
+  partida passa de 1,5× o que vale pelos acertos, quantos bônus se invente.
+- **Fator do modo** — 0 a 1,25. Rush = 1,0 (é a régua), Revisão = 0,8, Zen = 0.
+- **Fator do dia** — ✅ *aceito o freio do ChatGPT*: entra como **knob
+  desligado por padrão** (todas as partidas a 100%), com decaimento suave
+  disponível (100 ×5, depois 90, 85, 80, 75...) se a liga der sinal de
+  maratona. Vira dado, não dogma.
 - **Poção multiplica no fim.**
-
-### Bônus: o que entra
 
 | Bônus | Entra? | Por quê |
 |---|---|---|
-| **Combo** | ✅ sim | mede consistência dentro da partida; com marco pagando uma vez por partida, não farma |
-| **Velocidade** | ❌ não | já é paga pelo `bonusTime` do Rush (rápido → mais tempo → mais perguntas → mais XP). E o lugar dela agora é o domínio (seção 2.1) |
-| **Recorde** | ⚠️ só por percentual e com teto | regressivo (paga o iniciante, some no platô). E **concordo com o ChatGPT**: tem que ser evento raro, não renda |
-| **Evento** | ✅ sim | modificador temporário. É aqui que uma "Semana da Velocidade" pode ligar o bônus de velocidade sem ele virar regra estrutural — boa ideia do ChatGPT |
+| **Combo** | ✅ | consistência dentro da partida; marco paga 1× por partida |
+| **Velocidade** | ❌ | já paga pelo `bonusTime` do Rush. E o lugar dela é o domínio |
+| **Recorde** | ⚠️ só percentual, com teto | regressivo. **Evento raro, não renda** (ChatGPT) |
+| **Evento** | ✅ | modificador temporário — é aqui que uma "Semana da Velocidade" liga o bônus de velocidade sem virar estrutura |
 
 ---
 
-## 5. Domínio e XP não são independentes (e tudo bem)
-
-Vale registrar pra ninguém achar que são dois mundos separados:
+## 5. Por que não dá pra farmar nenhum dos dois
 
 ```
-jogar → acertar → mais XP  (liga)
-                → mais domínio  (faixa)
+jogar → acertar → mais XP (liga)
+                → mais domínio (faixa)
 ```
 
-Acertar alimenta os dois. A diferença é **o que cada um aceita como pagamento**:
-o XP aceita volume; o domínio exige velocidade, constância e espaçamento.
+Os dois comem acerto, mas cobram moedas diferentes: **XP aceita volume; domínio
+exige constância, espaçamento e fluência.**
 
-Por isso não dá pra farmar conteúdo: quem joga muito e mal sobe na liga e
-**não** sai da faixa. Quem joga pouco e bem sai da faixa e **não** sobe na
-liga. Cada sistema cobra a moeda dele.
+Quem joga muito e mal sobe na liga e **não** sai da faixa. Quem joga pouco e
+bem sai da faixa e **não** sobe na liga.
 
 ---
 
 ## 6. O que muda no código
 
-`getLevelIdx(xp)` é usado em **11 lugares**, e em todos eles a pergunta real é
-"em que faixa o jogador está" — nunca "quanto XP ele tem":
+**`getLevelIdx(xp)` → `getFaixaIdx(data)`** em 11 lugares (`App.jsx` ×3,
+`Header.jsx`, `CatalogPage.jsx`, `ModesPage.jsx`, `PerfilPage.jsx`,
+`SettingsPage.jsx`, `utils/index.js` ×3). Em todos, a pergunta real já é "em
+que faixa o jogador está".
 
-`App.jsx` (×3) · `Header.jsx` · `CatalogPage.jsx` · `ModesPage.jsx` ·
-`PerfilPage.jsx` · `SettingsPage.jsx` · `utils/index.js` (`getTierRange`,
-`detectProgressEvents`, conquistas)
+**Migração de uma linha:** na primeira abertura, `faixaIdx = getLevelIdx(xp)`.
+Todo mundo fica exatamente na faixa em que está hoje; dali em diante a
+progressão é por domínio. Ninguém perde nada.
 
-**A troca é mecânica:** nasce `getFaixaIdx(data)` lendo um campo novo
-`data.faixaIdx`, e os 11 pontos passam a chamar ela.
-
-**A migração é uma linha e não perde nada:** na primeira abertura,
-`faixaIdx = getLevelIdx(xp)`. Todo mundo continua exatamente na faixa em que
-está hoje; a partir dali a progressão passa a ser por domínio. Sem rebase de
-XP, sem ninguém perdendo faixa — o oposto do risco que a v2 carregava.
-
-**Some:** a barra de XP do Header como medidor de faixa (vira barra de
-**domínio da faixa atual**, que é mais útil e empurra o jogador pras
-estatísticas, que era o desejo dele). O XP continua visível como número da
-liga.
+**Novo:**
+- `firstKeyMs` no registro da questão (seção 2.3) — sem isso a fluência mede
+  digitação
+- `utils/dominio.js` — nota composta por fato, base do jogador, estado da faixa
+- peso no sorteio de `getRandomQuestion` (seção 2.5)
+- `utils/xp.js` — fonte única do XP (seção 9.1)
 
 ---
 
-## 7. Interface: esconder a fórmula, nunca esconder o motivo
+## 7. Interface
 
-Com uma trava só, isso fica mais simples que na v2 — mas o princípio continua:
+**Regra:** barra é pra coisa que **destrava** algo. XP não destrava mais nada
+→ vira número. Domínio destrava a faixa → vira barra.
+
+Concordo com o meio-termo do ChatGPT: o **XP continua no Header** como número
+(ao lado de moedas e vidas, é identidade do jogo e é o placar da liga), e a
+**barra** passa a ser o domínio da faixa atual.
 
 ```
 📚 Tabuada 2×10
-
 Domínio     ███████████████░░░░░   84%
 
 Estas ainda pedem prática:
 🔴 7 × 8      🟡 6 × 7      🟡 8 × 9
 ```
 
-Sem percentual exigido na tela, sem "acerte 7×8 mais 4 vezes". Mas o jogador
-**sempre sabe o que está segurando** — e a lista de fatos vira o caminho, não
-a parede. Um jogador que não avança nunca fica sem saber por quê.
+Sem percentual exigido na tela, sem "acerte 7×8 mais 4 vezes" — mas o jogador
+**sempre sabe o que está segurando**. Quem não avança nunca fica sem saber por
+quê.
 
 ---
 
 ## 8. Ligas: personagens com personalidade
 
-O Davi quer que a liga pare de parecer planilha. **Metade já está construída**
-(`utils/leagues.js`):
+**Metade já está construída** (`utils/leagues.js`): cada personagem já tem
+atividade própria (0,4–0,9), já varia ±30% a cada 12h, e a liga já tem
+multiplicador (0,7 Bronze → 2,2 Diamante).
 
-| Já existe | Falta |
-|---|---|
-| Atividade própria por personagem (0,4–0,9) | Ela vem de um **hash do nome**, não da identidade — o Einstein pode calhar de ser mais preguiçoso que o Patrick Estrela |
-| Variação de ±30% a cada 12h | A variação é **igual pra todo mundo** — ninguém é regular, ninguém é imprevisível |
-| Multiplicador por liga (0,7 Bronze → 2,2 Diamante) | — |
+Faltam **duas correções**, não um sistema novo:
 
-Não é sistema novo, são **duas correções**:
+1. **Ritmo por identidade** — hoje vem de um *hash do nome*, então o Einstein
+   pode calhar de ser mais preguiçoso que o Patrick Estrela. Vira dois números
+   escritos à mão nos 114 (`ritmo`, `constancia`).
+2. **Variância por personagem** — hoje é ±30% pra todo mundo. Einstein: ritmo
+   alto, constância alta. Peter Parker: ritmo médio, constância baixa.
+   **É a constância baixa dos OUTROS que produz o "caraca, o Einstein está em
+   terceiro"** — não a variação do Einstein.
 
-1. **Ritmo por identidade** — dois números escritos à mão nos 114 personagens
-   (`ritmo`, `constancia`), substituindo o hash.
-2. **Variância por personagem** — Einstein: ritmo alto, constância alta (quase
-   sempre no pódio). Peter Parker: ritmo médio, constância baixa (uma vez por
-   mês tem um dia absurdo e passa por cima). **É a constância baixa dos OUTROS
-   que produz o "caraca, o Einstein está em terceiro"** — não a variação do
-   próprio Einstein.
+**Não simular o que não aparece:** a liga consome uma saída, um número de XP.
+Dar precisão/velocidade/combo a cada personagem é trabalho invisível e
+superfície pra bug. Dois números entregam 100% do efeito.
 
-**Não simular o que não aparece.** A liga consome exatamente uma saída: um
-número de XP. Dar precisão, velocidade e combo a cada personagem é trabalho que
-ninguém vê na tela e superfície a mais pra bug. Dois números entregam 100% do
-efeito visível; se um dia existir ficha de personagem, aí os atributos passam a
-aparecer e valem a pena.
-
-**QI:** usar como eixo do **ritmo** (a média) — é a ficção do jogo inteiro e é
-o que faz o pódio da Diamante fazer sentido. Nunca como eixo da **constância**.
-São independentes: é isso que permite o gênio distraído perder pro esforçado
+**QI define o ritmo** (é a ficção do jogo inteiro), **nunca a constância**. São
+eixos independentes — é o que permite o gênio distraído perder pro esforçado
 num dia ruim.
 
 ---
 
 ## 9. O que TODO modo novo precisa responder
 
-**Modo novo sem estas 7 respostas não entra:**
+1. Duração típica de uma partida (dá pra ficar parado? então XP não vem do
+   tempo)
+2. Quantas perguntas cabem numa partida típica
+3. Tem pressão? (timer, vidas, penalidade)
+4. **`xpFactor`** — 0 a 1,25, e o porquê
+5. **`scoreScale`** — os pontos são comparáveis aos do Rush?
+6. ⚠️ **Conta pro domínio?** — a mais importante das sete, porque decide se o
+   modo abre conteúdo. Modo com pergunta fácil demais ou tempo folgado demais
+   inflaria o domínio. **Zen deveria contar** (é treino de verdade, mesmo sem
+   XP e sem moeda). E **se conta pro domínio, precisa medir `firstKeyMs`.**
+7. Dá pra farmar? — agora em duas moedas: XP (liga) e domínio (faixa)
 
-1. **Duração típica de uma partida.** (Dá pra ficar parado nela? Então XP não
-   vem do tempo — vem dos acertos.)
-2. **Quantas perguntas cabem numa partida típica?**
-3. **Tem pressão?** (timer, vidas, penalidade por erro) — é o que justifica
-   fator acima de 1.
-4. **`xpFactor`** — 0 a 1,25, e o porquê. Rush = 1,0 (é a régua).
-5. **`scoreScale`** — os pontos são comparáveis aos do Rush? O recorde por modo
-   aguenta (é separado), mas o `bestScore` global mistura modos.
-6. **Conta pro domínio?** ⚠️ **Pergunta nova e agora a mais importante das
-   sete** — é ela que decide se o modo abre conteúdo. Um modo com pergunta
-   fácil demais ou tempo folgado demais inflaria o domínio e destravaria faixa
-   sem aprendizado. **Zen deveria contar** (é treino de verdade, mesmo sem XP e
-   sem moeda).
-7. **Dá pra farmar?** Descrever o caminho mais burro de abusar do modo e o que
-   impede — agora em duas moedas: farmar XP (liga) e farmar domínio (faixa).
+### 9.1 Dívida que morre antes do primeiro modo novo
 
-### 9.1 Dívida técnica que morre antes do primeiro modo novo
-
-O multiplicador de XP existe **em dois lugares**: `MODES[x].xpMultiplier`
-(`constants/index.js`) e `const MODE_XP_MULT` dentro de `handleGameEnd`
-(`App.jsx`). Já houve uma **terceira** cópia (`ResultsPage.jsx`) que divergiu
-de verdade e fez a tela mostrar um XP diferente do creditado.
-
-**Antes de qualquer modo novo:** `utils/xp.js → calcularXpDaPartida(result,
-data)`, fonte única pro save, pra tela e pra simulação.
+O multiplicador de XP existe em **dois lugares** (`MODES[x].xpMultiplier` e
+`const MODE_XP_MULT` dentro de `handleGameEnd`), e já houve uma **terceira**
+cópia que divergiu de verdade e fez a tela mostrar XP diferente do creditado.
+→ `utils/xp.js`, fonte única.
 
 ---
 
 ## 10. Pontos: ficam
 
-Pontos são a linguagem natural de um jogo de velocidade — "742 pontos" diz uma
-coisa que "+43 XP" não diz. Mudam só de cargo: deixam de ser matéria-prima do
-XP e ficam sendo desempenho (recorde, estatística, feedback, aposta, missões de
-habilidade). Nada quebra, porque hoje nada além do XP consome pontos.
+Linguagem natural de um jogo de velocidade — "742 pontos" diz o que "+43 XP"
+não diz. Mudam de cargo: desempenho (recorde, estatística, feedback, aposta,
+missões de habilidade), não matéria-prima do XP. Nada quebra, porque hoje nada
+além do XP consome pontos.
 
 ---
 
@@ -340,31 +371,29 @@ habilidade). Nada quebra, porque hoje nada além do XP consome pontos.
 
 ### ✅ Fechado
 
-| | |
-|---|---|
-| Pontos = desempenho, XP = esforço, Domínio = aprendizado | |
-| **Faixa = domínio** (sem condição de XP) | v3 |
-| XP = liga + missões de progressão | |
-| Velocidade sai do XP e vira critério de domínio | |
-| Combo continua como bônus de XP | |
-| Base de XP por acerto, bônus com teto de 50% | |
-| Personagens com ritmo + constância; QI define ritmo, não constância | |
-| Poções multiplicam no fim; eventos podem modificar tudo | |
+Pontos = desempenho · XP = progressão (liga, missões, eventos, status) ·
+Domínio = aprendizado · **Faixa = domínio** · velocidade sai do XP e vira
+critério de domínio · combo continua no XP · base de XP por acerto com teto de
+bônus · **domínio como nota composta com piso duro de precisão** · **fluência
+relativa ao jogador, sem limite universal** · personagens com ritmo +
+constância · QI define ritmo, não constância · pontos ficam.
+
+### 🔧 Precisa ser construído (não é calibração — é peça faltando)
+
+1. **`firstKeyMs`** — sem isso a fluência mede digitação (seção 2.3)
+2. **Sorteio ponderado por estado do fato** — sem isso a faixa por domínio
+   trava na cauda (seção 2.5)
+3. **`utils/dominio.js`** e **`utils/xp.js`**
 
 ### ⚠️ A calibrar (risco baixo — nada disso trava conteúdo)
 
-- Os cinco limiares de domínio da seção 2.2 (**o único que exige cuidado de
-  verdade é o tempo de 2,0 s** — muito apertado trava criança lenta que
-  aprendeu; muito frouxo deixa passar quem conta nos dedos)
-- Corte de abertura da faixa (95% verde / nenhum vermelho) e o gatilho do Teste
-  de Faixa
-- Curva do decaimento diário de XP
-- XP por modo, tabela de combo, teto de bônus, recorde
-- Ritmo e constância dos 114 personagens
+Os 4 pesos da nota · o multiplicador da fluência (1,4) · o piso de precisão
+(70%) · os cortes por faixa · o gatilho do Teste de Faixa · a fatia de
+interleaving · XP por modo, combo, recorde · ritmo e constância dos 114
+personagens.
 
-### ❓ Em aberto pro Davi
+### ❓ Pro Davi
 
-1. **Teste de Faixa** (seção 2.3) — mecânica nova. Faz? Fica pra depois?
-2. **Interleaving** (seção 2.4) — que fatia das perguntas vem das faixas
-   antigas?
-3. **A barra do Header** vira domínio da faixa atual — confirma?
+1. **Teste de Faixa** (2.7) — mecânica nova. Faz agora ou fica pra depois?
+2. **Interleaving** (2.8) — que fatia das perguntas vem das faixas antigas?
+3. **Header** (7) — XP vira número e a barra vira domínio. Confirma?

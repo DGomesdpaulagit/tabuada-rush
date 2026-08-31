@@ -8,6 +8,14 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 **Detalhes em `sessions/sessao-099.md`.**
 
+### Alterado
+- 🔴 **Vidas diárias DESLIGADAS temporariamente** (`DAILY_LIVES_ENABLED =
+  false`), a pedido do Davi: pra Fase 1 ele precisa jogar muitas partidas
+  seguidas e o pote de 5 por dia trava no 5º erro. Nenhum erro consome vida,
+  nenhum modo bloqueia, e o Header mostra ❤️ ∞. As 3 vidas de dentro da
+  partida seguem normais. **Religar quando a Fase 1 acabar** — anotado em
+  `PENDENCIAS.md`
+
 ### Adicionado
 - **Resumo da coleta no console ao fim de cada partida — só em DEV.** Mostra
   tentativas gravadas, quantas têm tempo de decisão, mediana de decisão vs.

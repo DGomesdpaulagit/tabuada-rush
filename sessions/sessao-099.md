@@ -445,6 +445,23 @@ vs. total (com o % que é digitação) e uma `console.table` das últimas 8.
 `import.meta.env.DEV` é false no build de produção — o Vite remove o bloco
 inteiro do bundle.
 
+## 11. Vidas diárias desligadas (pra viabilizar a Fase 1)
+
+Pedido do Davi: com 5 vidas por dia ele não consegue jogar o suficiente pra
+Fase 1 ter histórico. `DAILY_LIVES_ENABLED = false` em `constants/index.js` —
+**um lugar só**, pra religar sem caçar código.
+
+Duas decisões dentro disso:
+
+- **As 3 vidas DENTRO da partida continuam.** Sem elas a partida do Rush só
+  acabaria por tempo — e o fim de partida é justamente o que grava a coleta.
+  Desligar as duas coisas atrapalharia o que ele quer fazer.
+- **O Header mostra ❤️ ∞** em vez de travar em 5. Com o pote desligado o
+  número ficaria sempre cheio e pareceria bug; o infinito diz a verdade.
+
+Anotado em `PENDENCIAS.md` como dívida com data pra vencer: sem o limite
+diário a Loja perde o maior sorvedouro de moeda do jogo (vida a 300).
+
 ---
 
 ## Arquivos alterados
@@ -460,6 +477,8 @@ inteiro do bundle.
 | `src/utils/index.js` | **Fase 0** — `diaNum`, `ULT_MAX`, `DIAS_MAX`, `CALIBRA_MAX` |
 | `src/App.jsx` | **Fase 0** — `ult`/`dias` por fato + `calibra` |
 | `src/lib/storage.js` | **Fase 0** — `calibra: []` |
+| `src/constants/index.js` | `DAILY_LIVES_ENABLED = false` (temporário) |
+| `src/components/Header.jsx` | ❤️ ∞ enquanto o pote estiver desligado |
 
 ---
 

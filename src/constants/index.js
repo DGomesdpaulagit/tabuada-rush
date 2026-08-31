@@ -147,6 +147,20 @@ export const STREAK_REWARD_MILESTONES = [40, 100, 250, 365];
 // Zerou? Não dá pra começar partida nova até repor (comprar com moeda — caro
 // de propósito, ver planejamento-6.0.md seção 5) ou esperar o próximo dia.
 export const DAILY_LIVES_MAX = 5;
+
+// ── 🔴 VIDAS DIÁRIAS DESLIGADAS [Fase 1, sessão 099] ────────────────────────
+// Temporário, a pedido do Davi: pra Fase 1 do sistema de domínio ele precisa
+// jogar MUITAS partidas seguidas e juntar histórico, e o pote de 5 vidas por
+// dia trava isso já no 5º erro.
+//
+// Com `false`: nenhum erro consome vida do pote e nenhum modo fica bloqueado
+// por falta de vida. A vida DENTRO da partida (as 3 do Rush) continua normal —
+// senão a partida nunca acabaria por erro, e o fim de partida é justamente o
+// que grava a coleta.
+//
+// ➡️ PRA RELIGAR: trocar pra `true`. É o único lugar. Não esquecer disso
+//    quando a Fase 1 acabar — sem as vidas o jogo perde o limite diário.
+export const DAILY_LIVES_ENABLED = false;
 // [sessão 090] Antes era `LIFE_REFILL_PRICE = 150`, que enchia o pote
 // INTEIRO de uma vez. O Davi mudou a regra: agora se compra UMA vida por vez,
 // a 300 moedas. Quem está com 3 de 5 e quer o pote cheio compra duas vezes.

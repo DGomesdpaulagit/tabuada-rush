@@ -9,7 +9,7 @@ import { rollMatchLoot } from './utils/loot';
 import { emZonaDeRebaixamento, multiplicadorXp, multiplicadorLoot, deveAvisarDaZona, chaveDoDia } from './utils/relegation';
 import { LEAGUE_MAP } from './constants/leagues';
 import { SHOP_ITEM_MAP } from './constants/shop';
-import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, LIFE_PRICE } from './constants';
+import { LEVELS, ACHIEVEMENTS, STREAK_GOALS, STREAK_REWARD_MILESTONES, DAILY_LIVES_MAX, DAILY_LIVES_ENABLED, LIFE_PRICE } from './constants';
 import { prefs } from './lib/prefs';
 import { audio } from './lib/audioManager';
 import { maybeStreakReminder, maybeMissionExpireReminder, maybeForgettingReminder } from './lib/notify';
@@ -1068,6 +1068,7 @@ export default function App() {
   // getLivesInfo/DAILY_LIVES_MAX). Reseta o pote pro dia atual antes de
   // descontar, se o último registro for de um dia anterior.
   const loseLife = useCallback(() => {
+    if (!DAILY_LIVES_ENABLED) return; // [Fase 1] pote desligado — ver constants
     update((prev) => {
       const info = getLivesInfo(prev);
       return { ...prev, livesData: { date: todayStr(), remaining: Math.max(0, info.remaining - 1) } };
@@ -1083,7 +1084,7 @@ export default function App() {
     // [v6.0 · Bloco 2] Sem vidas hoje → bloqueia QUALQUER modo até repor
     // (comprar) ou o dia virar. Checa antes da aposta — sem vida, nem chega
     // a apostar.
-    if (getLivesInfo(data).remaining <= 0) {
+    if (DAILY_LIVES_ENABLED && getLivesInfo(data).remaining <= 0) {
       setPendingNoLivesMode(mode);
       return;
     }

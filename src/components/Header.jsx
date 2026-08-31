@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { getLevelIdx, getXpProgress, getLivesInfo, todayStr } from '../utils';
+import { DAILY_LIVES_ENABLED } from '../constants';
 import { LEVELS, ACHIEVEMENTS, DAILY_LIVES_MAX, LIFE_PRICE } from '../constants';
 import { Progress } from './ui';
 import GameIcon from './GameIcon';
@@ -330,7 +331,9 @@ export default function Header({ onNavigate }) {
           trigger={
             <>
               <GameIcon name="vidas" size={20} />
-              <span className="text-danger">{lives}</span>
+              {/* [Fase 1] com o pote desligado o número seria sempre 5 e
+                  pareceria bug — o infinito diz a verdade. */}
+              <span className="text-danger">{DAILY_LIVES_ENABLED ? lives : '∞'}</span>
             </>
           }
         >

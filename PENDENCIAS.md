@@ -65,6 +65,23 @@ O Davi encerrou a conversa por limite de contexto e pediu pra documentar:
 
 ---
 
+## 🔴 RELIGAR AS VIDAS DIÁRIAS (sessão 099) — dívida com data pra vencer
+
+`DAILY_LIVES_ENABLED = false` em `src/constants/index.js`, a pedido do Davi:
+pra Fase 1 do sistema de domínio ele precisa jogar muitas partidas seguidas e
+o pote de 5 vidas por dia trava isso já no 5º erro.
+
+**Enquanto estiver `false`:** nenhum erro consome vida do pote, nenhum modo
+fica bloqueado, e o Header mostra ❤️ ∞. As 3 vidas DENTRO da partida (Rush)
+continuam normais — é assim que a partida acaba por erro, e o fim de partida é
+o que grava a coleta.
+
+**➡️ Trocar pra `true` quando a Fase 1 acabar.** É o único lugar. Sem isso o
+jogo fica sem limite diário — o que também desmonta a Loja (a vida a 300
+moedas é o maior sorvedouro de moeda do jogo).
+
+---
+
 ## 🔢 Tipos de pontuação por faixa numérica (pedido da sessão 082)
 
 Hoje existe **um único** ícone de pontuação (`missao-tipo-pontuacao`, o

@@ -8,6 +8,15 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 **Detalhes em `sessions/sessao-099.md`.**
 
+### Adicionado
+- **FASE 1 — cálculo de domínio (`utils/dominio.js`) e painel de leitura.**
+  Função pura com os quatro componentes da Tabela-Mãe (precisão 40 /
+  consistência 25 / fluência 20 / recência 15), catraca de precisão em 70%,
+  base p25 da fluência com período de estabilização e o corte de faixa (95%
+  verde, nenhum vermelho). **Não grava nada e não destrava faixa** — só mede.
+  O painel abre em `?screen=dominio` (só em DEV) e mostra a qualidade da
+  coleta, o estado da faixa e todos os fatos do pior pro melhor
+
 ### Alterado
 - 🔴 **Vidas diárias DESLIGADAS temporariamente** (`DAILY_LIVES_ENABLED =
   false`), a pedido do Davi: pra Fase 1 ele precisa jogar muitas partidas

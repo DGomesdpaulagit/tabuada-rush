@@ -462,6 +462,48 @@ Duas decisões dentro disso:
 Anotado em `PENDENCIAS.md` como dívida com data pra vencer: sem o limite
 diário a Loja perde o maior sorvedouro de moeda do jogo (vida a 300).
 
+## 12. FASE 1 — o cálculo de domínio + painel de leitura
+
+O Davi jogou 15 partidas e perguntou se já dava. Dá pra **começar**, com uma
+ressalva que não é detalhe (ver abaixo).
+
+**`src/utils/dominio.js` (novo) — função pura.** Implementa a Tabela-Mãe: os
+quatro componentes (precisão recente 40 / consistência 25 / fluência 20 /
+recência 15), a catraca de precisão < 70% → 🔴, a base p25 da fluência com
+período de estabilização, e o corte da faixa (95% verde + nenhum vermelho).
+Não grava nada e não destrava faixa nenhuma — na Fase 3 é ela que passa a
+decidir a progressão.
+
+Detalhe que evita punir sem dado: quando **não há** fluência calculável (por
+estar estabilizando ou por não ter tempo válido gravado), os 20 pontos dela
+vão pra precisão — em vez de contar como zero.
+
+**`src/pages/DominioPage.jsx` (novo) — `?screen=dominio`, só em DEV.**
+Relatório em cima do save real: se a coleta está prestando (decisão vs. total,
+% de digitação, 1ª pergunta vs. demais, dias distintos), o estado da faixa
+(base, contagem 🟢🟡🔴, se abriria) e a tabela de todos os fatos do pior pro
+melhor com os quatro componentes separados. Existe porque conferir isso pelo
+console é hostil — o DevTools bloqueia colar e a frase de desbloqueio muda de
+idioma.
+
+**Conferido com dado sintético** (fatos difíceis com 55% de acerto e decisão
+~2,3 s contra base de 627 ms): 39 🟢 / 6 🟡 / 9 🔴, faixa não abriria (72%), e
+os vermelhos que subiram no topo da tabela foram exatamente 7×10, 8×10, 9×10,
+6×7, 8×8 e 7×7. A regra separa o que tem que separar.
+
+### ⚠️ O que 15 partidas NÃO conseguem responder
+
+Volume resolve precisão e fluência. **Não resolve consistência nem recência —
+essas são de calendário, não de quantidade.** Consistência cheia pede 4 dias
+DISTINTOS; 15 partidas num dia só valem 1 dia. Enquanto isso, todo fato fica
+com o teto rebaixado e nenhum chega perto de 100.
+
+E falso positivo/negativo (o hold-out no tempo) precisa de mais tempo ainda:
+calcular a nota até a data T e olhar o erro DEPOIS de T.
+
+Por isso o painel mostra "dias distintos" em destaque, com o aviso de que só o
+tempo resolve.
+
 ---
 
 ## Arquivos alterados
@@ -479,6 +521,8 @@ diário a Loja perde o maior sorvedouro de moeda do jogo (vida a 300).
 | `src/lib/storage.js` | **Fase 0** — `calibra: []` |
 | `src/constants/index.js` | `DAILY_LIVES_ENABLED = false` (temporário) |
 | `src/components/Header.jsx` | ❤️ ∞ enquanto o pote estiver desligado |
+| `src/utils/dominio.js` | **novo** — cálculo de domínio (função pura) |
+| `src/pages/DominioPage.jsx` | **novo** — painel de Fase 1 (`?screen=dominio`, DEV) |
 
 ---
 

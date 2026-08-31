@@ -28,6 +28,8 @@ import ShopPage from './pages/ShopPage';
 import MissionsPage from './pages/MissionsPage';
 import PerfilPage from './pages/PerfilPage';
 import MochilaPage from './pages/MochilaPage';
+// [Fase 1, sessão 099] Relatório de domínio — só em DEV, aberto por `?screen=dominio`.
+import DominioPage from './pages/DominioPage';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import LostStreakModal from './components/LostStreakModal';
@@ -1207,7 +1209,7 @@ export default function App() {
             [sessão 094] A Arena entrou aqui porque o painel novo tem duas
             colunas — dentro dos 512px do `max-w-lg` as caixas de modo viravam
             tiras de uma palavra por linha. */}
-        <div className={`w-full px-4 py-6 ${screen === 'ranking' || screen === 'menu' ? 'max-w-5xl' : 'max-w-lg'}`}>
+        <div className={`w-full px-4 py-6 ${screen === 'ranking' || screen === 'menu' || screen === 'dominio' ? 'max-w-5xl' : 'max-w-lg'}`}>
         <AnimatePresence mode="wait">
           {screen === 'menu' && (
             <MenuPage
@@ -1287,6 +1289,9 @@ export default function App() {
             <MochilaPage key="mochila" onBack={() => setScreen('menu')} />
           )}
           {screen === 'perfil' && <PerfilPage key="perfil" />}
+          {/* Ferramenta de Fase 1, só em DEV: `?screen=dominio`. O Vite
+              remove o ramo no build de produção. */}
+          {import.meta.env.DEV && screen === 'dominio' && <DominioPage key="dominio" />}
         </AnimatePresence>
         </div>
         </div>

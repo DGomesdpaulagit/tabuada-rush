@@ -4,6 +4,26 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.49] — 2026-08-31 — 🚨 Fim de partida voltou a funcionar
+
+**Detalhes em `sessions/sessao-099.md`.**
+
+### Corrigido
+- 🚨 **CRÍTICO — `handleGameEnd` quebrava em TODA partida desde a 6.0.46.**
+  `multiplicadorLoot(prev)` estava **fora** do `update()`, onde `prev` não
+  existe → `ReferenceError: prev is not defined` (App.jsx:521, chamado por
+  `callEnd` no GamePage). Efeito: ao terminar a partida nada era salvo (XP,
+  moedas, ofensiva, missões, recorde, loot) e a tela ficava travada no jogo.
+  Passou a usar o `data` do componente, que é o estado de ANTES da partida —
+  mesmo padrão do `potionMultiplier`
+  - **Como escapou:** a penalidade de loot da zona entrou na sessão 097 sem
+    ninguém jogar uma partida de verdade depois. O build não pega isso: é
+    erro de runtime. Foi o Davi que achou, pelo console
+  - **Foi ele também que travou toda a verificação da Fase 0** — as partidas
+    do navegador automatizado nunca terminavam, e eu atribuí isso ao harness
+
+---
+
 ## [6.0.48] — 2026-08-30 — Aviso de ofensiva raro + posição colorida na Arena
 
 **Detalhes em `sessions/sessao-099.md`.**

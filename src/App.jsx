@@ -515,10 +515,17 @@ export default function App() {
       // sem nem jogar de verdade. Mesmo espírito de "Zen não gera moeda nenhuma"
       // (já valia pra `coinsEarned`, linha abaixo) — decisão não escrita no
       // PLANO_ACAO.md, sinalizada em D049.
-      // Loot também cai na zona de rebaixamento (25% da chance normal)
+      // Loot também cai na zona de rebaixamento (25% da chance normal).
+      //
+      // ⚠️ [sessão 099] Aqui é FORA do `update()` — o `prev` não existe neste
+      // escopo. Usava `multiplicadorLoot(prev)` desde a sessão 097 e isso
+      // derrubava `handleGameEnd` com ReferenceError em TODA partida: nada era
+      // salvo e a tela nunca saía do jogo. O estado certo aqui é o `data` do
+      // componente (o de ANTES desta partida), mesmo padrão do
+      // `potionMultiplier` mais abaixo.
       const loot = result.mode === 'zen'
         ? { chests: [], powerupIds: [], potionIds: [] }
-        : rollMatchLoot(result.timePlayed || 0, multiplicadorLoot(prev));
+        : rollMatchLoot(result.timePlayed || 0, multiplicadorLoot(data));
       const lootCoins = loot.chests.reduce((sum, c) => sum + c.coins, 0);
 
       const newData = update((prev) => {

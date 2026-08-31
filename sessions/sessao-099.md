@@ -377,35 +377,56 @@ pra 39%. Dominância se ajusta escrevendo os 114 personagens, não no código.
 
 Nenhuma regra do jogo mudou: nenhum XP, nenhuma faixa, nenhuma tela.
 
-### ⚠️ Verificação: o que ficou provado e o que NÃO ficou
+### 🚨 O bug que estava por trás de tudo
 
-**Provado:** o build passa; e o caminho de digitação chega ao React — numa das
-rodadas o diagnóstico mostrou o input recebendo "8" pra 2×4 **e o botão OK
-ficando habilitado**, o que só acontece quando o `inputVal` do React tem valor.
-É o mesmo `onChange` que agora chama o `marcarPrimeiraTecla`.
+O Davi abriu o console do próprio navegador e mandou o print:
 
-**NÃO provado:** que uma partida terminada grava `ult`/`dias`/`calibra` — não
-consegui **encerrar** uma partida no navegador automatizado. Três motivos
-distintos, todos do harness, nenhum do jogo:
-
-1. Em headless o Chrome estrangula o `setInterval`, então o cronômetro do Rush
-   praticamente não anda (as flags `--disable-background-timer-throttling` e
-   companhia não resolveram; forçar quadros com `Page.captureScreenshot`
-   também não).
-2. Meu script lia a pergunta **antes** de esperar o campo liberar, então
-   digitava a resposta da pergunta anterior — isso apareceu como "PONTOS 10"
-   depois de 12 respostas.
-3. Ao corrigir (2) eu criei um gate que nunca abria durante a contagem
-   regressiva.
-
-**Não vale insistir nisso por script.** O jeito honesto e barato: o Davi joga
-UMA partida de verdade e conferimos o save. No DevTools (F12 → Console):
-
-```js
-JSON.parse(localStorage.tabuada_rush_v2).calibra.slice(-5)
+```
+Uncaught ReferenceError: prev is not defined
+    at App.jsx:521:67
+    at callEnd (GamePage.jsx:262:29)
 ```
 
-Se aparecerem linhas com `fk`, `ok`, `d` e `t`, a coleta está funcionando.
+`multiplicadorLoot(prev)` estava **fora** do `update()`. O `prev` só existe
+dentro do callback — ali fora é variável inexistente. Resultado: **toda
+partida quebrava ao terminar**, desde a 6.0.46. Nada era salvo (XP, moedas,
+ofensiva, missões, recorde, loot) e a tela ficava presa no jogo.
+
+Corrigido pra `multiplicadorLoot(data)` — o estado do componente, que é o de
+ANTES desta partida, mesmo padrão do `potionMultiplier` logo abaixo.
+
+**Como escapou:** entrou na sessão 097 junto com a penalidade de loot da zona,
+e ninguém jogou uma partida de verdade depois. `npm run build` não pega: é
+erro de runtime, dentro de um callback que só roda ao terminar a partida.
+
+**E foi ele que travou a verificação da Fase 0 a tarde inteira.** As partidas
+do navegador automatizado nunca terminavam e eu fui culpando o harness —
+throttling de `setInterval`, ordem de leitura da pergunta, escape de regex.
+Tudo isso existia, mas o motivo real era o jogo quebrando no fim da partida.
+**Lição:** quando a mesma verificação falha por três motivos diferentes,
+desconfiar do alvo, não só do instrumento.
+
+### ✅ Verificação da Fase 0 — feita, depois do fix
+
+Partida de verdade no navegador, terminada de verdade ("Tarefa concluída!"):
+
+```
+=== factStats: 3 fatos tocados ===
+ 6x9: count=1 correct=0 wrong=1
+      ult  = [{"ok":0,"d":3414,"t":1788194437244}]
+      dias = [20696]
+
+=== calibra ===
+ { "fk":"4x10", "ok":0, "d":3368, "tot":3450, "flu":1, "q1":1 }
+ { "fk":"3x6",  "ok":0, "d":245,  "tot":341,  "flu":1, "q1":0 }
+```
+
+`ult`, `dias`, `calibra`, `d` (tempo de decisão), `flu` e `q1` — tudo
+gravando.
+
+**E o dado já confirmou a hipótese que motivou o `firstKeyMs`:** a digitação
+foi **~28% do tempo total** nessa amostra. Medir fluência pelo tempo até o
+envio estaria misturando quase um terço de motor com pensamento.
 
 ---
 

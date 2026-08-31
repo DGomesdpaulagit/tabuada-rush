@@ -28,6 +28,12 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+- **`ARQUITETURA_XP.md` v3** — o Davi cancelou a meta de "8 a 10 meses na
+  faixa 1" ("se ele aprendeu, ele aprendeu"), o que derruba a condição de
+  XP na faixa: **faixa = domínio**, XP = liga + missões. Junto com ela
+  morrem a migração de save arriscada, a calibração de XP por faixa e a
+  fase de simulação de tempo. O documento passa a especificar o que conta
+  como "decorou" (tempo de resposta como critério central)
 - **`ARQUITETURA_XP.md` v2** — reescrito depois da contraproposta do ChatGPT:
   faixa passa a exigir **XP + Domínio**, com a calibração que faltava (as
   "600 partidas" são os "8–10 meses" pedidos; a curva de 27.000 XP já está

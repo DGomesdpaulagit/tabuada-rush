@@ -108,13 +108,56 @@ disso.
 recorde me incomoda menos (farm de XP não compra mais conteúdo). O bônus de
 velocidade eu continuo cortando — é pago duas vezes pelo `bonusTime` do Rush.
 
+## 5. `ARQUITETURA_XP.md` v3 — o Davi cancelou a meta de tempo
+
+Decisão dele, depois de mais uma rodada com o ChatGPT: *"cada usuário tem seu
+tempo (...) se ele aprendeu, ele aprendeu, já era. Outros vão chegar já
+sabendo essa primeira faixa. Vamos parar de perder tempo com isso."*
+
+**Consequência que fecha a arquitetura: a condição de XP na faixa cai.** Ela
+existia só pra sustentar os 8–10 meses; sem a meta de tempo, qualquer XP
+exigido vira imposto cobrado de quem já provou que aprendeu — exatamente o
+caso do jogador que chega sabendo a 2×10.
+
+```
+PRÓXIMA FAIXA = Domínio suficiente
+```
+
+**Por que isso não deixa o XP vago:** ele fica com a liga inteira (114
+personagens, 8 divisões, zona de rebaixamento, pódio) e as missões de
+progressão. A divisão vira uma frase: *conteúdo se abre com aprendizado,
+competição se ganha com esforço*.
+
+**E a trava de esforço não some** — ela já estava dentro do domínio: os 54
+fatos da faixa 1 só ficam verdes com ~430 acertos espalhados por vários dias.
+A condição de XP só somava tempo em cima disso.
+
+**O que passou a ser o trabalho de verdade:** a definição de "decorou". O
+critério central é o **tempo de resposta** — fato recuperado da memória volta
+em menos de 1,5 s; fato calculado (contar de 7 em 7) leva 3 a 6 s. Os dois
+terminam em acerto, e é por isso que contar acertos não enxerga aprendizado.
+
+Fecha um arco: tirei a velocidade do XP e ela reaparece como critério central
+do domínio. **Velocidade não deve comprar progresso — ela deve provar
+aprendizado.**
+
+**Três coisas morreram junto com a condição de XP:** a migração de save
+perigosa (era o único risco real do plano), a calibração dos 27.000 XP por
+faixa, e a fase inteira de simular jogadores pra achar quanto tempo cada um
+leva — ela existia pra calibrar tempo.
+
+**Alcance no código:** `getLevelIdx(xp)` aparece em 11 lugares e em todos a
+pergunta real é "em que faixa o jogador está". Troca mecânica por
+`getFaixaIdx(data)`, e a migração é uma linha (`faixaIdx = getLevelIdx(xp)` na
+primeira abertura) — ninguém perde faixa.
+
 ---
 
 ## Arquivos alterados
 
 | Arquivo | Mudança |
 |---------|---------|
-| `ARQUITETURA_XP.md` | **novo** — análise + regra de escala pros modos; **v2** com XP + Domínio e a calibração |
+| `ARQUITETURA_XP.md` | **novo** — v1 análise → v2 XP + Domínio → **v3 faixa = domínio**, com a especificação de "decorou" |
 | `src/utils/index.js` | `momentoDaPerda`, `mesAtual`, `deveAvisarOfensivaPerdida`; `em` agora é a meia-noite real |
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |
@@ -124,9 +167,9 @@ velocidade eu continuo cortando — é pago duas vezes pelo `bonusTime` do Rush.
 
 ## 📋 Para a PRÓXIMA CONVERSA
 
-1. **Decidir as 9 linhas da seção 11 do `ARQUITETURA_XP.md`** — nada de XP
-   muda antes disso, e nenhum modo novo entra antes disso. A linha 9
-   (rebaixar o XP já guardado nos saves) é o único risco real do plano.
+1. **Três perguntas em aberto na seção 11 do `ARQUITETURA_XP.md`**: Teste de
+   Faixa (mecânica nova), fatia de interleaving das faixas antigas, e a barra
+   do Header virando domínio. A arquitetura em si está fechada.
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Tipos de pontuação por faixa** (100/200/500/1000) — destravado agora que
    a pergunta sobre os pontos foi respondida (eles ficam).

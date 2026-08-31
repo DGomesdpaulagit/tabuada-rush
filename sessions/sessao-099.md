@@ -124,8 +124,9 @@ velocidade eu continuo cortando — é pago duas vezes pelo `bonusTime` do Rush.
 
 ## 📋 Para a PRÓXIMA CONVERSA
 
-1. **Decidir os 5 itens da seção 8 do `ARQUITETURA_XP.md`** — nada de XP muda
-   antes disso, e nenhum modo novo entra antes disso.
+1. **Decidir as 9 linhas da seção 11 do `ARQUITETURA_XP.md`** — nada de XP
+   muda antes disso, e nenhum modo novo entra antes disso. A linha 9
+   (rebaixar o XP já guardado nos saves) é o único risco real do plano.
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Tipos de pontuação por faixa** (100/200/500/1000) — destravado agora que
    a pergunta sobre os pontos foi respondida (eles ficam).

@@ -340,6 +340,73 @@ picos) ou corrige dando ritmo médio um pouco menor a quem tem constância baixa
 Adotada também a **regra de ouro** proposta pelo ChatGPT: *o sistema nunca cria
 uma barreira sem oferecer um caminho claro pra superá-la.*
 
+## 10. FASE 0 implementada (as 3 decisões do Davi)
+
+Ele aprovou as três: Fase 0 pode ligar, teste de placement aprovado como
+decisão de produto (implementação depois da calibração) e **corrigir** a
+vantagem de pódio da constância baixa. Regra de ouro que ele definiu pra liga:
+*"surpresa vem da variância; força vem do ritmo médio."*
+
+### Fator da constância, calibrado por simulação
+
+Rodei o teste limpo — três personagens de **mesmo ritmo (120)** e constâncias
+diferentes, 20.000 ciclos, medindo o pódio de cada um:
+
+| Fator no ritmo | alta | média | baixa |
+|---|---|---|---|
+| nenhum | 6,1% | 18,2% | **30,1%** ← o privilégio |
+| **baixa ×0,94 · média ×0,97** | **18,6%** | **17,8%** | **20,1%** ← neutro |
+| baixa ×0,92 | 26,5% | 17,2% | 16,9% ← passou do ponto |
+
+**Adotado: alta ×1,00 · média ×0,97 · baixa ×0,94.** Na liga cheia o pódio
+passa a cair junto com o ritmo sem inversão, e a surpresa sobrevive (pior
+colocação do Einstein em 8.000 ciclos: 5º).
+
+**Nota de autoria:** com esses fatores, ritmo máximo + constância alta vence
+66% dos ciclos; o mesmo ritmo com constância média cai pra 47% e com baixa
+pra 39%. Dominância se ajusta escrevendo os 114 personagens, não no código.
+
+### O que entrou no código
+
+| Arquivo | O que |
+|---|---|
+| `GamePage.jsx` | `firstKeyAt` (1ª tecla, no `onChange` dos 3 inputs), marcadores de descarte (`abaEscondida` via `visibilitychange`, `powerupNaQuestao`, `questaoIdx`) e os campos `dec`/`flu`/`q1` no registro da questão |
+| `utils/index.js` | `diaNum()`, `ULT_MAX` (20), `DIAS_MAX` (10), `CALIBRA_MAX` (5000) |
+| `App.jsx` | grava `ult` e `dias` por fato no `factStats` e acumula o `calibra` |
+| `lib/storage.js` | `calibra: []` no default |
+
+Nenhuma regra do jogo mudou: nenhum XP, nenhuma faixa, nenhuma tela.
+
+### ⚠️ Verificação: o que ficou provado e o que NÃO ficou
+
+**Provado:** o build passa; e o caminho de digitação chega ao React — numa das
+rodadas o diagnóstico mostrou o input recebendo "8" pra 2×4 **e o botão OK
+ficando habilitado**, o que só acontece quando o `inputVal` do React tem valor.
+É o mesmo `onChange` que agora chama o `marcarPrimeiraTecla`.
+
+**NÃO provado:** que uma partida terminada grava `ult`/`dias`/`calibra` — não
+consegui **encerrar** uma partida no navegador automatizado. Três motivos
+distintos, todos do harness, nenhum do jogo:
+
+1. Em headless o Chrome estrangula o `setInterval`, então o cronômetro do Rush
+   praticamente não anda (as flags `--disable-background-timer-throttling` e
+   companhia não resolveram; forçar quadros com `Page.captureScreenshot`
+   também não).
+2. Meu script lia a pergunta **antes** de esperar o campo liberar, então
+   digitava a resposta da pergunta anterior — isso apareceu como "PONTOS 10"
+   depois de 12 respostas.
+3. Ao corrigir (2) eu criei um gate que nunca abria durante a contagem
+   regressiva.
+
+**Não vale insistir nisso por script.** O jeito honesto e barato: o Davi joga
+UMA partida de verdade e conferimos o save. No DevTools (F12 → Console):
+
+```js
+JSON.parse(localStorage.tabuada_rush_v2).calibra.slice(-5)
+```
+
+Se aparecerem linhas com `fk`, `ok`, `d` e `t`, a coleta está funcionando.
+
 ---
 
 ## Arquivos alterados
@@ -351,6 +418,10 @@ uma barreira sem oferecer um caminho claro pra superá-la.*
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |
 | `src/pages/MenuPage.jsx` | posição pintada pela situação |
+| `src/pages/GamePage.jsx` | **Fase 0** — `firstKeyMs`, descartes, `dec`/`flu`/`q1` |
+| `src/utils/index.js` | **Fase 0** — `diaNum`, `ULT_MAX`, `DIAS_MAX`, `CALIBRA_MAX` |
+| `src/App.jsx` | **Fase 0** — `ult`/`dias` por fato + `calibra` |
+| `src/lib/storage.js` | **Fase 0** — `calibra: []` |
 
 ---
 

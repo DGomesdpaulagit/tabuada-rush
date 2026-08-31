@@ -800,6 +800,30 @@ export function todayStr() {
   return localDateStr();
 }
 
+// ── [FASE 0 · sessão 099] COLETA PRO SISTEMA DE DOMÍNIO ─────────────────────
+// Nada aqui muda regra do jogo — é só o formato do que passa a ser gravado.
+// O desenho vem das CONSULTAS que o domínio vai precisar fazer, não de um log
+// genérico (ver ARQUITETURA_XP.md seção 4.2):
+//
+//   `ult`   → precisão recente + fluência (as últimas N tentativas do fato)
+//   `dias`  → consistência (em quantos DIAS DISTINTOS o fato foi praticado)
+//   `calibra` → falso positivo/negativo, a única consulta que precisa de
+//               ordem cronológica global. É TEMPORÁRIA: existe só durante a
+//               calibração e é apagada depois. Em produção não existe.
+//
+// ⚠️ `dias` não sai do `ult`: um jogador pesado faz 20 tentativas do mesmo
+// fato em dois dias. O buffer não enxerga espaçamento — e espaçamento é
+// exatamente o que a consistência mede. Duas perguntas, duas estruturas.
+export const ULT_MAX = 20;      // tentativas guardadas por fato
+export const DIAS_MAX = 10;     // dias distintos guardados por fato
+export const CALIBRA_MAX = 5000; // teto do log temporário de calibração
+
+// Número do dia LOCAL (dias desde a época). Inteiro em vez de string pra
+// `dias` caber em poucos bytes por fato.
+export function diaNum(d = new Date()) {
+  return Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000);
+}
+
 // [v6.0 · Bloco 2] Vidas diárias — lê o pote sem mutar o storage; se o dia
 // virou desde o último registro, reporta o pote cheio (o reset de verdade só
 // é gravado na próxima vez que uma vida é perdida ou comprada, ver App.jsx

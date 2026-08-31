@@ -188,6 +188,19 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   const responseTimes = useRef([]);
   // Registro por questão (Catálogo de Precisão)
   const questionLog = useRef([]);
+  // ── [FASE 0 · sessão 099] COLETA PRO SISTEMA DE DOMÍNIO ───────────────────
+  // Só GRAVA. Não muda nenhuma regra do jogo, nenhum XP, nenhuma faixa —
+  // ver ARQUITETURA_XP.md seção 4.2.
+  //
+  // Por que `firstKeyAt` e não o tempo que já existe: o `dt` medido no envio
+  // é `ler + lembrar + DIGITAR + Enter`, e as respostas têm de 1 a 4 dígitos.
+  // Medir fluência com ele puniria resposta grande por ser grande. O tempo
+  // até a PRIMEIRA TECLA é a janela de decisão — lembrar ou calcular.
+  const firstKeyAt = useRef(null);
+  // Descartes da fluência (a tentativa continua valendo pra precisão):
+  const abaEscondida = useRef(false);      // trocou de aba no meio da pergunta
+  const powerupNaQuestao = useRef(false);  // modal na frente inflou o relógio
+  const questaoIdx = useRef(0);            // pra marcar a 1ª da partida (ver 4.2)
   // [Fase 6, sessão 071] Duração REAL da partida, em relógio de parede —
   // `cfg.timer - state.time` dava sempre a duração BASE do modo (o
   // cronômetro sempre termina em 0), ignorando totalmente o bônus de tempo
@@ -282,9 +295,29 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
       setInputValB('');
       setInputState('idle');
       questionShownAt.current = Date.now();
+      // [Fase 0] zera os marcadores de coleta desta questão
+      firstKeyAt.current = null;
+      abaEscondida.current = false;
+      powerupNaQuestao.current = false;
+      questaoIdx.current += 1;
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [state.question, state.phase]);
+
+  // [Fase 0] Aba escondida = o relógio parou de medir pensamento. Marca pra
+  // descartar essa tentativa da FLUÊNCIA (ela continua contando pra precisão).
+  useEffect(() => {
+    const aoTrocar = () => { if (document.hidden) abaEscondida.current = true; };
+    document.addEventListener('visibilitychange', aoTrocar);
+    return () => document.removeEventListener('visibilitychange', aoTrocar);
+  }, []);
+
+  // [Fase 0] Primeira tecla da resposta. Fica no `onChange` (e não no
+  // `onKeyDown`) de propósito: o change só dispara quando o valor MUDA de
+  // verdade, então Tab/Shift/setas não contam e colar também é capturado.
+  const marcarPrimeiraTecla = useCallback(() => {
+    if (firstKeyAt.current == null) firstKeyAt.current = Date.now();
+  }, []);
 
   const handleSubmit = useCallback(() => {
     if (state.phase !== 'playing') return;
@@ -310,11 +343,30 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
     const benchmark = state.question?.personalBenchmarkMs || 0;
     const beatPersonal = isPersonal && isCorrect && dt > 0 && benchmark > 0 && dt < benchmark;
 
+    // [Fase 0] Tempo de DECISÃO (até a primeira tecla) + se ele vale pra
+    // fluência. Os descartes não somem com a tentativa: ela continua contando
+    // pra precisão e pra consistência, só não entra na conta de velocidade.
+    const dec = firstKeyAt.current ? firstKeyAt.current - questionShownAt.current : null;
+    const decOk = dec != null && dec > 0 && dec < 60000;
+    const fluValida =
+      decOk &&
+      !abaEscondida.current &&
+      !powerupNaQuestao.current &&
+      dt > 0 &&
+      dt <= 30000;
+
     questionLog.current.push({
       a: state.question.a,
       b: state.question.b,
       correct: isCorrect,
       ms: dt > 0 && dt < 60000 ? dt : 0,
+      // [Fase 0] `dec` = tempo até começar a responder; `flu` = pode entrar na
+      // fluência; `q1` = primeira pergunta da partida (suspeita de conter
+      // tempo de se situar — é hipótese A MEDIR na Fase 1, não descarte já
+      // decidido, ver ARQUITETURA_XP.md 4.2).
+      dec: decOk ? dec : null,
+      flu: fluValida,
+      q1: questaoIdx.current === 1,
       ...(isPersonal ? { beatPersonal, benchmarkMs: benchmark } : {}),
     });
 
@@ -388,6 +440,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   };
 
   const handleUseLive = () => {
+    powerupNaQuestao.current = true; // [Fase 0] modal na frente infla o relógio
     onUsePowerup?.('life');
     dispatch({ type: 'CONTINUE' });
     setShowLifePrompt(false);
@@ -397,6 +450,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   // SPOT-BUY: compra 1 vida por 80 moedas e usa na hora
   const handleBuyLifeSpot = () => {
     if ((data.coins || 0) < 80) return;
+    powerupNaQuestao.current = true; // [Fase 0]
     update((prev) => ({ ...prev, coins: (prev.coins || 0) - 80 }));
     dispatch({ type: 'CONTINUE' });
     setShowLifePrompt(false);
@@ -410,6 +464,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
   };
 
   const handleAddTime = () => {
+    powerupNaQuestao.current = true; // [Fase 0]
     onUsePowerup?.('time');
     dispatch({ type: 'ADD_TIME' });
   };
@@ -695,7 +750,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               type="number"
               inputMode="numeric"
               value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
+              onChange={(e) => { marcarPrimeiraTecla(); setInputVal(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   if (inputVal.trim() && !inputValB.trim()) inputRefB.current?.focus();
@@ -716,7 +771,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               type="number"
               inputMode="numeric"
               value={inputValB}
-              onChange={(e) => setInputValB(e.target.value)}
+              onChange={(e) => { marcarPrimeiraTecla(); setInputValB(e.target.value); }}
               onKeyDown={handleKey}
               placeholder="b"
               disabled={state.phase !== 'playing'}
@@ -741,7 +796,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               type="number"
               inputMode="numeric"
               value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
+              onChange={(e) => { marcarPrimeiraTecla(); setInputVal(e.target.value); }}
               onKeyDown={handleKey}
               placeholder="Sua resposta..."
               disabled={state.phase !== 'playing'}

@@ -28,6 +28,17 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+### Adicionado
+- **FASE 0 do sistema de domínio** — o jogo passa a gravar o **tempo até a
+  primeira tecla** (`firstKeyMs`, a janela de decisão, sem a digitação
+  dentro), o histórico `ult` (20 tentativas) e `dias` (10 dias distintos)
+  por fato, e o log temporário `calibra`. **Nenhuma regra do jogo mudou** —
+  nenhum XP, nenhuma faixa, nenhuma tela. Descartes da fluência: aba
+  escondida, power-up na frente e tempo > 30s
+  - ⚠️ Falta confirmar em partida real que o fim de partida grava tudo — não
+    consegui encerrar uma partida no navegador automatizado (ver sessão 099)
+
+### Documentado
 - **`ARQUITETURA_XP.md` v7 — CONSENSO FECHADO.** Último item resolvido: o
   histórico passa a ser desenhado **por consulta**, com duas vidas — `ult`
   (20 tentativas) e `dias` (10 dias distintos) permanentes dentro do

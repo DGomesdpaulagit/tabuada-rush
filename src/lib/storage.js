@@ -50,7 +50,12 @@ export const DEFAULTS = {
   // tableStats/factStats/srsData ficam sob `.mult` (namespace interno — só existe
   // multiplicação no jogo, ver CHANGELOG v3.11-3.16 pro histórico da 4.0).
   tableStats: { mult: {} },  // desempenho por tabuada (fator a): { mult: { [a]: { correct, wrong, totalMs, count, lastPracticed } } }
-  factStats: { mult: {} },   // desempenho por fato (par a,b): { mult: { [factKey]: { correct, wrong, totalMs, count, lastPracticed } } }
+  factStats: { mult: {} },   // desempenho por fato (par a,b): { mult: { [factKey]: { correct, wrong, totalMs, count, lastPracticed, ult, dias } } }
+  // [Fase 0 · sessão 099] Log cronológico TEMPORÁRIO de tentativas — existe só
+  // pra calibrar o sistema de domínio (falso positivo/negativo é a única
+  // consulta que precisa de ordem global) e é apagado depois. Ver
+  // ARQUITETURA_XP.md 4.2. Teto de CALIBRA_MAX linhas.
+  calibra: [],
   srsData: { mult: {} },     // repetição espaçada por fato: { mult: { [factKey]: { interval, nextReview, easeFactor, reps, lastReview } } }
 };
 

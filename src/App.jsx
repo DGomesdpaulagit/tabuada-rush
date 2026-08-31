@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useApp } from './contexts/AppContext';
 import { useAuth } from './contexts/AuthContext';
-import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo, deveAvisarOfensivaPerdida, mesAtual } from './utils';
+import { checkNewAchievements, todayStr, localDateStr, getLevelIdx, detectProgressEvents, getRevisionQuestions, getModeUnlock, getFactKey, countFactsAtRiskAllOps, getLivesInfo, deveAvisarOfensivaPerdida, mesAtual, diaNum, ULT_MAX, DIAS_MAX, CALIBRA_MAX } from './utils';
 import { applyLeaguePromotion } from './utils/leagues';
 import { getActiveXpMultiplier } from './utils/potions';
 import { rollMatchLoot } from './utils/loot';
@@ -681,6 +681,11 @@ export default function App() {
         // [v4.0 · Fase 4] `lastPracticed` alimenta o modelo de curva de esquecimento
         // (predictRecallProbability) — precisa saber HÁ QUANTO TEMPO o fato foi praticado.
         const nowIso = new Date().toISOString();
+        // [Fase 0 · sessão 099] Coleta pro sistema de domínio. Só grava —
+        // nenhuma regra, nenhum XP e nenhuma faixa mudam por causa disto.
+        const agoraMs = Date.now();
+        const hojeNum = diaNum();
+        const novasTentativas = [];
         for (const q of result.questions || []) {
           if (q == null || q.a == null) continue;
           const op = q.operation || 'mult';
@@ -709,6 +714,30 @@ export default function App() {
             if (q.ms > 0) f.totalMs += q.ms;
             f.count += 1;
             f.lastPracticed = nowIso;
+
+            // [Fase 0] `ult` alimenta precisão recente e fluência; `dias`
+            // alimenta consistência. `d` só é gravado quando a tentativa
+            // passou nos descartes da fluência (aba escondida, power-up na
+            // frente, tempo > 30s) — ela continua contando pro resto.
+            f.ult = [
+              ...(f.ult || []),
+              { ok: q.correct ? 1 : 0, d: q.flu ? q.dec : null, t: agoraMs },
+            ].slice(-ULT_MAX);
+            const diasFato = f.dias || [];
+            f.dias = diasFato.includes(hojeNum)
+              ? diasFato
+              : [...diasFato, hojeNum].slice(-DIAS_MAX);
+
+            novasTentativas.push({
+              fk,
+              ok: q.correct ? 1 : 0,
+              d: q.dec ?? null,
+              tot: q.ms || 0,
+              flu: q.flu ? 1 : 0,
+              q1: q.q1 ? 1 : 0,
+              t: agoraMs,
+            });
+
             opFactStats[fk] = f;
             factStats[op] = opFactStats;
           }
@@ -727,6 +756,8 @@ export default function App() {
           fastestAvgMs,
           tableStats,
           factStats,
+          // [Fase 0] log temporário de calibração (apagado depois da Fase 2)
+          calibra: [...(prev.calibra || []), ...novasTentativas].slice(-CALIBRA_MAX),
           currentStreak,
           // Recuperação cumprida (ou partida normal): o aviso não deve voltar.
           ofensivaPerdida: null,

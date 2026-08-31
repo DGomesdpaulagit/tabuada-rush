@@ -484,6 +484,7 @@ aqui é ponto de partida, não estrutura.**
 | Personagem | **ritmo** + **constância** (2 números, escritos à mão nos 114) |
 | QI | define o **ritmo**, nunca a constância |
 | Constância → σ diário | alta **±10%** · média **±25%** · baixa **±45%** |
+| Constância → fator do ritmo | alta **×1,00** · média **×0,97** · baixa **×0,94** |
 | Janela | **soma de sorteios diários** (não uma oscilação sobre o total) |
 | Ciclo | 6 dias (já existe) |
 
@@ -592,7 +593,36 @@ constância alternada**:
 caos", confirmado com número, sem nenhuma regra especial — só porque a soma de
 sorteios diários se comporta assim.
 
-#### ⚠️ Um efeito colateral que apareceu na simulação
+#### ✅ A correção do Davi, calibrada por simulação
+
+Decisão dele: *"não quero que ser inconsistente seja matematicamente
+vantajoso. Surpresa vem da variância; força vem do ritmo médio."* Então
+constância baixa **também reduz o ritmo médio esperado**.
+
+Achei o fator rodando o teste limpo — três personagens de **mesmo ritmo (120)**
+e constâncias diferentes, 20.000 ciclos cada, medindo o pódio de cada um:
+
+| Fator aplicado ao ritmo | Pódio (alta) | Pódio (média) | Pódio (baixa) |
+|---|---|---|---|
+| nenhum (1,00) | 6,1% | 18,2% | **30,1%** ← o privilégio |
+| baixa ×0,96 | 13,1% | 18,1% | 23,1% |
+| **baixa ×0,94 · média ×0,97** | **18,6%** | **17,8%** | **20,1%** ← neutro |
+| baixa ×0,92 | 26,5% | 17,2% | 16,9% ← passou do ponto |
+
+**Fatores adotados: alta ×1,00 · média ×0,97 · baixa ×0,94.** Com o mesmo
+ritmo, a constância deixa de mudar a chance de pódio.
+
+Confirmado na liga cheia de 20: o pódio passa a **cair junto com o ritmo, sem
+inversão**, e a surpresa sobrevive — pior colocação do Einstein em 8.000
+ciclos: **5º**; melhor do Patrick: **14º de 20**.
+
+**Nota de autoria:** com esses fatores, um personagem que tenha ritmo máximo
+**e** constância alta vence 66% dos ciclos. Se isso parecer monótono, o
+controle não é a fórmula, é a ficha: o mesmo ritmo 140 com constância **média**
+cai pra 47% e com **baixa** pra 39%. Dominância se ajusta na hora de escrever
+os 114 personagens, não no código.
+
+#### ⚠️ Como o problema apareceu (registro)
 
 Comparando dois personagens da simulação:
 
@@ -605,11 +635,8 @@ Comparando dois personagens da simulação:
 cauda, e quem varia mais ganha mais caudas. **Constância baixa é vantagem pra
 pódio.**
 
-Isso é sabor ou problema? Como sabor, funciona — o gênio irregular tem picos.
-Se o Davi quiser que o ritmo domine a percepção de hierarquia, o ajuste é
-simples e narrativamente coerente: **personagem de constância baixa leva um
-ritmo médio um pouco menor** (ele é irregular, então produz menos na média).
-Fica como knob, não como correção obrigatória.
+Não é bug: pódio é evento de cauda, e quem varia mais ganha mais caudas. Foi
+isso que a correção acima resolveu.
 
 ---
 
@@ -657,19 +684,42 @@ porque o Plano de Resgate cobre o buraco) · personagens com ritmo + constância
 ### ⚠️ A calibrar (com dado real, não no papel)
 Todos os números da Tabela-Mãe.
 
+### 🟢 FASE 0 — IMPLEMENTADA (sessão 099)
+
+Aprovada pelo Davi e no ar. O que entrou:
+
+| Arquivo | O que |
+|---|---|
+| `GamePage.jsx` | `firstKeyAt` (1ª tecla, no `onChange` dos 3 inputs), marcadores de descarte (`abaEscondida` via `visibilitychange`, `powerupNaQuestao`, `questaoIdx`) e os campos `dec`/`flu`/`q1` no registro da questão |
+| `utils/index.js` | `diaNum()`, `ULT_MAX` (20), `DIAS_MAX` (10), `CALIBRA_MAX` (5000) |
+| `App.jsx` | grava `ult` e `dias` por fato dentro do `factStats` e acumula o `calibra` |
+| `lib/storage.js` | `calibra: []` no default |
+
+**Nenhuma regra do jogo mudou.** Nenhum XP, nenhuma faixa, nenhuma tela.
+
 ### ✅ Já decididos no consenso
 **Teste de Faixa** → depois (o Plano de Resgate cobre o buraco).
 **Interleaving** → sim, adaptativo, sem porcentagem fixa.
 **Header** → ✨ XP como número · 🧠 barra = domínio da faixa atual.
 
-### ❓ Só o Davi decide
-1. **Ligo a Fase 0?** É a menor mudança do plano inteiro e não altera nenhuma
-   regra — mas é o único jeito de a Fase 1 existir, porque o histórico que
-   falta só começa a existir depois de ligar.
-2. **Teste de placement na entrada** — quem já sabe a 2×10 prova numa prova
-   curta em vez de esperar ~1 semana? (Mesma mecânica do Teste de Faixa, na
-   porta de entrada — é o que o Duolingo faz com o teste de nivelamento.)
-3. **Constância baixa dando vantagem de pódio** (seção 8) — sabor ou corrige?
+### ✅ Decidido pelo Davi na sessão 099
+
+**Fase 0** → aprovada e implementada.
+
+**Teste de placement na entrada** → **aprovado** como decisão de produto,
+implementação depois da coleta/calibração. Exigência dele: *"que o teste seja
+realmente uma certificação — dificuldade suficiente e evidência suficiente pra
+não liberar alguém que apenas teve uma partida excepcional."* Ou seja: a prova
+tem que exigir **cobertura** (os 54 fatos, não uma amostra) e **espaçamento**
+mínimo, senão vira sorte. Especificação junto com o Teste de Faixa.
+
+**Constância baixa dando vantagem de pódio** → **corrigir**. Regra de ouro da
+liga que ele definiu:
+
+> **Surpresa vem da variância; força vem do ritmo médio.**
+
+Constância baixa aumenta a variância **e reduz um pouco o ritmo médio
+esperado**. Fatores calibrados por simulação na seção 8.
 
 ---
 

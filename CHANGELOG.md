@@ -8,6 +8,12 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 **Detalhes em `sessions/sessao-099.md`.**
 
+### Adicionado
+- **Resumo da coleta no console ao fim de cada partida — só em DEV.** Mostra
+  tentativas gravadas, quantas têm tempo de decisão, mediana de decisão vs.
+  total (com o % que é digitação) e uma tabela das últimas 8. Removido do
+  bundle de produção pelo `import.meta.env.DEV`
+
 ### Corrigido
 - 🚨 **CRÍTICO — `handleGameEnd` quebrava em TODA partida desde a 6.0.46.**
   `multiplicadorLoot(prev)` estava **fora** do `update()`, onde `prev` não
@@ -19,6 +25,8 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   - **Como escapou:** a penalidade de loot da zona entrou na sessão 097 sem
     ninguém jogar uma partida de verdade depois. O build não pega isso: é
     erro de runtime. Foi o Davi que achou, pelo console
+  - Confirmado no navegador do Davi: partida completa (15 acertos / 3 erros),
+    `calibra` e `factStats` gravando
   - **Foi ele também que travou toda a verificação da Fase 0** — as partidas
     do navegador automatizado nunca terminavam, e eu atribuí isso ao harness
 

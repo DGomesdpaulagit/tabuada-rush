@@ -428,6 +428,23 @@ gravando.
 foi **~28% do tempo total** nessa amostra. Medir fluência pelo tempo até o
 envio estaria misturando quase um terço de motor com pensamento.
 
+**Confirmado também no navegador do Davi** (partida real, 15 acertos / 3
+erros): `calibra.slice(-5)` devolveu as 5 tentativas e `factStats.mult` os
+fatos com histórico.
+
+### Resumo da coleta no console (só em DEV)
+
+Conferir isso pelo console na mão é chato: o DevTools bloqueia colar comando e
+a frase de desbloqueio muda de idioma (em português é *"permitir colar"*, e o
+aviso some depois de um tempo, o que fez a frase ser avaliada como código e dar
+`SyntaxError`).
+
+Então cada fim de partida passa a imprimir sozinho, **só em DEV**, quantas
+tentativas foram gravadas, quantas têm tempo de decisão, a mediana de decisão
+vs. total (com o % que é digitação) e uma `console.table` das últimas 8.
+`import.meta.env.DEV` é false no build de produção — o Vite remove o bloco
+inteiro do bundle.
+
 ---
 
 ## Arquivos alterados

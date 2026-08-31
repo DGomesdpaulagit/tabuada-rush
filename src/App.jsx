@@ -972,6 +972,37 @@ export default function App() {
         prevLevelIdx,
         newLevelIdx,
       });
+      // ── [FASE 0 · só em DEV] Resumo da coleta no console ──────────────────
+      // Enquanto a Fase 0 estiver rodando, cada fim de partida imprime o que
+      // foi gravado. Evita ter que caçar isso no localStorage na mão (o
+      // DevTools bloqueia colar comando, e a frase de desbloqueio muda de
+      // idioma). `import.meta.env.DEV` é false no build de produção, então o
+      // Vite remove este bloco inteiro do bundle.
+      if (import.meta.env.DEV) {
+        const cal = newData.calibra || [];
+        const desta = cal.slice(-(result.questions?.length || 0));
+        const comDec = desta.filter((c) => c.d != null);
+        const mediana = (xs) => (xs.length ? [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)] : null);
+        const medDec = mediana(comDec.map((c) => c.d));
+        const medTot = mediana(desta.map((c) => c.tot));
+        console.log(
+          `%c[FASE 0] coleta desta partida`,
+          'background:#7C3AED;color:#fff;padding:2px 6px;border-radius:4px;font-weight:bold'
+        );
+        console.log(
+          `  tentativas gravadas: ${desta.length}  |  com tempo de decisão: ${comDec.length}` +
+          `  |  válidas p/ fluência: ${desta.filter((c) => c.flu).length}`
+        );
+        if (medDec != null && medTot) {
+          console.log(
+            `  mediana decisão: ${medDec} ms  |  mediana total: ${medTot} ms` +
+            `  →  digitação = ${Math.round(100 * (1 - medDec / medTot))}% do tempo`
+          );
+        }
+        console.log(`  calibra acumulado: ${cal.length} tentativas`);
+        console.table(desta.slice(-8));
+      }
+
       setScreen('results');
     },
     [data, update, showAchievement]

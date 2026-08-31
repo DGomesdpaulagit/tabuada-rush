@@ -235,13 +235,67 @@ gate.
 Documento agora tem a **Tabela-Mãe** (pedido dele) com todos os parâmetros
 num lugar só.
 
+## 8. `ARQUITETURA_XP.md` v6 — os cinco últimos pontos, resolvidos
+
+O Davi pediu explicitamente pra parar de comentar a resposta do outro e
+**resolver**, pra ele levar as soluções pro ChatGPT aprovar. Cinco pontos
+estavam soltos:
+
+**1. O latch era ambíguo.** Explicitado: o latch é do **componente**, nunca da
+nota. Só os 20 pontos de fluência travam; precisão, consistência e recência
+continuam vivas e podem derrubar o fato de verde pra amarelo. Fluência
+conquistada não é invalidada porque a referência mudou; conhecimento pode
+enfraquecer com o tempo.
+
+**2. Estratégias rápidas ≠ memorização (objeção pedagógica real).** A base
+relativa já resolve, sem afrouxar nada: ela não pergunta QUAL processo, e sim
+se este fato sai tão rápido quanto os fatos mais rápidos do próprio jogador.
+Quem usa estratégia pra tudo tem base de estratégia e é fluente de verdade;
+quem tem truque só pro 9 vê o 7×8 ficar lento **em relação a si mesmo**, e o
+sistema segura exatamente o fato que não consolidou. O critério é agnóstico ao
+processo mental por construção. Terminologia adotada: **fluência**, não
+"decorado".
+
+**3. O jogador travado numa conta só.** Adiar o Teste de Faixa deixava um
+buraco: "nenhum vermelho" é gate sobre UM fato. Resolvido sem afrouxar o
+portão — **Plano de Resgate**: fato 🔴 com ≥15 tentativas desde que ficou
+vermelho sobe pra peso 8, entra no **Flashcard** (página que já existe, e é a
+única peça do jogo que ENSINA em vez de cobrar), ganha dica de decomposição no
+erro e fica visível como "conta travada". Testar não está ensinando, então o
+jogo muda de estratégia. É isso que torna o adiamento do Teste de Faixa seguro.
+
+**4. 🚨 A descoberta que muda a Fase 0.** Fui conferir se o dado guardado hoje
+aguenta a validação, e **não aguenta**. `factStats` é **agregado**
+(`correct/wrong/totalMs/count/lastPracticed`) e `sessions` não guarda nada por
+pergunta. Logo: **precisão recente (últimas 10) e consistência (dias distintos)
+NÃO são calculáveis** com o histórico atual — duas das quatro componentes da
+nota — e falso positivo/negativo é impossível por construção, porque agregado
+não tem passado. Se a Fase 0 gravasse só o `firstKeyMs`, a gente descobriria
+isso daqui a três meses com três meses de dado errado. **Fase 0 passa a ter
+duas peças:** `firstKeyMs` **e** um log rolante de tentativas
+(`{fk, ok, dec, tot, t}`, teto de 3.000 linhas ≈ 120 KB).
+
+**5. "Surpresa, mas não caos" nos personagens.** Resolvido com matemática, sem
+regra especial: constância vira σ diário (alta ±10%, média ±25%, baixa ±45%) e
+a janela passa a ser a **soma de sorteios diários** em vez de uma oscilação de
+±30% sobre o total. Somar 14 dias encolhe o desvio por √14 sozinho. Resultado:
+Einstein × Batman fica a 1,1σ (**upset em ~14% dos ciclos** — a surpresa que o
+Davi quer), Einstein × Patrick fica a 6,6σ (**nunca**). Vizinho passa vizinho;
+o fundo nunca passa o topo.
+
+Documento ganhou também o **anexo com a pesquisa do Duolingo**, que valida a
+arquitetura de fora: lá o XP também não é certificado de conhecimento, o
+domínio também é inferido de comportamento, e não existe fórmula pública de
+XP → domínio — que é exatamente o motivo de a v3 ter derrubado a condição de
+XP na faixa.
+
 ---
 
 ## Arquivos alterados
 
 | Arquivo | Mudança |
 |---------|---------|
-| `ARQUITETURA_XP.md` | **novo** — v1 → v2 → v3 → v4 → **v5**: estrutura fechada, Tabela-Mãe e o plano de validação em 3 fases |
+| `ARQUITETURA_XP.md` | **novo** — v1 → … → **v6**: arquitetura conceitual fechada, Tabela-Mãe, Plano de Resgate e a especificação das Fases 0/1 |
 | `src/utils/index.js` | `momentoDaPerda`, `mesAtual`, `deveAvisarOfensivaPerdida`; `em` agora é a meia-noite real |
 | `src/App.jsx` | estado local do aviso, marca do mês, recuperação limitada ao dia |
 | `src/constants/leaguePhrases.js` | `COR_POSICAO` |
@@ -251,10 +305,10 @@ num lugar só.
 
 ## 📋 Para a PRÓXIMA CONVERSA
 
-1. **Seção 10 do `ARQUITETURA_XP.md`** — só três coisas dependem do Davi:
-   ligar a **Fase 0** (`firstKeyMs`, invisível, risco zero), confirmar o
-   **Header** (XP vira número, barra vira domínio) e decidir sobre **teste de
-   placement** na entrada (ele foi pesquisar como o Duolingo faz).
+1. **Seção 10 do `ARQUITETURA_XP.md`** — três coisas dependem do Davi: ligar
+   a **Fase 0** (`firstKeyMs` + log de tentativas; invisível, risco zero),
+   confirmar o **Header** (XP vira número, barra vira domínio) e decidir sobre
+   **teste de placement** na entrada.
 2. **Ícones das conquistas** — ele vai gerar.
 3. **Tipos de pontuação por faixa** (100/200/500/1000) — destravado agora que
    a pergunta sobre os pontos foi respondida (eles ficam).

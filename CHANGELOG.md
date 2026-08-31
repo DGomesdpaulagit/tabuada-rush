@@ -28,6 +28,15 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
   Pontos de XP, com as contas de deflação, o efeito oposto na liga e nas
   faixas, a fórmula proposta e o checklist que todo modo novo tem que
   responder antes de existir
+- **`ARQUITETURA_XP.md` v6** — resolvidos os cinco últimos pontos: latch é
+  do componente e não da nota; a base relativa já é agnóstica ao processo
+  mental (responde à objeção das estratégias rápidas); **Plano de Resgate**
+  pra conta travada (peso 8 + Flashcard + dica de decomposição), que torna o
+  adiamento do Teste de Faixa seguro; **a Fase 0 precisa gravar um log de
+  tentativas** — `factStats` é agregado, então precisão recente e
+  consistência não são calculáveis com o histórico de hoje; e a variância
+  dos personagens vira σ por constância com janela somada dia a dia
+  (upset entre vizinhos ~14% dos ciclos, do fundo pro topo nunca)
 - **`ARQUITETURA_XP.md` v5** — fechados os últimos pontos em aberto: a base
   da fluência (percentil 25 + período de estabilização + latch, resolvendo o
   problema de "no dia 1 não existe fato verde"), interleaving pelo peso em

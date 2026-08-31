@@ -1,15 +1,18 @@
 # ✨ ARQUITETURA_XP.md — Pontos, XP, Domínio e progressão
 
-> **v5 (sessão 099).** **Estrutura fechada. Parâmetros abertos.**
-> (Correção de linguagem que o ChatGPT pediu, e ele tem razão: "arquitetura
-> fechada" dava a entender que os números também estavam.)
+> **v6 (sessão 099).** **Arquitetura conceitual fechada. Parâmetros abertos.**
+>
+> Esta versão não comenta posições — ela **resolve** os cinco pontos que ainda
+> estavam soltos: o latch, a objeção pedagógica das estratégias rápidas, o
+> jogador travado numa conta só, o que exatamente a Fase 0 tem que gravar (e
+> aqui tem uma descoberta que muda o plano) e a variância dos personagens.
 >
 > Histórico: **v1** tirava o XP das faixas · **v2** `XP + Domínio` pra
 > sustentar os 8–10 meses · **v3** derrubou a condição de XP quando o Davi
 > cancelou a meta de tempo · **v4** nota composta + fluência relativa + 2 furos
 > achados no código · **v5** fecha os últimos pontos em aberto (base da
 > fluência, interleaving, Teste de Faixa, papel da Revisão) e consolida a
-> Tabela-Mãe.
+> Tabela-Mãe · **v6** resolve os cinco últimos.
 >
 > Nada aqui está implementado.
 
@@ -64,6 +67,32 @@ aprova quem conta rápido nos dedos.
 Idade, aparelho, ansiedade, leitura e dificuldade do número deslocam **a base
 junto com o fato**, então saem da conta sozinhos.
 
+#### ✅ A objeção das estratégias rápidas — resolvida pela própria base
+
+*Objeção:* uma criança pode desenvolver estratégia mental rápida (9×n = 10n−n,
+7×8 = 7×4+7×4) sem ter "decorado" o fato isolado. O tempo, sozinho, não prova
+memorização.
+
+**Correto — e a base relativa já resolve, sem precisar afrouxar nada.** Ela não
+pergunta *qual processo* o jogador usa; pergunta se **este fato** sai tão rápido
+quanto **os fatos mais rápidos dele**. Duas consequências:
+
+- Criança que usa estratégia pra tudo tem base de estratégia. Se ela é
+  consistentemente rápida em tudo, ela **é** fluente — e o sistema aprova, o
+  que está certo.
+- Estratégia que só funciona pra alguns casos (o truque do 9) deixa 7×8
+  visivelmente mais lento **que a base dela mesma** — e o sistema segura
+  exatamente o fato que não consolidou. Também está certo.
+
+O critério é **agnóstico ao processo mental por construção**. O jogo nunca
+afirma saber o que se passa na cabeça de ninguém: ele mede comportamento.
+
+#### Terminologia
+
+Adotado: o nome interno é **fluência**, não "decorado" — é o que de fato se
+mede. Objetivo pedagógico = **fluência factual**, não memorização mecânica.
+Pro jogador continua a linguagem simples ("Você está dominando esta tabuada").
+
 ### 2.3 ✅ O problema da base — resolvido
 
 O ChatGPT levantou e deixou em aberto: *"se os primeiros fatos verdes forem
@@ -100,8 +129,14 @@ período a fluência **não pontua**, e os 20 pontos vão pra precisão:
 **3. Fluência é latch (trava pra cima).** Uma vez que o fato passou no teste,
 passou. Motivo: a base **desce** conforme o jogador melhora — sem o latch, um
 jogador que ficou mais rápido veria fatos já dominados voltarem pra amarelo
-**por ter melhorado**, o que é absurdo. Esquecimento é trabalho da recência,
-que é o mecanismo honesto pra isso.
+**por ter melhorado**, o que é absurdo.
+
+> ⚠️ **O latch é do COMPONENTE, nunca da nota.** Só os 20 pontos de fluência
+> ficam travados. Precisão, consistência e recência continuam vivas e podem
+> derrubar o fato de 🟢 pra 🟡 a qualquer momento — esquecer é trabalho da
+> recência, e é o mecanismo honesto pra isso. **Fluência conquistada não é
+> invalidada porque a referência mudou; conhecimento pode enfraquecer com o
+> tempo.** As duas coisas convivem.
 
 ### 2.4 🐛 O tempo medido hoje inclui a digitação
 
@@ -165,6 +200,34 @@ teimosos; o "nenhum vermelho" impede a folga virar buraco.
 *"A primeira faixa exige consolidação excepcional"* — não *"dura 10 meses"*.
 Mesma intenção, sem imposto de tempo.
 
+#### ✅ O jogador travado numa conta só — resolvido sem afrouxar o portão
+
+*Problema:* "nenhum 🔴" é gate sobre **um fato**. Alguém pode ficar preso meses
+por causa de 7×8 — e o Teste de Faixa, que resolveria isso, foi adiado.
+
+**A resposta não é afrouxar o portão, é dar um caminho.** Se o fato continua
+vermelho depois de muita exposição, o problema não é falta de repetição — é
+que **testar não está ensinando**. Então o jogo muda de estratégia:
+
+> **Plano de Resgate** — dispara quando um fato está 🔴 **e** acumulou ≥15
+> tentativas desde que ficou vermelho:
+>
+> 1. **Peso de sorteio sobe de 4 pra 8** — prioridade máxima.
+> 2. **Entra no Flashcard** (a `FlashcardPage` já existe) — vira **estudo**,
+>    não prova. É a única peça do jogo que ensina em vez de cobrar.
+> 3. **Dica de decomposição no erro:** "7 × 8 = 7 × 4 + 7 × 4 = 28 + 28 = 56".
+>    Ensinar a estratégia é legítimo — a fluência da 2.2 é agnóstica ao
+>    processo, então uma criança que chega no 56 por decomposição rápida está
+>    dominando de verdade.
+> 4. **Fica visível** no painel de domínio como "conta travada", com o caminho
+>    apontado. Ninguém fica bloqueado sem saber o que fazer.
+>
+> Isso é a *"rota específica de recuperação"* — e ela usa página que já existe.
+
+**E é por isso que adiar o Teste de Faixa é seguro:** ninguém fica sem saída
+enquanto ele não existe. Se a Fase 1 mostrar gente empacada mesmo com o Plano
+de Resgate, aí sim ele vira necessário — decisão com dado, não com palpite.
+
 ### 2.8 ✅ Teste de Faixa — adiado (concordo)
 
 A ideia (chegar a ~85% → rodada curta só com os fatos fracos → certificação)
@@ -214,43 +277,102 @@ sai da faixa. Quem joga pouco e bem sai da faixa e **não** sobe na liga.
 
 ---
 
-## 4. ⚠️ Onde eu discordo do ChatGPT: como validar
+## 4. Fase 0 e Fase 1: a especificação
 
-Ele propôs, antes de codar, uma especificação matemática completa com
-*"exemplos de partidas e cenários de usuário, pra testar se o sistema se
-comporta como imaginamos"*.
+Validar isso em planilha não é possível — o comportamento do domínio depende da
+distribuição real de tempos e erros, e simulação com número inventado devolve
+confiança inventada. E não precisa: o `factStats` já está cheio há meses.
 
-**Não dá pra validar isso no papel.** O comportamento do domínio depende da
-distribuição real de tempos de resposta e de erro de gente de verdade. Uma
-simulação de papel usa números inventados e devolve **confiança inventada** —
-o pior resultado possível, porque parece validação.
+### 🚨 4.1 A descoberta que muda o plano da Fase 0
 
-E não precisamos: **o `factStats` já existe e já está cheio.** Acertos, erros,
-tempo total, contagem e `lastPracticed` por fato, gravados há meses no save.
+Fui conferir se os dados guardados hoje aguentam a validação que a gente quer
+fazer. **Não aguentam** — e isso não aparece até você tentar.
 
-### O caminho que eu faria
+`factStats` guarda por fato: `{ correct, wrong, totalMs, count, lastPracticed }`.
+É **agregado**. E `sessions` guarda por partida `{ mode, score, correct, wrong,
+avgMs, date, xp }` — nenhum registro por pergunta.
 
-**Fase 0 — coletar (invisível, risco zero).** Só ligar o `firstKeyMs`. Nenhuma
-mudança de regra, nenhuma mudança de tela. É o único dado que não temos, e ele
-só existe depois de existir — então o relógio precisa começar a correr agora,
-não depois de fechar a planilha.
+Consequências, e a segunda é grave:
 
-**Fase 1 — medir no que já existe.** `utils/dominio.js` como **função pura**,
-rodada em cima do save real do Davi (meses de partidas). Sem UI, sem gate. A
-pergunta que isso responde na hora:
+| Pergunta da Fase 1 | Dá pra responder com o que existe? |
+|---|---|
+| Quantos fatos ficariam 🟢 hoje? | ✅ sim (parcial: sem fluência) |
+| Quais contas ficam 🔴? | ✅ sim |
+| A **precisão recente (últimas 10)** de um fato | ❌ **não** — só existe o total da vida inteira |
+| **Consistência** (acertou em quantos dias distintos?) | ❌ **não** — só existe o `lastPracticed` |
+| **Falso positivo** (a regra aprovou e a pessoa continuou errando depois?) | ❌ **não** — impossível sem histórico |
+| **Falso negativo** (a regra reprovou quem já sabia?) | ❌ **não** |
 
-- quantos dos 54 fatos da faixa 1 dariam 🟢 hoje?
-- a catraca de 95% é alcançável ou utópica?
-- os pesos 40/25/20/15 produzem uma distribuição sensata ou tudo cai no meio?
+> **Duas das quatro componentes da nota (precisão recente e consistência) NÃO
+> são calculáveis com o que o jogo grava hoje** — e a validação de falso
+> positivo/negativo, que é a mais importante de todas, é impossível por
+> construção. Um agregado não tem passado.
+>
+> Se a Fase 0 gravar só o `firstKeyMs`, a gente descobre isso daqui a três
+> meses, com três meses de dado errado guardado.
 
-Fluência fica de fora nessa rodada (não tem histórico de `firstKeyMs`), mas os
-outros 80% da nota se validam **com dados reais, hoje**.
+### 4.2 Fase 0 — o que gravar (invisível, risco zero)
 
-**Fase 2 — calibrar com o que a Fase 1 mostrar,** e só então ligar o gate.
+**Duas coisas, não uma:**
 
-É mais rápido que escrever a planilha e infinitamente mais confiável.
+**(a) `firstKeyMs`** — tempo até a primeira tecla, no registro da questão. Um
+`onKeyDown` no input do `GamePage.jsx`.
 
----
+**(b) Log de tentativas** — um buffer rolante, o dado que hoje não existe:
+
+```js
+tentativas: [
+  { fk: '7x8', ok: true, dec: 940, tot: 1620, t: 1756512345678 },
+  …
+]
+```
+
+| campo | o quê |
+|---|---|
+| `fk` | chave normalizada do fato (`getFactKey` já existe) |
+| `ok` | acertou |
+| `dec` | `firstKeyMs` — tempo de decisão |
+| `tot` | tempo total (o `ms` de hoje) |
+| `t` | timestamp |
+
+**Teto de 3.000 tentativas** (~75 partidas de 40 questões), cortando as mais
+antigas. Custo em `localStorage`: ~40 bytes por linha ≈ **120 KB** — o limite
+é 5 MB, então cabe com folga, e pode ser podado depois.
+
+**Isso não muda nada do jogo:** nenhuma regra, nenhuma tela, nenhum XP, nenhuma
+faixa. Só passa a guardar o que já acontece. É a mudança mais barata de todo o
+plano e é a que destrava as outras duas fases.
+
+### 4.3 Fase 1 — o que medir (função pura, sem UI, sem gate)
+
+`utils/dominio.js` rodado em cima do save real. O que sai:
+
+**Do `factStats` de hoje** (dá pra rodar imediatamente, com nota parcial):
+- distribuição 🔴/🟡/🟢 dos 54 fatos da faixa 1
+- quais contas ficam vermelhas (bate com 7×8, 6×7, 8×9?)
+- o corte de 95% é alcançável ou utópico?
+- os pesos jogam tudo pro meio da faixa 50–79?
+
+**Do log de tentativas** (depois de ~2 semanas de Fase 0):
+- **distribuição por jogador** — quantos estão em 20% / 50% / 80% / 95% de
+  domínio (pedido do ChatGPT, e é o número que diz se o portão é justo)
+- **tempo real até dominar** um fato, do zero ao verde
+- **falso positivo** — hold-out no tempo: calcula a nota usando só o que
+  aconteceu até a data T, depois olha a taxa de erro **depois de T**. Se a
+  regra aprova e a pessoa segue errando, o corte de 80 está baixo demais
+- **falso negativo** — o inverso: quem tem 100% de acerto depois de T mas a
+  regra segurava. Se aparecer muito, o corte está alto ou a fluência pesa
+  demais
+- **a base p25 é estável?** — ela oscila muito de semana em semana? O
+  multiplicador de 1,4 aprova quantos por cento dos fatos?
+
+**Só o falso positivo/negativo justifica o log de tentativas** — e é a única
+medida que responde a pergunta que importa: *a regra prevê acerto futuro?*
+
+### 4.4 Fase 2 — calibrar e ligar
+
+Com os números da 4.3 na mão, ajusta a Tabela-Mãe e só então liga o gate de
+faixa, o sorteio ponderado e a UI de domínio.
 
 ## 5. Tabela-Mãe
 
@@ -271,13 +393,15 @@ aqui é ponto de partida, não estrutura.**
 | Base da fluência | **p25** dos tempos medianos (fatos com ≥5 respostas) |
 | Limiar de fluência | tempo ≤ base × **1,4** |
 | Estabilização | <15 fatos com ≥5 respostas → fluência não pontua (60/25/–/15) |
-| Fluência | **latch** (só sobe) |
+| Fluência | **latch** — do componente, nunca da nota |
 | Fonte do tempo | **`firstKeyMs`**, nunca o tempo total |
+| Plano de Resgate | 🔴 + **≥15 tentativas** desde que ficou vermelho |
 
 ### Sorteio
 | | |
 |---|---|
 | 🔴 / 🟡 / 🟢 | peso **4 / 2 / 1** |
+| 🔴 em Plano de Resgate | peso **8** |
 | Faixas anteriores | `10% + 20% × (fração verde da faixa atual)`; piso **25%** se houver 🔴 antigo |
 | Rush | pool inteiro, ponderado |
 | Revisão | **só 🔴 e 🟡** |
@@ -306,6 +430,8 @@ aqui é ponto de partida, não estrutura.**
 | Métrica | XP acumulado **na divisão** (`xp − leagueXpBase`) |
 | Personagem | **ritmo** + **constância** (2 números, escritos à mão nos 114) |
 | QI | define o **ritmo**, nunca a constância |
+| Constância → σ diário | alta **±10%** · média **±25%** · baixa **±45%** |
+| Janela | **soma de sorteios diários** (não uma oscilação sobre o total) |
 | Ciclo | 6 dias (já existe) |
 
 ---
@@ -320,8 +446,10 @@ que faixa o jogador está".
 **Migração de uma linha:** `faixaIdx = getLevelIdx(xp)` na primeira abertura.
 Ninguém sai do lugar onde está; dali em diante a progressão é por domínio.
 
-**Novo:** `firstKeyMs` no registro da questão · `utils/dominio.js` (nota,
-base, estado da faixa) · peso no sorteio · `utils/xp.js` (fonte única — hoje o
+**Novo:** `firstKeyMs` no registro da questão · **log rolante de tentativas**
+(3.000 linhas, ~120 KB — sem ele metade da nota não é calculável em cima do
+histórico, ver 4.1) · `utils/dominio.js` (nota, base, estado da faixa) · peso
+no sorteio · Plano de Resgate · `utils/xp.js` (fonte única — hoje o
 multiplicador de XP vive em dois lugares e já viveu em três, com uma cópia que
 divergiu de verdade e fez a tela mostrar XP diferente do creditado).
 
@@ -366,6 +494,35 @@ Sem percentual exigido na tela, sem "acerte 7×8 mais 4 vezes" — mas o jogador
 **Não simular o que não aparece:** a liga consome uma saída, um número de XP.
 Dois números por personagem entregam 100% do efeito visível.
 
+### ✅ "Surpresa, mas não caos" — resolvido com a matemática
+
+*Exigência:* se Einstein faz 130/dia e Patrick 70/dia, Patrick **não pode** ter
+chance real de ganhar. A variação tem que existir **dentro de uma identidade**.
+
+Duas regras entregam isso, e a segunda resolve sozinha:
+
+**1. A constância vira o desvio (σ) do personagem:**
+
+| Constância | σ diário |
+|---|---|
+| Alta | ±10% |
+| Média | ±25% |
+| Baixa | ±45% |
+
+**2. Sortear o dia e SOMAR a janela** — em vez do que o código faz hoje (uma
+oscilação de ±30% aplicada de uma vez sobre o total de 14 dias). Somando 14
+sorteios diários, o desvio da janela encolhe por **√14 ≈ 3,74** sozinho. É a
+matemática que garante o "sem caos", sem precisar de nenhuma trava artificial:
+
+| Confronto | Diferença | σ combinado | Distância | Upset? |
+|---|---|---|---|---|
+| Einstein (130, alta) × Batman (120, média) | 140 XP na janela | ~122 | 1,1σ | **~14% dos ciclos** — a surpresa que o Davi quer |
+| Einstein (130, alta) × Patrick (70, baixa) | 840 XP na janela | ~128 | 6,6σ | **praticamente nunca** |
+
+Ou seja: **vizinho passa vizinho de vez em quando; o fundo da tabela nunca
+passa o topo.** Exatamente "surpresa, mas não caos" — e sem regra especial
+nenhuma, só porque a soma de sorteios diários se comporta assim.
+
 ---
 
 ## 9. O que TODO modo novo precisa responder
@@ -386,29 +543,62 @@ Dois números por personagem entregam 100% do efeito visível.
 
 ## 10. Estado das decisões
 
-### ✅ Estrutura fechada
+### ✅ Arquitetura conceitual fechada
 Pontos = desempenho · XP = progressão (liga, missões, eventos, status) ·
 Domínio = aprendizado · **Faixa = domínio** · velocidade sai do XP e vira
 critério de domínio · combo fica no XP · base de XP por acerto com teto de
 bônus · domínio como nota composta com catraca de precisão · fluência relativa
-com base p25, estabilização e latch · sorteio ponderado · interleaving pelo
-peso, sem porcentagem fixa · Revisão vira só 🔴/🟡 · Teste de Faixa adiado ·
-personagens com ritmo + constância · QI define ritmo · pontos ficam.
+(base p25, estabilização, latch **do componente**) · o critério é **agnóstico
+ao processo mental** e o nome interno é **fluência**, não "decorado" · sorteio
+ponderado · **Plano de Resgate** pra conta travada · interleaving pelo peso,
+sem porcentagem fixa · Revisão vira só 🔴/🟡 · Teste de Faixa adiado (seguro,
+porque o Plano de Resgate cobre o buraco) · personagens com ritmo + constância,
+**σ por constância e janela somada dia a dia** · QI define ritmo · pontos ficam.
 
-### 🔧 A construir
-`firstKeyMs` · sorteio ponderado · `utils/dominio.js` · `utils/xp.js` ·
-`getFaixaIdx`
+### 🔧 A construir — nesta ordem
+1. **Fase 0** — `firstKeyMs` + **log de tentativas** (invisível, risco zero)
+2. **Fase 1** — `utils/dominio.js` como função pura, medido no save real
+3. **Fase 2** — calibrar, e só então: `getFaixaIdx`, sorteio ponderado, gate de
+   faixa, UI de domínio, `utils/xp.js`
 
-### ⚠️ A calibrar (com dados reais, não no papel)
+### ⚠️ A calibrar (com dado real, não no papel)
 Todos os números da Tabela-Mãe.
 
 ### ❓ Só o Davi decide
-1. **Fase 0 já?** Ligar o `firstKeyMs` agora, sem mudar mais nada, pra começar
-   a juntar o único dado que falta. É a menor mudança possível e destrava a
-   calibração inteira.
+1. **Ligo a Fase 0 agora?** É a menor mudança possível do plano inteiro, não
+   altera nenhuma regra do jogo, e é o único jeito de a Fase 1 existir — o
+   histórico que falta só começa a existir depois de ligar.
 2. **Header** — XP vira número, barra vira domínio. Confirma?
-3. **Teste de placement** — se ele encontrar isso no Duolingo (lá existe teste
-   de nivelamento e checkpoint pra pular conteúdo), vale decidir se um jogador
-   que já sabe a 2×10 pode **provar isso numa prova curta** em vez de esperar o
-   domínio se acumular naturalmente (~1 semana). É a mesma mecânica do Teste de
-   Faixa, aplicada na entrada.
+3. **Teste de placement na entrada** — quem já sabe a 2×10 pode provar numa
+   prova curta em vez de esperar ~1 semana de domínio se acumular? (Mesma
+   mecânica do Teste de Faixa, aplicada na porta de entrada. O Duolingo faz
+   isso com teste de nivelamento.)
+
+---
+
+## 11. Anexo: o que a pesquisa do Duolingo confirma
+
+A pesquisa do Davi bate com a arquitetura em três pontos, e isso é validação
+externa — não inspiração:
+
+1. **Lá o XP também não é certificado de conhecimento.** É moeda de
+   participação, somada entre matérias, alimentando ranking e missões. "Duas
+   pessoas com o mesmo XP podem ter conhecimentos muito diferentes." É
+   exatamente o cargo que o XP tem aqui.
+2. **Lá o domínio também é inferido de comportamento**, não de acúmulo:
+   desempenho contínuo, dificuldade crescente, variação de contexto e
+   recuperação depois de um tempo. São, com outros nomes, precisão,
+   consistência e recência.
+3. **Não existe fórmula pública de XP → domínio.** Porque não existe conversão
+   possível — que é o motivo de a v3 ter derrubado a condição de XP na faixa.
+
+**Onde o Tabuada Rush precisa ser mais específico:** lá a evidência de
+aprendizado é *"resolve problemas variados"*. Aqui é *"quando vejo 7×8, o 56
+sai sozinho"*. Fluência factual é um alvo mais estreito e mais medível — por
+isso a nota tem um componente (fluência relativa) que não faria sentido no
+curso deles.
+
+**Princípios que valem a pena copiar** (e que a arquitetura já tem): repetição
+espaçada, recuperação ativa, progressão de dificuldade, reapresentação de
+conteúdo antigo (o interleaving da 2.6) e revisão dirigida ao erro (o sorteio
+ponderado da 2.5).

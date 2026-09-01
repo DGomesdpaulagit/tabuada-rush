@@ -310,12 +310,12 @@ export default function Header({ onNavigate }) {
             <div className="flex items-center gap-3 mb-1">
               <GameIcon name="moedas" size={32} />
               <div className="min-w-0">
-                <p className="font-black text-fg leading-tight">Moedas</p>
-                <p className="text-xs font-bold text-fg-muted">Você tem {coins.toLocaleString('pt-BR')} moedas</p>
+                <p className="font-black text-fg leading-tight">Multis</p>
+                <p className="text-xs font-bold text-fg-muted">Você tem {coins.toLocaleString('pt-BR')} multis</p>
               </div>
             </div>
             <p className="text-xs text-fg-muted font-semibold mt-2">
-              Use suas moedas na loja pra comprar power-ups e repor vidas.
+              Use seus multis na loja pra comprar power-ups e repor vidas.
             </p>
           </div>
           <div className="px-4 pb-4">

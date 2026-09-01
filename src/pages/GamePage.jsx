@@ -514,7 +514,7 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
               <p className="text-sm text-gray-500 font-semibold mb-4">
                 Estoque: <span className="font-black text-violet-600">{powerups.life || 0} Vida{(powerups.life || 0) !== 1 ? 's' : ''} Extra</span>
                 {' · '}
-                Moedas: <span className="font-black text-amber-600"><GameIcon name="moedas" size={14} className="inline-block align-text-bottom" /> {data.coins || 0}</span>
+                Multis: <span className="font-black text-amber-600"><GameIcon name="moedas" size={14} className="inline-block align-text-bottom" /> {data.coins || 0}</span>
               </p>
               <div className="flex flex-col gap-2">
                 {(powerups.life || 0) > 0 && (

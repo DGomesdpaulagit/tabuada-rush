@@ -665,7 +665,7 @@ export default function PostGameSummary({ result, onReplay, onHome, onSelectStre
           // Versão ABERTA da arte (7.1) — o fechado continua na Mochila/Loja.
           art: `${c.id}-aberto`,
           name: chest?.name || 'Baú',
-          desc: 'As moedas já foram direto pra sua carteira!',
+          desc: 'Os multis já foram direto pra sua carteira!',
           coins: c.coins,
           comboArt: null,
         },

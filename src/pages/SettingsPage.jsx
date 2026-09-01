@@ -334,7 +334,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
           {[
             { label: 'XP', value: data.xp || 0 },
             { label: 'Vidas', value: `${getLivesInfo(data).remaining}/${DAILY_LIVES_MAX}` },
-            { label: 'Moedas', value: data.coins || 0 },
+            { label: 'Multis', value: data.coins || 0 },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl bg-gray-50 border border-gray-100 p-2 text-center">
               <p className="text-base font-black text-gray-900">{s.value}</p>
@@ -370,7 +370,7 @@ export default function SettingsPage({ onBack, onNavigate }) {
       {/* ZONA DE PERIGO */}
       <Section title="Zona de Perigo">
         <p className="text-xs text-gray-400 font-semibold mb-3">
-          Apaga todo o progresso local e na nuvem (XP, conquistas, recordes, moedas). Irreversível.
+          Apaga todo o progresso local e na nuvem (XP, conquistas, recordes, multis). Irreversível.
         </p>
         <ResetButton onReset={handleReset} hasCloud={!!user} />
       </Section>

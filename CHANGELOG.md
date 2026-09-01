@@ -4,6 +4,49 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.51] — 2026-09-01 — 🪙 A moeda do jogo virou **Multis**
+
+**Detalhes em `sessions/sessao-100.md` (bloco 2).** Primeiro passo da
+versão 6.2 (identidade visual) — rodando em paralelo à coleta da Fase 1,
+porque não mexe em regra de jogo nenhuma.
+
+### Alterado
+- **"moedas" → "multis" em 15 textos visíveis**, em Loja, Header, Missões,
+  Loja de vidas, Configurações, resumo pós-partida, modal de recompensa de
+  ofensiva e modal de aposta. Decisão do Davi entre Multis / Fichas /
+  Raios. **Chaves de ícone (`name="moedas"`, `art: 'moedas'`) e o campo do
+  save (`coins`) intactos** — são identificadores, não texto
+- Três dos 15 só foram achados **na captura de tela**, não no grep: JSX
+  quebrado em várias linhas ("Use suas moedas na loja…" no Header,
+  "Resgatar +N moedas" nas Missões, "Aposte moedas no Rush"). D062 na
+  prática
+
+### Adicionado
+- **Auditoria de resolução dos 93 ícones** — compara o tamanho nativo de
+  cada PNG com o tamanho em que o `GameIcon` desenha (razão `maior lado ÷
+  size`, porque a caixa é quadrada com `object-contain`). **36 arquivos
+  têm folga < 2 e são ampliados em tela 2×**: os 9 `combo-*`, os 4
+  `bau-*-aberto`, os 20 `faixa-*`, `zona-selo`, `zona-buraco` e
+  `bau-vazio`. Os outros 57 estão ok
+- **Regra nova de design system:** nenhum ícone pode ser desenhado acima de
+  metade do seu maior lado nativo. Alvo pra arte nova: 512 px
+- Isso responde três perguntas abertas da 6.2 de uma vez: quais ícones
+  estão ruins (nenhum — estão pequenos), por que os da zona de rebaixamento
+  embaçam, e o que houve com os troféus (são os 20 de faixa, e é resolução)
+
+### 🚨 Descoberto (não alterado)
+- **O sistema de apostas já existe e está no ar desde a [3.5.0]** (2026-06-08,
+  já no CHANGELOG e no `MEMORY.md`; sobreviveu ao reset da 6.0). `App.jsx` tem um
+  `BetModal` ligado: 10/25/50 antes de toda partida de Rush, **3× fixo**
+  por bater o recorde do modo, `data.activeBet` persistido e resolvido no
+  `handleGameEnd`. É a "Modalidade Determinação" da 6.9, em versão
+  simplificada — **com o abuso que o Davi previu** (equilíbrio em 33% de
+  chance) e sem nenhuma das quatro travas que ele listou. **Nada foi
+  mexido** — o modal aparece antes de toda partida de Rush, que é onde a
+  coleta de fluência da Fase 1 acontece
+
+---
+
 ## [6.0.50] — 2026-09-01 — 🗂️ Documento de inovações organizado em `planos/`
 
 **Detalhes em `sessions/sessao-100.md`.** Sessão de planejamento —

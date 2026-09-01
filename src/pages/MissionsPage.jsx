@@ -212,7 +212,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
           </button>
           <div className="flex-1">
             <h2 className="text-xl font-black text-fg">Missões</h2>
-            <p className="text-xs font-semibold text-fg-muted">Complete para ganhar moedas</p>
+            <p className="text-xs font-semibold text-fg-muted">Complete para ganhar multis</p>
           </div>
           <div className="flex items-center gap-1.5 bg-coin/15 border border-coin/30 rounded-2xl px-3 py-1.5">
             <GameIcon name="moedas" size={16} />
@@ -287,7 +287,7 @@ export default function MissionsPage({ onBack, embedded = false }) {
                     onClick={() => handleClaim(mission)}
                     className="mt-3 w-full py-2.5 rounded-xl bg-success text-white text-sm font-black hover:bg-success/90 active:scale-[0.98] transition-all"
                   >
-                    🎁 Resgatar +{mission.reward} moedas
+                    🎁 Resgatar +{mission.reward} multis
                   </button>
                 )}
                 {mission.rewardClaimed && (

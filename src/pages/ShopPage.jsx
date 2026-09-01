@@ -246,11 +246,11 @@ export default function ShopPage({ onBack, embedded = false }) {
 
       {/* Como ganhar moedas */}
       <div className="bg-bee/10 border-2 border-bee/20 rounded-2xl p-4">
-        <p className="text-xs font-black text-bee-dark mb-2">Como ganhar moedas?</p>
+        <p className="text-xs font-black text-bee-dark mb-2">Como ganhar multis?</p>
         <ul className="space-y-1.5">
           {[
-            { art: 'moedas', text: 'Até 6 moedas por partida (1 a cada 8 acertos)' },
-            { art: 'ofensiva', text: '+1 moeda ao manter ofensiva' },
+            { art: 'moedas', text: 'Até 6 multis por partida (1 a cada 8 acertos)' },
+            { art: 'ofensiva', text: '+1 multi ao manter ofensiva' },
             { art: 'missoes', text: 'Complete missões para bônus maiores' },
           ].map(({ art, text }) => (
             <li key={text} className="flex items-center gap-1.5 text-xs text-bee-dark/80 font-semibold">

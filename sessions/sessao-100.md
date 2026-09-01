@@ -1,8 +1,8 @@
 # Sessão 100 — Organização do documento de inovações em `planos/`
 
 **Data:** 2026-09-01
-**Versão:** 6.0.49 → 6.0.50
-**Tipo:** Planejamento e organização — **zero código de jogo**
+**Versão:** 6.0.49 → 6.0.51
+**Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — início da versão 6.2 (troca de texto + auditoria de ícones)
 
 ---
 
@@ -164,6 +164,102 @@ planos/6.9-desafio-de-partida.md o sistema de apostas
 
 Alterados: `PLANO_ACAO.md` (seção FASE 9+), `PENDENCIAS.md` (pendências
 absorvidas).
+
+---
+
+# Bloco 2 — Versão 6.2 iniciada: a moeda virou **Multis**
+
+O Davi decidiu não esperar a coleta acabar e abrir a 6.2 em paralelo — o
+que é seguro, porque a 6.2 é decisão e arte, não regra de jogo.
+
+## A decisão nº 1 saiu: **Multis**
+
+Escolhido entre Multis, Fichas e Raios. Liga direto na multiplicação, nada
+no jogo usava a palavra, e o plural é natural. *(Fichas puxaria o jogo pro
+arcade; Raios brigaria com o ⚡ do Rush.)*
+
+**Aplicado em 15 textos visíveis**, em duas levas. As chaves de ícone
+(`name="moedas"`, `art: 'moedas'`) e o campo do save (`coins`) **não foram
+tocados** — são identificadores, não texto.
+
+**A segunda leva só existiu por causa da captura de tela.** O grep da
+primeira leva procurava `moeda` dentro de aspas ou depois de `>`, e perdeu
+três casos de JSX quebrado em várias linhas:
+
+- Header → *"Use suas moedas na loja pra comprar power-ups e repor vidas."*
+- Missões → *"🎁 Resgatar +N moedas"*
+- Modal de aposta → *"Aposte moedas no Rush"*
+
+O primeiro apareceu num screenshot do painel de moedas do Header. **É
+exatamente o que o D062 previu**: asserção de código não pega o que o olho
+pega. Sem a captura, três textos teriam ido pra produção pela metade.
+
+Conferido no fim: `document.body.innerText` da Loja não contém mais a
+palavra "moeda", e o build passa.
+
+## Auditoria de resolução dos ícones — a pergunta "quais estão mal desenhados"
+
+Em vez de pedir a lista pro Davi, medi. Script que compara o tamanho nativo
+de cada um dos 93 PNGs com o tamanho em que o `GameIcon` desenha.
+
+**Como o `GameIcon` usa caixa quadrada com `object-contain`, a razão certa
+é `maior lado ÷ size`** — não o menor lado (errei isso na primeira versão
+do script e corrigi antes de concluir; com o menor lado, o `zona-selo`
+400×132 aparecia como "ampliado" quando na verdade está reduzindo).
+
+**Resultado: os ícones não estão mal desenhados — estão pequenos demais.**
+São 36 arquivos, e todos têm a mesma coisa em comum: são os que o jogo
+desenha GRANDES.
+
+| Grupo | Nativo | Desenhado a | Folga |
+|---|---|---|---|
+| `bau-*-aberto` (4) | 240 | 168 | 1,43 |
+| `combo-*` (9) | 240 | 168 | 1,43 |
+| `zona-buraco` | 300 | 190 | 1,58 |
+| `zona-selo` | 400 | 230 | 1,74 |
+| `faixa-01…20` (20) | 200 | 112 | 1,79 |
+| `bau-vazio` | 240 | 132 | 1,82 |
+
+Folga abaixo de 2 = o navegador amplia o PNG em tela 2× (todo celular). Os
+outros 57 ícones têm folga de 2,5 a 14× e estão ok.
+
+**Vira regra de design system:** nenhum ícone pode ser desenhado acima de
+metade do seu maior lado nativo. Alvo pra arte nova: **512 px**.
+
+Isso responde de uma vez três perguntas abertas do plano 6.2: "quais ícones
+estão ruins", "por que os da zona de rebaixamento estão embaçados" e
+"refazer o download dos troféus" (são os 20 de faixa, e o problema é
+resolução, não perda de arquivo).
+
+Gerada uma página visual com os 36 ícones **no tamanho real de uso**, pra
+ele ver o problema em vez de ler sobre ele — junto com a pergunta de estilo
+(chapado × 3D) ilustrada, que ele não tinha entendido em texto.
+
+## 🚨 Descoberta: o sistema de apostas já existe e está no ar
+
+Apareceu por acaso na varredura de texto do nome da moeda. `App.jsx` tem um `BetModal`
+completo e **ligado**: aposta de 10/25/50 antes de toda partida de Rush,
+pagamento **3× fixo** por bater o recorde do modo, `data.activeBet`
+persistido e resolvido no `handleGameEnd`.
+
+Isso **não é buraco de registro**: a feature entrou na **[3.5.0]**
+(2026-06-08), está no `CHANGELOG.md` e no `MEMORY.md` (*"Único modo com
+aposta"*), e sobreviveu ao reset da 6.0. O que aconteceu é que o documento
+de inovações dele especifica como novidade uma coisa que já roda.
+
+Ou seja: a "Modalidade Determinação" que ele especificou como nova **já
+existe**, em versão simplificada — e **com o abuso que ele mesmo previu**.
+Com 3× fixo, o ponto de equilíbrio é 33% de chance de bater o próprio
+recorde; no começo do jogo isso é lucro fácil. Nenhuma das quatro travas
+que ele listou existe.
+
+E encosta na Fase 1: o modal aparece antes de toda partida de **Rush**, que
+é onde a coleta de fluência acontece. A amostra já está sendo colhida sob
+pressão de aposta. Não é contaminação nova (é a linha de base de sempre),
+mas é mais um motivo pra não mexer no sistema durante a coleta.
+
+Registrado no topo de `planos/6.9-desafio-de-partida.md`. A 6.9 deixou de
+ser "construir do zero" e virou "evoluir o que existe".
 
 ## Próximos passos
 

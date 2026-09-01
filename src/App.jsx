@@ -113,7 +113,7 @@ function RewardModal({ milestone, onChoose }) {
   const opts = [
     { id: 'level', icon: '⭐', label: 'Subir de Nível', desc: 'Avança 1 nível agora' },
     { id: 'xp', icon: '✨', label: `+${milestone * 20} XP`, desc: 'Ganho direto de XP' },
-    { id: 'coins', icon: '💰', label: `+${milestone * 5} moedas`, desc: 'Moedas do jogo' },
+    { id: 'coins', icon: '💰', label: `+${milestone * 5} multis`, desc: 'Multis do jogo' },
   ];
   return (
     <motion.div
@@ -234,7 +234,7 @@ function BetModal({ mode, modeLabel, currentRecord, coins, onConfirm, onSkip }) 
         <div className="text-center text-4xl mb-1">🎲</div>
         <h3 className="text-xl font-black text-gray-900 text-center">Quer apostar?</h3>
         <p className="text-sm text-gray-400 font-semibold text-center mt-1 mb-4 leading-snug">
-          Aposte moedas no <strong className="text-gray-700">{modeLabel}</strong>.<br/>
+          Aposte multis no <strong className="text-gray-700">{modeLabel}</strong>.<br/>
           {currentRecord > 0
             ? <>Bata seu recorde de <strong className="text-violet-600">{currentRecord} pts</strong> e receba <strong className="text-amber-600">3× a aposta</strong>.</>
             : <>Defina seu primeiro recorde e ganhe <strong className="text-amber-600">3× a aposta</strong>!</>
@@ -904,7 +904,7 @@ export default function App() {
                 id: `_mission_${m.id}`,
                 icon: m.emoji,
                 title: `Missão: ${m.title}`,
-                desc: `+${m.reward} moedas para resgatar!`,
+                desc: `+${m.reward} multis para resgatar!`,
               }),
             (newAchievements.length + i) * 3000
           );

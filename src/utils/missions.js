@@ -127,9 +127,31 @@ export function getActiveMissions(missionsData, opcoes = {}) {
 }
 
 // ── Atualizar progresso de uma missão/desafio com base no resultado da partida ─
+// ⚠️ [6.1, sessão 100] TRÊS REGRAS QUE PRECISAM ANDAR JUNTAS — ver o bug
+// abaixo antes de mexer em qualquer uma delas.
+//
+// O BUG: na ZONA DE REBAIXAMENTO as 7 missões ficavam IMPOSSÍVEIS. O alvo é
+// penalizado na LEITURA (`penalizarMissao`, alvo ×1,5), mas o progresso era
+// gravado com `Math.min(p, mission.target)` usando o alvo NORMAL. Resultado:
+// a barra travava no alvo normal e nunca alcançava o alvo mostrado —
+// "5 / 8 partidas" com 8 partidas jogadas, pra sempre. Reproduzido: 7 de 7.
+//
+// O `getActiveMissions` já dizia qual era o desenho certo ("aplico na
+// LEITURA, não no save: o progresso guardado continua sendo o real") — o
+// teto é que quebrava essa promessa. As correções:
+//
+//   1. Sem teto no save. `progress` guarda o valor REAL, que pode passar do
+//      alvo. Quem exibe é que corta (`progressCompact`/`progressLabel` na
+//      MissionsPage; as barras já usavam `Math.min(pct, 100)`).
+//   2. Sem parada ao completar. O `if (mission.completed) return mission`
+//      congelava o progresso no alvo normal — mesmo efeito do teto, por
+//      outro caminho. Missão completa continua acumulando; `completed` é
+//      recalculado, e `rewardClaimed` é que controla o resgate.
+//   3. `accuracy` e `score` gravam a MEDIDA, não o alvo. Antes faziam
+//      `p = mission.target` (tudo ou nada), então na zona nunca chegavam ao
+//      alvo penalizado. De quebra, a barra passou a ser informativa: quem
+//      fez 88% numa missão de 90% vê "88 / 90" em vez de "0 / 90".
 function updateOne(mission, result, currentStreak) {
-  if (mission.completed) return mission;
-
   const sessionTotal = (result.correct || 0) + (result.wrong || 0);
   const sessionAcc   = sessionTotal > 0
     ? Math.round(((result.correct || 0) / sessionTotal) * 100)
@@ -145,10 +167,10 @@ function updateOne(mission, result, currentStreak) {
       p = Math.max(p, result.bestStreak || 0);
       break;
     case 'accuracy':
-      if (sessionAcc >= mission.target) p = mission.target;
+      p = Math.max(p, sessionAcc);
       break;
     case 'score':
-      if ((result.score || 0) >= mission.target) p = mission.target;
+      p = Math.max(p, result.score || 0);
       break;
     case 'correct_single':
       p = Math.max(p, result.correct || 0);
@@ -164,9 +186,10 @@ function updateOne(mission, result, currentStreak) {
       break;
   }
 
-  const progress  = Math.min(p, mission.target);
-  const completed = progress >= mission.target;
-  return { ...mission, progress, completed };
+  // Sem `Math.min` de propósito (regra 1 acima): o valor guardado é o real,
+  // pra continuar valendo quando o alvo mostrado muda (zona de rebaixamento).
+  const completed = p >= mission.target;
+  return { ...mission, progress: p, completed };
 }
 
 // ── Atualizar todas as missões/desafios após uma partida ──────────────────────

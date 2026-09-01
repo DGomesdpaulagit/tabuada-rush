@@ -4,6 +4,52 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.52] — 2026-09-01 — 🐞 As missões eram impossíveis na zona de rebaixamento
+
+**Detalhes em `sessions/sessao-100.md` (bloco 3) e `planos/6.1-acabamento.md`.**
+Primeiro item da versão 6.1. O "números errados" que o Davi reportou eram
+**dois bugs com a mesma causa raiz**, os dois só visíveis na zona de
+rebaixamento.
+
+### Corrigido
+- 🚨 **As 7 missões ficavam IMPOSSÍVEIS na zona de rebaixamento.** A
+  penalidade da zona é aplicada na LEITURA (alvo ×1,5), mas `updateOne`
+  gravava `Math.min(p, mission.target)` com o alvo **normal** — o progresso
+  batia no teto do alvo normal e nunca alcançava o mostrado. E o
+  `if (mission.completed) return mission` congelava de vez. Reproduzido com
+  o código real: 8 partidas de 60 acertos, sequência 40 e 900 pontos →
+  **7 de 7 travadas** ("5 / 8 partidas" com 8 partidas jogadas)
+- **`accuracy` e `score` gravavam o ALVO, não a medida** (`p = mission.target`,
+  tudo ou nada) — então na zona nunca chegavam ao alvo penalizado. Agora
+  gravam o valor real, e de quebra a barra ficou informativa: quem fez 88%
+  numa missão de 90% vê "88 / 90" em vez de "0 / 90"
+- 🚨 **O card se contradizia em três lugares na zona:** título "120 Acertos",
+  descrição "Acerte 120 contas" e barra "0 / 180". `penalizarMissao` mudava
+  `target` e `reward`, mas não o texto. **Só apareceu na captura de tela.**
+  Agora título e descrição acompanham o alvo — tratando número com separador
+  de milhar ("1.500" virava os tokens "1" e "500") e removendo a dica de
+  ritmo ("~50/dia"), que foi calibrada pro alvo base. Conferido nas 16
+  missões do pool: zero cards com número desencontrado
+
+### Nota de invariante
+`getActiveMissions` sempre documentou o desenho certo — *"aplico na LEITURA,
+não no save: o progresso guardado continua sendo o real"*. Os dois bugs eram
+o resto do código não respeitando essa promessa. O `progress` agora é o valor
+real e pode passar do alvo; **quem exibe é que corta**
+(`progressCompact`/`progressLabel`; as barras já usavam `Math.min(pct, 100)`)
+
+### Em aberto (decisão do Davi, não são bugs)
+- 4 títulos por extenso não dão pra penalizar: *Duas Partidas*, *Cinco
+  Partidas*, *Duzentos e Cinquenta*, *Quinhentos Pontos*
+- As duas missões de precisão (80% e 90%) viram a mesma na zona — as duas
+  batem no teto de 98%
+- 98% de precisão é 1 erro em 60 contas; o próprio código diz que 100% seria
+  "cruel demais"
+- Desafio mensal na zona paga a recompensa NORMAL (`resolveChallenges` usa a
+  leitura não-penalizada): a tela promete 700 e paga 350
+
+---
+
 ## [6.0.51] — 2026-09-01 — 🪙 A moeda do jogo virou **Multis**
 
 **Detalhes em `sessions/sessao-100.md` (bloco 2).** Primeiro passo da

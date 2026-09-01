@@ -1,8 +1,8 @@
 # Sessão 100 — Organização do documento de inovações em `planos/`
 
 **Data:** 2026-09-01
-**Versão:** 6.0.49 → 6.0.51
-**Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — início da versão 6.2 (troca de texto + auditoria de ícones)
+**Versão:** 6.0.49 → 6.0.52
+**Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — versão 6.2 iniciada (moeda virou Multis + auditoria de ícones) · Bloco 3 — versão 6.1: bug das missões na zona de rebaixamento
 
 ---
 
@@ -260,6 +260,88 @@ mas é mais um motivo pra não mexer no sistema durante a coleta.
 
 Registrado no topo de `planos/6.9-desafio-de-partida.md`. A 6.9 deixou de
 ser "construir do zero" e virou "evoluir o que existe".
+
+---
+
+# Bloco 3 — Versão 6.1: o bug das missões era grave
+
+O Davi perguntou se valia abrir a 6.2 sem a Fase 1 fechar. Vale: a 6.2 é
+decisão e arquivo de arte, não muda comportamento — que é o que a Fase 1
+mede. As duas únicas exceções ficaram registradas: **som de dentro da
+partida** e **mascote reagindo durante a partida** esperam a coleta.
+
+Aí ele escolheu a 6.1. Em vez de pedir o print, fui procurar.
+
+## Eram dois bugs, e a causa raiz é a mesma
+
+A penalidade da zona de rebaixamento (`penalizarMissao`, sessão 097) é
+aplicada **na leitura**: alvo ×1,5 e recompensa ×2, com o save guardando o
+valor real. O `getActiveMissions` documenta isso desde sempre:
+
+> *"Aplico na LEITURA, não no save: o progresso guardado continua sendo o real"*
+
+**O resto do código não cumpria essa promessa.** Os dois bugs são o mesmo
+erro por dois caminhos.
+
+### Bug 1 — as 7 missões ficavam impossíveis
+
+`updateOne` gravava `Math.min(p, mission.target)` com o alvo **normal**,
+enquanto a tela comparava com o alvo **penalizado**. O progresso batia no
+teto do alvo normal e nunca alcançava o mostrado. O
+`if (mission.completed) return mission` fechava a porta de vez.
+
+Escrevi um repro com o código real (via `esbuild --bundle`, porque o Node
+não resolve import sem extensão como o Vite faz). **8 partidas de 60
+acertos, sequência 40, 900 pontos: 7 de 7 travadas.** "5 / 8 partidas" com
+8 partidas jogadas.
+
+Três correções, que precisam andar juntas:
+1. **Sem teto no save** — `progress` guarda o real; quem exibe é que corta
+2. **Sem parada ao completar** — congelava no alvo normal por outro caminho
+3. **`accuracy`/`score` gravam a medida, não o alvo** — faziam
+   `p = mission.target` (tudo ou nada), então nunca chegavam ao penalizado
+
+A terceira melhorou a barra pra todo mundo, não só na zona: quem faz 88%
+numa missão de 90% vê "88 / 90" em vez de "0 / 90".
+
+### Bug 2 — o card se contradizia em três lugares
+
+**Este só apareceu na captura de tela**, depois do primeiro fix: título
+"120 Acertos", descrição "Acerte 120 contas no total hoje", barra
+"0 / 180". `penalizarMissao` mudava `target` e `reward` e esquecia o texto.
+
+Segunda vez nesta sessão que a captura pega o que a leitura de código não
+pegou. Corrigido com dois cuidados que o caso exigiu:
+
+- **Separador de milhar:** `/\d+/g` via "1.500" como os tokens "1" e "500",
+  nenhum igual a 1500 — o título ficava eternamente errado. Regex passou a
+  casar `\d{1,3}(?:\.\d{3})+|\d+`.
+- **Nada de lookbehind** (`(?<!\d)`), que quebraria o app inteiro no Safari
+  antigo. Uso `replace` com função, comparando token por token.
+- **A dica de ritmo sai** — "(~50/dia)" foi calibrada pro alvo base; com o
+  alvo 50% maior ela vira mais um número errado.
+
+Conferido nas 16 missões do pool: **zero cards com número desencontrado**.
+E confirmado em captura: "Precisão de 98%" / "Termine uma partida com 98%
+de precisão" / "0 / 98%".
+
+## O que sobrou, e não é bug
+
+Três coisas que a correção expôs e que são decisão de produto:
+
+1. **4 títulos por extenso** não carregam dígito, então não dá pra
+   penalizar: *Duas Partidas*, *Cinco Partidas*, *Duzentos e Cinquenta*,
+   *Quinhentos Pontos*. Na zona, "Duas Partidas" fica com a barra em 0/3.
+2. **As duas missões de precisão viram a mesma na zona** — 80% e 90% batem
+   as duas no teto de 98%.
+3. **98% de precisão é 1 erro em 60 contas.** O comentário do próprio código
+   diz que 100% seria "cruel demais"; 98% está quase lá.
+
+E um resíduo do mesmo desenho, ainda em aberto: **desafio mensal na zona
+paga a recompensa normal.** `resolveChallenges` resolve contra a leitura
+não-penalizada, então a tela promete 700 e paga 350. Não é explorável (o
+alvo cobrado também é o normal, o que favorece o jogador), mas é mais um
+número que não bate.
 
 ## Próximos passos
 

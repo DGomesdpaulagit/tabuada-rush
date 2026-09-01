@@ -106,13 +106,20 @@ function resetLabel(tab) {
 // [sessão 088] Número curto pra caber DENTRO da barra, no estilo do
 // Duolingo que o Davi mandou de referência ("10 / 15"). A unidade já está
 // escrita na descrição da missão logo acima, então não precisa repetir.
+// [6.1, sessão 100] O `progress` guardado passou a ser o valor REAL, sem teto
+// (ver o comentário do `updateOne` em utils/missions.js). Quem exibe é que
+// corta — senão uma missão de 5 partidas com 8 jogadas mostraria "8 / 5".
+function exibir(mission) {
+  return { p: Math.min(mission.progress, mission.target), t: mission.target };
+}
+
 export function progressCompact(mission) {
-  const { progress: p, target: t } = mission;
+  const { p, t } = exibir(mission);
   return mission.type === 'accuracy' ? `${p} / ${t}%` : `${p} / ${t}`;
 }
 
 export function progressLabel(mission) {
-  const { progress: p, target: t } = mission;
+  const { p, t } = exibir(mission);
   switch (mission.type) {
     case 'play':          return `${p}/${t} partidas`;
     case 'streak':        return `${p}/${t} acertos seguidos`;

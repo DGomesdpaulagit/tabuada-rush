@@ -56,6 +56,27 @@ export function multiplicadorLoot(data, standings = null) {
 // O `completed` é recalculado porque o alvo mudou: uma missão que estava
 // concluída com o alvo normal volta a ficar em andamento com o alvo penalizado
 // — o que é justo, já que a recompensa dela também dobrou.
+// [6.1, sessão 100] O título e a descrição também precisam acompanhar o alvo.
+// Sem isso o card se contradizia em três lugares ao mesmo tempo: título
+// "120 Acertos", descrição "Acerte 120 contas no total hoje" e barra
+// "0 / 180". Era o "números errados" que o Davi reportou.
+//
+// Troco só o número que É o alvo base, comparando token por token — nada de
+// `replace` cego (que estragaria "1 a cada 8 acertos") e nada de lookbehind
+// (`(?<!\d)`), que quebra o app inteiro no Safari antigo.
+function trocarAlvoNoTexto(texto, alvoBase, alvoNovo) {
+  if (!texto) return texto;
+  // A dica de ritmo sai: ela foi calibrada pro alvo BASE ("~50/dia" deixa de
+  // valer quando o alvo sobe 50%), então mantê-la seria mais um número errado.
+  const semDica = texto.replace(/\s*\(~[^)]*\)/g, '');
+  // Casa número com separador de milhar ("1.500") ou sem ("120") — sem isso
+  // o "1.500 Acertos" virava os tokens "1" e "500" e nunca era trocado.
+  return semDica.replace(/\d{1,3}(?:\.\d{3})+|\d+/g, (n) => {
+    if (Number(n.replace(/\./g, '')) !== alvoBase) return n;
+    return n.includes('.') ? alvoNovo.toLocaleString('pt-BR') : String(alvoNovo);
+  });
+}
+
 export function penalizarMissao(missao) {
   // ⚠️ Missão de PRECISÃO tem alvo em PORCENTAGEM: multiplicar por 1,5 dava
   // "Precisão de 135%", que é impossível de cumprir. Nessas, o alvo sobe só
@@ -68,6 +89,8 @@ export function penalizarMissao(missao) {
   return {
     ...missao,
     target: alvo,
+    title: trocarAlvoNoTexto(missao.title, missao.target, alvo),
+    desc: trocarAlvoNoTexto(missao.desc, missao.target, alvo),
     reward: Math.round((missao.reward || 0) * PENALIDADES.missaoRecompensa),
     completed: (missao.progress || 0) >= alvo,
     penalizada: true,

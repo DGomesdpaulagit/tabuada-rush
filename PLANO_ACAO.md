@@ -560,9 +560,40 @@ pesado e o que mais muda de lugar.
 
 ---
 
+## FASE 9+ — planejadas em `planos/` (documento de inovações, sessão 100)
+
+O Davi mandou um documento único com ~25 inovações de uma vez (arte,
+interface, mecânicas novas, animações, apostas). Em vez de despejar tudo
+aqui no meio, o material foi organizado em **`planos/`** — um arquivo por
+versão, com escopo, dependência, risco e perguntas abertas.
+
+**Índice:** [`planos/00-INDICE.md`](planos/00-INDICE.md)
+
+| Versão | Nome | Pode começar |
+|---|---|---|
+| 6.1 | Acabamento e correções | ✅ agora |
+| 6.2 | Identidade visual (moeda, logo, mascote, ícones, som) | ✅ agora |
+| 6.3 | Painel de Domínio | ⛔ Domínio Fase 2 |
+| 6.4 | Missões v2 (tempo + recompensa oculta) | ⚠️ pós-coleta |
+| 6.5 | Reset de layout | ⛔ depende do 6.2 |
+| 6.6 | Animações e frames | ⛔ depende do 6.5 |
+| 6.7 | Semana de Chama | ⛔ Domínio Fase 3 |
+| 6.8 | Modo Geral | ⛔ Domínio Fase 3 |
+| 6.9 | Desafio de Partida (apostas) | ⛔ vidas religadas |
+
+**Regra que vale pra todas:** nada de `planos/` começa antes de o Davi
+confirmar o escopo daquela versão, e **nada pode atrapalhar as Fases 0/1
+do Domínio** (`ARQUITETURA_XP.md` §4). As duas zonas de exclusão — os
+arquivos que a coleta ocupa e a **amostra** que a Fase 1 mede — estão
+descritas no índice. As duas únicas trilhas seguras de rodar agora, em
+paralelo à coleta, são a **6.1** e a **6.2**.
+
+---
+
 ## Pendência menor, ainda sem resposta (não bloqueia nada)
 
 - Ícone de ofensiva usado também em "Melhor Sequência" (acertos seguidos
   numa partida, não dias) — ver D038. Se incomodar, trocar em 2 lugares.
 - Estilo dos ícones futuros: chapado tipo Duolingo (D041) ou 3D/gradiente
-  como os que já existem? Sem resposta ainda.
+  como os que já existem? Sem resposta ainda. **→ vira pergunta aberta do
+  [6.2](planos/6.2-identidade-visual.md); precisa morrer antes do 6.5.**

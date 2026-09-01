@@ -4,6 +4,48 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.50] — 2026-09-01 — 🗂️ Documento de inovações organizado em `planos/`
+
+**Detalhes em `sessions/sessao-100.md`.** Sessão de planejamento —
+**nenhuma linha de código de jogo mudou.**
+
+### Adicionado
+- **`planos/`** — o documento único de ~25 inovações que o Davi mandou
+  (arte, interface, mecânicas, animações, apostas) virou 10 arquivos: um
+  índice mestre e nove versões (6.1 a 6.9). Cada plano tem escopo,
+  dependências, conflito com o Domínio, checklist e perguntas abertas
+- **Duas zonas de exclusão da Fase 0/1 do Domínio**, documentadas no
+  índice: a **Zona 1** (arquivos que a coleta ocupa) e a **Zona 2** (a
+  *amostra* que a Fase 1 mede — Modo Geral, Semana de Chama, apostas,
+  missões de tempo e sons/animações de partida contaminam a medida sem
+  encostar em um arquivo da Zona 1). Só a **6.1** e a **6.2** rodam agora
+
+### Alterado
+- `PLANO_ACAO.md` — nova seção "FASE 9+" apontando pra `planos/`
+- `PENDENCIAS.md` — registradas as duas pendências absorvidas pelo
+  documento dele (ícones de pontuação por faixa; animações do fim de partida)
+
+### Achados registrados (levantados lendo o código, não estavam no documento)
+- **3 itens do documento já estavam prontos:** o ícone de baú vazio
+  (`bau-vazio.png`, sessão 083), a troca dos emojis da faixa de tabuada
+  (os 20 troféus da Fase 8.1) e os ícones dos 7 tipos de missão
+- 🐞 **O PWA não tem manifest ligado** — `index.html` não tem
+  `<link rel="manifest">` e o arquivo da raiz se chama `manifet.json`
+  (sem o `s`), fora de `public/`. O jogo não é instalável como app hoje
+- **Causa provável do "embaçado"** da zona de rebaixamento: `zona-buraco`
+  é 300×300 desenhado a `size={190}` → em tela 2× é ampliado 27%
+- **A fila de arte do 6.6 inteiro tem 2 itens** — baús, fundos e estados de
+  ofensiva já existem separados; falta interpolar, não gerar
+- **O documento define o Modo Geral de duas formas contraditórias**
+  (mistura tudo × escolher a faixa). Sem registro em lugar nenhum do
+  projeto da conversa sobre "o Rush incluir todas as faixas"
+- **Furo matemático nas apostas:** com multiplicador crescente por valor,
+  apostar 10 exige 83% de chance de vitória pra compensar e apostar 1000
+  exige 45% — mesma tarefa, logo apostar tudo domina. Proposta: o
+  multiplicador vem da **margem de risco escolhida**, não do valor
+
+---
+
 ## [6.0.49] — 2026-08-31 — 🚨 Fim de partida voltou a funcionar
 
 **Detalhes em `sessions/sessao-099.md`.**

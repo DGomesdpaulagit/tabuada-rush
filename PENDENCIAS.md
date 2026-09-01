@@ -82,6 +82,26 @@ moedas é o maior sorvedouro de moeda do jogo).
 
 ---
 
+## 📦 ABSORVIDO em `planos/` (sessão 100)
+
+O documento de inovações que o Davi mandou na sessão 100 foi organizado em
+[`planos/`](planos/00-INDICE.md), um arquivo por versão. Duas pendências
+antigas **daqui** foram absorvidas por lá e não precisam mais ser
+rastreadas neste arquivo:
+
+- **Tipos de pontuação por faixa numérica** (abaixo) → resolvido pelo
+  documento dele: são **10 ícones, de 100 em 100, até 1000**. Vai pro
+  [6.2](planos/6.2-identidade-visual.md). *(Falta só a regra do alvo
+  intermediário — proposta: repetir o D065 e arredondar pra baixo.)*
+- **Animações das telas de fim de partida** (abaixo) → viraram o
+  [6.6](planos/6.6-animacoes.md), com catálogo em 3 níveis de prioridade.
+
+As dívidas de layout da sessão 086 continuam válidas aqui **e** aparecem no
+[6.1](planos/6.1-acabamento.md) e no [6.5](planos/6.5-reset-layout.md) —
+saem daqui quando forem feitas.
+
+---
+
 ## 🔢 Tipos de pontuação por faixa numérica (pedido da sessão 082)
 
 Hoje existe **um único** ícone de pontuação (`missao-tipo-pontuacao`, o

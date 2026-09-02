@@ -194,7 +194,26 @@ function ScorePage({ result, footer }) {
   );
 }
 
-// ── PÁGINA 2 — XP total + % de acerto ─────────────────────────────────────────
+// [6.1, sessão 100] Tempo de partida no resumo — pedido do Davi.
+//
+// O dado NÃO precisou ser medido: `result.timePlayed` (segundos) já existe
+// desde a sessão 071, e já está certo. Ele é relógio de parede
+// (`matchStartRef` / `Date.now()` no GamePage), justamente porque o cálculo
+// antigo (`cfg.timer - state.time`) ignorava o tempo ganho por combo e pela
+// Largada Turbo. Aqui é só exibir.
+//
+// Formato `mm:ss`, virando `h:mm:ss` acima de uma hora — o Zen não tem
+// limite de tempo e pode passar disso.
+function formatarTempo(segundos) {
+  const s = Math.max(0, Math.round(segundos || 0));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const seg = s % 60;
+  const dd = (n) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${dd(m)}:${dd(seg)}` : `${dd(m)}:${dd(seg)}`;
+}
+
+// ── PÁGINA 2 — XP total + % de acerto + tempo de partida ──────────────────────
 function XpPage({ result, footer }) {
   const accuracy = getAccuracy(result.correct, result.correct + result.wrong);
   const accLabel = accuracy >= 90 ? 'Acertou muito!' : accuracy >= 70 ? 'Bom trabalho!' : 'Continue praticando!';
@@ -222,6 +241,12 @@ function XpPage({ result, footer }) {
           <span className="text-3xl font-black text-accent">{accuracy}%</span>
         </div>
         <p className="text-xs font-black text-fg-muted text-center mt-1">{accLabel}</p>
+      </StatBox>
+      <StatBox label="Tempo de partida" labelClassName="text-white bg-macaw -m-4 mb-3 p-3 rounded-t-2xl">
+        <div className="flex items-center justify-center gap-2">
+          <GameIcon name="conquista-relogio" size={28} />
+          <span className="text-3xl font-black text-macaw tabular-nums">{formatarTempo(result.timePlayed)}</span>
+        </div>
       </StatBox>
     </SummaryShell>
   );

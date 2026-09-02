@@ -1,8 +1,8 @@
 # Sessão 100 — Organização do documento de inovações em `planos/`
 
 **Data:** 2026-09-01
-**Versão:** 6.0.49 → 6.0.53
-**Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — versão 6.2 iniciada (moeda virou Multis + auditoria de ícones) · Bloco 3 — versão 6.1: bug das missões na zona de rebaixamento
+**Versão:** 6.0.49 → 6.0.54
+**Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — versão 6.2 iniciada (moeda virou Multis + auditoria de ícones) · Bloco 3 — versão 6.1: bug das missões na zona de rebaixamento · Bloco 4 — as 3 decisões que sobraram · Bloco 5 — versão 6.1 CONCLUÍDA (posição dos ícones, tempo de partida, nomes da ofensiva)
 
 ---
 
@@ -402,6 +402,80 @@ Nas 10 diárias: zero cards com número desencontrado. Precisão saindo 85% e
 com os títulos novos ("375 Pontos", "750 Pontos") penalizando certo.
 
 **Item 6.1.1 fechado.**
+
+---
+
+# Bloco 5 — Versão 6.1 concluída
+
+## Infra: o servidor não subia
+
+O `preview_start` recusava a porta 3000, ocupada por `node.exe` (PID 33136)
+— o `npm run dev` do próprio Davi, o mesmo servidor que eu vinha usando pras
+capturas a sessão toda.
+
+**A porta 3000 é exigência real do projeto**, não preferência: está fixa em
+`vite.config.js` (`server: { port: 3000 }`), em `scripts/tirar-telas.mjs`
+(`const BASE = 'http://localhost:3000'`) e documentada no `CLAUDE.md`. Com
+porta automática, o script de screenshots do projeto quebraria.
+
+Então: `autoPort: false` na configuração que sobe o servidor, mais uma
+configuração nova **`tabuada-rush-attach`** que só **se conecta** ao que já
+está rodando. **Não matei o processo dele** — não resolveria nada e ele
+perderia o servidor.
+
+## Zona de rebaixamento: posição trocada, embaçado explicado
+
+Buraco pra cima, selo pra baixo. Só isso — o pedido foi trocar de posição
+"apenas", então **não encolhi os ícones**, mesmo sabendo que encolher
+deixaria nítido hoje.
+
+**Descoberta de método:** o embaçado **não dá pra ver no preview**. Medi
+`window.devicePixelRatio` na janela do Browser: **1**. O problema só existe
+em tela 2× — celular e notebook retina. Ou seja, neste caso específico a
+medição vale e a captura não; é o oposto do que aconteceu duas vezes hoje
+com as missões. Vale saber qual ferramenta serve pra qual pergunta.
+
+A correção de verdade é arte de 512px, no lote 3 da 6.2.
+
+## Tempo de partida: o dado já estava certo
+
+`result.timePlayed` existe desde a sessão 071 e já é **relógio de parede**
+(`matchStartRef`/`Date.now()`), justamente porque o cálculo antigo
+(`cfg.timer - state.time`) ignorava o tempo ganho por combo e Largada Turbo.
+**Não precisou medir nada — só exibir.**
+
+Caixa azul com relógio na página 2, no mesmo padrão da de XP (amarela) e da
+de precisão (verde). `mm:ss`, virando `h:mm:ss` acima de uma hora — o Zen
+não tem limite de tempo. Conferido em captura: 185s → **03:05**.
+
+## Conquistas de ofensiva: dois problemas, não um
+
+O Davi pediu nomes "mais memoráveis e coerentes entre si, sem repetir termos
+de outras famílias". Lendo a lista, os dois problemas ficaram claros:
+
+1. **Misturava duas famílias.** Faísca e Chama Acesa (fogo) → Constância,
+   Disciplina, Inabalável (virtude abstrata) → Fogo Eterno, Centena em
+   Chamas, Inferno Imparável, Ano de Fogo (fogo de novo). Não dava pra
+   sentir a escada: "Disciplina" não é obviamente maior que "Constância".
+2. **Repetia a família de ACERTOS SEGUIDOS**, que já usa "Aquecendo" e "Em
+   Chamas" — e o "Chama Acesa" da ofensiva caía **no mesmo marco de 10** que
+   o "Em Chamas". Era exatamente a repetição que ele apontou.
+
+Agora é uma escala só, uma palavra cada, sempre crescendo:
+
+| 5 | 10 | 15 | 20 | 35 | 40 | 100 | 250 | 365 |
+|---|---|---|---|---|---|---|---|---|
+| Faísca | Brasa | Fogueira | Labareda | Incêndio | Vulcão | Estrela | Sol | Supernova |
+
+"Faísca" ficou porque já era o melhor da lista. E **"Chama" e "Fogo" foram
+deixados de fora de propósito** — a Semana de Chama (planos/6.7) vai
+precisar dessas palavras, e gastar as melhores aqui recriaria a mesma
+colisão que a gente acabou de desfazer.
+
+Conferido rodando: os 9 títulos lidos direto do módulo no navegador.
+
+**Versão 6.1 concluída**, menos o item opcional (o modal da meta de ofensiva
+na primeira visita, que talvez morra sozinho no reset de layout da 6.5).
 
 ## Próximos passos
 

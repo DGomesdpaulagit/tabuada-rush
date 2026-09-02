@@ -46,11 +46,22 @@ export default function RelegationPanel({ leagueId, onFechar, onNaoMostrarMais }
         {!verMais ? (
           // ── Aviso ──────────────────────────────────────────────────────
           <div className="p-6 text-center">
+            {/* [6.1, sessão 100] Ordem trocada a pedido do Davi: o BURACO
+                engolindo os recursos vem primeiro, o SELO da zona embaixo.
+                Só a posição mudou — tamanho e espaçamento seguem iguais.
+
+                ⚠️ Sobre o "embaçado" que ele reportou: não é a arte, é
+                resolução. `zona-buraco` tem 300px de arte desenhados a 190,
+                e `zona-selo` tem 400 desenhados a 230 — em tela 2× (todo
+                celular) os dois são AMPLIADOS. A correção é arte maior
+                (512px), no lote 3 da versão 6.2; ver planos/6.2. Baixar o
+                `size` aqui também resolveria, mas encolheria o painel — ele
+                pediu pra trocar de posição "apenas". */}
             <div className="flex justify-center mb-2">
-              <GameIcon name="zona-selo" size={230} />
+              <GameIcon name="zona-buraco" size={190} />
             </div>
             <div className="flex justify-center mb-4">
-              <GameIcon name="zona-buraco" size={190} />
+              <GameIcon name="zona-selo" size={230} />
             </div>
             <p className="text-lg font-black text-fg leading-snug">
               Você está na zona de rebaixamento!

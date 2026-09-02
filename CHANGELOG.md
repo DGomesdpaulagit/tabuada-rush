@@ -4,6 +4,49 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.54] — 2026-09-01 — ✅ Versão 6.1 concluída (acabamento)
+
+**Detalhes em `sessions/sessao-100.md` (bloco 5) e `planos/6.1-acabamento.md`.**
+Fecha os itens que faltavam da 6.1.
+
+### Alterado
+- **Zona de rebaixamento: ícones trocados de posição** — o BURACO engolindo
+  os recursos passou pra cima, o SELO da zona pra baixo. Só a posição mudou
+  (pedido dele foi "troque-os de posição **apenas**"); tamanho e espaçamento
+  seguem iguais
+- **Nomes das conquistas de ofensiva refeitos.** Os antigos misturavam duas
+  famílias (fogo → virtude abstrata → fogo) e **repetiam a família de acertos
+  seguidos**, que já usa "Aquecendo" e "Em Chamas" — o "Chama Acesa" da
+  ofensiva caía justo no mesmo marco de 10 que o "Em Chamas". Agora é uma
+  escala só, sempre crescendo, de uma palavra cada:
+
+  | Dias | 5 | 10 | 15 | 20 | 35 | 40 | 100 | 250 | 365 |
+  |---|---|---|---|---|---|---|---|---|---|
+  | **Antes** | Faísca | Chama Acesa | Constância | Disciplina | Inabalável | Fogo Eterno | Centena em Chamas | Inferno Imparável | Ano de Fogo |
+  | **Agora** | Faísca | **Brasa** | **Fogueira** | **Labareda** | **Incêndio** | **Vulcão** | **Estrela** | **Sol** | **Supernova** |
+
+  "Chama" e "Fogo" ficaram de fora de propósito — a Semana de Chama
+  (`planos/6.7`) vai precisar dessas palavras
+
+### Adicionado
+- **Tempo de partida na página 2 do resumo pós-partida**, em `mm:ss`
+  (`h:mm:ss` acima de uma hora — o Zen não tem limite). **O dado não precisou
+  ser medido:** `result.timePlayed` já existe e já está certo desde a sessão
+  071, medido por relógio de parede justamente porque o cálculo antigo
+  ignorava o tempo ganho por combo e Largada Turbo. Aqui foi só exibir
+- Caixa azul com o ícone de relógio, no mesmo padrão das caixas de XP
+  (amarela) e de precisão (verde). Conferido em captura: 185s → **03:05**
+
+### Corrigido (infra)
+- `.claude/launch.json` — `autoPort: false` na configuração que sobe o
+  servidor (a porta 3000 é exigência real: está fixa no `vite.config.js`, no
+  `scripts/tirar-telas.mjs` e documentada no `CLAUDE.md`; com porta
+  automática o script de screenshots do projeto quebraria), mais uma
+  configuração nova `tabuada-rush-attach` que **se conecta** ao `npm run dev`
+  já rodando em vez de tentar subir um segundo
+
+---
+
 ## [6.0.53] — 2026-09-01 — 🎯 As 3 decisões que sobraram do bug das missões
 
 **Detalhes em `sessions/sessao-100.md` (bloco 4).** O Davi respondeu as

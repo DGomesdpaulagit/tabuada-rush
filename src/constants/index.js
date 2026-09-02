@@ -299,6 +299,27 @@ export const ACHIEVEMENTS = [
   },
 
   // ── OFENSIVA (dias consecutivos jogando) ──────────────────────────────────
+  //
+  // [6.1, sessão 100] Nomes refeitos a pedido do Davi. Dois problemas com os
+  // antigos:
+  //
+  //   1. **Misturavam duas famílias.** Começava em fogo (Faísca, Chama
+  //      Acesa), virava virtude abstrata no meio (Constância, Disciplina,
+  //      Inabalável) e voltava pro fogo no fim. Não dava pra sentir a
+  //      progressão — "Disciplina" não é obviamente maior que "Constância".
+  //   2. **Repetiam a família de ACERTOS SEGUIDOS**, que já usa "Aquecendo"
+  //      e "Em Chamas" — e o "Chama Acesa" da ofensiva caía justo no mesmo
+  //      marco de 10 que o "Em Chamas". Era o "sem repetir termos de outras
+  //      famílias" que ele pediu.
+  //
+  // Agora é UMA escala só, sempre crescendo, de uma palavra cada:
+  // faísca → brasa → fogueira → labareda → incêndio → vulcão → estrela →
+  // sol → supernova. Cada degrau é visivelmente maior que o anterior, sem
+  // precisar saber quantos dias vale.
+  //
+  // ⚠️ "Chama" e "Fogo" ficaram DE FORA de propósito: a Semana de Chama
+  // (planos/6.7) vai precisar dessas palavras, e gastar as melhores aqui
+  // criaria a mesma colisão de novo.
   {
     id: 'ofensiva_5',
     title: 'Faísca',
@@ -309,7 +330,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_10',
-    title: 'Chama Acesa',
+    title: 'Brasa',
     desc: 'Mantenha 10 dias de ofensiva',
     icon: '🔥',
     category: 'Ofensiva',
@@ -317,7 +338,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_15',
-    title: 'Constância',
+    title: 'Fogueira',
     desc: 'Mantenha 15 dias de ofensiva',
     icon: '🔥',
     category: 'Ofensiva',
@@ -325,7 +346,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_20',
-    title: 'Disciplina',
+    title: 'Labareda',
     desc: 'Mantenha 20 dias de ofensiva',
     icon: '🔥',
     category: 'Ofensiva',
@@ -333,7 +354,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_35',
-    title: 'Inabalável',
+    title: 'Incêndio',
     desc: 'Mantenha 35 dias de ofensiva',
     icon: '🔥',
     category: 'Ofensiva',
@@ -341,7 +362,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_40',
-    title: 'Fogo Eterno',
+    title: 'Vulcão',
     desc: 'Mantenha 40 dias de ofensiva',
     icon: '🔥',
     category: 'Ofensiva',
@@ -349,7 +370,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_100',
-    title: 'Centena em Chamas',
+    title: 'Estrela',
     desc: 'Mantenha 100 dias de ofensiva',
     icon: '💯',
     category: 'Ofensiva',
@@ -357,7 +378,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_250',
-    title: 'Inferno Imparável',
+    title: 'Sol',
     desc: 'Mantenha 250 dias de ofensiva',
     icon: '🌋',
     category: 'Ofensiva',
@@ -365,7 +386,7 @@ export const ACHIEVEMENTS = [
   },
   {
     id: 'ofensiva_365',
-    title: 'Ano de Fogo',
+    title: 'Supernova',
     desc: 'Mantenha 365 dias de ofensiva',
     icon: '🎆',
     category: 'Ofensiva',

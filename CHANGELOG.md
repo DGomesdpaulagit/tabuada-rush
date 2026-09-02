@@ -4,6 +4,39 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.53] — 2026-09-01 — 🎯 As 3 decisões que sobraram do bug das missões
+
+**Detalhes em `sessions/sessao-100.md` (bloco 4).** O Davi respondeu as
+perguntas em aberto da 6.0.52 — fecha o item 6.1.1.
+
+### Alterado
+- **4 títulos por extenso viraram números** (aprovado pelo Davi): *Duas
+  Partidas* → **2 Partidas** · *Cinco Partidas* → **5 Partidas** ·
+  *Duzentos e Cinquenta* → **250 Pontos** · *Quinhentos Pontos* → **500
+  Pontos**. Sem dígito no título, a penalidade da zona não conseguia
+  atualizar o número e o card ficava com "Duas Partidas" sobre uma barra
+  de 0/3
+- **Penalidade de precisão passou a ser em PONTOS PERCENTUAIS** (+5, teto
+  95) em vez de ×1,5 com teto 98. Resolve dois problemas de uma vez: 98%
+  é errar 1 conta em 60 (o próprio comentário do código dizia que 100%
+  seria "cruel demais"), e o teto **achatava as duas missões numa só** —
+  80% e 90% batiam ambas em 98%, então quem tirasse as duas no mesmo dia
+  via dois cards idênticos. Agora 80 → **85%** e 90 → **95%**
+- **Desafio mensal deixou de ser penalizado na zona.** Ele é um CONTRATO:
+  o jogador aceita alvo e recompensa e tem multa se não cumprir. Penalizar
+  na leitura criava o número que não batia (tela prometia 700,
+  `resolveChallenges` pagava 350, porque resolve pelos valores guardados) e
+  era injusto nos dois sentidos — cair na zona no último dia do mês subia o
+  alvo de um contrato assinado semanas antes. **A zona continua doendo:**
+  metade do XP, 25% do loot e as diárias 50% mais duras
+
+### Conferido
+Nas 10 diárias: **zero cards com número desencontrado**, as duas missões de
+precisão saem diferentes (85% e 95%), e o desafio mensal na zona mostra
+exatamente o que vai pagar. Confirmado em captura de tela
+
+---
+
 ## [6.0.52] — 2026-09-01 — 🐞 As missões eram impossíveis na zona de rebaixamento
 
 **Detalhes em `sessions/sessao-100.md` (bloco 3) e `planos/6.1-acabamento.md`.**

@@ -118,9 +118,23 @@ export function getActiveMissions(missionsData, opcoes = {}) {
     : md.monthly;
 
   if (opcoes.zonaRebaixamento) {
+    // [6.1, sessão 100] A penalidade da zona vale só pras DIÁRIAS.
+    //
+    // Desafio mensal é CONTRATO: o jogador aceita um alvo e uma recompensa,
+    // e tem penalidade se não cumprir até o prazo. Penalizar ele na leitura
+    // criava um número que não batia — a tela prometia 700 e o
+    // `resolveChallenges` (que resolve com os valores guardados, os de base)
+    // pagava 350. E era injusto nos dois sentidos: cair na zona no último dia
+    // do mês subia o alvo de um contrato assinado semanas antes.
+    //
+    // A zona continua doendo bastante sem isso: metade do XP, 25% do loot e
+    // as diárias 50% mais duras. Se o Davi quiser o mensal penalizado também,
+    // é reverter esta linha E fazer o `resolveChallenges` julgar/pagar pelos
+    // mesmos valores penalizados — as duas coisas juntas, senão o número
+    // volta a não bater.
     return {
       daily: { ...daily, missions: penalizarMissoes(daily.missions, true) },
-      monthly: { ...monthly, accepted: penalizarMissoes(monthly.accepted, true) },
+      monthly,
     };
   }
   return { daily, monthly };

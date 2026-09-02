@@ -11,7 +11,8 @@ export const PENALIDADES = {
   xp: 0.5,               // ganha metade do XP
   loot: 0.25,            // 25% da chance normal de baú, power-up e poção
   missaoAlvo: 1.5,       // missões pedem 50% a mais
-  missaoRecompensa: 2,   // ...mas pagam o dobro de moedas
+  missaoAlvoPrecisao: 5, // ...menos as de PRECISÃO: +5 pontos percentuais (ver penalizarMissao)
+  missaoRecompensa: 2,   // ...mas pagam o dobro de multis
 };
 
 // A Bronze não tem divisão abaixo dela (`relegationCount: 0`), mas o Davi foi
@@ -78,13 +79,22 @@ function trocarAlvoNoTexto(texto, alvoBase, alvoNovo) {
 }
 
 export function penalizarMissao(missao) {
-  // ⚠️ Missão de PRECISÃO tem alvo em PORCENTAGEM: multiplicar por 1,5 dava
-  // "Precisão de 135%", que é impossível de cumprir. Nessas, o alvo sobe só
-  // até o teto de 98% (100% seria partida perfeita, cruel demais) — e a
-  // recompensa dobra igual.
+  // ⚠️ Missão de PRECISÃO tem alvo em PORCENTAGEM, então ×1,5 não serve:
+  // 80% viraria 120%, impossível. A regra anterior era "teto de 98%", e ela
+  // tinha dois problemas que só apareceram na revisão da 6.1 (sessão 100):
+  //
+  //   1. **Era quase impossível.** 98% é errar 1 conta em 60. O comentário
+  //      antigo já dizia que 100% seria "cruel demais" — 98% estava colado.
+  //   2. **Achatava as duas missões numa só.** 80% e 90% batiam as duas no
+  //      teto, então quem tirasse as duas no mesmo dia via dois cards
+  //      idênticos ("Precisão de 98%" duas vezes).
+  //
+  // Agora a penalidade de precisão é em PONTOS PERCENTUAIS (+5, teto 95),
+  // não em porcentagem do alvo: 80 → 85 e 90 → 95. Continua mais duro,
+  // continua pagando o dobro, e as duas seguem diferentes uma da outra.
   const alvo =
     missao.type === 'accuracy'
-      ? Math.min(98, Math.ceil(missao.target * PENALIDADES.missaoAlvo))
+      ? Math.min(95, missao.target + PENALIDADES.missaoAlvoPrecisao)
       : Math.ceil(missao.target * PENALIDADES.missaoAlvo);
   return {
     ...missao,

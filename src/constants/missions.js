@@ -11,7 +11,7 @@
 export const DAILY_MISSION_POOL = [
   {
     id: 'dm_play_2',
-    title: 'Duas Partidas',
+    title: '2 Partidas',
     desc: 'Jogue 2 partidas hoje',
     type: 'play',
     target: 2,
@@ -20,7 +20,7 @@ export const DAILY_MISSION_POOL = [
   },
   {
     id: 'dm_play_5',
-    title: 'Cinco Partidas',
+    title: '5 Partidas',
     desc: 'Jogue 5 partidas hoje',
     type: 'play',
     target: 5,
@@ -83,7 +83,7 @@ export const DAILY_MISSION_POOL = [
   },
   {
     id: 'dm_score_250',
-    title: 'Duzentos e Cinquenta',
+    title: '250 Pontos',
     desc: 'Faça 250 pontos em uma partida',
     type: 'score',
     target: 250,
@@ -92,7 +92,7 @@ export const DAILY_MISSION_POOL = [
   },
   {
     id: 'dm_score_500',
-    title: 'Quinhentos Pontos',
+    title: '500 Pontos',
     desc: 'Faça 500 pontos em uma partida',
     type: 'score',
     target: 500,

@@ -1,7 +1,7 @@
 # Sessão 100 — Organização do documento de inovações em `planos/`
 
 **Data:** 2026-09-01
-**Versão:** 6.0.49 → 6.0.52
+**Versão:** 6.0.49 → 6.0.53
 **Tipo:** Bloco 1 — planejamento e organização (zero código de jogo) · Bloco 2 — versão 6.2 iniciada (moeda virou Multis + auditoria de ícones) · Bloco 3 — versão 6.1: bug das missões na zona de rebaixamento
 
 ---
@@ -342,6 +342,66 @@ paga a recompensa normal.** `resolveChallenges` resolve contra a leitura
 não-penalizada, então a tela promete 700 e paga 350. Não é explorável (o
 alvo cobrado também é o normal, o que favorece o jogador), mas é mais um
 número que não bate.
+
+---
+
+# Bloco 4 — As 3 decisões que sobraram (e uma lição de comunicação)
+
+O Davi respondeu as perguntas em aberto do bloco 3 assim:
+
+> *"TENDI NADA"* · *"QUE ZONA CARA?"* · *"MANO, TO ENTENDENDO NADA, MAS SE
+> VC ACHA IMPOSSIVEL NAS CONTAS PODE REDUZIR"* · *"NÃO ENTENDI NADA KKKKK"*
+
+**Culpa da pergunta, não da resposta.** Eu perguntei em vocabulário de
+código ("o teto de 98% achata as duas missões de accuracy") pra alguém que
+queria saber se o jogo estava justo. **Regra pra mim daqui pra frente:
+pergunta de decisão vai em português do jogo — o que o jogador vê, não o
+que a função faz.** A única que ele respondeu de primeira foi justamente a
+que estava concreta ("Duas Partidas" virar "2 Partidas").
+
+Ele aprovou a 1, mandou reduzir na 3 e deixou as outras comigo.
+
+## O que foi aplicado
+
+**1. Os 4 títulos por extenso viraram número.** *Duas Partidas* →
+**2 Partidas**, *Cinco Partidas* → **5 Partidas**, *Duzentos e Cinquenta* →
+**250 Pontos**, *Quinhentos Pontos* → **500 Pontos**. Sem dígito no título,
+a penalidade da zona não tinha o que atualizar e o card ficava com "Duas
+Partidas" em cima de uma barra de 0/3.
+
+**2. A precisão passou a subir em PONTOS PERCENTUAIS (+5, teto 95).** Antes
+era ×1,5 com teto 98. Uma troca resolveu os dois problemas de uma vez:
+
+- deixa de ser quase impossível — 98% é errar 1 conta em 60
+- as duas missões voltam a ser diferentes (80 → 85%, 90 → 95%); com o teto
+  antigo as duas batiam em 98% e viravam cards idênticos
+
+Isso é o tipo de correção que só aparece quando se olha a regra e a tela
+juntas: o teto foi criado pra evitar "Precisão de 135%", e resolvia isso —
+mas criava dois problemas novos que ninguém tinha medido.
+
+**3. O desafio mensal deixou de ser penalizado na zona.** É a única das
+quatro em que eu decidi sozinho, então vale registrar o raciocínio: desafio
+mensal é **contrato** — o jogador aceita um alvo e uma recompensa e leva
+multa se não cumprir. Penalizar na leitura fazia a tela prometer 700 e o
+`resolveChallenges` pagar 350 (ele resolve pelos valores guardados, que são
+os de base), e era injusto nos dois sentidos: cair na zona no último dia do
+mês subiria o alvo de um contrato assinado semanas antes.
+
+A intenção do Davi na sessão 097 era *"que o usuário tenha MEDO da zona"* —
+e ela continua doendo sem isso: metade do XP, 25% do loot e as diárias 50%
+mais duras. **Reversível em uma linha**, mas aí o `resolveChallenges` tem
+que julgar e pagar pelos mesmos valores penalizados; as duas coisas juntas,
+senão o número volta a não bater.
+
+## Conferido
+
+Nas 10 diárias: zero cards com número desencontrado. Precisão saindo 85% e
+95%. Mensal na zona mostrando exatamente o que vai pagar. E em captura:
+"Precisão de 95%" / "Termine uma partida com 95% de precisão" / "0 / 95%",
+com os títulos novos ("375 Pontos", "750 Pontos") penalizando certo.
+
+**Item 6.1.1 fechado.**
 
 ## Próximos passos
 

@@ -163,20 +163,38 @@ Detalhamento e propostas concretas: [6.2 — Identidade visual](6.2-identidade-v
 Cada uma está detalhada no plano da sua versão. Reunidas aqui pra não
 precisar caçar:
 
-| # | Pergunta | Versão |
-|---|---|---|
-| 1 | Qual o nome da moeda? | 6.2 |
-| 2 | "Ícones mal desenhados" — quais especificamente? | 6.2 |
-| 3 | "Refazer download dos troféus" — os 20 de faixa ou o de conquista? | 6.2 |
-| 4 | O `bau-vazio` que já existe serve, ou você quer outro? | 6.2 |
-| 5 | Ícones de pontuação: alvo 350 usa o de 300 ou o de 400? | 6.2 |
-| 6 | Estilo dos ícones novos: chapado (Duolingo/D041) ou 3D/gradiente? | 6.2 |
-| 7 | Missão de tempo conta **tela aberta** ou **tempo ativo**? | 6.4 |
-| 8 | Recompensa oculta: fica oculta até completar, ou até coletar? | 6.4 |
-| 9 | "Apostas/roleta" ou "Desafio de partida/sorteio"? (classificação etária) | 6.9 |
-| 10 | O multiplicador deve crescer com o VALOR apostado? *(recomendo que não — ver 6.9)* | 6.9 |
-| 11 | Modo Geral **substitui** o Rush ou é modo separado? | 6.8 |
-| 12 | Semana de Chama: quem define o objetivo da semana? | 6.7 |
+| # | Pergunta | Versão | Estado |
+|---|---|---|---|
+| 1 | Qual o nome da moeda? | 6.2 | ✅ **Multis** |
+| 2 | "Ícones mal desenhados" — quais? | 6.2 | ✅ nenhum — **estão pequenos** (36 arquivos) |
+| 3 | "Refazer download dos troféus" — quais? | 6.2 | ✅ os 20 de faixa, e é resolução |
+| 4 | O `bau-vazio` que já existe serve? | 6.2 | ✅ serve, só está pequeno |
+| 5 | Estilo dos ícones: chapado ou 3D? | 6.2 | ✅ **a pergunta estava errada** — é Duolingo, com detalhe proporcional ao papel do ícone |
+| 6 | O mascote **fala**? | 6.2 | ❓ aberta |
+| 7 | O mascote aparece **dentro da partida**? | 6.2 | ❓ aberta *(recomendo que não até a coleta fechar)* |
+| 8 | Missão de tempo conta **tela aberta** ou **tempo ativo**? | 6.4 | ❓ aberta |
+| 9 | Recompensa oculta: até completar, ou até coletar? | 6.4 | ❓ aberta |
+| 10 | "Apostas/roleta" ou "Desafio de partida/sorteio"? | 6.9 | ❓ aberta |
+| 11 | O multiplicador cresce com o VALOR apostado? | 6.9 | ❓ aberta *(recomendo que não)* |
+| 12 | Modo Geral **substitui** o Rush ou é separado? | 6.8 | ❓ aberta |
+| 13 | Semana de Chama: quem define o objetivo? | 6.7 | ❓ aberta |
+| 14 | Ícone de pontuação: alvo 350 usa o de 300 ou o de 400? | ~~6.2~~ | ⏸️ **em suspenso** — ver abaixo |
+
+### ⏸️ Mudou de lugar: os 10 ícones de pontuação (sessão 100)
+
+Saíram da 6.2 e **passaram a depender da Fase 3 do Domínio**. Decisão do
+Davi, e o motivo é bom: *"não vai ter mais missão de pontuação. Vai ter de
+XP — 'ganhe 20 XP', 'ganhe 30 XP'."*
+
+Se o `type: 'score'` das missões vira `type: 'xp'`, os 10 ícones perdem o
+lugar onde apareceriam. E a faixa numérica deles dependeria da **escala nova
+de XP** — hoje uma partida rende ~250 XP, na proposta rende ~40. Uma escala
+de "100 a 1000" calibrada pro mundo velho nasceria errada.
+
+*(Isso **não** contradiz o `ARQUITETURA_XP.md`: os **pontos continuam
+existindo** como medida de desempenho — resumo, recordes, apostas. O que
+muda é que as **missões** param de cobrar pontos e passam a cobrar XP. É
+decisão de produto, não de arquitetura.)*
 
 ---
 

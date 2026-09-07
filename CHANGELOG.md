@@ -4,6 +4,59 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.57] — 2026-09-07 — 🔬 Análise da Fase 1 no dado real
+
+**Detalhes em `sessions/sessao-103.md` e `ARQUITETURA_XP.md` §4.3-R.**
+Nenhum código de jogo mudou — é análise.
+
+Coleta: **462 tentativas / 16 partidas / 53 das 54 contas**, entre 31/08 e
+02/09. Rodada com o código real (`utils/dominio.js`), não com cópia.
+
+### Respondido
+- ✅ **A Fase 0 entregou:** 462 tentativas, **100%** com tempo de decisão,
+  99% válidas pra fluência
+- ✅ **O `firstKeyMs` valeu a pena:** 1886 ms até a 1ª tecla contra 2445 ms
+  até enviar → **a digitação é 23% do tempo**. Medir pelo envio inflaria
+  tudo em ~1/4 e puniria resposta de 2 dígitos por ser de 2 dígitos
+- ✅ **A 1ª pergunta da partida é +49% mais lenta** (2759 ms × 1855 ms). A
+  §4.2 registrou como "suspeita a verificar — medir antes de decidir".
+  Medido → **decisão: descartar a Q1 da fluência** (o marcador `q1` já é
+  gravado)
+- ✅ **Base p25 confiável:** 1451 ms, 39 fatos medidos, sem estabilizar
+
+### 🚨 Achado principal — a precisão está saturada, quem discrimina é o tempo
+- Precisão por conta: p10 **80%** · mediana **100%** · p90 **100%** →
+  amplitude de 20 pontos. Acerto geral 95%; 69% das contas com 100%
+- Tempo por conta: p10 1239 ms · mediana 1740 ms · p90 3489 ms → **2,8×**
+- **Hold-out no tempo:** as três bandas de precisão (<70%, 70-89%, ≥90%)
+  dão **94%, 96% e 97%** de acerto depois. Iguais. Falso positivo 0 de 20 —
+  barato, quando quase tudo é acerto
+- **3×6 e 3×9 têm 100% de acerto e estão entre os mais lentos do jogo.** A
+  precisão diz "dominado", o tempo diz "está calculando" — a distinção que
+  motivou a arquitetura
+- **Consequência pra Fase 2:** precisão pesa 40 e não separa; fluência pesa
+  20 e separa tudo. A catraca (`PISO_PRECISAO`) segue válida como piso; o
+  caro é a precisão como componente de nota
+- **Ressalva:** é um jogador só, e um que já sabe a tabuada do 2 ao 10
+
+### ❌ O que trava a Fase 1
+- **2 dias distintos** (`MIN_DIAS_VERDE` = 3, `DIAS_ALVO` = 4). As 16
+  partidas caíram em 2 dias
+- Distribuição: **0 verde · 48 amarelo · 6 vermelho** — mas **11 contas já
+  têm nota ≥80 e estão travadas SÓ pela falta de dias**. Nota máxima 82,
+  mediana 73
+- Ou seja: o "0 verde" **não é o jogador falhando, é a medida incompleta**.
+  Sem espaçamento real não dá pra dizer se o corte de 95% é alcançável
+- **Falta dia, não volume** — 462 tentativas e mediana de 8 por conta bastam
+
+### Nota
+A origem do arquivo é `http://localhost:3000` — ou seja, a hipótese da
+6.0.56 de que ele jogava no Vercel **estava errada**. O botão em
+Configurações continua certo pelos outros dois motivos (servidor caído e
+`?screen=` ser DEV-only).
+
+---
+
 ## [6.0.56] — 2026-09-07 — 🔧 O botão de baixar a coleta foi pro lugar errado
 
 **Detalhes em `sessions/sessao-102.md`.** O Davi não conseguiu abrir

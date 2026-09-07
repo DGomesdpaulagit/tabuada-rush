@@ -422,6 +422,127 @@ passa a guardar o que já acontece.
 **Só o falso positivo/negativo justifica o log de tentativas** — e é a única
 medida que responde a pergunta que importa: *a regra prevê acerto futuro?*
 
+### 🟢 4.3-R — RESULTADOS DA FASE 1 (sessão 103, save real do Davi)
+
+Coleta de **462 tentativas / 16 partidas / 53 das 54 contas**, entre
+2026-08-31 e 2026-09-02. Origem `http://localhost:3000`. Rodado com o código
+real (`utils/dominio.js`), não com cópia.
+
+#### ✅ 1. A coleta funciona — a Fase 0 entregou
+
+| Medida | Valor |
+|---|---|
+| Tentativas gravadas | 462 |
+| Com tempo de decisão | **462 (100%)** |
+| Válidas pra fluência | 459 (99%) |
+| Contas tocadas | 53 de 54 |
+| Exposição por conta | min 0 · **mediana 8** · max 20 |
+
+#### ✅ 2. O `firstKeyMs` valeu a pena — e o número justifica a Fase 0
+
+> mediana até a **1ª tecla**: 1886 ms · mediana até **enviar**: 2445 ms
+> → **a digitação é 23% do tempo total**
+
+Medir fluência pelo tempo até o envio inflaria tudo em ~1/4 **e puniria
+resposta de 2 dígitos por ser de 2 dígitos**. O furo nº 1 da v4 era real.
+
+#### ✅ 3. A 1ª pergunta da partida É mais lenta — suspeita CONFIRMADA
+
+> 1ª pergunta: **2759 ms** · demais: **1855 ms** → **+49%**
+
+A §4.2 registrou isto como *"suspeita a verificar na Fase 1: medir antes de
+decidir"*. Medido. **Decisão: descartar a Q1 da fluência** (o marcador `q1`
+já é gravado; é só passar a usá-lo no filtro).
+
+#### ✅ 4. A base p25 é confiável
+
+`base = 1451 ms`, **39 fatos medidos**, `estabilizando: false`
+(`MIN_FATOS_BASE` = 15). A definição não se mordeu na prática.
+
+#### 🚨 5. O ACHADO PRINCIPAL: a precisão está saturada; quem discrimina é o tempo
+
+| | p10 | mediana | p90 | amplitude |
+|---|---|---|---|---|
+| **Precisão** por conta | 80% | **100%** | 100% | **20 pontos** |
+| **Tempo** por conta | 1239 ms | 1740 ms | 3489 ms | **2,8×** |
+
+Acerto geral: **95%**. **69% das contas têm 100% de acerto.**
+
+E o hold-out no tempo (nota só com o que aconteceu até T, erro medido depois
+de T) confirma que a precisão não separa nada:
+
+| Banda de precisão ANTES | Contas | Acerto DEPOIS |
+|---|---|---|
+| < 70% (a catraca reprova) | 2 | 94% |
+| 70-89% | 3 | 96% |
+| ≥ 90% (a regra aprova) | 20 | 97% |
+
+**Falso positivo: 0 de 20.** A regra nunca aprovou quem depois desandou —
+mas isso é fácil quando quase tudo é acerto. O ponto é o outro: **as três
+bandas dão o mesmo resultado.** A precisão, neste jogador, não prevê nada
+porque não varia.
+
+**O tempo, sim, separa — e separa do jeito certo:**
+
+| Mais lentas | ms | precisão | | Mais rápidas | ms | precisão |
+|---|---|---|---|---|---|---|
+| 6×9 | 4176 | 63% | | 5×10 | 1201 | 100% |
+| 4×9 | 3616 | 90% | | 1×3 | 1228 | 100% |
+| **3×6** | **3513** | **100%** | | 1×6 | 1229 | 100% |
+| **3×9** | **3489** | **100%** | | 6×10 | 1250 | 100% |
+| 6×7 | 3149 | 77% | | 6×6 | 1282 | 100% |
+
+> **Olhe o 3×6 e o 3×9: 100% de acerto e entre os mais lentos do jogo.**
+> A precisão diz "dominado". O tempo diz "ele está calculando". É
+> exatamente a distinção que a arquitetura existe pra capturar — *"fato
+> recuperado da memória volta em menos de 1,5 s; fato calculado leva 3 a
+> 6 s. Os dois terminam em acerto."*
+
+**Consequência direta pra Fase 2:** os pesos estão invertidos em relação ao
+que o dado mostra. **Precisão pesa 40 e não discrimina; fluência pesa 20 e
+discrimina tudo.** A catraca de precisão (`PISO_PRECISAO` = 70) continua
+fazendo sentido como piso de segurança, mas como *componente de nota* a
+precisão está gastando peso à toa neste perfil.
+
+*(Ressalva honesta: **é um jogador só, e um que já sabe a tabuada do 2 ao
+10.** Numa criança aprendendo, a precisão provavelmente varia muito mais e
+o quadro muda. O que este dado prova é que **para quem já passou do estágio
+de errar, o tempo é o único sinal que sobra** — e é justamente esse jogador
+que o portão de faixa precisa julgar.)*
+
+#### ❌ 6. Consistência: NÃO dá pra medir ainda — e é só isto que trava a Fase 1
+
+> **dias distintos: 2** · `MIN_DIAS_VERDE` = 3 · `DIAS_ALVO` = 4
+
+As 16 partidas aconteceram em **2 dias**. Resultado:
+
+| Estado | Contas | |
+|---|---|---|
+| 🟢 verde | **0** | 0% |
+| 🟡 amarelo | 48 | 89% |
+| 🔴 vermelho | 6 | 11% |
+
+**Mas 11 contas já têm nota ≥ 80 e estão travadas SÓ pela falta de dias.**
+Nota máxima 82, mediana 73 — o teto vem da consistência entregando 25-50 de
+100 (1 ou 2 dias de 4).
+
+Ou seja: **o "0 verde" não é o jogador falhando, é a medida incompleta.**
+Não dá pra dizer se o corte de 95% é alcançável ou utópico sem espaçamento
+real.
+
+#### O que falta pra Fase 1 fechar
+
+**Dias, não volume.** 462 tentativas e mediana de 8 por conta já bastam. O
+que falta é o jogador aparecer em **pelo menos mais 2 dias diferentes** —
+mesmo que sejam poucas partidas em cada. Aí a consistência sai do chão, as
+11 contas travadas resolvem, e o corte de 95% passa a ser mensurável.
+
+*(Observação de contexto: `currentStreak: 0` e `bestDayStreak: 1` — ele
+nunca manteve 2 dias seguidos. Num jogo cuja mecânica central é a ofensiva,
+isso é um dado sobre o produto, não só sobre a coleta.)*
+
+---
+
 ### 4.4 Fase 2 — calibrar e ligar
 
 Com os números da 4.3 na mão, ajusta a Tabela-Mãe e só então liga o gate de

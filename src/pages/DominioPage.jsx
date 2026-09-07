@@ -11,6 +11,39 @@ import { pageVariants, pageTransition } from '../components/ui';
 // Existe pra não ter que caçar isso no console: o DevTools bloqueia colar
 // comando e a frase de desbloqueio muda de idioma.
 
+// [sessão 101] Botão de exportar a coleta CRUA.
+//
+// Por que o painel não basta: ele responde "a coleta está prestando?", que é
+// uma pergunta de saúde. As perguntas que fecham a Fase 1 (§4.3 do
+// ARQUITETURA_XP) são outras — falso positivo/negativo por hold-out no tempo,
+// estabilidade da base p25 semana a semana, distribuição de domínio — e todas
+// precisam do histórico bruto, não de um resumo.
+//
+// E o "Exportar Dados" que já existe (StatsPage) NÃO serve: ele exporta só o
+// resumo e a lista de partidas, sem `factStats` (com `ult`/`dias`) e sem o
+// `calibra`. Ou seja, exporta tudo menos o que a Fase 1 mede.
+//
+// Isto é DEV-only (a página inteira já é), só lê o save e escreve um arquivo.
+// Não encosta na coleta nem em regra nenhuma do jogo.
+function baixarColeta(data) {
+  const hoje = new Date();
+  const dia = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+  const payload = {
+    exportadoEm: hoje.toISOString(),
+    versaoColeta: 'fase-1',
+    // O save inteiro: o analisador precisa cruzar factStats com sessions e
+    // com o log cronológico, então recortar aqui só criaria retrabalho.
+    data,
+  };
+  const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `coleta-dominio-${dia}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 const COR = {
   verde: 'text-success',
   amarelo: 'text-coin',
@@ -55,11 +88,23 @@ export default function DominioPage() {
       transition={pageTransition}
       className="flex flex-col gap-4"
     >
-      <div>
-        <h1 className="text-2xl font-black text-fg">Domínio — Fase 1</h1>
-        <p className="text-sm font-semibold text-fg-muted mt-1">
-          Relatório sobre o save real. Não muda nada no jogo.
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-black text-fg">Domínio — Fase 1</h1>
+          <p className="text-sm font-semibold text-fg-muted mt-1">
+            Relatório sobre o save real. Não muda nada no jogo.
+          </p>
+        </div>
+        <button
+          onClick={() => baixarColeta(data)}
+          disabled={semDado}
+          className="shrink-0 px-4 py-2.5 rounded-2xl bg-accent text-white font-black text-sm
+                     shadow-chunky-accent active:translate-y-1 active:shadow-none transition-all
+                     disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none
+                     disabled:active:translate-y-0"
+        >
+          ⬇ Baixar coleta
+        </button>
       </div>
 
       {semDado && (

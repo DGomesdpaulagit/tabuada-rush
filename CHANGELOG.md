@@ -4,6 +4,34 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.55] — 2026-09-06 — 📥 Botão pra baixar a coleta da Fase 1
+
+**Detalhes em `sessions/sessao-101.md`.** Ferramenta de DEV — nenhuma regra
+do jogo mudou.
+
+### Adicionado
+- **Botão "Baixar coleta" no painel `?screen=dominio`** (DEV). Baixa o save
+  inteiro como `coleta-dominio-AAAA-MM-DD.json`, pra a análise da Fase 1
+  poder rodar em cima do dado real
+- **Por que o painel não bastava:** ele responde *"a coleta está
+  prestando?"*, que é uma pergunta de saúde. As perguntas que **fecham** a
+  Fase 1 (§4.3 do `ARQUITETURA_XP.md`) são outras — falso positivo/negativo
+  por hold-out no tempo, estabilidade da base p25, distribuição de domínio
+  entre as contas — e todas precisam do **histórico bruto**, não de um
+  resumo na tela
+- **E o "Exportar Dados" que já existia NÃO servia:** o `exportJSON` da
+  `StatsPage` manda resumo + lista de partidas, **sem `factStats`** (onde
+  moram `ult`/`dias` por conta) **e sem `calibra`** — exporta tudo menos
+  exatamente o que a Fase 1 mede
+
+### Nota
+Confirmado (não suposto) que a janela de preview tem perfil de
+`localStorage` próprio: o painel abre mostrando *"nenhuma tentativa
+coletada"*. O save do Davi só chega aqui por arquivo. O botão vem
+**desabilitado** quando não há tentativa nenhuma.
+
+---
+
 ## [6.0.54] — 2026-09-01 — ✅ Versão 6.1 concluída (acabamento)
 
 **Detalhes em `sessions/sessao-100.md` (bloco 5) e `planos/6.1-acabamento.md`.**

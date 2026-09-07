@@ -4,6 +4,41 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.56] — 2026-09-07 — 🔧 O botão de baixar a coleta foi pro lugar errado
+
+**Detalhes em `sessions/sessao-102.md`.** O Davi não conseguiu abrir
+`localhost:3000/?screen=dominio` — e estava certo, o caminho tinha três
+pontos de falha.
+
+### Corrigido
+- 🚨 **O save mora no endereço onde ele JOGA, e eu mandei no outro.** O
+  `localStorage` é por origem: se ele joga no Vercel, a coleta está lá e o
+  `localhost:3000` tem um save **vazio e diferente**. Eu estava mandando
+  buscar o dado num lugar onde ele nunca esteve
+- **O servidor não estava de pé** — o dev server da 6.0.55 encerrou junto
+  com a sessão e a porta 3000 ficou livre
+- **`?screen=` não existe em produção** (`App.jsx:378`,
+  `if (!import.meta.env.DEV) return 'menu'`) — mesmo no Vercel cairia no menu
+
+### Adicionado
+- **Seção "Coleta de Aprendizado" em Configurações**, acima da Zona de
+  Perigo. Funciona **em qualquer endereço, sem servidor e sem URL com
+  parâmetro** — abrir o jogo normalmente e clicar
+- Mostra **respostas / contas / dias** antes de baixar, pra dar pra ver de
+  relance se já vale mandar o arquivo ou se falta jogar mais
+- O JSON passou a carregar o **`origin`**, pra ficar registrado de qual
+  endereço a coleta veio
+- Botão **desabilitado** quando não há coleta, com o motivo escrito
+
+### Nota
+**Temporário** — sai quando a Fase 2 fechar, junto com o `calibra`, que já é
+descartável por construção (`ARQUITETURA_XP.md` §4.2). Anotado no código.
+Conferido pelo DOM nos dois estados (vazio: 0/0/0 e botão travado; com
+coleta: 412/18/4 e botão liberado). **Sem captura** — a janela do preview
+parou de desenhar durante a verificação.
+
+---
+
 ## [6.0.55] — 2026-09-06 — 📥 Botão pra baixar a coleta da Fase 1
 
 **Detalhes em `sessions/sessao-101.md`.** Ferramenta de DEV — nenhuma regra

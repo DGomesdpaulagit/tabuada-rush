@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Volume2, Music, Sun, Moon, Bell, User, LogOut, LogIn,
-  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap, Target,
+  Type, Contrast, Sparkles, Cloud, Trash2, AlertTriangle, GraduationCap, Target, Download,
 } from 'lucide-react';
 import { LEVELS, DAILY_LIVES_MAX } from '../constants';
 import { getLevelIdx, getLivesInfo } from '../utils';
@@ -101,6 +101,63 @@ function Row({ icon, label, desc, children }) {
       </div>
       {children}
     </div>
+  );
+}
+
+// ── BAIXAR A COLETA DA FASE 1 [sessão 102] ──────────────────────────────────
+// Botão temporário: sai quando a Fase 2 acabar.
+//
+// Mostra na tela quanto já foi coletado ANTES de baixar — assim o Davi vê de
+// relance se vale a pena mandar o arquivo ou se falta jogar mais, sem precisar
+// abrir painel nenhum.
+function ColetaButton({ data }) {
+  const [baixado, setBaixado] = useState(false);
+
+  const fatos = data?.factStats?.mult || {};
+  const tentativas = (data?.calibra || []).length;
+  const contas = Object.keys(fatos).length;
+  const dias = new Set(Object.values(fatos).flatMap((f) => f?.dias || [])).size;
+
+  function baixar() {
+    const d = new Date();
+    const dia = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const blob = new Blob(
+      [JSON.stringify({ exportadoEm: d.toISOString(), versaoColeta: 'fase-1', origem: window.location.origin, data })],
+      { type: 'application/json' }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `coleta-dominio-${dia}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setBaixado(true);
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {[
+          { n: tentativas, r: 'respostas' },
+          { n: contas, r: 'contas' },
+          { n: dias, r: 'dias' },
+        ].map(({ n, r }) => (
+          <div key={r} className="rounded-2xl bg-gray-50 border border-gray-100 py-2.5 text-center">
+            <p className="text-xl font-black text-gray-800 tabular-nums leading-none">{n}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1">{r}</p>
+          </div>
+        ))}
+      </div>
+      <Button variant="secondary" onClick={baixar} disabled={tentativas === 0} className="w-full">
+        <Download size={16} />
+        {baixado ? 'Baixado! Pode mandar pro Claude' : 'Baixar coleta'}
+      </Button>
+      {tentativas === 0 && (
+        <p className="text-xs text-gray-400 font-semibold mt-2 text-center">
+          Nada coletado neste aparelho ainda — jogue uma partida até o fim.
+        </p>
+      )}
+    </>
   );
 }
 
@@ -365,6 +422,23 @@ export default function SettingsPage({ onBack, onNavigate }) {
             </Button>
           </>
         )}
+      </Section>
+
+      {/* COLETA DA FASE 1 — TEMPORÁRIO
+          Some quando a Fase 2 fechar (junto com o `calibra`, que também é
+          descartável por construção — ver ARQUITETURA_XP.md §4.2).
+
+          Por que aqui e não no painel `?screen=dominio`: aquele painel é
+          DEV-only (`import.meta.env.DEV`), e a coleta mora no localStorage
+          do ENDEREÇO onde o Davi joga. Se ele joga no Vercel, o save está
+          lá — o localhost teria um save vazio e diferente. Botão dentro do
+          jogo funciona em qualquer endereço, sem servidor e sem URL mágica. */}
+      <Section title="Coleta de Aprendizado">
+        <p className="text-xs text-gray-400 font-semibold mb-3">
+          Baixa o registro que o jogo vem guardando pra calibrar o sistema de
+          domínio. Não apaga nada — só salva uma cópia.
+        </p>
+        <ColetaButton data={data} />
       </Section>
 
       {/* ZONA DE PERIGO */}

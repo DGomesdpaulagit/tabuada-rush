@@ -133,7 +133,7 @@ export async function shareCard(props) {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
         files: [file],
-        title: 'Meu resultado no Tabuada Rush',
+        title: 'Meu resultado no TabuDecor',
         text: `Fiz ${props.score} pontos no ${props.mode}! Tente bater meu recorde: tabuada-rush-rho.vercel.app`,
       });
       return true;

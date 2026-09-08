@@ -29,7 +29,7 @@ export async function enableNotifications() {
     try { perm = await Notification.requestPermission(); } catch { return 'denied'; }
   }
   if (perm === 'granted') {
-    await showNotif('Tabuada Rush 🔥', 'Notificações ativadas! Vou te lembrar de manter a ofensiva.');
+    await showNotif('TabuDecor 🔥', 'Notificações ativadas! Vou te lembrar de manter a ofensiva.');
     return 'granted';
   }
   return perm; // 'denied'
@@ -139,7 +139,7 @@ export function maybeStreakReminder(data = {}) {
   if (data.lastPlayDate === today) return;                         // já praticou hoje
   if (localStorage.getItem('tr_last_reminder') === today) return;  // já lembrou hoje
   localStorage.setItem('tr_last_reminder', today);
-  showNotif('Tabuada Rush 🔥', reminderMessage(data.currentStreak || 0));
+  showNotif('TabuDecor 🔥', reminderMessage(data.currentStreak || 0));
 }
 
 // ── LEMBRETE DE CURVA DE ESQUECIMENTO [v4.0 · Fase 4] ───────────────────

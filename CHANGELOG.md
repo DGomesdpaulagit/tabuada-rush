@@ -4,6 +4,51 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.58] — 2026-09-08 — 🦔 O jogo virou **TabuDecor**, o mascote é o **Tatuba**
+
+**Detalhes em `sessions/sessao-104.md`.** Decisão de marca do Davi, mais as
+duas primeiras artes (ícone do app e letreiro), arquivadas em
+`referencias/marca/`.
+
+### Alterado
+- **"Tabuada Rush" → "TabuDecor"** em 8 lugares: Sidebar, MenuPage,
+  notificações (2×), share card, Configurações, `<title>` e `<meta
+  description>` do `index.html`
+
+### ⚠️ NÃO alterado, de propósito
+- **`const KEY = 'tabuada_rush_v2'`** (`src/lib/storage.js`). A chave do
+  `localStorage` é **endereço, não nome** — trocar apagaria o save inteiro,
+  incluindo as **462 tentativas da coleta da Fase 1**. O script de renome
+  confere isso e falha se a chave mudar
+- Comentários de código que citam o nome antigo — são registro histórico
+
+### 🎨 Medição de cor (e uma correção minha)
+Eu ia apontar conflito de três paletas (violeta × azul × verde). **Conferi a
+paleta real antes de falar e estava errado:** o `CLAUDE.md` diz "paleta
+violeta", mas o violeta saiu na v5.0. Os tokens de verdade já são
+**verde + azul + amarelo** — as artes caíram na família certa.
+
+| | Arte do Davi | Jogo hoje |
+|---|---|---|
+| Verde do letreiro | **#70B010** | `--accent` **#58CC02** |
+| Azul do Tatuba | **#2E7DF3** | `--primary` **#3B4FCC** |
+| Laranja da calculadora | **#FFA010** | `--coin` **#FFC800** |
+
+**Nenhuma bate exatamente** — não é conflito, é desalinho de tom. Barato
+agora, caro depois de 93 ícones gerados
+
+### Encontrado de quebra
+- `index.html` ainda tem `theme-color="#7C3AED"` — violeta, resíduo da
+  paleta que saiu na v5.0
+
+### Pendente nas artes
+Marca d'água "Made with AI" nas duas · são JPEG (precisa PNG) · letreiro com
+fundo preto sólido (precisa transparente) · o ícone tem a caixa arredondada
+embutida, então falta o Tatuba de corpo inteiro sem caixa · **as poses do
+mascote não vieram no zip** (só 2 arquivos chegaram)
+
+---
+
 ## [6.0.57] — 2026-09-07 — 🔬 Análise da Fase 1 no dado real
 
 **Detalhes em `sessions/sessao-103.md` e `ARQUITETURA_XP.md` §4.3-R.**

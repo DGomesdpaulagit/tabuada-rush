@@ -28,7 +28,7 @@ export default function Sidebar({ screen, onNavigate }) {
         onClick={() => onNavigate('menu')}
         className="text-2xl font-black text-accent px-2 mb-8 text-left"
       >
-        Tabuada Rush
+        TabuDecor
       </button>
 
       <nav className="flex flex-col gap-1">

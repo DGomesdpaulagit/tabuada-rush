@@ -98,7 +98,7 @@ export default function MenuPage({ onStart, onNavigate }) {
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className="text-4xl font-black text-accent leading-none"
           >
-            Tabuada Rush
+            TabuDecor
           </motion.h1>
           <p className="text-fg-muted text-sm font-semibold mt-1.5">
             Memorize a tabuada. Domine a multiplicação.

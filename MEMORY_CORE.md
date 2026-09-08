@@ -19,7 +19,7 @@
 ## 📍 ESTADO ATUAL
 
 **Data:** 2026-09-08
-**Versão:** 6.0.58 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + zona de rebaixamento + aviso de ofensiva raro + ARQUITETURA_XP.md + FASE 0 do domínio + fix crítico do fim de partida + backlog de inovações organizado em `planos/` + moeda virou Multis (6.2) + VERSAO 6.1 CONCLUIDA (missoes na zona, tempo de partida, nomes da ofensiva) + botao de baixar a coleta em Configuracoes + ANALISE DA FASE 1 no dado real (ver ARQUITETURA_XP 4.3-R) + JOGO RENOMEADO PRA TabuDecor e mascote Tatuba (tatu) — sessao-104.md)
+**Versão:** 6.0.59 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + zona de rebaixamento + aviso de ofensiva raro + ARQUITETURA_XP.md + FASE 0 do domínio + fix crítico do fim de partida + backlog de inovações organizado em `planos/` + moeda virou Multis (6.2) + VERSAO 6.1 CONCLUIDA (missoes na zona, tempo de partida, nomes da ofensiva) + botao de baixar a coleta em Configuracoes + ANALISE DA FASE 1 no dado real (ver ARQUITETURA_XP 4.3-R) + JOGO RENOMEADO PRA TabuDecor e mascote Tatuba (tatu) + acervo de sons catalogado (ver referencias/sons/CATALOGO.md) — sessao-105.md)
 
 > 🗂️ **`planos/` (sessão 100)** — o documento de ~25 inovações do Davi virou
 > 9 planos por versão (6.1 a 6.9), com índice em `planos/00-INDICE.md`.

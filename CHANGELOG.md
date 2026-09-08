@@ -4,6 +4,51 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.59] — 2026-09-08 — 🔊 Acervo de sons catalogado e medido
+
+**Detalhes em `sessions/sessao-105.md` e `referencias/sons/CATALOGO.md`.**
+Nenhum código de jogo mudou — é acervo. O jogo continua sintetizando os bipes
+em código (`audioManager.js`).
+
+### Adicionado
+- **`referencias/sons/`** — 158 arquivos: 100 do Kenney "Interface Sounds",
+  54 do Kenney "UI SFX Set" (os dois **CC0**, conferido nos `License.txt`
+  dentro dos pacotes) e 4 `.mp3` de origem Pixabay
+- **Duração medida de 43 candidatos** (via `loadedmetadata` no navegador).
+  Sem medir, `click_002` e `click1` parecem equivalentes pelo nome
+
+### ⚠️ Dois achados que mudam o plano da etapa 7
+- **Tudo do Kenney é `.ogg`, e o iOS não toca `.ogg` de forma confiável.** O
+  jogo é PWA e roda em celular → **os escolhidos precisam ser convertidos pra
+  `.mp3`**. Etapa de preparo que não estava prevista
+- **Falta som de baú e de recompensa, e o motivo é estrutural:** os pacotes
+  são de *interface*, então os sons de sucesso são blips curtos, não jingles
+
+  | Precisamos | Alvo | Mais longo disponível |
+  |---|---|---|
+  | Clique | ≤200 ms | vários entre 32-100 ms ✅ |
+  | Abrir baú | ~1,2 s | `open_004` = **323 ms** ⚠️ |
+  | Recompensa | ~1,5 s | `confirmation_002` = **539 ms** ⚠️ |
+
+  Duas saídas: **A** baixar pacote de jingle, ou **B** montar em camadas no
+  código (`open_004` + `glass_001` 150 ms depois)
+
+### Achado que só a medição pega
+- **`kenney-interface/click_002` a `click_005` medem 10 ms cada** — 1/100 de
+  segundo, não é som, é estalo digital. Pelo nome seriam os candidatos
+  óbvios; estão fora. Marcado no catálogo
+
+### Lista curta do clique (o único item resolvido)
+`kenney-ui/click1` (94 ms) · `click2` (56 ms) · `click3` (86 ms) ·
+`kenney-interface/click_001` (100 ms)
+
+### Guardado pra depois da Fase 1
+Os 2 *risers* de 6 s, o *clock ticking* de 9,4 s (cronômetro em laço) e as
+**8 variações de erro** do Kenney — som dentro da partida muda o ritmo de
+resposta, que é o que a Fase 1 mede
+
+---
+
 ## [6.0.58] — 2026-09-08 — 🦔 O jogo virou **TabuDecor**, o mascote é o **Tatuba**
 
 **Detalhes em `sessions/sessao-104.md`.** Decisão de marca do Davi, mais as

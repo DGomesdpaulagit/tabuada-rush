@@ -4,6 +4,36 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.60] — 2026-09-12 — 🎛️ Sons de baú vão ser gerados no ElevenLabs
+
+**Detalhes em `sessions/sessao-106.md` e `referencias/sons/CATALOGO.md`.**
+Decisão + prompts. Nenhum código de jogo mudou.
+
+### Decidido
+- **Baú e recompensa:** gerados no ElevenLabs (o Davi escolheu), em vez de
+  baixar pacote. O clique continua vindo do Kenney
+- **O "combo recompensa + baú" é uma SEQUÊNCIA de dois sons**, não um
+  arquivo — baú abre → 250 ms → recurso aparece (ou moedas caem). Separando,
+  são **5 arquivos** que montam qualquer combinação; juntos seriam 4 baús ×
+  13 recursos, com o timing travado dentro do áudio
+- **Sem camada atmosférica separada** — a cauda de 2 s do baú místico já
+  entrega o efeito; um loop à parte traria balanço de volume, emenda de loop
+  e a restrição de autoplay do celular
+
+### Adicionado ao `CATALOGO.md`
+- Os 5 prompts em inglês com duração alvo (`som_bau_comum` 1,3 s ·
+  `som_bau_mistico` 2,0 s · `som_recurso` 0,9 s · `som_multis` 1,2 s ·
+  `som_bau_vazio` 1,5 s) + 2 variações opcionais (ferro, ouro)
+- Passo a passo do ElevenLabs (duração definida no controle, *prompt
+  influence* ~0,65, 4 variações, MP3)
+
+### ⚠️ Aviso registrado
+- **Licença do ElevenLabs:** o plano gratuito é não-comercial e exige
+  atribuição; uso comercial só a partir do Starter. Conferir o plano antes
+  de gerar o conjunto final — o jogo vai ser distribuído
+
+---
+
 ## [6.0.59] — 2026-09-08 — 🔊 Acervo de sons catalogado e medido
 
 **Detalhes em `sessions/sessao-105.md` e `referencias/sons/CATALOGO.md`.**

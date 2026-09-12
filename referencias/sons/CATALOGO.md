@@ -119,10 +119,88 @@ material de sobra pro acerto/erro/combo.
 
 ---
 
-## Próximo passo
+---
 
-1. **Davi ouve a lista curta do clique** (4 arquivos) e escolhe um.
-2. **Decide baú e recompensa:** baixar pacote de jingle (opção A) ou montar
-   em camadas (opção B).
-3. **Eu converto pra `.mp3`**, coloco em `src/assets/sons/` e ligo no
-   `audioManager` — com registro de licença por arquivo.
+## 🎛️ Decisão da sessão 106: baú e recompensa vão ser GERADOS no ElevenLabs
+
+O Davi decidiu gerar os sons de baú no ElevenLabs em vez de baixar pacote.
+O clique continua vindo do Kenney (lista curta acima).
+
+### Primeiro a estrutura — o que toca, e em que ordem
+
+Na página de recompensa (`PostGameSummary`, página 6) aparece **um item por
+vez**: o baú abre e o recurso ou as Multis aparecem. Então o "som do combo
+recompensa + baú" **não é um arquivo — é uma sequência de dois**, tocada em
+código com ~250 ms entre eles:
+
+```
+página de recompensa entra
+ └─ [1] BAÚ ABRE       comum (madeira/ferro/ouro)  ~1,3 s
+                        OU místico                  ~2,0 s
+      └─ +250 ms
+         [2] RECURSO APARECE   pop + brilho         ~0,9 s   (power-up / poção)
+         OU
+         [3] MULTIS CAEM       moedas tilintando    ~1,2 s   (baú de moeda)
+
+página "Nada desta vez"
+ └─ [4] BAÚ VAZIO      rangido + moscas            ~1,5 s
+```
+
+**Por que separar em vez de gerar um arquivo por combinação:** são 4 baús ×
+13 recursos. Separando, são **5 arquivos** e a sequência monta qualquer
+combinação. Gerando junto seriam dezenas, e o timing entre baú e recurso
+ficaria travado dentro do áudio, sem poder acompanhar a animação da 6.6.
+
+**Sobre a "camada atmosférica":** recomendo **não** fazer um loop de
+ambiente separado. Duas camadas de áudio trazem balanço de volume, emenda de
+loop e restrição de autoplay no celular — tudo pra ganhar um efeito que a
+**cauda de 2 s do baú místico já entrega** se o prompt pedir. A atmosfera
+mora dentro do som do baú, não ao lado dele.
+
+### Os 5 prompts (em inglês — o ElevenLabs responde melhor)
+
+| # | Arquivo final | Duração | Prompt |
+|---|---|---|---|
+| 1 | `som_bau_comum.mp3` | **1.3 s** | Small cartoon treasure chest opening: a wooden lid creaks open with a soft latch click, then a short bright sparkle shimmer as light spills out. Playful game sound, clean, no music, no voice, ends cleanly. |
+| 1b *(opcional)* | `som_bau_ferro.mp3` | 1.3 s | *mesmo prompt, trocando o começo por:* an iron lid swings open with a heavier metallic clank and hinge squeak |
+| 1c *(opcional)* | `som_bau_ouro.mp3` | 1.3 s | *mesmo prompt, trocando o começo por:* a golden lid opens with a rich, warm metallic ring |
+| 2 | `som_bau_mistico.mp3` | **2.0 s** | Mystical treasure chest opening: a deep resonant hum swells, the lid opens with a soft magical whoosh, then an ethereal crystalline shimmer glows and slowly fades. Enchanted, otherworldly, cartoon game style, no drums, no voice, gentle tail. |
+| 3 | `som_recurso.mp3` | **0.9 s** | Reward item reveal: a quick soft pop followed by a rising magical sparkle chime, bright and playful, cartoon game UI sound, no voice, no music, clean ending. |
+| 4 | `som_multis.mp3` | **1.2 s** | A handful of gold coins pouring and clinking into a pile, bright metallic jingle, short and cheerful, cartoon game style, no voice, no music. |
+| 5 | `som_bau_vazio.mp3` | **1.5 s** | An old wooden chest creaks open slowly, revealing nothing; two small flies buzz around for a moment, then a short comedic descending slide whistle. Playful, cartoon, no voice, no music. |
+
+O Davi pediu **1 som pros três baús comuns** — é o #1. Os 1b/1c são
+variações opcionais, se ele quiser que ferro e ouro soem diferentes; custam
+uma geração cada e a sequência já aceita.
+
+### Como gerar (ElevenLabs → Sound Effects)
+
+1. Colar o prompt **em inglês**.
+2. **Definir a duração** no controle (não deixar automático) — é o que
+   garante que o som cabe na animação.
+3. *Prompt influence* em torno de **0,65** — literal o suficiente pra não
+   inventar música.
+4. Gerar **4 variações** de cada e escolher a melhor. Uma só quase nunca é a
+   boa.
+5. Baixar em **MP3** — já sai no formato certo, sem o problema do `.ogg`.
+
+### ⚠️ Licença — conferir ANTES de gerar o conjunto final
+
+O plano **gratuito** do ElevenLabs exige **atribuição** e é **não
+comercial**. Só os planos pagos (a partir do Starter) dão direito de uso
+comercial. Como o TabuDecor vai ser distribuído, isto precisa estar
+resolvido antes de o som entrar no jogo. Conferir o plano na conta.
+
+### Como me entregar
+
+- Os 5 (ou 7) arquivos `.mp3` com os nomes da tabela, no Downloads
+- **Sem silêncio no começo** — o ElevenLabs às vezes deixa ~50 ms; se
+  deixar, eu corto no processamento, só avisar
+- Me dizer qual plano do ElevenLabs foi usado, pro registro de licença
+
+### Próximo passo
+
+1. **Clique:** ouvir os 4 do Kenney e escolher um.
+2. **Baús:** gerar os 5 no ElevenLabs com os prompts acima.
+3. **Eu integro** os 6 em `src/assets/sons/`, ligo no `audioManager` com a
+   sequência de 250 ms, e registro a licença por arquivo.

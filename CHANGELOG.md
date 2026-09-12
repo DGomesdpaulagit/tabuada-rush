@@ -4,6 +4,29 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.62] — 2026-09-12 — 🎬 Vídeo com áudio nativo — e o limite do Duolingo
+
+**Detalhes em `sessions/sessao-108.md`.** Decisão de fluxo. Nenhum código
+de jogo mudou.
+
+### Decidido
+- **Kling 3.0** recomendado como plataforma de vídeo+áudio gerados juntos
+  (única gratuita com áudio nativo real no mesmo prompt hoje)
+- **Fluxo:** gerar vídeo de referência com som no Kling → extrair só o
+  áudio → a animação real (código, arte do jogo) usa esse tempo como
+  referência. O vídeo em si não entra no jogo (sem transparência real no
+  celular, sem contador variável, peso incompatível com PWA, traço
+  diferente do Tatuba)
+
+### 🚨 Registrado — sons do Duolingo não entram como arquivo original
+O Davi pediu os `.mp3` do Duolingo (myinstants) integrados de verdade no
+jogo, contestando a objeção de direito autoral. Mantida a distinção: estilo
+visual é prática legítima do projeto (D041); o arquivo de áudio exato é de
+terceiro e não entra. Alternativa oferecida — e aceita como caminho —
+referência privada + equivalente gerado no ElevenLabs.
+
+---
+
 ## [6.0.61] — 2026-09-12 — 🎚️ Mesa de som + roteiros som/animação
 
 **Detalhes em `sessions/sessao-107.md`.** Nenhum código de jogo mudou.

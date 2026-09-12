@@ -4,6 +4,36 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.61] — 2026-09-12 — 🎚️ Mesa de som + roteiros som/animação
+
+**Detalhes em `sessions/sessao-107.md`.** Nenhum código de jogo mudou.
+
+### O que motivou
+Os sons gerados com os prompts da 6.0.60 saíram *"muito rápidos"*. O Davi
+achou a causa: *"tudo tem que bater, a animação com o som"*. Ele está certo
+— eu tinha dado durações sem existir animação pra elas caberem.
+
+### Adicionado
+- **Mesa de som** (artefato) — 13 catálogos (9 de fora da partida, 4 de
+  dentro marcados "esperam a Fase 1"), **40 áudios embutidos e tocáveis na
+  página**, escolha por catálogo salva no navegador, botão "Copiar resumo
+  pra mandar". Catálogos vazios dizem o que falta
+- **Roteiros com tempo** (tempo · animação · som): baú com Multis 4,0 s ·
+  baú com recurso 3,5 s · baú vazio 2,5 s. A partir deles: abertura ~1,4 s,
+  místico ~2,0 s, Multis ~1,6 s **sobrepostas** à abertura
+- `PENDENCIAS.md` — o que ele pediu pra não deixar esquecer: baixar o som
+  do **combo** (fonte paga), gerar Multis e místico com as durações do
+  roteiro, olhar o baú vazio, confirmar o plano do ElevenLabs
+
+### ⚠️ Registrado
+- **Os 5 sons do Duolingo** que ele achou no myinstants entram na mesa como
+  **link e referência de caráter**, com selo "não vai pro jogo". Copiar o
+  estilo visual é legítimo (D041); usar o arquivo de áudio deles num app
+  distribuído é violação de direito autoral. O caminho: gerar o equivalente
+  descrevendo o caráter
+
+---
+
 ## [6.0.60] — 2026-09-12 — 🎛️ Sons de baú vão ser gerados no ElevenLabs
 
 **Detalhes em `sessions/sessao-106.md` e `referencias/sons/CATALOGO.md`.**

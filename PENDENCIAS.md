@@ -82,6 +82,30 @@ moedas é o maior sorvedouro de moeda do jogo).
 
 ---
 
+## 🔊 SONS — o que o Davi pediu pra eu NÃO deixar ele esquecer (sessão 107)
+
+Palavras dele: *"você não pode me deixar me esquecer"*.
+
+- [ ] **Baixar o som do COMBO** — fonte que ele chamou de "Limbo", é
+      **paga**, ele vai colocar depois. Vale pra **todos** os combos
+      (recurso + baú), místico ou não. Sem isso a página de recompensa
+      fica sem som de revelação.
+- [ ] **Gerar o baú com Multis** — abertura mais longa (3-5 s, pra caber na
+      animação) e depois **moedas se mexendo "como num saco"** enquanto a
+      animação mexe as moedinhas. Não é o tilintar curto de 1,2 s que eu
+      tinha proposto — ele achou tudo rápido demais.
+- [ ] **Gerar o baú místico** — mesma lógica, com abertura própria e mais
+      diferente.
+- [ ] **Baú vazio** — ele ainda não olhou.
+- [ ] **Confirmar o plano do ElevenLabs** (licença) antes do conjunto final.
+
+⚠️ **Sobre os sons do Duolingo** que ele achou no myinstants (acerto, erro,
+lição perfeita, lição concluída, ofensiva): servem como **referência de
+caráter**, não como arquivo do jogo — são propriedade da Duolingo. Ver
+`referencias/sons/CATALOGO.md`, seção "Duolingo".
+
+---
+
 ## 📦 ABSORVIDO em `planos/` (sessão 100)
 
 O documento de inovações que o Davi mandou na sessão 100 foi organizado em

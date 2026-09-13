@@ -4,6 +4,53 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.63] — 2026-09-12 — 🔊 3 sons de verdade integrados + painel consolidado
+
+**Detalhes em `sessions/sessao-109.md`.** Primeira integração REAL de áudio
+por arquivo no jogo (até aqui era tudo sintetizado).
+
+### Adicionado
+- **`src/assets/sons/`** com os 5 arquivos do Davi (erro, acerto,
+  ofensiva-atualização, lição concluída, missão concluída)
+- **`audioManager.js`** ganhou `_playFile` (ponte pra `<audio>` real, ao
+  lado do sintetizador) e 5 métodos: `licaoConcluida()`,
+  `ofensivaAtualizacao()`, `missaoConcluida()` — **ligados** — e
+  `tocarArquivoAcerto()`/`tocarArquivoErro()` — **prontos, não ligados**
+- **3 pontos de disparo reais:** fim de partida (`GamePage.jsx`, troca o
+  `victory()` sintetizado) · `StreakPage` ao montar · `MissionsProgressPage`
+  ao montar. Conferido rodando: os 3 geraram `206 Partial Content` — tocando
+  de verdade, não só carregado
+- **Painel "Status Geral 6.2"** (artefato) — três grupos por dependência:
+  o que não trava em nada, o que depende de outra coisa (arte, decisão,
+  fonte paga), e o que trava especificamente na Fase 1. Status clicável,
+  salvo no navegador
+
+### Não integrado, de propósito
+- `tocarArquivoAcerto()`/`tocarArquivoErro()` existem no código mas não são
+  chamados em lugar nenhum — ligá-los muda o tempo de resposta que a Fase 1
+  mede. Decisão registrada, visível no painel, não escondida
+
+### Testado e confirmado bloqueado
+- **Magnific MCP** (recém-conectado): `account_balance` recusa de cara —
+  "requer conta premium"
+- Testado também `generate_image` no conector de vídeo (Higgsfield),
+  cogitando que imagem pudesse ter camada grátis separada de vídeo — mesmo
+  bloqueio, dois modelos, `"Requires basic plan or higher"`
+- Pesquisados (não testados, não conectados): **Pixa MCP**, **AI Box MCP**,
+  **Dream Pixel Forge** — os três com camada gratuita real, segundo a busca
+
+### Fase 1 — sem dado novo
+Só o export de 2026-09-07 (462 tentativas, 2 dias distintos) — nenhum mais
+recente no Downloads
+
+### Sobre apagar artefatos
+Não existe ação de apagar artefato publicado na ferramenta — só
+`delete_asset` (remove um arquivo dentro de um artefato). Avisado
+plainly; "Mesa de som" e "Painel de produção" ficam substituídos pelo
+painel novo, mas continuam existindo como URL
+
+---
+
 ## [6.0.62] — 2026-09-12 — 🎬 Vídeo com áudio nativo — e o limite do Duolingo
 
 **Detalhes em `sessions/sessao-108.md`.** Decisão de fluxo. Nenhum código

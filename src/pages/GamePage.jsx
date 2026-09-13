@@ -282,7 +282,11 @@ export default function GamePage({ mode, adaptiveDifficulty = true, onEnd, onBac
         return;
       }
 
-      if (state.correct > 0) audio.victory();
+      // [6.2, sessão 109] "vitória" da partida trocado pelo arquivo de
+      // verdade (lição concluída). Dispara aqui, DEPOIS da última pergunta
+      // já estar registrada — não afeta o tempo de decisão de nada, então
+      // não encosta na coleta da Fase 1.
+      if (state.correct > 0) audio.licaoConcluida();
       else audio.gameOver();
       setTimeout(callEnd, 300);
     }

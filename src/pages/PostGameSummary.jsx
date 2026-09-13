@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Lock, Check, Share2 } from 'lucide-react';
 import { LEVELS, ACHIEVEMENTS, STREAK_GOALS } from '../constants';
@@ -9,6 +9,7 @@ import { getActiveMissions } from '../utils/missions';
 import { emZonaDeRebaixamento } from '../utils/relegation';
 import { getLeagueStandings } from '../utils/leagues';
 import { useApp } from '../contexts/AppContext';
+import { audio } from '../lib/audioManager';
 import { Button, pageTransition, stillInitial } from '../components/ui';
 import { MissionIcon, MissionProgress } from './MissionsPage';
 import { shareCard } from '../lib/shareCard';
@@ -256,6 +257,10 @@ function XpPage({ result, footer }) {
 function MissionsProgressPage({ footer }) {
   const { data } = useApp();
   const [tab, setTab] = useState('daily');
+  // [6.2, sessão 109] Som ao montar a página — fora da partida, sem risco
+  // pra Fase 1. `[]` de propósito: toca uma vez, na entrada da página, não
+  // a cada re-render (troca de aba diárias/mensais não deve tocar de novo).
+  useEffect(() => { audio.missaoConcluida(); }, []);
   const active = useMemo(
     () => getActiveMissions(data.missionsData, { zonaRebaixamento: emZonaDeRebaixamento(data) }),
     [data]
@@ -341,6 +346,9 @@ function MissionsProgressPage({ footer }) {
 // ── PÁGINA 4 — Ofensiva ativada (1ª partida do dia) ───────────────────────────
 function StreakPage({ footer }) {
   const { data } = useApp();
+  // [6.2, sessão 109] Idem — só aparece na 1ª partida do dia, então já é
+  // naturalmente raro; toca uma vez por montagem.
+  useEffect(() => { audio.ofensivaAtualizacao(); }, []);
   // [Fase 7.1, sessão 080] Antes o "concluído" era assumido (`i <= 0`, ou
   // seja: ontem SEMPRE aparecia feito, mesmo em quem jogou pela 1ª vez
   // hoje). Agora vem das sessões de verdade, na data LOCAL — mesma conta

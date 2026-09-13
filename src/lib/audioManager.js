@@ -1,4 +1,23 @@
 // Web Audio API synthesizer — no audio files required
+//
+// [6.2, sessão 109] Primeiros ARQUIVOS de verdade entrando aqui, ao lado do
+// sintetizador. `_playFile` é a ponte: um <audio> comum, respeitando o mesmo
+// `enabled`/`volume` do resto. Os arquivos moram em `src/assets/sons/` —
+// fornecidos pelo Davi (ver `referencias/sons/CATALOGO.md`).
+//
+// ⚠️ Acerto e Erro (`_arquivoAcerto`/`_arquivoErro`) estão CARREGADOS mas
+// PROPOSITALMENTE NÃO CHAMADOS em lugar nenhum do jogo ainda — são os dois
+// que tocam a cada resposta, dentro da partida, exatamente o que a Fase 1 do
+// Domínio está medindo (tempo de decisão). Ligar agora contaminaria a coleta
+// em andamento. Ver `planos/6.2-identidade-visual.md` e o painel de produção
+// pra essa decisão — ela é do Davi, não travada em código, só não ligada por
+// padrão.
+import arquivoErro from '../assets/sons/erro.mp3';
+import arquivoAcerto from '../assets/sons/acerto.mp3';
+import arquivoOfensiva from '../assets/sons/ofensiva-atualizacao.mp3';
+import arquivoLicaoConcluida from '../assets/sons/licao-concluida.mp3';
+import arquivoMissaoConcluida from '../assets/sons/missao-concluida.wav';
+
 class AudioManager {
   constructor() {
     this._ctx = null;
@@ -109,6 +128,43 @@ class AudioManager {
   newRecord() {
     // Sparkling ascending run
     this._seq([523.25, 587.33, 659.25, 783.99, 880, 1046.5], 0.065);
+  }
+
+  // ── ARQUIVOS DE VERDADE — fora da partida, sem risco pra Fase 1 ─────────────
+  _playFile(src, vol = 0.7) {
+    if (!this.enabled || this.volume === 0) return;
+    try {
+      const a = new Audio(src);
+      a.volume = Math.max(0, Math.min(1, this.volume * vol));
+      a.play().catch(() => {}); // autoplay bloqueado antes do 1º toque — silencioso
+    } catch {}
+  }
+
+  // Fim de partida bem-sucedida (troca o `victory()` sintetizado nesse ponto —
+  // ver GamePage.jsx). Dispara DEPOIS da última pergunta já registrada.
+  licaoConcluida() {
+    this._playFile(arquivoLicaoConcluida);
+  }
+
+  // Página 4 do resumo (StreakPage) — só aparece na 1ª partida do dia.
+  ofensivaAtualizacao() {
+    this._playFile(arquivoOfensiva);
+  }
+
+  // Página 3 do resumo (MissionsProgressPage), ao montar.
+  missaoConcluida() {
+    this._playFile(arquivoMissaoConcluida);
+  }
+
+  // ⚠️ Preparados, NÃO chamados em nenhum lugar do jogo — ver aviso no topo
+  // do arquivo. Ligar é trocar as chamadas de `correct()`/`wrong()` por
+  // `tocarArquivoAcerto()`/`tocarArquivoErro()` no GamePage — decisão
+  // pendente do Davi.
+  tocarArquivoAcerto() {
+    this._playFile(arquivoAcerto);
+  }
+  tocarArquivoErro() {
+    this._playFile(arquivoErro);
   }
 
   // ── MÚSICA DE FUNDO (ambiente, gerada — sem arquivos) ───────────────────────

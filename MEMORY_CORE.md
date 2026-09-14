@@ -18,8 +18,8 @@
 
 ## 📍 ESTADO ATUAL
 
-**Data:** 2026-09-12
-**Versão:** 6.0.63 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + zona de rebaixamento + aviso de ofensiva raro + ARQUITETURA_XP.md + FASE 0 do domínio + fix crítico do fim de partida + backlog de inovações organizado em `planos/` + moeda virou Multis (6.2) + VERSAO 6.1 CONCLUIDA (missoes na zona, tempo de partida, nomes da ofensiva) + botao de baixar a coleta em Configuracoes + ANALISE DA FASE 1 no dado real (ver ARQUITETURA_XP 4.3-R) + JOGO RENOMEADO PRA TabuDecor e mascote Tatuba (tatu) + acervo de sons catalogado + prompts de bau pro ElevenLabs + MESA DE SOM (artefato) e roteiros som/animacao + fluxo de video-referencia (Kling) + limite sobre audio do Duolingo + 3 SONS REAIS INTEGRADOS NO CODIGO + painel Status Geral 6.2 — sessao-109.md)
+**Data:** 2026-09-14
+**Versão:** 6.0.64 (Tabuada Rush 6.0 completo + Fase 7.1 bloco 1 + catálogo de ícones (Fase 7.2) + arte nova/fundos + screenshots + FASE 7.1 concluída + zona de rebaixamento + aviso de ofensiva raro + ARQUITETURA_XP.md + FASE 0 do domínio + fix crítico do fim de partida + backlog de inovações organizado em `planos/` + moeda virou Multis (6.2) + VERSAO 6.1 CONCLUIDA (missoes na zona, tempo de partida, nomes da ofensiva) + botao de baixar a coleta em Configuracoes + ANALISE DA FASE 1 no dado real (ver ARQUITETURA_XP 4.3-R) + JOGO RENOMEADO PRA TabuDecor e mascote Tatuba (tatu) + acervo de sons catalogado + prompts de bau pro ElevenLabs + MESA DE SOM (artefato) e roteiros som/animacao + fluxo de video-referencia (Kling) + limite sobre audio do Duolingo + 3 SONS REAIS INTEGRADOS NO CODIGO + painel Status Geral 6.2 + 33 DE 36 ICONES 512px NO JOGO + poses do Tatuba chegaram — sessao-110.md)
 
 > 🗂️ **`planos/` (sessão 100)** — o documento de ~25 inovações do Davi virou
 > 9 planos por versão (6.1 a 6.9), com índice em `planos/00-INDICE.md`.

@@ -4,6 +4,53 @@ Todas as mudanças notáveis do projeto são documentadas aqui.
 
 ---
 
+## [6.0.64] — 2026-09-14 — 🖼️ 33 de 36 ícones no jogo + poses do Tatuba
+
+**Detalhes em `sessions/sessao-110.md`.** Primeira leva real de ícones
+512px da 6.2 processada e integrada — não só catalogada.
+
+### Adicionado/Substituído
+- **11 dos 13 ícones do Lote 1** (recompensa) — `src/assets/icons/`, mesmo
+  nome de arquivo de sempre, `GameIcon.jsx` sem alteração
+- **20 de 20 troféus de faixa** (Lote 2), fatiados da folha por
+  **componente conectado** (`scipy.ndimage.label`), não grade fixa — a
+  grade fixa vazava a coroa da linha de baixo pra dentro da célula de cima
+- **`zona-buraco`** corrigido (Lote 3, parcial — só esta peça chegou)
+
+### 🚨 Achado: xadrez impresso como pixel real, não transparência
+3 arquivos (`combo-escudo`, `combo-seguro-ofensiva`, `combo-vida-extra`)
+tinham **alpha=255 constante** — o xadrez que parecia indicar
+transparência era **pixel de verdade**. Só apareceu porque testei na tela
+real do jogo, não só no visualizador de imagem. Corrigido com flood-fill
+por saturação (remove pixel neutro conectado à borda) + reprocessamento.
+Conferido rodando: limpos
+
+### 🔀 Divergência de escopo no "lote 3" — gap meu
+O lote 3 catalogado (sessão 100) era `zona-selo`/`zona-buraco`/`bau-vazio`.
+O Davi identificou como "embaçados" os ícones da caixa "O que piorou"
+(`zona-xp-50`/`zona-recursos-25`) — que eu **nunca tinha catalogado em
+lote nenhum**. Ele estava certo sobre o problema; eu não tinha listado o
+arquivo certo
+
+### Não integrado — motivo registrado, não silencioso
+- `XP cai 50%.png` e `Recursos e baús a 25%.png`: **fundo preto sólido**
+  (não transparente) e **estilo 3D glossy**, diferente do resto do jogo
+  (chapado/Duolingo, regra da sessão 100). Precisam ser regerados
+- `combo-pocao-3` e `bau-mistico-aberto`: só existem como imagem colada no
+  chat, sem arquivo em disco pra processar
+- `zona-selo` e `bau-vazio` originais: não vieram nesta remessa
+
+### 🎭 As poses do Tatuba chegaram (sem aviso no texto)
+`tatuba-corpo-inteiro-v1` (pose sentada) e `tatuba-6-vistas-v1` (turnaround
+6 ângulos, fundo magenta) — arquivadas em `referencias/marca/`. Ainda não
+processadas: faltam duas respostas (fala? aparece dentro da partida?)
+
+### Artefato
+**"Fila da 6.2" recriada** (a antiga tinha sido apagada) com os ícones
+reais embutidos e status por lote
+
+---
+
 ## [6.0.63] — 2026-09-12 — 🔊 3 sons de verdade integrados + painel consolidado
 
 **Detalhes em `sessions/sessao-109.md`.** Primeira integração REAL de áudio
